@@ -13,7 +13,7 @@ namespace FilterCore.Commands.EntryCommands
 
         public void Execute()
         {
-            this.Target.IsFrozen = false;
+            this.Target.IsFrozen = true;
         }
     }
 }
