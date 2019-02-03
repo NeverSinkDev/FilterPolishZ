@@ -55,5 +55,19 @@ namespace FilterPolishZ.Configuration
                 }
             }
         }
+
+        private void SetButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                if (btn.Parent is StackPanel parent)
+                {
+                    if (parent.DataContext is ConfigurationData data)
+                    {
+                        this.Configuration.Set(data.Key, data.Value);
+                    }
+                }
+            }
+        }
     }
 }

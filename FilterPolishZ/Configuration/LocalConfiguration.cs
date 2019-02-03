@@ -33,11 +33,23 @@ namespace FilterPolishZ.Configuration
             return instance;
         }
 
+        public void Set(string key, string value, bool doAutoSave = true)
+        {
+            this.config.AppSettings.Settings[key].Value = value;            
+            if (doAutoSave) this.Save();
+        }
+
+        public void Save()
+        {
+            this.config.Save(ConfigurationSaveMode.Full, true);
+            ConfigurationManager.RefreshSection("appSettings");
+        }
+
         public IEnumerable<ConfigurationData> YieldConfiguration()
         {
             foreach (string key in AppSettings)
             {
-                yield return new ConfigurationData() { Key = key, Value = AppSettings[key], Util = "Set" };
+                yield return new ConfigurationData() { Key = key, Value = AppSettings[key], Util = "-" };
             }
         }
     }
