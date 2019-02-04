@@ -11,8 +11,9 @@ namespace FilterCore.Util
         public Path Parent { get; set; }
         public Path Next { get; set; }
         public string Value { get; set; } = string.Empty;
+        public string CombineString;
 
-        public Path(string value)
+        public Path(string value, string CombineChar = "/")
         {
             this.Value = value;
         }
@@ -26,7 +27,7 @@ namespace FilterCore.Util
 
         public string Serialize()
         {
-            return this.Value + "/" +  (this.Next != null ? this.Next.Serialize() : string.Empty);
+            return $"{this.Value}{CombineString}{(this.Next != null ? this.Next.Serialize() : string.Empty)}";
         }
     }
 }

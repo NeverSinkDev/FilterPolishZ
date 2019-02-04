@@ -25,8 +25,7 @@ namespace FilterCore.Entry
 
         public string HeaderComment { get; set; }
         public List<GenerationTag> GenerationTags { get; set; }
-        public List<StyleTag> StyleTags { get; set; }
-        public List<TierTag> TierTag { get; set; }
+        public Dictionary<string,TierTag> TierTags { get; set; }
 
         public string Serialize()
         {
@@ -36,7 +35,7 @@ namespace FilterCore.Entry
 
                     var comment = string.Join(" ",
                         string.Join(" ", GenerationTags.Select(x => x.Serialize()).ToList()),
-                        string.Join(" ", StyleTags.Select(x => x.Serialize()).ToList()),
+                        string.Join(" ", TierTags.Select(x => x.Value.Serialize()).ToList()),
                         HeaderComment).Trim();
 
                     if (!string.IsNullOrEmpty(comment))
@@ -56,11 +55,11 @@ namespace FilterCore.Entry
         public void ExtractTagsFromLine(IFilterLine line)
         {
             GenerationTags = new List<GenerationTag>();
-            StyleTags = new List<StyleTag>();
+            TierTags = new Dictionary<string, TierTag>();
 
             bool firstComment = true;
             StringBuilder builder = new StringBuilder();
-            var strings = line.Comment.Split(FilterConstants.WhiteLineChars);
+            var strings = line.Comment.ToLower().Split(FilterConstants.WhiteLineChars);
 
             foreach (var s in strings)
             {
@@ -98,6 +97,16 @@ namespace FilterCore.Entry
                 else if (s[0] == '$')
                 {
                     var split = s.Substring(1);
+                    var separator = new string[] { "->" };
+                    if (split.Contains(separator[0]))
+                    {
+                        var parts = split.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                        this.TierTags.Add(parts.First(), new TierTag(parts));
+                    }
+                    else
+                    {
+                        this.TierTags.Add(split,new TierTag(split));
+                    }
                 }
                 else
                 {

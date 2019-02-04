@@ -8,7 +8,12 @@ namespace FilterCore.Util
 {
     public static class StringWork
     {
-        public static string CombinePieces(params string[] pieces)
+        public static string CombinePieces(string combiner, List<string> pieces)
+        {
+            return CombinePieces(combiner, pieces.ToArray());
+        }
+
+        public static string CombinePieces(string combiner, params string[] pieces)
         {
             var first = true;
             StringBuilder builder = new StringBuilder();

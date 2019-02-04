@@ -93,22 +93,26 @@ namespace FilterCore
         public Dictionary<string, TierGroup> ExtractTiers(HashSet<string> addressedTiers)
         {
             Dictionary<string, TierGroup> result = new Dictionary<string, TierGroup>();
+            HashSet<string> foundTags = new HashSet<string>();
 
+            // analyze every entry...
             foreach (var entry in this.FilterEntries)
             {
-                if (entry.Header.TierTag != null)
+                //..with tiertags
+                if (entry.Header.TierTags != null)
                 {
-                    foreach (var tierTag in entry.Header.TierTag)
+                    if (entry.Header.TierTags.ContainsKey("s") && entry.Header.TierTags.ContainsKey("t") && addressedTiers.Contains(entry.Header.TierTags["s"].Tags[1]))
                     {
-                        if (addressedTiers.Contains(tierTag.Category))
-                        {
-                            if (!result.ContainsKey(tierTag.Category))
-                            {
-                                result.Add(tierTag.Category, new TierGroup(tierTag.Category));
-                            }
+                        var primaryTag = entry.Header.TierTags["s"].PrimaryTag;
+                        var tier = entry.Header.TierTags["t"].Serialize();
 
-                            result[tierTag.Category].FilterEntries[tierTag.Category] = new SingleTier() { Entry = entry, TierName = tierTag.SubCategory };
+                        // füge eine neue Hauptgruppe hinzu
+                        if (!result.ContainsKey(primaryTag))
+                        {
+                            result.Add(primaryTag, new TierGroup(primaryTag));
                         }
+
+                        result[primaryTag].FilterEntries[tier] = new SingleTier() { Entry = entry, TierName = tier };
                     }
                 }
             }

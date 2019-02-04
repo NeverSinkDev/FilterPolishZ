@@ -87,7 +87,6 @@
     <Compile Include="FilterComponents\Line\LineToken.cs" />
     <Compile Include="FilterComponents\Line\Parsing\LineParser.cs" />
     <Compile Include="FilterComponents\Tags\GenerationTag.cs" />
-    <Compile Include="FilterComponents\Tags\StyleTag.cs" />
     <Compile Include="FilterComponents\Tags\TierTag.cs" />
     <Compile Include="FilterComponents\Tier\EcoTier.cs" />
     <Compile Include="FilterComponents\Tier\ItemInformationData.cs" />
@@ -110,6 +109,8 @@
     <Compile Include="Tests\LineSerializationTests.cs" />
     <Compile Include="Tests\TestUtils.cs" />
     <Compile Include="Util\Collections\AutoBiDictionary.cs" />
+    <Compile Include="Util\Collections\EDictionary.cs" />
+    <Compile Include="Util\EDictionary.cs" />
     <Compile Include="Util\FileWork.cs" />
     <Compile Include="Util\Path.cs" />
     <Compile Include="Util\StringWork.cs" />
