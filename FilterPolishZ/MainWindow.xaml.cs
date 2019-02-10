@@ -66,7 +66,7 @@ namespace FilterPolishZ
         
         private Dictionary<string,TierGroup> LoadTierLists(Filter filter)
         {
-            var workTiers = new HashSet<string> { "unique", "divinations", "uniqueMaps", "fossils", "resonators", "fragments", "prophecies", "shaper", "elder", "crafting", "currency" };
+            var workTiers = new HashSet<string> { "uniques", "divination", "maps->uniques", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
             var tiers = filter.ExtractTiers(workTiers);
             return tiers;
         }
@@ -76,15 +76,15 @@ namespace FilterPolishZ
             var variation = "tmpstandard";
             var league = "betrayal";
 
-            PerformRequest("divinations", "divination", "?");
-            PerformRequest("uniqueMaps","uniqueMaps", "?");
-            PerformRequest("uniques", "uniqueWeapons", "?");
-            PerformRequest("uniques", "uniqueFlasks", "?");
-            PerformRequest("uniques", "uniqueArmours", "?");
-            PerformRequest("uniques", "uniqueAccessory", "?");
-            PerformRequest("basetypes", "basetypes", "&");
+            PerformEcoRequest("divination", "divination", "?");
+            PerformEcoRequest("maps->uniques", "uniqueMaps", "?");
+            PerformEcoRequest("uniques", "uniqueWeapons", "?");
+            PerformEcoRequest("uniques", "uniqueFlasks", "?");
+            PerformEcoRequest("uniques", "uniqueArmours", "?");
+            PerformEcoRequest("uniques", "uniqueAccessory", "?");
+            PerformEcoRequest("basetypes", "basetypes", "&");
 
-            void PerformRequest(string dictionaryKey, string requestKey, string prefix) => 
+            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) => 
                 EconomyData.AddToDictionary(dictionaryKey, 
                 EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode));
         }
@@ -93,12 +93,12 @@ namespace FilterPolishZ
         {
             var variation = "defaultSorting";
 
-            PerformRequest(variation, "divination");
-            PerformRequest(variation, "uniques");
-            PerformRequest(variation, "uniqueMaps");
-            PerformRequest(variation, "basetypes");
+            PerformItemInfoRequest(variation, "divination");
+            PerformItemInfoRequest(variation, "uniques");
+            PerformItemInfoRequest(variation, "uniqueMaps");
+            PerformItemInfoRequest(variation, "basetypes");
 
-            void PerformRequest(string loadPath, string requestKey) =>
+            void PerformItemInfoRequest(string loadPath, string requestKey) =>
                 ItemInformationFacadeData.AddToDictionary(requestKey,
                 ItemInformationFacadeData.LoadItemInformation(loadPath, requestKey));
         }

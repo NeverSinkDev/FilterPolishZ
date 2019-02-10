@@ -15,6 +15,7 @@ namespace FilterCore.Util
 
         public static string CombinePieces(string combiner, params string[] pieces)
         {
+            combiner = string.IsNullOrEmpty(combiner) ? " " : combiner;
             var first = true;
             StringBuilder builder = new StringBuilder();
 
@@ -28,7 +29,7 @@ namespace FilterCore.Util
                     }
                     else
                     {
-                        builder.Append(" ");
+                        builder.Append(combiner);
                     }
 
                     builder.Append(piece);

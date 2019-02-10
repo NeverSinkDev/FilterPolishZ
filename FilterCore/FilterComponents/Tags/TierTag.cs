@@ -12,6 +12,9 @@ namespace FilterCore.FilterComponents.Tags
         public List<string> Tags { get; set; } = new List<string>();
         public string PrimaryTag => Tags.FirstOrDefault();
 
+        public string CombinedTagValue =>
+            StringWork.CombinePieces("->", Tags.Skip(1).ToList());
+
         public TierTag(params string[] tags)
         {
             this.Tags = new List<string>();

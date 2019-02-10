@@ -101,9 +101,15 @@ namespace FilterCore
                 //..with tiertags
                 if (entry.Header.TierTags != null)
                 {
-                    if (entry.Header.TierTags.ContainsKey("s") && entry.Header.TierTags.ContainsKey("t") && addressedTiers.Contains(entry.Header.TierTags["s"].Tags[1]))
+                    if (!entry.Header.TierTags.ContainsKey("s") || !entry.Header.TierTags.ContainsKey("t"))
                     {
-                        var primaryTag = entry.Header.TierTags["s"].PrimaryTag;
+                        continue;
+                    }
+
+                    var primaryTag = entry.Header.TierTags["s"].CombinedTagValue;
+
+                    if (addressedTiers.Contains(primaryTag))
+                    { 
                         var tier = entry.Header.TierTags["t"].Serialize();
 
                         // füge eine neue Hauptgruppe hinzu
