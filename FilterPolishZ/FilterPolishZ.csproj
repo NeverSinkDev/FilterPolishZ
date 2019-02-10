@@ -108,10 +108,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\EconomyRequestFacade.cs" />
     <Compile Include="Modules\ItemInformationFacade.cs" />
+    <Compile Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml.cs">
+      <DependentUpon>GenerationOptions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

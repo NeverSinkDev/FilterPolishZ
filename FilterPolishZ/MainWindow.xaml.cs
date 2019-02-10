@@ -22,6 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FilterPolishZ.ModuleWindows.GenerationOptions;
 
 namespace FilterPolishZ
 {
@@ -36,6 +37,7 @@ namespace FilterPolishZ
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
         public EconomyRequestFacade EconomyData { get; set; } = new EconomyRequestFacade();
         public ItemInformationFacade ItemInformationFacadeData { get; set; } = new ItemInformationFacade();
+        public UserControl CurrentWindow;
 
         public List<string> FilterRawString { get; set; }
 
@@ -101,6 +103,14 @@ namespace FilterPolishZ
             void PerformItemInfoRequest(string loadPath, string requestKey) =>
                 ItemInformationFacadeData.AddToDictionary(requestKey,
                 ItemInformationFacadeData.LoadItemInformation(loadPath, requestKey));
+        }
+
+        private void OnScreenTabSelect(object sender, RoutedEventArgs e)
+        {
+//            GenerationOptions.Vo;
+//            this.DataContext = ConfigurationView;
+//            GenerationOptions.OpenSc
+//            MainBorder.Child = new GenerationOptions();
         }
     }
 }

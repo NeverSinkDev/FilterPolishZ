@@ -4,6 +4,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Grid="clr-namespace:FilterPolishZ.Configuration"
+        xmlns:generationOptions="clr-namespace:FilterPolishZ.ModuleWindows.GenerationOptions"
         Title="Material Design in XAML" Height="800" Width="1100"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -15,30 +16,40 @@
     <Grid>
         <StackPanel>
 
+            <!-- top menu container -->
             <materialDesign:DialogHost>
                 <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+                    
+                    <!-- top left menu content -->
                     <materialDesign:DrawerHost.LeftDrawerContent>
-                        
                         <DockPanel MinWidth="212">
+                            
+                            <!-- back button -->
                             <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
                                     DockPanel.Dock="Top"
                                     HorizontalAlignment="Right" Margin="16"
                                     IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
+                            
+                            <!-- option list -->
                             <ListBox>
-                                <ListBoxItem>ListBox Item #1</ListBoxItem>
-                                <ListBoxItem>ListBox Item #2</ListBoxItem>
-                                <ListBoxItem>ListBox Item #3</ListBoxItem>
+                                <ListBoxItem Selected="OnScreenTabSelect">generation options</ListBoxItem>
+                                <ListBoxItem>economy data // tierLists</ListBoxItem>
+                                <ListBoxItem>changeLog</ListBoxItem>
+                                <ListBoxItem>style</ListBoxItem>
+                                <ListBoxItem>operations</ListBoxItem>
                             </ListBox>
                         </DockPanel>
-                        
                     </materialDesign:DrawerHost.LeftDrawerContent>
 
                     <DockPanel>
                         <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2"
                                             Mode="PrimaryMid" DockPanel.Dock="Top">
                             <DockPanel>
+                                <!-- top LEFT open menu button -->
                                 <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
                                         x:Name="MenuToggleButton"/>
+                                
+                                <!-- top right open menu button -->
                                 <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                                     <StackPanel>
                                         <Button Content="Hello World"/>
@@ -57,13 +68,21 @@
                 </materialDesign:DrawerHost>
             </materialDesign:DialogHost>
 
+            <!-- header title -->
             <materialDesign:Card Padding="32" Margin="16" Grid.Row="0">
                 <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Welcome to FilterPolishZ</TextBlock>
             </materialDesign:Card>
 
+            <!-- current window -->
             <Grid:ConfigurationView/>
-
-
+            <!-- <generationOptions:GenerationOptions Visibility="Hidden" /> -->
+            
+            <!-- <ContentControl Content="{Binding contentWindow}" /> -->
+            
+            <!-- <Border Name="MainBorder"> -->
+                <!-- <Grid:ConfigurationView x:Name="ConfigurationView" /> -->
+            <!-- </Border> -->
+            
         </StackPanel>
     </Grid>
 </Window>
