@@ -118,7 +118,12 @@ namespace FilterCore
                             result.Add(primaryTag, new TierGroup(primaryTag));
                         }
 
-                        result[primaryTag].FilterEntries[tier] = new SingleTier() { Entry = entry, TierName = tier };
+                        if (!result[primaryTag].FilterEntries.ContainsKey(tier))
+                        {
+                            result[primaryTag].FilterEntries[tier] = new SingleTier() { TierName = tier };
+                        }
+
+                        result[primaryTag].FilterEntries[tier].Entry.Add(entry);
                     }
                 }
             }

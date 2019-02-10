@@ -10,6 +10,6 @@ namespace FilterCore.FilterComponents.Tier
     public class SingleTier
     {
         public string TierName { get; set; }
-        public IFilterEntry Entry { get; set; }
+        public List<IFilterEntry> Entry { get; set; } = new List<IFilterEntry>();
     }
 }
