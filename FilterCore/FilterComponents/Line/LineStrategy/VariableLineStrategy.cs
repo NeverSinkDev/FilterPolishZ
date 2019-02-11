@@ -41,7 +41,7 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
-            return StringWork.CombinePieces(" ",this.Value.Select(x => x.Serialize()).ToArray());
+            return StringWork.CombinePieces(string.Empty,this.Value.Select(x => x.Serialize()).ToArray());
         }
     }
 }

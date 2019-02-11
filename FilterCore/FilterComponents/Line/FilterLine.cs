@@ -23,7 +23,7 @@ namespace FilterCore.Line
 
         public virtual string Serialize()
         {
-            return StringWork.CombinePieces(
+            return StringWork.CombinePieces(string.Empty,
                 Ident, 
                 Value?.Serialize() ?? string.Empty, 
                 !string.IsNullOrEmpty(Comment) ? 

@@ -42,7 +42,7 @@ namespace FilterCore.Entry
                         comment = $"# {comment}";
                     }
 
-                    return StringWork.CombinePieces(HeaderValue, comment);
+                    return StringWork.CombinePieces(string.Empty,HeaderValue, comment);
 
                 case FilterEntryType.Filler:
                 case FilterEntryType.Comment:
