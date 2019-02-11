@@ -1,28 +1,12 @@
 ﻿using FilterCore;
 using FilterCore.FilterComponents.Tier;
-using FilterCore.Util;
-using FilterEconomy.Request;
-using FilterEconomy.Request.Parsing;
 using FilterPolishZ.Configuration;
-using FilterPolishZ.Modules;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FilterPolishZ.ModuleWindows.GenerationOptions;
+using FilterPolishUtil;
+using FilterEconomy.Facades;
 
 namespace FilterPolishZ
 {
@@ -75,6 +59,9 @@ namespace FilterPolishZ
 
         private void LoadEconomyOverviewData()
         {
+            var seedfolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
+            var ninjaurl = LocalConfiguration.GetInstance().AppSettings["Ninja Request URL"];
+
             var variation = "tmpstandard";
             var league = "betrayal";
 
@@ -86,13 +73,18 @@ namespace FilterPolishZ
             PerformEcoRequest("uniques", "uniqueAccessory", "?");
             PerformEcoRequest("basetypes", "basetypes", "&");
 
+
+
             void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) => 
                 EconomyData.AddToDictionary(dictionaryKey, 
-                EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode));
+                EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedfolder, ninjaurl));
         }
 
         private void LoadItemInformationOverview()
         {
+            var localConfig = LocalConfiguration.GetInstance();
+            var baseStoragePath = localConfig.AppSettings["SeedFile Folder"];
+
             var variation = "defaultSorting";
 
             PerformItemInfoRequest(variation, "divination");
@@ -102,7 +94,7 @@ namespace FilterPolishZ
 
             void PerformItemInfoRequest(string loadPath, string requestKey) =>
                 ItemInformationFacadeData.AddToDictionary(requestKey,
-                ItemInformationFacadeData.LoadItemInformation(loadPath, requestKey));
+                ItemInformationFacadeData.LoadItemInformation(loadPath, requestKey, baseStoragePath));
         }
 
         private void OnScreenTabSelect(object sender, RoutedEventArgs e)

@@ -104,6 +104,7 @@
     <Compile Include="Configuration\FilterPolishConstants.cs" />
     <Compile Include="Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\ConfigurationData.cs" />
+    <Compile Include="Economy\ConcreteEconomyRules.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -111,8 +112,6 @@
     <Page Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\EconomyRequestFacade.cs" />
-    <Compile Include="Modules\ItemInformationFacade.cs" />
     <Compile Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml.cs">
       <DependentUpon>GenerationOptions.xaml</DependentUpon>
     </Compile>
@@ -150,6 +149,10 @@
     <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj">
       <Project>{30DD41C8-5321-4153-A9B9-9F91CDC5D2DC}</Project>
       <Name>FilterEconomy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
+      <Project>{F19797E3-6953-4EDD-9D10-52E65B842C82}</Project>
+      <Name>FilterPolishUtil</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

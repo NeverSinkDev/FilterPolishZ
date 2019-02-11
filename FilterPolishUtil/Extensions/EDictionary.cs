@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterCore.Util.Collections
+namespace FilterPolishUtil.Extensions
 {
     public static class EDictionary
     {
-        public static void AddOrSet<TKey,TValue>(this Dictionary<TKey,TValue> me, TKey key, TValue value)
+        public static void AddOrSet<TKey, TValue>(this Dictionary<TKey, TValue> me, TKey key, TValue value)
         {
             if (!me.ContainsKey(key))
             {

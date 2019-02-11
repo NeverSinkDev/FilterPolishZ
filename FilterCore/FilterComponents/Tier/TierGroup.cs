@@ -1,11 +1,4 @@
-﻿using FilterCore.Entry;
-using FilterCore.Util.Collections;
-using FilterDomain.LineStrategy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FilterCore.FilterComponents.Tier
 {
@@ -24,9 +17,6 @@ namespace FilterCore.FilterComponents.Tier
 
         // Item : TierKey
         public Dictionary<string, string> ItemTiering = new Dictionary<string, string>();
-
-        // Item : InfoContainer
-        public Dictionary<string, ItemInformationData> SavedItemInformation = new Dictionary<string, ItemInformationData>();
 
         // Item : EcoContainer
         public Dictionary<string, EcoTier> EconomyInformation = new Dictionary<string, EcoTier>(); 

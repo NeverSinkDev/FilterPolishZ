@@ -89,7 +89,6 @@
     <Compile Include="FilterComponents\Tags\GenerationTag.cs" />
     <Compile Include="FilterComponents\Tags\TierTag.cs" />
     <Compile Include="FilterComponents\Tier\EcoTier.cs" />
-    <Compile Include="FilterComponents\Tier\ItemInformationData.cs" />
     <Compile Include="FilterComponents\Tier\SingleTier.cs" />
     <Compile Include="FilterComponents\Tier\TierGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -108,12 +107,6 @@
     <Compile Include="Tests\LineParsingTests.cs" />
     <Compile Include="Tests\LineSerializationTests.cs" />
     <Compile Include="Tests\TestUtils.cs" />
-    <Compile Include="Util\Collections\AutoBiDictionary.cs" />
-    <Compile Include="Util\Collections\EDictionary.cs" />
-    <Compile Include="Util\EDictionary.cs" />
-    <Compile Include="Util\FileWork.cs" />
-    <Compile Include="Util\Path.cs" />
-    <Compile Include="Util\StringWork.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -127,7 +120,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
+      <Project>{F19797E3-6953-4EDD-9D10-52E65B842C82}</Project>
+      <Name>FilterPolishUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

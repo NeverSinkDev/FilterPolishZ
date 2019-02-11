@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterCore.Util.Collections
+namespace FilterPolishUtil.Collections
 {
     public class AutoBiDictionary<K, T>
     {

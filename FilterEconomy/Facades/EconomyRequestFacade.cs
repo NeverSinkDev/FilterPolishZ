@@ -1,25 +1,21 @@
-﻿using FilterCore.Util;
-using FilterEconomy.Request;
+﻿using FilterEconomy.Request;
 using FilterEconomy.Request.Parsing;
-using FilterPolishZ.Configuration;
+using FilterPolishUtil;
+using FilterPolishUtil.Constants;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterPolishZ.Modules
+namespace FilterEconomy.Facades
 {
     public class EconomyRequestFacade
     {
         public Dictionary<string, Dictionary<string, List<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<FilterEconomy.Model.NinjaItem>>>();
 
-        public Dictionary<string, List<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType)
+        public Dictionary<string, List<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
         {
-            var localConfig = LocalConfiguration.GetInstance();
-
-            var baseStoragePath = localConfig.AppSettings["SeedFile Folder"];
             var economySegmentBranch = FilterPolishConstants.Abbreviations[branchKey];
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
             var fileName = $"{economySegmentBranch}.txt";
@@ -40,7 +36,7 @@ namespace FilterPolishZ.Modules
                 }
                 else
                 {   // Request online file
-                    var urlRequest = $"{localConfig.AppSettings["Ninja Request URL"]}{economySegmentBranch}{prefix}league={variation}";
+                    var urlRequest = $"{ninjaUrl}{economySegmentBranch}{prefix}league={variation}";
                     responseString = new RestRequest(urlRequest).Execute();
 
                     // Store locally

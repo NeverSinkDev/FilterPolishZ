@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterCore.Util
+namespace FilterPolishUtil
 {
     public static class FileWork
     {

@@ -1,26 +1,19 @@
-﻿using FilterCore.Util;
-using FilterEconomy.Model.ItemInformationData;
+﻿using FilterEconomy.Model.ItemInformationData;
 using FilterEconomy.Request.Parsing;
-using FilterPolishZ.Configuration;
+using FilterPolishUtil;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static FilterPolishZ.Modules.EconomyRequestFacade;
 
-namespace FilterPolishZ.Modules
+namespace FilterEconomy.Facades
 {
     public class ItemInformationFacade
     {
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
 
-        public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string variation, string branchKey)
+        public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string variation, string branchKey, string baseStoragePath)
         {
-            var localConfig = LocalConfiguration.GetInstance();
-            var baseStoragePath = localConfig.AppSettings["SeedFile Folder"];
-
             var directoryPath = $"{baseStoragePath}/{variation}";
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
