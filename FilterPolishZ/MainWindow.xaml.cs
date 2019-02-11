@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using FilterPolishUtil;
 using FilterEconomy.Facades;
+using FilterPolishZ.Economy;
 
 namespace FilterPolishZ
 {
@@ -30,11 +31,21 @@ namespace FilterPolishZ
         public MainWindow()
         {
             this.InitializeComponent();
-            this.LoadEconomyOverviewData();
+
+            var economyData = this.LoadEconomyOverviewData();
             // this.LoadItemInformationOverview();
-            var filter = this.PerformFilterWorkAsync();
-            var economyDashBoard = this.LoadTierLists(filter);
-            Task.Run(() => WriteFilter(filter));
+            var filterData = this.PerformFilterWorkAsync();
+            var tierListData = this.LoadTierLists(filterData);
+
+            var economyTieringSystem = new ConcreteEconomyRules()
+            {
+                TierInformation = tierListData,
+                EconomyInformation = economyData
+            };
+
+            economyTieringSystem.Execute();
+
+            Task.Run(() => WriteFilter(filterData));
         }
 
         private Filter PerformFilterWorkAsync()
@@ -57,7 +68,7 @@ namespace FilterPolishZ
             return tiers;
         }
 
-        private void LoadEconomyOverviewData()
+        private EconomyRequestFacade LoadEconomyOverviewData()
         {
             var seedfolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             var ninjaurl = LocalConfiguration.GetInstance().AppSettings["Ninja Request URL"];
@@ -78,6 +89,8 @@ namespace FilterPolishZ
             void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) => 
                 EconomyData.AddToDictionary(dictionaryKey, 
                 EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedfolder, ninjaurl));
+
+            return this.EconomyData;
         }
 
         private void LoadItemInformationOverview()

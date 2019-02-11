@@ -3,26 +3,57 @@ using FilterEconomy.Facades;
 using FilterEconomy.Processor;
 using FilterUtilModels.Economy;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FilterPolishZ.Economy
 {
     public class ConcreteEconomyRules : IEconomyProcessorData
     {
+        private FilterEconomyRuleSet uniqueRules;
+        private List<TieringCommand> suggestions;
+
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public Dictionary<string, TierGroup> TierInformation { get; set; }
 
         public ConcreteEconomyRules()
         {
-            this.CreateUniqueEconomyRules();
+            this.uniqueRules = this.CreateUniqueEconomyRules();
         }
 
-        private void CreateUniqueEconomyRules()
+        public void Execute()
+        {
+            this.suggestions = EconomyInformation.EconomyTierlistOverview["uniques"].Select(z => z.Key).Select(x => this.uniqueRules.ProcessItem("uniques", x, this)).ToList();
+        }
+
+        private FilterEconomyRuleSet CreateUniqueEconomyRules()
         {
             FilterEconomyRuleSet uniqueRules = new FilterEconomyRuleSet() { GoverningSection = "uniques" };
-            uniqueRules.EconomyRules.Add(new FilterEconomyRule() {
-                TargetTier = "T1",
-                Rule = (string s) =>  s.Length > 0 });
+
+            List<string> list = new List<string>();
+
+            // Unknown Unique
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "unknown",
+                Rule = (string s) =>
+                {
+                    return !EconomyInformation.EconomyTierlistOverview["uniques"].ContainsKey(s);
+                }
+            });
+
+            // T1 unique
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "t1",
+                Rule = (string s) =>
+                {
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s].ToList();
+                    return items.All(x => x.CVal > 20);
+                }
+            });
+
+            return uniqueRules;
         }
     }
 }
