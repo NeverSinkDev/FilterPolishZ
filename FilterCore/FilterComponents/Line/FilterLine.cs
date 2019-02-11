@@ -38,11 +38,17 @@ namespace FilterCore.Line
                     res = res.PadRight(StyleCommentPad, ' ');
                     res += "#";
                 }
+                else if (!this.IsDividerComment()) res += " ";
                 
                 res += Comment;
             }
 
             return res;
+        }
+
+        private bool IsDividerComment()
+        {
+            return this.Comment.Length > 10 && this.Comment[0] == this.Comment[1] && this.Comment[1] == this.Comment[2];
         }
 
         IFilterLine IFilterLine.Clone()

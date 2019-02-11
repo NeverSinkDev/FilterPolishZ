@@ -41,6 +41,7 @@ namespace FilterCore.Line.Parsing
                             else
                             {
                                 comment = token.value;
+                                if (tokens.Count > 1) comment += " ";
                             }
 
                             phase = FilterLineIdentPhase.ValueScan;
