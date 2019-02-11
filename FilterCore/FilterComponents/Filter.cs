@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore.Commands;
 
 namespace FilterCore
 {
@@ -33,6 +34,7 @@ namespace FilterCore
             }
 
             this.GenerateFilterEntries(lineList);
+            new FilterTableOfContentsCreator(this);
         }
 
         private void GenerateFilterEntries(List<IFilterLine> lineList)

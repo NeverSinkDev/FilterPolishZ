@@ -65,6 +65,7 @@
     <Compile Include="Commands\EntryCommands\DisableEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\HideEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\IEntryCommand.cs" />
+    <Compile Include="Commands\FilterTableOfContentsCreator.cs" />
     <Compile Include="Commands\IFilterCommand.cs" />
     <Compile Include="Constants\FilterConstants.cs" />
     <Compile Include="FilterComponents\Entry\EFilterEntry.cs" />
