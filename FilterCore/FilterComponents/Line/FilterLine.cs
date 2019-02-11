@@ -16,6 +16,8 @@ namespace FilterCore.Line
         public ILineValueCore Value { get; set; }
         public bool identCommented { get; set; }
 
+        private const int StyleCommentPad = 37;
+
         public virtual FilterLine<T> Clone()
         {
             throw new NotImplementedException();
@@ -23,12 +25,24 @@ namespace FilterCore.Line
 
         public virtual string Serialize()
         {
-            return StringWork.CombinePieces(string.Empty,
+            var res = StringWork.CombinePieces(
+                string.Empty,
                 Ident, 
-                Value?.Serialize() ?? string.Empty, 
-                !string.IsNullOrEmpty(Comment) ? 
-                    (Ident != string.Empty ? "#" : string.Empty) + Comment : 
-                    string.Empty );
+                Value?.Serialize() ?? string.Empty
+                );
+
+            if (!string.IsNullOrEmpty(Comment))
+            {
+                if (Ident != string.Empty)
+                {
+                    res = res.PadRight(StyleCommentPad, ' ');
+                    res += "#";
+                }
+                
+                res += Comment;
+            }
+
+            return res;
         }
 
         IFilterLine IFilterLine.Clone()

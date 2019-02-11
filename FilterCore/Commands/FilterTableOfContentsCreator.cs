@@ -13,8 +13,8 @@ namespace FilterCore.Commands
     {
         // (existing) filterEntry, containing the ToC strings as comments - this is where the result will be inserted into
         private IFilterEntry filterEntry;
-        
-        private readonly FilterTableOfContentsInfo tableContent = new FilterTableOfContentsInfo("root", -1, StartIndex);
+        private readonly List<int> indices = new List<int>();
+        private readonly List<string> tableLines = new List<string>();
         private readonly Filter filter;
         
         // actual constants - should not change unless filter code style changes
@@ -22,7 +22,7 @@ namespace FilterCore.Commands
         private const int SectionTitleLineIndex = 1; // index of the line in the filterEntry that contains the title
         private const char SectionTitleKeyIdentStart = '[';
         private const char SectionTitleKeyIdentEnd = ']';
-        private const int StaticTableHeaderLineCount = 4;
+        private const int StaticTableHeaderLineCount = 4; // 1st = divider, 2nd = [WELCOME], 3rd = divider, 4th = filler
         
         // customization options
         private const int MaxDepth = 2;
@@ -38,8 +38,16 @@ namespace FilterCore.Commands
         public void Run()
         {
             this.filterEntry = this.FindFilterEntry();
+            this.SaveTableHeaderLines();
             this.ScanFilterContent();
             this.WriteTableIntoEntry();
+        }
+
+        private void SaveTableHeaderLines()
+        {
+            var headerLines = this.filterEntry.Content.Content["comment"].GetRange(0, StaticTableHeaderLineCount);
+            var headerStrings = headerLines.Select(x => x.Comment);
+            this.tableLines.AddRange(headerStrings);
         }
 
         private IFilterEntry FindFilterEntry()
@@ -67,11 +75,25 @@ namespace FilterCore.Commands
                 }
 
                 var line = this.GetTitleLineFromEntry(entry);
-                var depth = this.GetTitleDepth(line);
-                var title = this.GetTitle(line, depth);
+                var depth = this.GetTitleDepth(line.Comment);
+                var title = this.GetTitle(line.Comment, depth);
                 
-                this.AddNewSection(title, depth);
+                this.AddNewSection(title, depth, line);
             }
+        }
+        
+        private IFilterLine GetTitleLineFromEntry(IFilterEntry entry) => entry.Content.Content["comment"][SectionTitleLineIndex];
+        
+        private int GetTitleDepth(string line)
+        {
+            var bracketCount = 0;
+            foreach (var c in line)
+            {
+                if (c == SectionTitleKeyIdentStart) bracketCount++;
+                else break;
+            }
+            if (bracketCount > MaxDepth) throw new Exception("ToC error: found title line exceeding maxDepth");
+            return bracketCount;
         }
 
         private string GetTitle(string line, int depth)
@@ -82,15 +104,72 @@ namespace FilterCore.Commands
             return line.Substring(index);
         }
 
-        private int GetTitleDepth(string line)
+        private void AddNewSection(string name, int depth, IFilterLine line)
         {
-            var bracketCount = 0;
-            foreach (var c in line)
+            // the more brackets, the less deep the section is -> we invert that number here
+            depth = MaxDepth - depth;
+            
+            var index = this.AddIndex(depth);
+            var prefix = this.GetPrefix(depth);
+            var title = this.BuildLineTitle(depth, index, name, prefix);
+            line.Comment = title;
+            this.tableLines.Add(title);
+        }
+        
+        private int AddIndex(int depth)
+        {
+            // increase list size for first entry of this depth
+            if (depth > this.indices.Count - 1)
             {
-                if (c == SectionTitleKeyIdentStart) bracketCount++;
-                else break;
+                var missingSlots = depth - (this.indices.Count - 1);
+                this.indices.AddRange(Enumerable.Repeat(StartIndex-1, missingSlots));
             }
-            return bracketCount;
+
+            // revert deeper indices so that they re-start at zero when they're used again
+            for (var i = depth + 1; i < this.indices.Count; i++)
+            {
+                this.indices[i] = StartIndex-1;
+            }
+
+            // first increase, THEN return. else the children will have the increased index in their prefix
+            // thats why we start with StartIndex-1
+            return ++this.indices[depth];
+        }
+        
+        // prefix = the indices of the "parent" sections. for "[1502] Top Gems", the prefix is "15", because the parent section is "[[1500]] Gems"
+        private string GetPrefix(int depth)
+        {
+            var prefix = "";
+            for (var i = 0; i < depth; i++)
+            {
+                prefix += this.indices[i].ToString().PadLeft(IndexDigitCount, '0');
+            }
+            return prefix;
+        }
+
+        private string BuildLineTitle(int depth, int index, string title, string prefix)
+        {
+            var bracketCount = MaxDepth - depth;
+            var spaceCount = depth * 2; // left side spaces that make all numbers end on the same level
+            
+            if (index.ToString().Length > IndexDigitCount) throw new Exception("ToC index gets too high for selected indexDigitCount");
+
+            var line = "";
+            line += " ".Times(spaceCount);                                     // ident spaces            
+            line += SectionTitleKeyIdentStart.ToString().Times(bracketCount);  // open brackets
+            line += prefix;                                                    // indices of the parents         
+            line += index.ToString().PadLeft(IndexDigitCount, '0');            // current index with zeros filled on the left
+            line += "".PadRight((bracketCount - 1) * IndexDigitCount, '0');    // fill in children-zeros. for "[[0400]] ELDER" the 2 zeros to the right of the 4
+            line += SectionTitleKeyIdentEnd.ToString().Times(bracketCount);    // close brackets
+            line += " " + title;                                               // actual title of the section
+
+            return " " + line;
+        }
+
+        private void WriteTableIntoEntry()
+        {
+            var lines = new List<IFilterLine>(this.tableLines.Select(x => new FilterLine<EmptyValueContainer> {Comment = x}));
+            this.filterEntry.Content.Content["comment"] = lines;
         }
         
         private bool IsSectionTitleEntry(IFilterEntry entry)
@@ -100,6 +179,7 @@ namespace FilterCore.Commands
                 return false;
             }
 
+            // skip the actual ToC entry, even tho it does look fitting
             if (entry == this.filterEntry)
             {
                 return false;
@@ -116,89 +196,12 @@ namespace FilterCore.Commands
             }
 
             var line = this.GetTitleLineFromEntry(entry);
-            if (line[0] != SectionTitleKeyIdentStart || !line.Contains(SectionTitleKeyIdentEnd))
+            if (line.Comment[0] != SectionTitleKeyIdentStart || !line.Comment.Contains(SectionTitleKeyIdentEnd))
             {
                 return false;
             }
 
             return true;
-        }
-
-        private string GetTitleLineFromEntry(IFilterEntry entry)
-        {
-            return entry.Content.Content["comment"][SectionTitleLineIndex].Comment.Trim();
-        }
-
-        private void AddNewSection(string name, int depth)
-        {
-            // the more brackets, the less deep the section is -> we invert that number here
-            depth = MaxDepth - depth;
-            
-            this.tableContent.InsertTitle(name, depth);
-        }
-
-        private void WriteTableIntoEntry()
-        {
-            var content = this.tableContent.Stringify();
-            var lines = new List<IFilterLine>(content.Select(x => new FilterLine<EmptyValueContainer> {Comment = x}));
-            lines.InsertRange(0, this.filterEntry.Content.Content["comment"].GetRange(0, StaticTableHeaderLineCount));
-            this.filterEntry.Content.Content["comment"] = lines;
-        }
-
-        private class FilterTableOfContentsInfo
-        {
-            private int Depth { get; }
-            private readonly List<FilterTableOfContentsInfo> content;
-            private string Title { get; }
-            private readonly int index;
-
-            public FilterTableOfContentsInfo(string title, int depth, int index)
-            {
-                this.Title = title;
-                this.Depth = depth;
-                this.index = index;
-                this.content = new List<FilterTableOfContentsInfo>();
-            }
-
-            public void InsertTitle(string title, int depth)
-            {
-                if (depth == 0)
-                {
-                    this.content.Insert(this.content.Count, new FilterTableOfContentsInfo(title, this.Depth+1, this.content.Count+StartIndex));
-                    return;
-                }
-                
-                this.content[this.content.Count-1].InsertTitle(title, depth-1);
-            }
-
-            public List<string> Stringify(string prefix = "")
-            {
-                var res = new List<string>();
-                var idx = this.index.ToString().PadLeft(IndexDigitCount, '0');
-
-                // skip the -1 root level title
-                if (this.Depth >= 0)
-                {
-                    var bracketCount = MaxDepth - this.Depth;
-                    var spaceCount = this.Depth * 2; // left side spaces that make all numbers end on the same level
-
-                    var line = "";
-                    line += " ".Times(spaceCount);
-                    line += SectionTitleKeyIdentStart.ToString().Times(bracketCount);
-                    line += prefix;
-                    line += idx;
-                    line += "".PadRight((bracketCount - 1) * IndexDigitCount, '0');
-                    line += SectionTitleKeyIdentEnd.ToString().Times(bracketCount);
-                    line += " " + this.Title;
-
-                    res.Add(" " + line);
-                }
-                else idx = "";
-                
-                this.content.ForEach(x => res.AddRange(x.Stringify(prefix + idx)));
-                
-                return res;
-            }
         }
     }
 }

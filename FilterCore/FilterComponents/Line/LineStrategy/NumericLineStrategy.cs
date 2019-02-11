@@ -48,7 +48,7 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
-            if (Operator == "=")
+            if (Operator == "=" || string.IsNullOrEmpty(Operator))
             {
                 return this.Value;
             }
