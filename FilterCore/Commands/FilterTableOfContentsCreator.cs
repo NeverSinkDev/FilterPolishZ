@@ -22,6 +22,7 @@ namespace FilterCore.Commands
         private const int SectionTitleLineIndex = 1; // index of the line in the filterEntry that contains the title
         private const char SectionTitleKeyIdentStart = '[';
         private const char SectionTitleKeyIdentEnd = ']';
+        private const int StaticTableHeaderLineCount = 4;
         
         // customization options
         private const int MaxDepth = 2;
@@ -140,6 +141,7 @@ namespace FilterCore.Commands
         {
             var content = this.tableContent.Stringify();
             var lines = new List<IFilterLine>(content.Select(x => new FilterLine<EmptyValueContainer> {Comment = x}));
+            lines.InsertRange(0, this.filterEntry.Content.Content["comment"].GetRange(0, StaticTableHeaderLineCount));
             this.filterEntry.Content.Content["comment"] = lines;
         }
 
