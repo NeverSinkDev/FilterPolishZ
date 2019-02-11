@@ -101,10 +101,10 @@
     <Compile Include="Configuration\ConfigurationView.xaml.cs">
       <DependentUpon>ConfigurationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\FilterPolishConstants.cs" />
     <Compile Include="Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\ConfigurationData.cs" />
     <Compile Include="Economy\ConcreteEconomyRules.cs" />
+    <Compile Include="Economy\ConcreteEnrichmentProcedures.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

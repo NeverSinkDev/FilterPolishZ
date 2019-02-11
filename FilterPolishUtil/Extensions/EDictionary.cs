@@ -27,5 +27,13 @@ namespace FilterPolishUtil.Extensions
                 me.Add(key, value);
             }
         }
+
+        public static void AddToMultiple<TKey, TValue>(this Dictionary<TKey, TValue> me, List<TKey> key, TValue value)
+        {
+            foreach (var item in key)
+            {
+                me.Add(item, value);
+            }
+        }
     }
 }

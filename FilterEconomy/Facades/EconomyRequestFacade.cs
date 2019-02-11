@@ -51,6 +51,11 @@ namespace FilterEconomy.Facades
 
             var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString).ToList());
 
+            foreach (var item in result)
+            {
+                EnrichmentProcedureConfiguration.EnrichmentProcedures[branchKey].ForEach(z => z.Enrich(item.Key, item.Value));
+            }
+
             return result;
         }
 
