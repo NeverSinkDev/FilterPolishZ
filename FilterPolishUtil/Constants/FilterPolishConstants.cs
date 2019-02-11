@@ -18,5 +18,8 @@ namespace FilterPolishUtil.Constants
             { "uniqueAccessory", "GetUniqueAccessoryOverview" },
             { "uniqueMaps", "GetUniqueMapOverview" }
         };
+
+        public static float T1BreakPoint = 20;
+        public static float T2BreakPoint = 8;
     }
 }

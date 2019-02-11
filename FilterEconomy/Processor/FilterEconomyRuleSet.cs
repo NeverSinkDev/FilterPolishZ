@@ -2,6 +2,7 @@
 using FilterUtilModels.Economy;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,7 @@ namespace FilterEconomy.Processor
         }
     }
 
+    [DebuggerDisplay("{NewTier} // {BaseType}")]
     public class TieringCommand
     {
         public float Price { get; set; }

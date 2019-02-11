@@ -34,7 +34,7 @@ namespace FilterEconomy.Request.Parsing
                     continue;
                 }
 
-                var key = item.Name ?? item.BaseType;
+                var key = item.BaseType ?? item.Name;
 
                 if (!result.ContainsKey(key))
                 {

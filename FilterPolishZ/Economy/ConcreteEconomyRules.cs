@@ -1,6 +1,7 @@
 ﻿using FilterCore.FilterComponents.Tier;
 using FilterEconomy.Facades;
 using FilterEconomy.Processor;
+using FilterPolishUtil.Constants;
 using FilterUtilModels.Economy;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,17 @@ namespace FilterPolishZ.Economy
                 Rule = (string s) =>
                 {
                     var items = EconomyInformation.EconomyTierlistOverview["uniques"][s].ToList();
-                    return items.All(x => x.CVal > 20);
+                    return items.All(x => x.CVal > FilterPolishConstants.T1BreakPoint);
+                }
+            });
+
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "t2",
+                Rule = (string s) =>
+                {
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s].ToList();
+                    return items.All(x => x.CVal > FilterPolishConstants.T2BreakPoint);
                 }
             });
 
