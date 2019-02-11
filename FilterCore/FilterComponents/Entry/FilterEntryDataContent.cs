@@ -18,6 +18,7 @@ namespace FilterCore.Entry
                 return true;
             }
 
+            this.Content[line.Ident].Add(line);
             return false;
         }
 
