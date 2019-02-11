@@ -32,7 +32,6 @@ namespace FilterPolishZ
         {
             this.InitializeComponent();
             ConcreteEnrichmentProcedures.Initialize();
-            // this.InitializeDataEnrichment();
 
             var economyData = this.LoadEconomyOverviewData();
             // this.LoadItemInformationOverview();
