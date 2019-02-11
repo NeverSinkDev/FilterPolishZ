@@ -14,8 +14,6 @@ namespace FilterCore
 {
     public class Filter
     {
-        public bool Debug_StoreLines { get; set; } = false;
-
         public List<IFilterEntry> FilterEntries { get; set; } = new List<IFilterEntry>();
         public List<IFilterLine> FilterLines { get; set; }
 
@@ -27,14 +25,10 @@ namespace FilterCore
             {
                 lineList.Add(LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(rawLine)));
             }
-
-            if (Debug_StoreLines)
-            {
-                this.FilterLines = lineList; //TODO: REMOVE
-            }
+            
+            this.FilterLines = lineList;
 
             this.GenerateFilterEntries(lineList);
-            new FilterTableOfContentsCreator(this);
         }
 
         private void GenerateFilterEntries(List<IFilterLine> lineList)
@@ -58,7 +52,6 @@ namespace FilterCore
                     else
                     {
                         lastDataEntry.Content.Add(line);
-
                     }
                 }
 
@@ -156,6 +149,7 @@ namespace FilterCore
 
         public List<string> Serialize()
         {
+            new FilterTableOfContentsCreator(this);
             var results = new List<string>();
             this.FilterEntries.ForEach(x => results.AddRange(x.Serialize()));
             return results;
