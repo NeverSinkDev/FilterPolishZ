@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\AutoDictionary.cs" />
+    <Compile Include="Collections\ItemList.cs" />
     <Compile Include="Constants\FilterPolishConstants.cs" />
     <Compile Include="Extensions\EDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

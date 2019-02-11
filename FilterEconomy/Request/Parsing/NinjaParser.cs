@@ -1,4 +1,5 @@
 ﻿using FilterEconomy.Model;
+using FilterPolishUtil.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -23,9 +24,9 @@ namespace FilterEconomy.Request.Parsing
             }
         }
 
-        public static Dictionary<string, List<NinjaItem>> CreateOverviewDictionary(IEnumerable<NinjaItem> input)
+        public static Dictionary<string, ItemList<NinjaItem>> CreateOverviewDictionary(IEnumerable<NinjaItem> input)
         {
-            var result = new Dictionary<string, List<NinjaItem>>();
+            var result = new Dictionary<string, ItemList<NinjaItem>>();
 
             foreach (var item in input)
             {
@@ -38,7 +39,7 @@ namespace FilterEconomy.Request.Parsing
 
                 if (!result.ContainsKey(key))
                 {
-                    result.Add(key, new List<NinjaItem>());
+                    result.Add(key, new ItemList<NinjaItem>());
                 }
 
                 result[key].Add(item);

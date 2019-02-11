@@ -84,8 +84,6 @@ namespace FilterPolishZ
             PerformEcoRequest("uniques", "uniqueAccessory", "?");
             PerformEcoRequest("basetypes", "basetypes", "&");
 
-
-
             void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) => 
                 EconomyData.AddToDictionary(dictionaryKey, 
                 EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedfolder, ninjaurl));

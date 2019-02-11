@@ -37,6 +37,7 @@ namespace FilterPolishZ.Economy
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
                 TargetTier = "unknown",
+
                 Rule = (string s) =>
                 {
                     return !EconomyInformation.EconomyTierlistOverview["uniques"].ContainsKey(s);

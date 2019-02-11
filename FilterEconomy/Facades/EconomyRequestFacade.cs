@@ -1,6 +1,7 @@
 ﻿using FilterEconomy.Request;
 using FilterEconomy.Request.Parsing;
 using FilterPolishUtil;
+using FilterPolishUtil.Collections;
 using FilterPolishUtil.Constants;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ namespace FilterEconomy.Facades
 {
     public class EconomyRequestFacade
     {
-        public Dictionary<string, Dictionary<string, List<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<FilterEconomy.Model.NinjaItem>>>();
+        public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
-        public Dictionary<string, List<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
+        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
         {
             var economySegmentBranch = FilterPolishConstants.Abbreviations[branchKey];
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
@@ -53,11 +54,11 @@ namespace FilterEconomy.Facades
             return result;
         }
 
-        public void AddToDictionary(string leagueKey, Dictionary<string, List<FilterEconomy.Model.NinjaItem>> dictionary)
+        public void AddToDictionary(string leagueKey, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> dictionary)
         {
             if (!this.EconomyTierlistOverview.ContainsKey(leagueKey))
             {
-                this.EconomyTierlistOverview.Add(leagueKey, new Dictionary<string, List<FilterEconomy.Model.NinjaItem>>());
+                this.EconomyTierlistOverview.Add(leagueKey, new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>());
             }
 
             foreach (var keyvalue in dictionary)
