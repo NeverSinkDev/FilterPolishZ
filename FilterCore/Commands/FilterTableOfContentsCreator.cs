@@ -189,7 +189,7 @@ namespace FilterCore.Commands
                     line += SectionTitleKeyIdentEnd.ToString().Times(bracketCount);
                     line += " " + this.Title;
 
-                    res.Add("# " + line);
+                    res.Add(" " + line);
                 }
                 else idx = "";
                 
