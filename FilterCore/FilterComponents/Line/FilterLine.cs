@@ -31,7 +31,7 @@ namespace FilterCore.Line
                 Value?.Serialize() ?? string.Empty
                 );
 
-            if (!string.IsNullOrEmpty(Comment))
+            if (!string.IsNullOrEmpty(Comment) && !string.IsNullOrWhiteSpace(Comment))
             {
                 if (Ident != string.Empty)
                 {
