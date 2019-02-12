@@ -50,8 +50,8 @@ namespace FilterPolishZ.Economy
                 TargetTier = "t1",
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s].ToList();
-                    return items.All(x => x.CVal > FilterPolishConstants.T1BreakPoint);
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
+                    return items.LowestPrice > FilterPolishConstants.T1BreakPoint;
                 }
             });
 
@@ -60,8 +60,8 @@ namespace FilterPolishZ.Economy
                 TargetTier = "t2",
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s].ToList();
-                    return items.All(x => x.CVal > FilterPolishConstants.T2BreakPoint);
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
+                    return items.LowestPrice > FilterPolishConstants.T2BreakPoint;
                 }
             });
 

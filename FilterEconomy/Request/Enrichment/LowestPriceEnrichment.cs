@@ -15,7 +15,7 @@ namespace FilterEconomy.Request.Enrichment
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             var price = data.Min(x => x.CVal);
-            data.MetaData[DataKey] = price.ToString();
+            data.LowestPrice = price;
         }
     }
 }
