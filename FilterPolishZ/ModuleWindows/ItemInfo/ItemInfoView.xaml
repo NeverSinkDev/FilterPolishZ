@@ -12,13 +12,11 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}">
 
-    <Grid>
-        <StackPanel>
+        <DockPanel>
             <DataGrid x:Name="ItemInfoGrid" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" >
                 <DataGrid.RowHeaderTemplate>
                     <DataTemplate>
                         <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-
                         </Expander>
                     </DataTemplate>
                 </DataGrid.RowHeaderTemplate>
@@ -29,6 +27,5 @@
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
-        </StackPanel>
-    </Grid>
+        </DockPanel>
 </UserControl>

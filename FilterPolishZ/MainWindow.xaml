@@ -15,75 +15,72 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}">
 
-    <ScrollViewer>
     <Grid>
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Panel.ZIndex="1000" Grid.RowSpan="2">
 
-            <!-- top menu container -->
-            <materialDesign:DialogHost>
-                <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+        <!-- top menu container -->
+        <materialDesign:DialogHost>
+            <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
 
-                    <!-- top left menu content -->
+                <!-- top left menu content -->
                     <materialDesign:DrawerHost.LeftDrawerContent>
-                        <DockPanel MinWidth="212">
+                        <StackPanel MinWidth="212" Margin="16" HorizontalAlignment="Center" Orientation="Horizontal">
 
-                            <!-- back button -->
-                            <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
+                        <!-- back button -->
+                        <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
                                     DockPanel.Dock="Top"
                                     HorizontalAlignment="Right" Margin="16"
                                     IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
 
-                            <!-- top left tool switch button -->
-                                <ListBox x:Name="ToolsListBox" Margin="0 16 0 16" SelectedIndex="0"                         
+                        <!-- top left tool switch button -->
+                        <ListBox x:Name="ToolsListBox" Margin="0 16 0 16" SelectedIndex="0"  HorizontalAlignment="Center"                       
                                  ItemsSource="{Binding ToolWindows}"
                                  PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="domainWindow:ToolWindow">
-                                            <TextBlock Text="{Binding Name}" Margin="32 0 32 0" />
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                        </DockPanel>
-                    </materialDesign:DrawerHost.LeftDrawerContent>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="domainWindow:ToolWindow">
+                                    <TextBlock Text="{Binding Name}" Margin="32 0 32 0" VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </materialDesign:DrawerHost.LeftDrawerContent>
 
-                    <DockPanel>
-                        <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                <DockPanel>
+                    <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2"
                                             Mode="PrimaryMid" DockPanel.Dock="Top">
-                            <DockPanel>
-                                <!-- top LEFT open menu button -->
-                                <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
+                        <DockPanel>
+                            <!-- top LEFT open menu button -->
+                            <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
                                         x:Name="MenuToggleButton"/>
 
-                                <!-- top right open menu button -->
-                                <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
-                                    <StackPanel>
-                                        <Button Content="Hello World"/>
-                                        <Button Content="Nice Popup"/>
-                                        <Button Content="Can't Touch This" IsEnabled="False" />
-                                        <Separator/>
-                                        <Button Content="Goodbye"/>
-                                    </StackPanel>
-                                </materialDesign:PopupBox>
+                            <!-- top right open menu button -->
+                            <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
+                                <StackPanel>
+                                    <Button Content="Hello World"/>
+                                    <Button Content="Nice Popup"/>
+                                    <Button Content="Can't Touch This" IsEnabled="False" />
+                                    <Separator/>
+                                    <Button Content="Goodbye"/>
+                                </StackPanel>
+                            </materialDesign:PopupBox>
 
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22">FilterPolishZ</TextBlock>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22">FilterPolishZ</TextBlock>
 
-                            </DockPanel>
-                        </materialDesign:ColorZone>
-                    </DockPanel>
-                </materialDesign:DrawerHost>
-            </materialDesign:DialogHost>
+                        </DockPanel>
+                    </materialDesign:ColorZone>
+                </DockPanel>
+            </materialDesign:DrawerHost>
+        </materialDesign:DialogHost>
 
-                <!-- header title -->
-                <materialDesign:Card Padding="32" Margin="16" Grid.Row="0">
-                    <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Welcome to FilterPolishZ</TextBlock>
-                </materialDesign:Card>
-            
-                <!-- current window -->
-
-                <Grid>
-                    <ContentControl Content="{Binding ElementName=ToolsListBox, Path=SelectedItem.Content}" />
-                </Grid>
-            </StackPanel>
+        <!-- current window -->
+        </Grid>
+        <Grid Grid.Row="1">
+            <ContentControl Content="{Binding ElementName=ToolsListBox, Path=SelectedItem.Content}" />
+        </Grid>
     </Grid>
-    </ScrollViewer>
 </Window>
