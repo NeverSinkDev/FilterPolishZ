@@ -14,10 +14,9 @@
 
     <Grid>
         <StackPanel>
-            
             <DataGrid x:Name="ConfigGrid" Margin="0 8 0 0" ItemsSource="{Binding ConfigurationData}" CanUserSortColumns="True" CanUserAddRows="False" PreviewMouseDown="ConfigGrid_PreviewMouseDown">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn DisplayIndex="3">
+                    <DataGridTemplateColumn DisplayIndex="2">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="domain:ConfigurationData">
                                 <StackPanel Orientation="Horizontal">
@@ -28,7 +27,6 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            
         </StackPanel>
     </Grid>
 </UserControl>

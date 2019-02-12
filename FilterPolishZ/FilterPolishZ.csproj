@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -103,6 +104,7 @@
     </Compile>
     <Compile Include="Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\ConfigurationData.cs" />
+    <Compile Include="Domain\NinjaDemoItem.cs" />
     <Compile Include="Economy\ConcreteEconomyRules.cs" />
     <Compile Include="Economy\ConcreteEnrichmentProcedures.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -110,10 +112,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml" />
+    <Page Include="ModuleWindows\ItemInfo\ItemInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml.cs">
       <DependentUpon>GenerationOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModuleWindows\ItemInfo\ItemInfoView.xaml.cs">
+      <DependentUpon>ItemInfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

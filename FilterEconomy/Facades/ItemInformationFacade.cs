@@ -10,6 +10,24 @@ namespace FilterEconomy.Facades
 {
     public class ItemInformationFacade
     {
+        private ItemInformationFacade()
+        {
+
+        }
+
+        private static ItemInformationFacade instance;
+
+        public static ItemInformationFacade GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new ItemInformationFacade();
+            }
+
+            return instance;
+        }
+
+
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
 
         public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string variation, string branchKey, string baseStoragePath)

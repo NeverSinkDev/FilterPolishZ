@@ -49,7 +49,7 @@ namespace FilterPolishZ.Configuration
         {
             foreach (string key in AppSettings)
             {
-                yield return new ConfigurationData() { Key = key, Value = AppSettings[key], Util = "-" };
+                yield return new ConfigurationData() { Key = key, Value = AppSettings[key] };
             }
         }
     }

@@ -13,6 +13,23 @@ namespace FilterEconomy.Facades
 {
     public class EconomyRequestFacade
     {
+        private EconomyRequestFacade()
+        {
+
+        }
+
+        public static EconomyRequestFacade GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new EconomyRequestFacade();
+            }
+
+            return instance;
+        }
+
+        private static EconomyRequestFacade instance;
+
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
         public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)

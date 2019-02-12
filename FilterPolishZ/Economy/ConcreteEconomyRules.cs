@@ -65,6 +65,16 @@ namespace FilterPolishZ.Economy
                 }
             });
 
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "Potential",
+                Rule = (string s) =>
+                {
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
+                    return items.HighestPrice > FilterPolishConstants.T2BreakPoint;
+                }
+            });
+
             return uniqueRules;
         }
     }

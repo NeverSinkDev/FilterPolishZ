@@ -8,6 +8,10 @@ using System.Windows.Controls;
 using FilterPolishUtil;
 using FilterEconomy.Facades;
 using FilterPolishZ.Economy;
+using FilterEconomy.Model.ItemInformationData;
+using System.Linq;
+using FilterEconomy.Model;
+using FilterPolishUtil.Collections;
 
 namespace FilterPolishZ
 {
@@ -16,37 +20,42 @@ namespace FilterPolishZ
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<string> DemoItems { get; set; } = new List<string> { "Test", "Test1" };
+        public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
 
         // Components
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
-        public EconomyRequestFacade EconomyData { get; set; } = new EconomyRequestFacade();
-        public ItemInformationFacade ItemInformationFacadeData { get; set; } = new ItemInformationFacade();
-        public UserControl CurrentWindow;
+        public EconomyRequestFacade EconomyData { get; set; }
+        public ItemInformationFacade ItemInfoData { get; set; }
 
+        public UserControl CurrentWindow;
         public List<string> FilterRawString { get; set; }
 
-        public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
+        public List<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; }
 
         public MainWindow()
         {
-            this.InitializeComponent();
             ConcreteEnrichmentProcedures.Initialize();
 
-            var economyData = this.LoadEconomyOverviewData();
-            // this.LoadItemInformationOverview();
+            // Initialize Modules
             var filterData = this.PerformFilterWorkAsync();
+            this.EconomyData = this.LoadEconomyOverviewData();
+            this.ItemInfoData = this.LoadItemInformationOverview();
             var tierListData = this.LoadTierLists(filterData);
 
+            // Initialize 
             var economyTieringSystem = new ConcreteEconomyRules()
             {
                 TierInformation = tierListData,
-                EconomyInformation = economyData
+                EconomyInformation = this.EconomyData
             };
 
             economyTieringSystem.Execute();
 
+            // Initialize Settings
+            this.InitializeComponent();
+
             Task.Run(() => WriteFilter(filterData));
+
         }
 
         private Filter PerformFilterWorkAsync()
@@ -71,6 +80,8 @@ namespace FilterPolishZ
 
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
+            var result = EconomyRequestFacade.GetInstance();
+
             var seedfolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             var ninjaurl = LocalConfiguration.GetInstance().AppSettings["Ninja Request URL"];
 
@@ -85,15 +96,17 @@ namespace FilterPolishZ
             PerformEcoRequest("uniques", "uniqueAccessory", "?");
             PerformEcoRequest("basetypes", "basetypes", "&");
 
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) => 
-                EconomyData.AddToDictionary(dictionaryKey, 
-                EconomyData.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedfolder, ninjaurl));
+            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
+                result.AddToDictionary(dictionaryKey,
+                result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedfolder, ninjaurl));
 
-            return this.EconomyData;
+            return result;
         }
 
-        private void LoadItemInformationOverview()
+        private ItemInformationFacade LoadItemInformationOverview()
         {
+            ItemInformationFacade result = ItemInformationFacade.GetInstance();
+
             var localConfig = LocalConfiguration.GetInstance();
             var baseStoragePath = localConfig.AppSettings["SeedFile Folder"];
 
@@ -105,8 +118,10 @@ namespace FilterPolishZ
             PerformItemInfoRequest(variation, "basetypes");
 
             void PerformItemInfoRequest(string loadPath, string requestKey) =>
-                ItemInformationFacadeData.AddToDictionary(requestKey,
-                ItemInformationFacadeData.LoadItemInformation(loadPath, requestKey, baseStoragePath));
+                result.AddToDictionary(requestKey,
+                result.LoadItemInformation(loadPath, requestKey, baseStoragePath));
+
+            return result;
         }
 
         private void OnScreenTabSelect(object sender, RoutedEventArgs e)
