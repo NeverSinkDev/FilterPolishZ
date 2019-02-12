@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using FilterPolishZ.Domain;
+using FilterPolishZ.Domain.DataType;
 
 namespace FilterPolishZ.Configuration
 {

@@ -1,4 +1,4 @@
-﻿namespace FilterPolishZ.Domain
+namespace FilterPolishZ.Domain.DataType
 {
     public class NinjaDemoItem
     {

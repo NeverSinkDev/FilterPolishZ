@@ -1,5 +1,6 @@
 using FilterPolishZ.Configuration;
 using FilterPolishZ.Domain;
+using FilterPolishZ.Domain.DataType;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -28,14 +28,10 @@ namespace FilterPolishZ
     {
         public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
 
-        public UserControl CurrentView { get; set; } = new ConfigurationView();
-
         // Components
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
         public EconomyRequestFacade EconomyData { get; set; }
         public ItemInformationFacade ItemInfoData { get; set; }
-
-        public UserControl CurrentWindow;
         public List<string> FilterRawString { get; set; }
 
         public List<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; }

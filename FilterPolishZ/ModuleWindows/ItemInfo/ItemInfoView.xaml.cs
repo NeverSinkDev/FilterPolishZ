@@ -2,6 +2,7 @@
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 using FilterPolishZ.Domain;
+using FilterPolishZ.Domain.DataType;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,7 +30,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; private set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
-        public ObservableCollection<NinjaDemoItem> UnhandledUniqueItems2 { get; set; } = new ObservableCollection<NinjaDemoItem>();
 
         public ItemInfoView()
         {
@@ -39,11 +39,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void InitializeItemInformationData()
         {
-            this.UnhandledUniqueItems2.Add(new NinjaDemoItem());
-            this.UnhandledUniqueItems2.Add(new NinjaDemoItem());
-            this.UnhandledUniqueItems2.Add(new NinjaDemoItem());
-            this.UnhandledUniqueItems2.Add(new NinjaDemoItem());
-
             this.EconomyData.EconomyTierlistOverview["uniques"]
                 .Where(x => !this.ItemInfoData.EconomyTierlistOverview["uniques"].ContainsKey(x.Key))
                 .ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
