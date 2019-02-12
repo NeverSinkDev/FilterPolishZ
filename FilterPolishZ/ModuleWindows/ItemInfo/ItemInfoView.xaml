@@ -21,58 +21,45 @@
             
             <ToolBarTray Grid.Row="0">
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Button ToolTip="Follow me on Twitter">
-                        <materialDesign:PackIcon Kind="TwitterBox" />
+                    <Button ToolTip="Re-Open File Info">
+                        <materialDesign:PackIcon Kind="FolderOpen" Foreground="Aqua" />
                     </Button>
-                    <Button ToolTip="Save">
-                        <materialDesign:PackIcon Kind="ContentSave" />
+                    <Button ToolTip="Open File Info">
+                        <materialDesign:PackIcon Kind="FolderOpen" Foreground="White" />
                     </Button>
+                    
                     <Separator />
-                    <Button Command="Cut" ToolTip="Cut" ToolBar.OverflowMode="AsNeeded">
-                        <materialDesign:PackIcon Kind="ContentCut" />
+                    
+                    <Button ToolTip="Save File Info">
+                        <materialDesign:PackIcon Kind="ContentSave" Foreground="Aqua" />
                     </Button>
+                    <Button ToolTip="Save File Info as">
+                        <materialDesign:PackIcon Kind="ContentSave" Foreground="White" />
+                    </Button>
+                    
+                    <Separator />
+
                     <Button Command="Copy" ToolTip="Copy that stuff" ToolBar.OverflowMode="AsNeeded">
                         <materialDesign:PackIcon Kind="ContentCopy" />
                     </Button>
-                    <Separator />
                     <Button Command="Paste" ToolTip="Paste some stuff" ToolBar.OverflowMode="AsNeeded">
                         <materialDesign:PackIcon Kind="ContentPaste" />
                     </Button>
-                    <!-- when badging in a toolbar, make sure the parent ToolBar.ClipToBounds="False", and 
-                     manually apply the button style -->
-                    <materialDesign:Badged ToolBar.OverflowMode="AsNeeded" Badge="{materialDesign:PackIcon Alert}">
-                        <Button ToolTip="Badge it up!" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                            <materialDesign:PackIcon Kind="AirplaneTakeoff" />
-                        </Button>
-                    </materialDesign:Badged>
+
                     <Separator />
-                    <ListBox>
-                        <ListBoxItem ToolTip="This is a lonley toggle with TextBlock instead of icon">
-                            <TextBlock>
-                            W
-                            </TextBlock>
-                        </ListBoxItem>
-                    </ListBox>
-                    <Separator />
+
                     <ListBox SelectedIndex="0">
                         <ListBox.ToolTip>
                             <StackPanel>
-                                <TextBlock Text="MaterialDesignToolToggleFlatListBox" />
-                                <TextBlock Text="Exclusive selection" />
-                                <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                                <TextBlock Text="Show New Only" />
+                                <TextBlock Text="Show Old Only" />
                             </StackPanel>
                         </ListBox.ToolTip>
                         <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatAlignLeft" />
+                            <materialDesign:PackIcon Kind="HexagonSlice1" />
                         </ListBoxItem>
                         <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatAlignCenter" />
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatAlignRight" />
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatAlignJustify" />
+                            <materialDesign:PackIcon Kind="HexagonSlice6" />
                         </ListBoxItem>
                     </ListBox>
                     <Separator />
