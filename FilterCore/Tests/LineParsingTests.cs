@@ -88,5 +88,16 @@ namespace FilterCore.Tests
             Assert.That(value.Operator, Is.EqualTo(">="));
             Assert.That(value.Value, Is.EqualTo("Rare"));
         }
+
+        [Test]
+        public void ParseCommentWithTabs()
+        {
+            const string originalLine = "# \tKey:\t\tval";
+            var line = TestUtils.ParseFilterLine(originalLine);
+            var result = line.Serialize();
+            
+            Assert.That("#" + result, Is.EqualTo(originalLine));
+            Assert.That(result.Contains(originalLine), Is.True);
+        }
     }
 }

@@ -11,8 +11,8 @@ namespace FilterCore.Tests
     {
         public static IFilterLine ParseFilterLine(string input)
         {
-            var filter = new Filter(new List<string>() { input }) { Debug_StoreLines = true };
-            return filter.FilterLines.First();
+            var filter = new Filter(new List<string>() { "Show", input });
+            return filter.FilterLines[1];
         }
     }
 }
