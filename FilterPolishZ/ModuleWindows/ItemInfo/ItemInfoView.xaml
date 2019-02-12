@@ -1,31 +1,136 @@
 ﻿<UserControl x:Class="FilterPolishZ.ModuleWindows.ItemInfo.ItemInfoView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:domain="clr-namespace:FilterPolishZ.Domain.DataType" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:domain="clr-namespace:FilterPolishZ.Domain.DataType" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}">
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}">
 
-        <DockPanel>
-            <DataGrid x:Name="ItemInfoGrid" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" >
-                <DataGrid.RowHeaderTemplate>
-                    <DataTemplate>
-                        <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                        </Expander>
-                    </DataTemplate>
-                </DataGrid.RowHeaderTemplate>
+    <DockPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <ToolBarTray Grid.Row="0">
+                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                    <Button ToolTip="Follow me on Twitter">
+                        <materialDesign:PackIcon Kind="TwitterBox" />
+                    </Button>
+                    <Button ToolTip="Save">
+                        <materialDesign:PackIcon Kind="ContentSave" />
+                    </Button>
+                    <Separator />
+                    <Button Command="Cut" ToolTip="Cut" ToolBar.OverflowMode="AsNeeded">
+                        <materialDesign:PackIcon Kind="ContentCut" />
+                    </Button>
+                    <Button Command="Copy" ToolTip="Copy that stuff" ToolBar.OverflowMode="AsNeeded">
+                        <materialDesign:PackIcon Kind="ContentCopy" />
+                    </Button>
+                    <Separator />
+                    <Button Command="Paste" ToolTip="Paste some stuff" ToolBar.OverflowMode="AsNeeded">
+                        <materialDesign:PackIcon Kind="ContentPaste" />
+                    </Button>
+                    <!-- when badging in a toolbar, make sure the parent ToolBar.ClipToBounds="False", and 
+                     manually apply the button style -->
+                    <materialDesign:Badged ToolBar.OverflowMode="AsNeeded" Badge="{materialDesign:PackIcon Alert}">
+                        <Button ToolTip="Badge it up!" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <materialDesign:PackIcon Kind="AirplaneTakeoff" />
+                        </Button>
+                    </materialDesign:Badged>
+                    <Separator />
+                    <ListBox>
+                        <ListBoxItem ToolTip="This is a lonley toggle with TextBlock instead of icon">
+                            <TextBlock>
+                            W
+                            </TextBlock>
+                        </ListBoxItem>
+                    </ListBox>
+                    <Separator />
+                    <ListBox SelectedIndex="0">
+                        <ListBox.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="MaterialDesignToolToggleFlatListBox" />
+                                <TextBlock Text="Exclusive selection" />
+                                <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                            </StackPanel>
+                        </ListBox.ToolTip>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatAlignLeft" />
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatAlignCenter" />
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatAlignRight" />
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatAlignJustify" />
+                        </ListBoxItem>
+                    </ListBox>
+                    <Separator />
+                    <ListBox
+                    SelectionMode="Extended">
+                        <ListBox.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="MaterialDesignToolToggleListBox" />
+                                <TextBlock Text="Multiple selection" />
+                                <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                            </StackPanel>
+                        </ListBox.ToolTip>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatBold" />
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <materialDesign:PackIcon Kind="FormatItalic" />
+                        </ListBoxItem>
+                        <ListBoxItem
+                        x:Name="UnderlineCheckbox">
+                            <materialDesign:PackIcon Kind="FormatUnderline" />
+                        </ListBoxItem>
+                    </ListBox>
+                    <Separator />
+                    <Label Content="Font size:" VerticalAlignment="Center" />
+                    <ComboBox>
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem IsSelected="True" Content="12" />
+                        <ComboBoxItem Content="14" />
+                        <ComboBoxItem Content="16" />
+                    </ComboBox>
+                    <CheckBox>
+                        Check
+                    </CheckBox>
+                    <Button ToolTip="Take a nap" ToolBar.OverflowMode="Always">
+                        <materialDesign:PackIcon Kind="Hotel" />
+                    </Button>
+                    <RadioButton GroupName="XXX" Content="Radio" />
+                    <RadioButton GroupName="XXX" Content="Ga Ga" />
+                    <ToggleButton />
+                </ToolBar>
+            </ToolBarTray>
+        
 
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="asdasd" Margin="10,5,0,0" />
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-            </DataGrid>
-        </DockPanel>
+        <DataGrid x:Name="ItemInfoGrid" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Row="1" >
+            <DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
+                    </Expander>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>
+
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock Text="asdasd" Margin="10,5,0,0" />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        </Grid>
+    </DockPanel>
 </UserControl>
