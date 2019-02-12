@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:Grid="clr-namespace:FilterPolishZ.Configuration"
-        xmlns:Item="clr-namespace:FilterPolishZ.ModuleWindows.ItemInfo"
+        xmlns:modConfig="clr-namespace:FilterPolishZ.ModuleWindows.Configuration"
+        xmlns:modIteminfo="clr-namespace:FilterPolishZ.ModuleWindows.ItemInfo"
         xmlns:generationOptions="clr-namespace:FilterPolishZ.ModuleWindows.GenerationOptions"
         Title="Material Design in XAML" Height="800" Width="1100"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -14,6 +14,15 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}">
 
+    <Window.Resources>
+        <DataTemplate x:Key="config" DataType="{x:Type modConfig:ConfigurationView}">
+            <modConfig:ConfigurationView/>
+        </DataTemplate>
+        <DataTemplate x:Key="itemInfo" DataType="{x:Type modIteminfo:ItemInfoView}">
+            <modIteminfo:ItemInfoView/>
+        </DataTemplate>
+    </Window.Resources>
+    
     <ScrollViewer>
     <Grid>
         <StackPanel>
@@ -33,13 +42,15 @@
                                     IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
 
                             <!-- option list -->
-                            <ListBox>
-                                <ListBoxItem Selected="OnScreenTabSelect">generation options</ListBoxItem>
-                                <ListBoxItem>economy data // tierLists</ListBoxItem>
-                                <ListBoxItem>changeLog</ListBoxItem>
-                                <ListBoxItem>style</ListBoxItem>
-                                <ListBoxItem>operations</ListBoxItem>
-                            </ListBox>
+                                <ListBox x:Name="ToolsListBox" Margin="0 16 0 16" SelectedIndex="0"                         
+                                 ItemsSource="{Binding ToolWindows}"
+                                 PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
+                                        <!--<ListBox.ItemTemplate>
+                                            <DataTemplate DataType="domain:DemoItem">
+                                                <TextBlock Text="{Binding Name}" Margin="32 0 32 0" />
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>-->
+                                </ListBox>
                         </DockPanel>
                     </materialDesign:DrawerHost.LeftDrawerContent>
 
@@ -71,14 +82,19 @@
             </materialDesign:DialogHost>
 
             <!-- header title -->
-            <materialDesign:Card Padding="32" Margin="16" Grid.Row="0">
-                <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Welcome to FilterPolishZ</TextBlock>
-            </materialDesign:Card>
+                <materialDesign:Card Padding="32" Margin="16" Grid.Row="0">
+                    <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Welcome to FilterPolishZ</TextBlock>
+                </materialDesign:Card>
+            
+                <!-- current window -->
 
-            <!-- current window -->
+                <Grid>
+                    <ContentControl Content="{Binding ElementName=ToolsListBox, Path=SelectedItem.Content}" />
+                </Grid>
+                
 
-            <Grid:ConfigurationView/>
-            <Item:ItemInfoView/>
+                <!--<modConfig:ConfigurationView/>  -->
+                <!--<modIteminfo:ItemInfoView/> -->
 
             <!-- <generationOptions:GenerationOptions Visibility="Hidden" /> -->
             

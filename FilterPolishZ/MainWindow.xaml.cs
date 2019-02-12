@@ -12,6 +12,12 @@ using FilterEconomy.Model.ItemInformationData;
 using System.Linq;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
+using FilterPolishZ.ModuleWindows.ItemInfo;
+using FilterPolishZ.ModuleWindows.Configuration;
+using FilterPolishZ.Domain;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace FilterPolishZ
 {
@@ -21,6 +27,8 @@ namespace FilterPolishZ
     public partial class MainWindow : Window
     {
         public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
+
+        public UserControl CurrentView { get; set; } = new ConfigurationView();
 
         // Components
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
@@ -53,6 +61,7 @@ namespace FilterPolishZ
 
             // Initialize Settings
             this.InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
 
             Task.Run(() => WriteFilter(filterData));
 
@@ -130,6 +139,19 @@ namespace FilterPolishZ
 //            this.DataContext = ConfigurationView;
 //            GenerationOptions.OpenSc
 //            MainBorder.Child = new GenerationOptions();
+        }
+
+        private void UIElement_OnPreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            //until we had a StaysOpen glag to Drawer, this will help with scroll bars
+            var dependencyObject = Mouse.Captured as DependencyObject;
+            while (dependencyObject != null)
+            {
+                if (dependencyObject is ScrollBar) return;
+                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+            }
+
+            MenuToggleButton.IsChecked = false;
         }
     }
 }

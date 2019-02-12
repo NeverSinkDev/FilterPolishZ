@@ -1,4 +1,5 @@
-﻿using FilterPolishZ.Domain;
+using FilterPolishZ.Configuration;
+using FilterPolishZ.Domain;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FilterPolishZ.Configuration
+namespace FilterPolishZ.ModuleWindows.Configuration
 {
     /// <summary>
     /// Interaction logic for ConfigurationView.xaml
