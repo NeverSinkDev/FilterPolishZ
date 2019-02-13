@@ -18,6 +18,7 @@ using FilterPolishZ.Domain;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using MethodTimer;
 
 namespace FilterPolishZ
 {
@@ -63,19 +64,22 @@ namespace FilterPolishZ
 
         }
 
+        [Time]
         private Filter PerformFilterWorkAsync()
         {
            this.FilterRawString = FileWork.ReadLinesFromFile(Configuration.AppSettings["SeedFile Folder"] + "/" + "NeverSink's filter - SEED (SeedFilter) .filter");
            return new Filter(this.FilterRawString);
         }
 
+        [Time]
         private async Task WriteFilter(Filter filter)
         {
             var result = filter.Serialize();
             var seedFolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             await FileWork.WriteTextAsync(seedFolder + "/" + "test" + ".filter", result);
         }
-        
+
+        [Time]
         private Dictionary<string,TierGroup> LoadTierLists(Filter filter)
         {
             var workTiers = new HashSet<string> { "uniques", "divination", "maps->uniques", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
@@ -83,6 +87,7 @@ namespace FilterPolishZ
             return tiers;
         }
 
+        [Time]
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
             var result = EconomyRequestFacade.GetInstance();
@@ -108,6 +113,7 @@ namespace FilterPolishZ
             return result;
         }
 
+        [Time]
         private ItemInformationFacade LoadItemInformationOverview()
         {
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
