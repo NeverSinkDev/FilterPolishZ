@@ -28,6 +28,7 @@
                         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="150" MinWidth="500">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
@@ -49,17 +50,17 @@
 
                             <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
 
-                            <ListBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Aspects}">
+                            <ListBox Grid.ColumnSpan="2" Grid.Row="3" ItemsSource="{Binding Aspects}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate DataType="domainAspects:AbstractItemAspect">
-                                        <materialDesign:Card Margin="4 4 4 4" BorderBrush="Red" BorderThickness="3">
+                                        <materialDesign:Chip BorderBrush="Red" BorderThickness="3" Icon="A" IconBackground="{Binding Color}" IsDeletable="True">
                                             <TextBlock Text="{Binding Name}" />
-                                         </materialDesign:Card>
+                                         </materialDesign:Chip>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             
-                            <Border Grid.Column="2" Grid.RowSpan="3"  Margin="8 8 0 0">
+                            <Border Grid.Column="2" Grid.RowSpan="4"  Margin="8 8 0 0">
                                 <Image Source="{Binding Icon}"/>
                             </Border>
                                

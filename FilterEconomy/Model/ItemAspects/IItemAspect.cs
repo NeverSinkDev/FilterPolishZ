@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace FilterEconomy.Model.ItemAspects
 {
@@ -11,12 +12,14 @@ namespace FilterEconomy.Model.ItemAspects
     {
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
+        public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
     }
 
     public interface IItemAspect
     {
         string Group { get; }
         string Name { get; }
+        SolidColorBrush Color { get; }
     }
 
     public class HandledAspect : AbstractItemAspect

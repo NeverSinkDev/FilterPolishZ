@@ -30,6 +30,27 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
 
+        public void SaveItemInformaiton(string variation, string branchKey, string baseStoragePath)
+        {
+            var directoryPath = $"{baseStoragePath}/{variation}";
+            var fileName = $"{branchKey}.txt";
+            var fileFullPath = $"{directoryPath}/{fileName}";
+
+            string responseString = string.Empty;
+
+            if (!Directory.Exists(directoryPath))
+            {   // Check directory
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            FileWork.WriteTextAsync(fileFullPath, this.Serialize());
+        }
+
+        private List<string> Serialize()
+        {
+            return null;
+        }
+
         public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string variation, string branchKey, string baseStoragePath)
         {
             var directoryPath = $"{baseStoragePath}/{variation}";

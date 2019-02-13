@@ -31,7 +31,7 @@
                     
                     <Separator />
                     
-                    <Button ToolTip="Save File Info">
+                    <Button ToolTip="Save File Info" Click="SaveInsta_Click">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="Aqua" />
                     </Button>
                     <Button ToolTip="Save File Info as">

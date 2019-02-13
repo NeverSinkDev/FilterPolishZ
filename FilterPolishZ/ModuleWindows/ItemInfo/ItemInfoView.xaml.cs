@@ -34,24 +34,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; private set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
-        //public ContentControl DetailedItemOverView
-        //{
-        //    get
-        //    {
-        //        if (this.ItemInfoGrid.SelectedCells.Count == 0)
-        //        {
-        //            return null;
-        //        }
-
-        //        var name = this.ItemInfoGrid.SelectedCells.Where(x => x.Column.Header.ToString() == "Key")?.FirstOrDefault();
-
-        //        return new ItemVariationListView()
-        //        {
-        //            Key = ((KeyValuePair<string, ItemList<NinjaItem>>)name.Value.Item).ToString()
-        //        };
-        //    }
-        //}
-
         public ItemInfoView()
         {
             InitializeComponent();
@@ -103,5 +85,10 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void SaveInsta_Click(object sender, RoutedEventArgs e)
+        {
+            // save
+        }
     }
 }
