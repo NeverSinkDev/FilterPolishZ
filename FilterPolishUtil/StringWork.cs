@@ -8,6 +8,17 @@ namespace FilterPolishUtil
 {
     public static class StringWork
     {
+        public static string SubStringLast(this string me, string substring)
+        {
+            if (string.IsNullOrEmpty(me) || !me.Contains(substring))
+            {
+                return me;
+            }
+
+            var index = me.LastIndexOf(substring);
+            return me.Substring(index + 1);
+        }
+
         public static string CombinePieces(string combiner, List<string> pieces)
         {
             return CombinePieces(combiner, pieces.ToArray());
