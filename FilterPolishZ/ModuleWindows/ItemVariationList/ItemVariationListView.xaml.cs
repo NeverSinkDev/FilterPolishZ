@@ -1,5 +1,6 @@
 ﻿using FilterEconomy.Facades;
 using FilterEconomy.Model;
+using FilterEconomy.Model.ItemAspects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,35 +39,42 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             if (d is ItemVariationListView obj)
             {
                 obj.ItemVariationInformation.Clear();
-                obj.InitializeItem();
+                obj.InitializeItems();
             }
-            
         }
 
         public string Key
         {
             get { return GetValue(KeyProperty) as string; }
-            set { SetValue(KeyProperty, value); }
+            set
+            {
+                if (Key != value)
+                {
+                    SetValue(KeyProperty, value);
+                }
+            }
         }
 
         public ObservableCollection<NinjaItem> ItemVariationInformation { get; set; } = new ObservableCollection<NinjaItem>();
 
         public ItemVariationListView()
         {
-            this.InitializeItem();
+            this.InitializeItems();
             InitializeComponent();
             this.DataContext = this;
         }
 
-        private void InitializeItem()
+        private void InitializeItems()
         {
             if (string.IsNullOrEmpty(Key))
             {
                 return;
             }
-
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview["uniques"][Key].ForEach(x => ItemVariationInformation.Add(x));
-            //this.ItemVariationInformation.Add(new NinjaItem() { Name = Key });
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview["uniques"][Key].ForEach(x =>
+            {
+                x.Aspects.Add(new HandledAspect());
+                ItemVariationInformation.Add(x);
+            });
         }
     }
 }

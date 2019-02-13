@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="Facades\EconomyRequestFacade.cs" />
     <Compile Include="Facades\ItemInformationFacade.cs" />
-    <Compile Include="Model\ItemInformationData\ItemAspect\IItemAspect.cs" />
+    <Compile Include="Model\ItemAspects\IItemAspect.cs" />
     <Compile Include="Model\ItemInformationData\ItemInformationData.cs" />
     <Compile Include="Model\NinjaItem.cs" />
     <Compile Include="Model\Overview\IOverview.cs" />

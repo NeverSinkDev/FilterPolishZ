@@ -1,4 +1,4 @@
-﻿using FilterEconomy.Model.ItemInformationData.ItemAspect;
+﻿using FilterEconomy.Model.ItemAspects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

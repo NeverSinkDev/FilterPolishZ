@@ -1,11 +1,11 @@
-﻿using FilterPolishUtil;
+using FilterPolishUtil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterPolishZ.Domain.ItemAspects
+namespace FilterEconomy.Model.ItemAspects
 {
     public abstract class AbstractItemAspect : IItemAspect
     {
@@ -24,6 +24,16 @@ namespace FilterPolishZ.Domain.ItemAspects
         public override string Group => "Meta";
         public DateTime HandlingDate { get; }
         public float HanadlingPrice { get; }
+    }
+
+    public class IgnoreAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+    }
+
+    public class AnchorAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
     }
 
     public class NonDropAspect : AbstractItemAspect
@@ -47,6 +57,11 @@ namespace FilterPolishZ.Domain.ItemAspects
     }
 
     public class EarlyLeagueInterestAspect : AbstractItemAspect
+    {
+        public override string Group => "TemporalAspect";
+    }
+
+    public class MetaBiasAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";
     }

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using FilterEconomy.Model.ItemAspects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +55,8 @@ namespace FilterEconomy.Model
 
         //[JsonProperty("lowConfidenceSparkline")]
         //public int[] LowConfSparkLine { get; set; }
+
+        public ObservableCollection<IItemAspect> Aspects { get; set; } = new ObservableCollection<IItemAspect>();
 
         public bool isItemRelic()
         {
