@@ -3,14 +3,17 @@ using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 using FilterPolishZ.Domain;
 using FilterPolishZ.Domain.DataType;
+using FilterPolishZ.ModuleWindows.ItemVariationList;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -25,17 +28,38 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     /// <summary>
     /// Interaction logic for ItemInfoView.xaml
     /// </summary>
-    public partial class ItemInfoView : UserControl
+    public partial class ItemInfoView : UserControl, INotifyPropertyChanged
     {
         public EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; private set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
+        //public ContentControl DetailedItemOverView
+        //{
+        //    get
+        //    {
+        //        if (this.ItemInfoGrid.SelectedCells.Count == 0)
+        //        {
+        //            return null;
+        //        }
+
+        //        var name = this.ItemInfoGrid.SelectedCells.Where(x => x.Column.Header.ToString() == "Key")?.FirstOrDefault();
+
+        //        return new ItemVariationListView()
+        //        {
+        //            Key = ((KeyValuePair<string, ItemList<NinjaItem>>)name.Value.Item).ToString()
+        //        };
+        //    }
+        //}
+
         public ItemInfoView()
         {
             InitializeComponent();
             this.InitializeItemInformationData();
+            this.DataContext = this;
         }
+
+        
 
         private void InitializeItemInformationData()
         {
@@ -67,5 +91,17 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                     break;
                 }
         }
+
+        private void ItemInfoGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            var dependencyObject = Mouse.Captured as DependencyObject;
+            while (dependencyObject != null)
+            {
+                if (dependencyObject is ScrollBar) return;
+                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

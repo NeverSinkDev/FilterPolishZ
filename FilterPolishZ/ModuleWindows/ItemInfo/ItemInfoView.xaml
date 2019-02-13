@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:domain="clr-namespace:FilterPolishZ.Domain.DataType" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:itemVariation="clr-namespace:FilterPolishZ.ModuleWindows.ItemVariationList" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Regular"
@@ -62,62 +63,66 @@
                             <materialDesign:PackIcon Kind="HexagonSlice6" />
                         </ListBoxItem>
                     </ListBox>
-                    <Separator />
-                    <ListBox
-                    SelectionMode="Extended">
-                        <ListBox.ToolTip>
-                            <StackPanel>
-                                <TextBlock Text="MaterialDesignToolToggleListBox" />
-                                <TextBlock Text="Multiple selection" />
-                                <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
-                            </StackPanel>
-                        </ListBox.ToolTip>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatBold" />
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="FormatItalic" />
-                        </ListBoxItem>
-                        <ListBoxItem
-                        x:Name="UnderlineCheckbox">
-                            <materialDesign:PackIcon Kind="FormatUnderline" />
-                        </ListBoxItem>
-                    </ListBox>
-                    <Separator />
-                    <Label Content="Font size:" VerticalAlignment="Center" />
-                    <ComboBox>
-                        <ComboBoxItem Content="10" />
-                        <ComboBoxItem IsSelected="True" Content="12" />
-                        <ComboBoxItem Content="14" />
-                        <ComboBoxItem Content="16" />
-                    </ComboBox>
-                    <CheckBox>
-                        Check
-                    </CheckBox>
-                    <Button ToolTip="Take a nap" ToolBar.OverflowMode="Always">
-                        <materialDesign:PackIcon Kind="Hotel" />
-                    </Button>
-                    <RadioButton GroupName="XXX" Content="Radio" />
-                    <RadioButton GroupName="XXX" Content="Ga Ga" />
-                    <ToggleButton />
                 </ToolBar>
             </ToolBarTray>
-        
 
-        <DataGrid x:Name="ItemInfoGrid" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Row="1" >
-            <DataGrid.RowHeaderTemplate>
-                <DataTemplate>
-                    <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                    </Expander>
-                </DataTemplate>
-            </DataGrid.RowHeaderTemplate>
+            <!-- Gridpart -->
+            
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <DataGrid.RowDetailsTemplate>
-                <DataTemplate>
-                    <TextBlock Text="asdasd" Margin="10,5,0,0" />
-                </DataTemplate>
-            </DataGrid.RowDetailsTemplate>
-        </DataGrid>
+                <DataGrid x:Name="ItemInfoGrid" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
+                            </Expander>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="asdasd" Margin="10,5,0,0" />
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+            
+                <!-- SecondaryPart -->
+
+                <DockPanel Grid.Column="1">
+                    <!--<ListBox>
+                        <ListBoxItem>
+                            <materialDesign:Card Padding="32" Margin="16">
+                                <ContentControl Content="{Binding DemoItem}"/>
+                            </materialDesign:Card>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <materialDesign:Card Padding="32" Margin="16">
+                                <ContentControl x:Name="SpecialContent" Content="{Binding DataContext.DetailedItemOverView, UpdateSourceTrigger=PropertyChanged}"/>
+                            </materialDesign:Card>
+                        </ListBoxItem>
+                    
+                                            <ListBoxItem>
+                            <materialDesign:Card Padding="32" Margin="16">
+                                <TextBlock Text="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}"/>
+                            </materialDesign:Card>
+                        </ListBoxItem>
+                    
+                                                <ContentControl.Content>
+                                <MultiBinding  StringFormat="{}{0}[{1}]">
+                                    <Binding Source="DataContext.DetailedItemOverView" />
+                                    <Binding Path="SelectedItem.Key" ElementName="ItemInfoGrid" />
+                                </MultiBinding>
+                            </ContentControl.Content>
+                    Content="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}
+                    </ListBox>-->
+
+                    <itemVariation:ItemVariationListView x:Name="InnerView" Key="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}" />
+                </DockPanel>
+
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControl>

@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="FilterPolishZ.ModuleWindows.ItemVariationList.ItemVariationListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:domain="clr-namespace:FilterEconomy.Model;assembly=FilterEconomy" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}">
+    <Grid>
+        <ListBox ItemsSource="{Binding ItemVariationInformation}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="domain:NinjaItem">
+                    <materialDesign:Card Padding="32" Margin="16">
+                        <TextBlock Text="{Binding Name}"/>
+                    </materialDesign:Card>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>
