@@ -15,8 +15,32 @@
         <ListBox ItemsSource="{Binding ItemVariationInformation}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="domain:NinjaItem">
-                    <materialDesign:Card Padding="32" Margin="16">
-                        <TextBlock Text="{Binding Name}"/>
+                    <materialDesign:Card Padding="16" Margin="4">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            
+                            <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Margin="0 8 8 8" Text="{Binding Name}"/>
+
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding BaseType}"/>
+
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Variant}" />
+
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" />
+
+                            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
+
+                            <TextBlock Grid.Column="2" Grid.RowSpan="3" Text="{Binding Icon}"/>
+                        </Grid>
                     </materialDesign:Card>
                 </DataTemplate>
             </ListBox.ItemTemplate>

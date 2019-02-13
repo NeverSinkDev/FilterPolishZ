@@ -1,4 +1,5 @@
-﻿using FilterEconomy.Model;
+﻿using FilterEconomy.Facades;
+using FilterEconomy.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,7 +60,13 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
 
         private void InitializeItem()
         {
-            this.ItemVariationInformation.Add(new NinjaItem() { Name = Key });
+            if (string.IsNullOrEmpty(Key))
+            {
+                return;
+            }
+
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview["uniques"][Key].ForEach(x => ItemVariationInformation.Add(x));
+            //this.ItemVariationInformation.Add(new NinjaItem() { Name = Key });
         }
     }
 }
