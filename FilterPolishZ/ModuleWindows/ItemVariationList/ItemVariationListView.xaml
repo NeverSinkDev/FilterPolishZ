@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:domain="clr-namespace:FilterEconomy.Model;assembly=FilterEconomy" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -11,12 +12,18 @@
              TextOptions.TextFormattingMode="Ideal" 
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:BrushColorChaosValueConverter x:Key="ChaosValueToBrushColorConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <ListBox ItemsSource="{Binding ItemVariationInformation}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="domain:NinjaItem">
                     <materialDesign:Card Padding="16" Margin="4">
-                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" MaxHeight="150">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="150" MinWidth="500">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -35,11 +42,15 @@
 
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Variant}" />
 
-                            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" />
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                                       Foreground="{Binding CVal, Converter={StaticResource ChaosValueToBrushColorConverter}}" />
 
                             <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
 
-                            <Image Grid.Column="2" Grid.RowSpan="3" Source="{Binding Icon}"/>
+                            <Border Grid.Column="2" Grid.RowSpan="3"  Margin="8 8 0 0">
+                                <Image Source="{Binding Icon}"/>
+                            </Border>
+                               
                         </Grid>
                     </materialDesign:Card>
                 </DataTemplate>
