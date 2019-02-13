@@ -16,7 +16,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="domain:NinjaItem">
                     <materialDesign:Card Padding="16" Margin="4">
-                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" MaxHeight="150">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -25,7 +25,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="75" />
                             </Grid.ColumnDefinitions>
 
                             
@@ -39,7 +39,7 @@
 
                             <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
 
-                            <TextBlock Grid.Column="2" Grid.RowSpan="3" Text="{Binding Icon}"/>
+                            <Image Grid.Column="2" Grid.RowSpan="3" Source="{Binding Icon}"/>
                         </Grid>
                     </materialDesign:Card>
                 </DataTemplate>
