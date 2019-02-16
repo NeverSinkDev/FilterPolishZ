@@ -41,8 +41,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.DataContext = this;
         }
 
-        
-
         private void InitializeItemInformationData()
         {
             this.EconomyData.EconomyTierlistOverview["uniques"]

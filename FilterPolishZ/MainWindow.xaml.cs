@@ -75,7 +75,7 @@ namespace FilterPolishZ
         private async Task WriteFilter(Filter filter)
         {
             var result = filter.Serialize();
-            var seedFolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
+            var seedFolder = Configuration.AppSettings["SeedFile Folder"];
             await FileWork.WriteTextAsync(seedFolder + "/" + "test" + ".filter", result);
         }
 
@@ -92,11 +92,10 @@ namespace FilterPolishZ
         {
             var result = EconomyRequestFacade.GetInstance();
 
-            var seedfolder = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
-            var ninjaurl = LocalConfiguration.GetInstance().AppSettings["Ninja Request URL"];
-
-            var variation = "tmpstandard";
-            var league = "betrayal";
+            var seedfolder = Configuration.AppSettings["SeedFile Folder"];
+            var ninjaurl = Configuration.AppSettings["Ninja Request URL"];
+            var variation = Configuration.AppSettings["Ninja League"];
+            var league = Configuration.AppSettings["betrayal"];
 
             PerformEcoRequest("divination", "divination", "?");
             PerformEcoRequest("maps->uniques", "uniqueMaps", "?");
@@ -118,8 +117,7 @@ namespace FilterPolishZ
         {
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
 
-            var localConfig = LocalConfiguration.GetInstance();
-            var baseStoragePath = localConfig.AppSettings["SeedFile Folder"];
+            var baseStoragePath = Configuration.AppSettings["SeedFile Folder"];
 
             var variation = "defaultSorting";
 

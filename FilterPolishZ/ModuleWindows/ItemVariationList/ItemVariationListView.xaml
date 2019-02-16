@@ -21,7 +21,12 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ListBox ItemsSource="{Binding ItemVariationInformation}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <ListBox ItemsSource="{Binding ItemVariationInformation}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="domain:NinjaItem">
                     <materialDesign:Card Padding="16" Margin="4">
@@ -69,5 +74,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        </Grid>
     </Grid>
 </UserControl>
