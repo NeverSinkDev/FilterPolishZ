@@ -45,11 +45,13 @@
     <Compile Include="Collections\ItemList.cs" />
     <Compile Include="Constants\FilterPolishConstants.cs" />
     <Compile Include="Extensions\EDictionary.cs" />
+    <Compile Include="Extensions\EIEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\AutoBiDictionary.cs" />
     <Compile Include="FileWork.cs" />
     <Compile Include="EString.cs" />
     <Compile Include="Path.cs" />
+    <Compile Include="Reflection\ReflectiveEnumerator.cs" />
     <Compile Include="StringWork.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

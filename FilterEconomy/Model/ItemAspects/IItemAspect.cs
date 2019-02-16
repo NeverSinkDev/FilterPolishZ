@@ -1,7 +1,10 @@
 using FilterPolishUtil;
+using FilterPolishUtil.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -10,6 +13,18 @@ namespace FilterEconomy.Model.ItemAspects
 {
     public abstract class AbstractItemAspect : IItemAspect
     {
+        static AbstractItemAspect()
+        {
+            var aspects = ReflectiveEnumerator.GetEnumerableOfType<AbstractItemAspect>().ToList();
+
+            foreach (var item in aspects)
+            {
+                AvailableAspects.Add(item);
+            }
+        }
+
+        public static ObservableCollection<AbstractItemAspect> AvailableAspects = new ObservableCollection<AbstractItemAspect>();
+
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
         public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);

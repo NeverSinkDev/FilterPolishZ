@@ -25,55 +25,81 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid>
-            <ListBox ItemsSource="{Binding ItemVariationInformation}">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="domain:NinjaItem">
-                    <materialDesign:Card Padding="16" Margin="4">
-                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="150" MinWidth="500">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="75" />
-                            </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <ListBox ItemsSource="{Binding ItemVariationInformation}" x:Name="ItemVariationTable">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="domain:NinjaItem">
+                        <materialDesign:Card Padding="16" Margin="4">
+                            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="150" MinWidth="500">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="75" />
+                                </Grid.ColumnDefinitions>
 
                             
-                            <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Margin="0 8 8 8" Text="{Binding Name}"/>
+                                <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Margin="0 8 8 8" Text="{Binding Name}"/>
 
-                            <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding BaseType}"/>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding BaseType}"/>
 
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Variant}" />
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Variant}" />
 
-                            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
-                                       Foreground="{Binding CVal, Converter={StaticResource ChaosValueToBrushColorConverter}}" />
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                                           Foreground="{Binding CVal, Converter={StaticResource ChaosValueToBrushColorConverter}}" />
 
-                            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding IndexedCount}" />
 
-                            <ListBox Grid.ColumnSpan="2" Grid.Row="3" ItemsSource="{Binding Aspects}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate DataType="domainAspects:AbstractItemAspect">
-                                        <materialDesign:Chip BorderBrush="Red" BorderThickness="3" Icon="A" IconBackground="{Binding Color}" IsDeletable="True">
-                                            <TextBlock Text="{Binding Name}" />
-                                         </materialDesign:Chip>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                <ListBox Grid.ColumnSpan="2" Grid.Row="3" ItemsSource="{Binding Aspects}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="domainAspects:AbstractItemAspect">
+                                            <materialDesign:Chip BorderBrush="Red" BorderThickness="3" Icon="A" IconBackground="{Binding Color}" IsDeletable="True">
+                                                <TextBlock Text="{Binding Name}" />
+                                            </materialDesign:Chip>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             
-                            <Border Grid.Column="2" Grid.RowSpan="4"  Margin="8 8 0 0">
-                                <Image Source="{Binding Icon}"/>
-                            </Border>
+                                <Border Grid.Column="2" Grid.RowSpan="4"  Margin="8 8 0 0">
+                                    <Image Source="{Binding Icon}"/>
+                                </Border>
                                
-                        </Grid>
-                    </materialDesign:Card>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            </Grid>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid  Grid.Column="1">
+            <DockPanel>
+                <ListBox ItemsSource="{Binding AvailableAspects}" x:Name="AspectTable">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="domainAspects:AbstractItemAspect">
+                            <materialDesign:Badged MouseUp="OnAspectButtonClick" Padding="2" Margin="2" Badge="{Binding Group}">
+                                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Button Width="Auto"></Button>
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}"  Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+                                   
+                                </Grid>
+                            </materialDesign:Badged>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
+using FilterPolishUtil.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,6 +58,8 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
 
         public ObservableCollection<NinjaItem> ItemVariationInformation { get; set; } = new ObservableCollection<NinjaItem>();
 
+        public ObservableCollection<AbstractItemAspect> AvailableAspects { get; set; } = AbstractItemAspect.AvailableAspects;
+
         public ItemVariationListView()
         {
             this.InitializeItems();
@@ -72,9 +75,30 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             }
             EconomyRequestFacade.GetInstance().EconomyTierlistOverview["uniques"][Key].ForEach(x =>
             {
-                x.Aspects.Add(new HandledAspect());
+                //x.Aspects.Add(new HandledAspect());
                 ItemVariationInformation.Add(x);
             });
+        }
+
+        private void OnAspectButtonClick(object sender, RoutedEventArgs e)
+        {
+            var control = (sender as ContentControl);
+            if (ItemVariationTable.SelectedItem == null || control == null)
+            {
+                return;
+            }
+
+            NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
+            var clickedAspect = (control.DataContext as AbstractItemAspect);
+
+            if (item.Aspects.Any(x => x.Name == clickedAspect.Name))
+            {
+                item.Aspects.RemoveAll(x => x.Name == clickedAspect.Name);
+            }
+            else
+            {
+                item.Aspects.Add(this.AvailableAspects.First(x => clickedAspect.Name == x.Name));
+            }
         }
     }
 }

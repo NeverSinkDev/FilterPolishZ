@@ -70,8 +70,8 @@
             
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
                 <DataGrid x:Name="ItemInfoGrid" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
@@ -92,33 +92,6 @@
                 <!-- SecondaryPart -->
 
                 <DockPanel Grid.Column="1">
-                    <!--<ListBox>
-                        <ListBoxItem>
-                            <materialDesign:Card Padding="32" Margin="16">
-                                <ContentControl Content="{Binding DemoItem}"/>
-                            </materialDesign:Card>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <materialDesign:Card Padding="32" Margin="16">
-                                <ContentControl x:Name="SpecialContent" Content="{Binding DataContext.DetailedItemOverView, UpdateSourceTrigger=PropertyChanged}"/>
-                            </materialDesign:Card>
-                        </ListBoxItem>
-                    
-                                            <ListBoxItem>
-                            <materialDesign:Card Padding="32" Margin="16">
-                                <TextBlock Text="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}"/>
-                            </materialDesign:Card>
-                        </ListBoxItem>
-                    
-                                                <ContentControl.Content>
-                                <MultiBinding  StringFormat="{}{0}[{1}]">
-                                    <Binding Source="DataContext.DetailedItemOverView" />
-                                    <Binding Path="SelectedItem.Key" ElementName="ItemInfoGrid" />
-                                </MultiBinding>
-                            </ContentControl.Content>
-                    Content="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}
-                    </ListBox>-->
-
                     <itemVariation:ItemVariationListView x:Name="InnerView" Key="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}" />
                 </DockPanel>
 
