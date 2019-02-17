@@ -22,10 +22,10 @@
             
             <ToolBarTray Grid.Row="0">
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Button ToolTip="Re-Open File Info">
+                    <Button ToolTip="Re-Open File Info" Click="LoadInsta_Click">
                         <materialDesign:PackIcon Kind="FolderOpen" Foreground="Aqua" />
                     </Button>
-                    <Button ToolTip="Open File Info">
+                    <Button ToolTip="Open File Info" Click="LoadFromFile">
                         <materialDesign:PackIcon Kind="FolderOpen" Foreground="White" />
                     </Button>
                     
@@ -34,7 +34,7 @@
                     <Button ToolTip="Save File Info" Click="SaveInsta_Click">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="Aqua" />
                     </Button>
-                    <Button ToolTip="Save File Info as">
+                    <Button ToolTip="Save File Info as" Click="SaveInfoAs">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="White" />
                     </Button>
                     

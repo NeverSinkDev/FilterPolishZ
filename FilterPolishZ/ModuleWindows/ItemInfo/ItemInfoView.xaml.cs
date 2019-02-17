@@ -13,14 +13,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using FilterPolishUtil;
+using FilterPolishZ.Configuration;
+using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -45,8 +44,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void InitializeItemInformationData()
         {
-            this.EconomyData.EconomyTierlistOverview["uniques"]
-                .Where(x => !this.ItemInfoData.EconomyTierlistOverview["uniques"].ContainsKey(x.Key))
+            this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()]
+                .Where(x => !this.ItemInfoData.EconomyTierlistOverview[this.GetBranchKey()].ContainsKey(x.Key))
                 .ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
 
             this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
@@ -55,9 +54,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
-                if (vis is DataGridRow)
+                if (vis is DataGridRow row)
                 {
-                    var row = (DataGridRow)vis;
                     row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     break;
                 }
@@ -66,9 +64,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void Expander_Collapsed(object sender, RoutedEventArgs e)
         {
             for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
-                if (vis is DataGridRow)
+                if (vis is DataGridRow row)
                 {
-                    var row = (DataGridRow)vis;
                     row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     break;
                 }
@@ -97,7 +94,54 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void SaveInsta_Click(object sender, RoutedEventArgs e)
         {
-
+            // todo: rework league/base/branch param requirements
+            var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
+            var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
+            var branchKey = this.GetBranchKey();
+            
+            this.ItemInfoData.ExtractAspectDataFromEcoData(this.EconomyData, branchKey);
+            this.ItemInfoData.SaveItemInformation(leagueType, branchKey, baseStoragePath);
         }
+
+        private void SaveInfoAs(object sender, RoutedEventArgs e)
+        {
+            var fd = new SaveFileDialog();
+            if (fd.ShowDialog() != DialogResult.OK) return;
+            var filePath = fd.FileName;
+            
+            var branchKey = this.GetBranchKey();
+            
+            this.ItemInfoData.ExtractAspectDataFromEcoData(this.EconomyData, branchKey);
+            this.ItemInfoData.SaveItemInformation(filePath, branchKey);
+        }
+
+        private void LoadInsta_Click(object sender, RoutedEventArgs e)
+        {
+            // todo: rework league/base/branch param requirements
+            var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
+            var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
+            var branchKey = this.GetBranchKey();
+            
+            var filePath = this.ItemInfoData.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var fileText = System.IO.File.ReadAllText(filePath);
+            
+            this.ItemInfoData.Deserialize(branchKey, fileText);
+            this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
+        }
+
+        private void LoadFromFile(object sender, RoutedEventArgs e)
+        {
+            var fd = new OpenFileDialog();
+            if (fd.ShowDialog() != DialogResult.OK) return;
+            var filePath = fd.FileName;
+            var responseString = FileWork.ReadFromFile(filePath);
+            
+            var branchKey = this.GetBranchKey();
+            
+            this.ItemInfoData.Deserialize(branchKey, responseString);
+            this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
+        }
+
+        private string GetBranchKey() => "uniques"; // todo
     }
 }
