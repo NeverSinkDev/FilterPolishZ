@@ -67,6 +67,11 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             this.DataContext = this;
         }
 
+        public void SelectFirstItem()
+        {
+            ItemVariationTable.SelectedIndex = 0;
+        }
+
         private void InitializeItems()
         {
             if (string.IsNullOrEmpty(Key))

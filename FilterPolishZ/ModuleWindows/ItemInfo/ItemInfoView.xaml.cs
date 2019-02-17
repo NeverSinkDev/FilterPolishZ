@@ -30,6 +30,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     /// </summary>
     public partial class ItemInfoView : UserControl, INotifyPropertyChanged
     {
+        private int lastIndex = -1;
+
         public EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; private set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
@@ -84,9 +86,18 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private void ItemInfoGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var index = ItemInfoGrid.SelectedIndex;
+            if (index != this.lastIndex)
+            {
+                (InnerView as ItemVariationListView).SelectFirstItem();
+            }
+        }
+
         private void SaveInsta_Click(object sender, RoutedEventArgs e)
         {
-            // save
+
         }
     }
 }

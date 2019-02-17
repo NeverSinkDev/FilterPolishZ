@@ -80,7 +80,7 @@
                 <ListBox ItemsSource="{Binding AvailableAspects}" x:Name="AspectTable">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="domainAspects:AbstractItemAspect">
-                            <materialDesign:Badged MouseUp="OnAspectButtonClick" Padding="2" Margin="2" Badge="{Binding Group}">
+                            <materialDesign:Badged MouseUp="OnAspectButtonClick" Padding="2" Margin="2" Badge="{Binding Group}" Focusable="False">
                                 <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300" />

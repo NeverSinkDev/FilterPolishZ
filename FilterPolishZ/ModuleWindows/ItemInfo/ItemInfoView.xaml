@@ -74,7 +74,7 @@
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="ItemInfoGrid" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
+                <DataGrid x:Name="ItemInfoGrid" SelectionChanged="ItemInfoGrid_SelectionChanged" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
                     <DataGrid.RowHeaderTemplate>
                         <DataTemplate>
                             <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
