@@ -45,7 +45,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void InitializeItemInformationData()
         {
             this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()]
-                .Where(x => !this.ItemInfoData.EconomyTierlistOverview[this.GetBranchKey()].ContainsKey(x.Key))
+                .Where(x => !this.ItemInfoData.EconomyTierListOverview[this.GetBranchKey()].ContainsKey(x.Key))
                 .ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
 
             this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
@@ -94,7 +94,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void SaveInsta_Click(object sender, RoutedEventArgs e)
         {
-            // todo: rework league/base/branch param requirements
             var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
             var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             var branchKey = this.GetBranchKey();
@@ -117,12 +116,11 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void LoadInsta_Click(object sender, RoutedEventArgs e)
         {
-            // todo: rework league/base/branch param requirements
             var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
             var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             var branchKey = this.GetBranchKey();
             
-            var filePath = this.ItemInfoData.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var filePath = ItemInformationFacade.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
             var fileText = System.IO.File.ReadAllText(filePath);
             
             this.ItemInfoData.Deserialize(branchKey, fileText);
@@ -141,7 +139,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.ItemInfoData.Deserialize(branchKey, responseString);
             this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
         }
-
+        
         private string GetBranchKey() => "uniques"; // todo
     }
 }
