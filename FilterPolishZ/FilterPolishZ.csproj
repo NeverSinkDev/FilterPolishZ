@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleWindows\Converters\BrushColorChaosValueConverter.cs" />
+    <Compile Include="ModuleWindows\Converters\HasAspectToBoolConverter.cs" />
     <Compile Include="ModuleWindows\Converters\IsGreaterThanConverter.cs" />
     <Compile Include="ModuleWindows\GenerationOptions\GenerationOptions.xaml.cs">
       <DependentUpon>GenerationOptions.xaml</DependentUpon>

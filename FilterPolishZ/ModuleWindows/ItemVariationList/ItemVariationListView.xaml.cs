@@ -57,6 +57,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
         }
 
         public ObservableCollection<NinjaItem> ItemVariationInformation { get; set; } = new ObservableCollection<NinjaItem>();
+        public static ObservableCollection<NinjaItem> ItemVariationInformationStatic { get; set; } = new ObservableCollection<NinjaItem>();
 
         public ObservableCollection<AbstractItemAspect> AvailableAspects { get; set; } = AbstractItemAspect.AvailableAspects;
 
@@ -83,6 +84,9 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 //x.Aspects.Add(new HandledAspect());
                 ItemVariationInformation.Add(x);
             });
+            ItemVariationInformationStatic = ItemVariationInformation;
+
+            AvailableAspects.OrderBy(x => x.Name);
         }
 
         private void OnAspectButtonClick(object sender, RoutedEventArgs e)

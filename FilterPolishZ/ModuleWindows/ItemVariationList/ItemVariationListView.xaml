@@ -18,6 +18,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:BrushColorChaosValueConverter x:Key="ChaosValueToBrushColorConverter"/>
+            <converters:HasAspectToBoolConverter x:Key="HasAspectToBoolConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -91,9 +92,22 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Button Width="Auto"></Button>
+                                    <Button Width="Auto">
+                                        <Button.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Name , Converter={StaticResource HasAspectToBoolConverter}, NotifyOnTargetUpdated=True}" Value="True">
+                                                    <Setter Property="Canvas.Background"  Value="Azure" />
+                                                </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Name , Converter={StaticResource HasAspectToBoolConverter}, NotifyOnTargetUpdated=True}" Value="False">
+                                                        <Setter Property="Canvas.Background" Value="Purple" />
+                                                </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                     <TextBlock Grid.Column="0" Text="{Binding Name}"  Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-                                   
                                 </Grid>
                             </materialDesign:Badged>
                         </DataTemplate>
