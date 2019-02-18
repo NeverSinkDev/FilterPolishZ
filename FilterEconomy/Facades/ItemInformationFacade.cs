@@ -14,82 +14,75 @@ namespace FilterEconomy.Facades
 {
     public class ItemInformationFacade
     {
+        // singleton
         private ItemInformationFacade() { }
-
         private static ItemInformationFacade instance;
+        public static ItemInformationFacade GetInstance() => instance ?? (instance = new ItemInformationFacade());
 
-        public static ItemInformationFacade GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new ItemInformationFacade();
-            }
-
-            return instance;
-        }
-
-        public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
+        public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierListOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() } };
 
         public void ExtractAspectDataFromEcoData(EconomyRequestFacade ecoData, string branchKey)
         {
-            var otherDic = this.EconomyTierlistOverview[branchKey];
+            var targetDic = this.EconomyTierListOverview[branchKey];
             
             foreach (var keyValuePair in ecoData.EconomyTierlistOverview[branchKey])
             {
                 var baseType = keyValuePair.Key;
-                var itemList = keyValuePair.Value;
+                var sourceItemList = keyValuePair.Value;
 
-                if (!otherDic.ContainsKey(baseType))
+                if (!targetDic.ContainsKey(baseType))
                 {
-                    otherDic.Add(baseType, new List<ItemInformationData>());
+                    targetDic.Add(baseType, new List<ItemInformationData>());
                 }
-                var otherItems = otherDic[baseType];
+                
+                var targetItems = targetDic[baseType];
 
-                foreach (var item in itemList)
+                foreach (var sourceItem in sourceItemList)
                 {
-                    var other = otherItems.FirstOrDefault(x => x.Name == item.Name);
-                    if (other == null)
+                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
+                    if (targetItem == null)
                     {
-                        otherItems.Add(new ItemInformationData
+                        targetItem = new ItemInformationData
                         {
-                            Name = item.Name,
-                            BaseType = item.BaseType
-                            // todo: special?
-                        });
-                        other = otherItems.First(x => x.Name == item.Name);
+                            Name = sourceItem.Name,
+                            BaseType = sourceItem.BaseType,
+                            Special = sourceItem.Variant
+                        };
+                        
+                        targetItems.Add(targetItem);
                     }
 
-                    other.Aspects = new List<IItemAspect>(item.Aspects);
+                    targetItem.Aspects = new List<IItemAspect>(sourceItem.Aspects);
                 }
             }
         }
 
         public void MigrateAspectDataToEcoData(EconomyRequestFacade ecoData, string branchKey)
         {
-            var otherDic = ecoData.EconomyTierlistOverview[branchKey];
+            var targetDic = ecoData.EconomyTierlistOverview[branchKey];
             
-            foreach (var keyValuePair in this.EconomyTierlistOverview[branchKey])
+            foreach (var keyValuePair in this.EconomyTierListOverview[branchKey])
             {
                 var baseType = keyValuePair.Key;
-                var itemList = keyValuePair.Value;
+                var sourceItemList = keyValuePair.Value;
                 
-                if (!otherDic.ContainsKey(baseType)) throw new Exception("unknown base"); // todo
-                var otherItems = otherDic[baseType];
+                if (!targetDic.ContainsKey(baseType)) throw new Exception("unknown base"); // todo
+                var targetItems = targetDic[baseType];
 
-                foreach (var item in itemList)
+                foreach (var sourceItem in sourceItemList)
                 {
-                    var other = otherItems.FirstOrDefault(x => x.Name == item.Name);
-                    if (other == null) throw new Exception("unknown item/unique"); // todo
+                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
+                    if (targetItem == null) throw new Exception("unknown item/unique"); // todo
 
-                    other.Aspects = new ObservableCollection<IItemAspect>(item.Aspects);
+                    targetItem.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects);
                 }
             }
         }
 
         public void SaveItemInformation(string leagueType, string branchKey, string baseStoragePath)
         {
-            var fileFullPath = this.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var fileFullPath = GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
             this.SaveItemInformation(fileFullPath, branchKey);
         }
 
@@ -97,64 +90,51 @@ namespace FilterEconomy.Facades
         {
             FileWork.WriteTextAsync(filePath, this.Serialize(branchKey));
         }
-        
-        public string GetItemInfoSaveFilePath(string leagueType, string branchKey, string baseStoragePath)
-        {
-            var directoryPath = $"{baseStoragePath}/{leagueType}";
-            var fileName = $"{branchKey}.txt";
-            var fileFullPath = $"{directoryPath}/{fileName}";
-
-            if (!Directory.Exists(directoryPath))
-            {   // Check directory
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            return fileFullPath;
-        }
 
         public string Serialize(string branchKey)
         {
-            return JsonConvert.SerializeObject(this.EconomyTierlistOverview[branchKey], JsonSettings);
+            return JsonConvert.SerializeObject(this.EconomyTierListOverview[branchKey], JsonSettings);
         }
 
         public void Deserialize(string branchKey, string input)
         {
             var newObj = new Dictionary<string, List<ItemInformationData>>();
             JsonConvert.PopulateObject(input, newObj, JsonSettings);
-            this.EconomyTierlistOverview[branchKey] = newObj;
+            this.EconomyTierListOverview[branchKey] = newObj;
         }
 
         public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string leagueType, string branchKey, string baseStoragePath)
         {
-            var fileFullPath = this.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
-            string responseString = string.Empty;
-
-            try
-            {
-                if (File.Exists(fileFullPath))
-                {   // Load existing file
-                    responseString = FileWork.ReadFromFile(fileFullPath);
-                }
-            }
-            catch
-            {
-                throw new Exception("Failed to load economy file: " + branchKey);
-            }
-
+            var fileFullPath = GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var responseString = File.Exists(fileFullPath) ? FileWork.ReadFromFile(fileFullPath) : "";
             return ItemInformationParser.CreateOverviewDictionary(ItemInformationParser.ParseItemInformationString(responseString).ToList());
         }
 
         public void AddToDictionary(string leagueKey, Dictionary<string, List<ItemInformationData>> dictionary)
         {
-            if (!this.EconomyTierlistOverview.ContainsKey(leagueKey))
+            if (!this.EconomyTierListOverview.ContainsKey(leagueKey))
             {
-                this.EconomyTierlistOverview.Add(leagueKey, new Dictionary<string, List<ItemInformationData>>());
+                this.EconomyTierListOverview.Add(leagueKey, new Dictionary<string, List<ItemInformationData>>());
             }
 
-            foreach (var keyvalue in dictionary)
+            foreach (var keyValuePair in dictionary)
             {
-                this.EconomyTierlistOverview[leagueKey].Add(keyvalue.Key, keyvalue.Value);
+                this.EconomyTierListOverview[leagueKey].Add(keyValuePair.Key, keyValuePair.Value);
             }
+        }
+        
+        public static string GetItemInfoSaveFilePath(string leagueType, string branchKey, string baseStoragePath)
+        {
+            var directoryPath = $"{baseStoragePath}/{leagueType}";
+            var fileName = $"{branchKey}.txt";
+            var fileFullPath = $"{directoryPath}/{fileName}";
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            return fileFullPath;
         }
     }
 }

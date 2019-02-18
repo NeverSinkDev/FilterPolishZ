@@ -40,20 +40,20 @@
                     
                     <Separator />
 
-                    <Button Command="Copy" ToolTip="Copy that stuff" ToolBar.OverflowMode="AsNeeded">
+                    <Button Command="Copy" ToolTip="Copy that stuff" ToolBar.OverflowMode="AsNeeded" Click="OnCopyButtonClick">
                         <materialDesign:PackIcon Kind="ContentCopy" />
                     </Button>
-                    <Button Command="Paste" ToolTip="Paste some stuff" ToolBar.OverflowMode="AsNeeded">
+                    <Button Command="Paste" ToolTip="Paste some stuff" ToolBar.OverflowMode="AsNeeded" Click="OnPasteButtonClick">
                         <materialDesign:PackIcon Kind="ContentPaste" />
                     </Button>
 
                     <Separator />
 
-                    <ListBox SelectedIndex="0">
+                    <ListBox SelectedIndex="0" SelectionChanged="OnDisplayFilterChange">
                         <ListBox.ToolTip>
                             <StackPanel>
-                                <TextBlock Text="Show New Only" />
-                                <TextBlock Text="Show Old Only" />
+                                <TextBlock Text="Show New Only" Name="FilterItems_NewOnly" />
+                                <TextBlock Text="Show Old Only" Name="FilterItems_OldOnly" />
                             </StackPanel>
                         </ListBox.ToolTip>
                         <ListBoxItem>
@@ -63,6 +63,11 @@
                             <materialDesign:PackIcon Kind="HexagonSlice6" />
                         </ListBoxItem>
                     </ListBox>
+                    
+                    <ComboBox SelectionChanged="OnBranchKeyChange" Name="BranchKeyDisplaySelection">
+                        <!-- <ComboBoxItem Name="uniques">Uniques</ComboBoxItem> -->
+                        <!-- <ComboBoxItem Name="divination">DivCard</ComboBoxItem> -->
+                    </ComboBox>
                 </ToolBar>
             </ToolBarTray>
 
