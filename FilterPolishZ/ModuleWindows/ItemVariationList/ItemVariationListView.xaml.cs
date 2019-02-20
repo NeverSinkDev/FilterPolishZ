@@ -84,11 +84,10 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             // todo: change this hard-coded "uniques"
             EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.currentBranchKey][Key].ForEach(x =>
             {
-                //x.Aspects.Add(new HandledAspect());
                 ItemVariationInformation.Add(x);
             });
-            ItemVariationInformationStatic = ItemVariationInformation;
 
+            ItemVariationInformationStatic = ItemVariationInformation;
             AvailableAspects.OrderBy(x => x.Name);
         }
 
@@ -111,6 +110,11 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 item.Aspects.Add(this.AvailableAspects.First(x => clickedAspect.Name == x.Name));
             }
+        }
+
+        private Action<PropertyChangedEventArgs> RaisePropertyChanged()
+        {
+            return args => PropertyChanged?.Invoke(this, args);
         }
     }
 }
