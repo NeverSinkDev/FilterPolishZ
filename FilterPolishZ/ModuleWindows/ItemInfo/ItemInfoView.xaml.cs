@@ -34,7 +34,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public ItemInformationFacade ItemInfoData { get; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
-        private string currentBranchKey;
+        public static string currentBranchKey; // todo: temporary workaround to access this info on other pages
         private string currentDisplayFiltering;
 
         public ItemInfoView()
