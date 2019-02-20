@@ -28,13 +28,11 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     /// </summary>
     public partial class ItemInfoView : UserControl, INotifyPropertyChanged
     {
-        private int lastIndex = -1;
-
         public EconomyRequestFacade EconomyData { get; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; } = ItemInformationFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
-        public static string currentBranchKey; // todo: temporary workaround to access this info on other pages
+        public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
 
         public ItemInfoView()
@@ -42,7 +40,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             InitializeComponent();
             
             var allBranchKeys = this.EconomyData.EconomyTierlistOverview.Keys;
-            currentBranchKey = allBranchKeys.First();
+            CurrentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
             
@@ -122,7 +120,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void ItemInfoGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var index = ItemInfoGrid.SelectedIndex;
-            if (index != this.lastIndex)
+            if (index != -1)
             {
                 InnerView.SelectFirstItem();
             }
@@ -176,7 +174,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
         }
         
-        private string GetBranchKey() => currentBranchKey ?? this.EconomyData.EconomyTierlistOverview.Keys.First();
+        private string GetBranchKey() => CurrentBranchKey ?? this.EconomyData.EconomyTierlistOverview.Keys.First();
 
         private void OnDisplayFilterChange(object sender, SelectionChangedEventArgs e)
         {
@@ -205,12 +203,12 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 case ComboBoxItem selected:
                 {
                     var newValue = selected.Content as string; //name
-                    currentBranchKey = newValue;
+                    CurrentBranchKey = newValue;
                     this.InitializeItemInformationData();
                     break;
                 }
                 case string branchKey:
-                    currentBranchKey = branchKey;
+                    CurrentBranchKey = branchKey;
                     this.InitializeItemInformationData();
                     break;
             }
