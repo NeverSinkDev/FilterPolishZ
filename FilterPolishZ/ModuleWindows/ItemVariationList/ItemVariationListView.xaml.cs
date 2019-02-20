@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FilterPolishZ.ModuleWindows.ItemInfo;
 
 namespace FilterPolishZ.ModuleWindows.ItemVariationList
 {
@@ -79,7 +80,9 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 return;
             }
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview["uniques"][Key].ForEach(x =>
+            
+            // todo: change this hard-coded "uniques"
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.currentBranchKey][Key].ForEach(x =>
             {
                 //x.Aspects.Add(new HandledAspect());
                 ItemVariationInformation.Add(x);

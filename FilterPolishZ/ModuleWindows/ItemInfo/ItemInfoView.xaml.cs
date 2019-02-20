@@ -23,7 +23,6 @@ using UserControl = System.Windows.Controls.UserControl;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
-
     /// <summary>
     /// Interaction logic for ItemInfoView.xaml
     /// </summary>
@@ -36,13 +35,14 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
         private string currentBranchKey;
+        private string currentDisplayFiltering;
 
         public ItemInfoView()
         {
             InitializeComponent();
             
             var allBranchKeys = this.EconomyData.EconomyTierlistOverview.Keys;
-            this.currentBranchKey = allBranchKeys.First();
+            currentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
             
@@ -52,12 +52,39 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void InitializeItemInformationData()
         {
             this.UnhandledUniqueItems.Clear();
+            IEnumerable<KeyValuePair<string, ItemList<NinjaItem>>> ecoData = this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()];
             
-            this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()]
-                .Where(x => !this.ItemInfoData.EconomyTierListOverview[this.GetBranchKey()].ContainsKey(x.Key))
-                .ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
+            // todo: UI updating trigger when adding aspects and ????
+            
+            switch (this.currentDisplayFiltering)
+            {
+                case "ShowAspectless":
+                    ecoData = ecoData.Where(x => x.Value.Any(item => item.Aspects.Count == 0));
+                    break;
+                
+                case "ShowOnlyInItem":
+                    var resultList = new List<KeyValuePair<string, ItemList<NinjaItem>>>();
+                    
+                    // todo: rework/refactor this!
+                    foreach (var keyValuePair in this.ItemInfoData.EconomyTierListOverview[this.GetBranchKey()])
+                    {
+                        if (this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()].ContainsKey(keyValuePair.Key)) continue;
+                        
+                        var itemList = new ItemList<NinjaItem>();
+                        keyValuePair.Value.ToList().ForEach(x => itemList.Add(x.ToNinjaItem()));
+                        resultList.Add(new KeyValuePair<string, ItemList<NinjaItem>>(keyValuePair.Key, itemList));
+                    }
 
-            this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
+                    ecoData = resultList;
+                    break;
+                
+                case "ShowStable":
+                    ecoData = ecoData.Where(x => x.Value.All(item => item.Aspects.Count > 0));
+                    break;
+            }
+            
+            ecoData.ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
+            if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -149,39 +176,43 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
         }
         
-        private string GetBranchKey() => this.currentBranchKey;
-
-        private void OnCopyButtonClick(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("s"); // todo: find currently selected item and copy their ???? + enable paste button
-        }
-
-        private void OnPasteButtonClick(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("s"); // todo: find currently selected item and paste the saved data into that item
-        }
+        private string GetBranchKey() => currentBranchKey ?? this.EconomyData.EconomyTierlistOverview.Keys.First();
 
         private void OnDisplayFilterChange(object sender, SelectionChangedEventArgs e)
         {
-//            Console.WriteLine("s"); // todo: update the displayed list to only show <<<see selected mode>>>
-//            
-//            ListBoxItem lbi = ((sender as System.Windows.Controls.ListBox).SelectedItem as ListBoxItem);
-//            var s = lbi.Content.ToString();
-//            // todo: none of this works!!
+            switch (e.AddedItems[0])
+            {
+                // ((sender as System.Windows.Controls.ComboBox).SelectedItem as ComboBoxItem)
+                case ComboBoxItem selected:
+                {
+                    var newValue = selected.Name;
+                    this.currentDisplayFiltering = newValue;
+                    this.InitializeItemInformationData();
+                    break;
+                }
+                case string branchKey:
+                    this.currentDisplayFiltering = branchKey;
+                    this.InitializeItemInformationData();
+                    break;
+            }
         }
 
         private void OnBranchKeyChange(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems[0] is ComboBoxItem selected) // ((sender as System.Windows.Controls.ComboBox).SelectedItem as ComboBoxItem)
+            switch (e.AddedItems[0])
             {
-                var newValue = selected.Content as string; //name
-                this.currentBranchKey = newValue;
-                this.InitializeItemInformationData();
-            }
-            else if (e.AddedItems[0] is string branchKey)
-            {
-                this.currentBranchKey = branchKey;
-                this.InitializeItemInformationData();
+                // ((sender as System.Windows.Controls.ComboBox).SelectedItem as ComboBoxItem)
+                case ComboBoxItem selected:
+                {
+                    var newValue = selected.Content as string; //name
+                    currentBranchKey = newValue;
+                    this.InitializeItemInformationData();
+                    break;
+                }
+                case string branchKey:
+                    currentBranchKey = branchKey;
+                    this.InitializeItemInformationData();
+                    break;
             }
         }
     }

@@ -39,30 +39,13 @@
                     </Button>
                     
                     <Separator />
-
-                    <Button Command="Copy" ToolTip="Copy that stuff" ToolBar.OverflowMode="AsNeeded" Click="OnCopyButtonClick">
-                        <materialDesign:PackIcon Kind="ContentCopy" />
-                    </Button>
-                    <Button Command="Paste" ToolTip="Paste some stuff" ToolBar.OverflowMode="AsNeeded" Click="OnPasteButtonClick">
-                        <materialDesign:PackIcon Kind="ContentPaste" />
-                    </Button>
-
-                    <Separator />
-
-                    <ListBox SelectedIndex="0" SelectionChanged="OnDisplayFilterChange">
-                        <ListBox.ToolTip>
-                            <StackPanel>
-                                <TextBlock Text="Show New Only" Name="FilterItems_NewOnly" />
-                                <TextBlock Text="Show Old Only" Name="FilterItems_OldOnly" />
-                            </StackPanel>
-                        </ListBox.ToolTip>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="HexagonSlice1" />
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <materialDesign:PackIcon Kind="HexagonSlice6" />
-                        </ListBoxItem>
-                    </ListBox>
+                    
+                    <ComboBox SelectedIndex="0" SelectionChanged="OnDisplayFilterChange">
+                        <ComboBoxItem Name="ShowAll">Show all</ComboBoxItem>
+                        <ComboBoxItem Name="ShowAspectless">Show unhandled</ComboBoxItem>
+                        <ComboBoxItem Name="ShowOnlyInItem">Show eco-less</ComboBoxItem>
+                        <ComboBoxItem Name="ShowStable">Fully handled</ComboBoxItem>
+                    </ComboBox>
                     
                     <ComboBox SelectionChanged="OnBranchKeyChange" Name="BranchKeyDisplaySelection">
                         <!-- <ComboBoxItem Name="uniques">Uniques</ComboBoxItem> -->
