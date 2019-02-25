@@ -33,6 +33,18 @@ namespace FilterPolishZ.Economy
 
             List<string> list = new List<string>();
 
+            // Anchor item
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "current",
+
+                Rule = (string s) =>
+                {
+                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
+                    return items.Select(x => x.Aspects).ToList().Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
+                }
+            });
+
             // Unknown Unique
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {

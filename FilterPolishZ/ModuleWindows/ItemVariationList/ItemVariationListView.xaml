@@ -31,7 +31,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="domain:NinjaItem">
                         <materialDesign:Card Padding="16" Margin="4">
-                            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="150" MinWidth="500">
+                            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center" Height="Auto" MinWidth="500">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -41,7 +41,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="3*" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="75" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                             
@@ -81,7 +81,7 @@
                 <ListBox ItemsSource="{Binding AvailableAspects}" x:Name="AspectTable">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="domainAspects:AbstractItemAspect">
-                            <materialDesign:Badged MouseUp="OnAspectButtonClick" Padding="2" Margin="2" Badge="{Binding Group}" Focusable="False">
+                            <materialDesign:Badged MouseUp="OnAspectButtonClick" Badge="{Binding Group}" Focusable="False">
                                 <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300" />
@@ -93,19 +93,6 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Button Width="Auto" x:Name="Special">
-                                        <Button.Style>
-                                            <Style>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Name , Converter={StaticResource HasAspectToBoolConverter}, NotifyOnTargetUpdated=True}" Value="True">
-                                                    <Setter Property="Canvas.Background"  Value="Azure" />
-                                                </DataTrigger>
-
-                                                    <DataTrigger Binding="{Binding Name , Converter={StaticResource HasAspectToBoolConverter}, NotifyOnTargetUpdated=True}" Value="False">
-                                                        <Setter Property="Canvas.Background" Value="Purple" />
-                                                </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
                                     </Button>
                                     <TextBlock Grid.Column="0" Text="{Binding Name}"  Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
                                 </Grid>
