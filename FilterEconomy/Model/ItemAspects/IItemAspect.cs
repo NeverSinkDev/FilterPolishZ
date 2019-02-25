@@ -40,8 +40,8 @@ namespace FilterEconomy.Model.ItemAspects
     public class HandledAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
-        public DateTime HandlingDate { get; }
-        public float HanadlingPrice { get; }
+        public DateTime HandlingDate { get; set; }
+        public float HanadlingPrice { get; set; }
     }
 
     public class IgnoreAspect : AbstractItemAspect

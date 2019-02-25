@@ -51,6 +51,14 @@
                         <!-- <ComboBoxItem Name="uniques">Uniques</ComboBoxItem> -->
                         <!-- <ComboBoxItem Name="divination">DivCard</ComboBoxItem> -->
                     </ComboBox>
+                    
+                    <Button Click="OnUpdateUiButtonClick">UpdateUI</Button>
+                    
+                    <Button Click="OnResetAspectsButtonClick">Reset Aspects</Button>
+                    
+                    <ToggleButton Style="{DynamicResource MaterialDesignActionLightToggleButton}" Click="ToggleMultiBaseOnlyDisplay" ToolTip="Only display multiBase items">MB</ToggleButton>
+                    
+                    <Button Click="OnAddHandleToAllButtonClick">Add 'Handled' to all</Button>
                 </ToolBar>
             </ToolBarTray>
 

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
+using FilterPolishUtil.Collections;
 using Newtonsoft.Json;
 
 namespace FilterEconomy.Facades
@@ -135,6 +136,40 @@ namespace FilterEconomy.Facades
             }
 
             return fileFullPath;
+        }
+        
+        public Dictionary<string, ItemList<NinjaItem>> GetItemsThatAreNotInThisList(Dictionary<string, ItemList<NinjaItem>> otherDic, string branchKey, bool isAddingToOtherDic)
+        {
+            var result = new Dictionary<string, ItemList<NinjaItem>>();
+
+            // add existing ecoData (semi-deep clone)
+            if (isAddingToOtherDic)
+            {
+                otherDic.ToList().ForEach(x =>
+                {
+                    result.Add(x.Key, new ItemList<NinjaItem>());
+                    x.Value.ForEach(y => result[x.Key].Add(y));
+                });
+            }
+            
+            // add this.items to result
+            foreach (var itemDataPair in this.EconomyTierListOverview[branchKey])
+            {
+                if (!result.ContainsKey(itemDataPair.Key))
+                {
+                    result.Add(itemDataPair.Key, new ItemList<NinjaItem>());
+                }
+
+                foreach (var item in itemDataPair.Value)
+                {
+                    if (otherDic[itemDataPair.Key].FirstOrDefault(x => x.Name == item.Name && x.Variant == item.Special) == null)
+                    {
+                        result[itemDataPair.Key].Add(item.ToNinjaItem());
+                    }
+                }
+            }
+            
+            return result;
         }
     }
 }

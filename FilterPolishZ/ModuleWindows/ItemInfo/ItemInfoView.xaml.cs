@@ -13,9 +13,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil;
 using FilterPolishZ.Configuration;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
@@ -34,6 +36,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
+        private bool isOnlyDisplayingMultiBases;
+        private HashSet<string> visitedBranches = new HashSet<string>(); // first visit to any branch should load that saved setup
 
         public ItemInfoView()
         {
@@ -50,39 +54,53 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private void InitializeItemInformationData()
         {
             this.UnhandledUniqueItems.Clear();
-            IEnumerable<KeyValuePair<string, ItemList<NinjaItem>>> ecoData = this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()];
+            var ecoData = this.GetCurrentDisplayItems();
+            ecoData.ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
+            if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
             
-            // todo: UI updating trigger when adding aspects and ????
-            
+            // load saved data
+            if (!this.visitedBranches.Contains(this.GetBranchKey()))
+            {
+                this.LoadInsta_Click(null, null);
+                this.visitedBranches.Add(this.GetBranchKey());
+            }
+        }
+
+        private Dictionary<string, ItemList<NinjaItem>> GetCurrentDisplayItems()
+        {
+            var ecoData = this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()];
+
             switch (this.currentDisplayFiltering)
             {
                 case "ShowAspectless":
-                    ecoData = ecoData.Where(x => x.Value.Any(item => item.Aspects.Count == 0));
+                    ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), true);
+                    ecoData = ecoData.Where(x => x.Value.Any(item => item.Aspects.Count == 0))
+                        .ToDictionary(x => x.Key, x => x.Value);
                     break;
-                
-                case "ShowOnlyInItem":
-                    var resultList = new List<KeyValuePair<string, ItemList<NinjaItem>>>();
-                    
-                    // todo: rework/refactor this!
-                    foreach (var keyValuePair in this.ItemInfoData.EconomyTierListOverview[this.GetBranchKey()])
-                    {
-                        if (this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()].ContainsKey(keyValuePair.Key)) continue;
-                        
-                        var itemList = new ItemList<NinjaItem>();
-                        keyValuePair.Value.ToList().ForEach(x => itemList.Add(x.ToNinjaItem()));
-                        resultList.Add(new KeyValuePair<string, ItemList<NinjaItem>>(keyValuePair.Key, itemList));
-                    }
 
-                    ecoData = resultList;
+                case "ShowOnlyInItem":
+                    ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), false);
                     break;
-                
+
+                case "ShowAll":
+                    ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), true);
+                    break;
+
                 case "ShowStable":
-                    ecoData = ecoData.Where(x => x.Value.All(item => item.Aspects.Count > 0));
+                    ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), true);
+                    ecoData = ecoData.Where(x => x.Value.All(item => item.Aspects.Count > 0))
+                        .ToDictionary(x => x.Key, x => x.Value);
                     break;
+
+                default: throw new Exception("unexpected display filtering mode");
             }
-            
-            ecoData.ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
-            if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
+
+            if (this.isOnlyDisplayingMultiBases)
+            {
+                ecoData = ecoData.Where(x => x.Value.Count > 1).ToDictionary(x => x.Key, x => x.Value);
+            }
+
+            return ecoData;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -212,6 +230,47 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                     this.InitializeItemInformationData();
                     break;
             }
+        }
+
+        private void OnUpdateUiButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.InitializeItemInformationData();
+        }
+
+        private void OnResetAspectsButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()].ToList().ForEach(x => x.Value.ForEach(y => y.Aspects.Clear()));
+            this.OnUpdateUiButtonClick(null, null);
+        }
+
+        private void ToggleMultiBaseOnlyDisplay(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton button)
+            {
+                this.isOnlyDisplayingMultiBases = button.IsChecked ?? false;
+                this.OnUpdateUiButtonClick(null, null);
+            }
+        }
+
+        private void OnAddHandleToAllButtonClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var itemData in this.GetCurrentDisplayItems())
+            {
+                foreach (var item in this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()][itemData.Key])
+                {
+                    if (item.Aspects.Any(x => x is HandledAspect)) return;
+
+                    var aspect = new HandledAspect
+                    {
+                        HanadlingPrice = item.CVal,
+                        HandlingDate = DateTime.Now
+                    };
+                    
+                    item.Aspects.Add(aspect);
+                }
+            }
+            
+            this.OnUpdateUiButtonClick(null, null);
         }
     }
 }
