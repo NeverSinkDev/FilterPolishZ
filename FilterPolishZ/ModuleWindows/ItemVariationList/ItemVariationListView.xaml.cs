@@ -75,7 +75,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             }
 
             // todo: change this hard-coded "uniques"
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.currentBranchKey][Key].ForEach(x =>
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.CurrentBranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);
             });
