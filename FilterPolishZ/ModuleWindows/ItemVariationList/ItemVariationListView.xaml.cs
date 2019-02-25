@@ -73,7 +73,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 return;
             }
-            
+
             // todo: change this hard-coded "uniques"
             EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.currentBranchKey][Key].ForEach(x =>
             {
