@@ -2,23 +2,16 @@
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Extensions;
+using FilterPolishZ.ModuleWindows.ItemInfo;
+using FilterPolishZ.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FilterPolishZ.ModuleWindows.ItemInfo;
 
 namespace FilterPolishZ.ModuleWindows.ItemVariationList
 {
@@ -81,13 +74,38 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 return;
             }
             
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.CurrentBranchKey][Key].ForEach(x =>
+            // todo: change this hard-coded "uniques"
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.currentBranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);
             });
 
             ItemVariationInformationStatic = ItemVariationInformation;
             AvailableAspects.OrderBy(x => x.Name);
+
+            RefreshAspectColoration();
+        }
+
+        private void RefreshAspectColoration()
+        {
+            for (int i = 0; i < AspectTable.Items.Count; i++)
+            {
+                DependencyObject obj = AspectTable.ItemContainerGenerator.ContainerFromIndex(i);
+                IEnumerable<Button> buttons = WpfUtil.FindVisualChildren<Button>(obj).ToList();
+
+                buttons.Select(x => new { label = AspectTable.Items[i], value = x }).ToList()
+                    .ForEach(z =>
+                    {
+                        if (((ItemVariationTable.SelectedItem ?? ItemVariationTable.Items[0]) as NinjaItem).Aspects.Contains(z.label))
+                        {
+                            z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#651fff"));
+                        }
+                        else
+                        {
+                            z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9e9e9e"));
+                        }
+                    });
+            }
         }
 
         private void OnAspectButtonClick(object sender, RoutedEventArgs e)
@@ -109,6 +127,8 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 item.Aspects.Add(this.AvailableAspects.First(x => clickedAspect.Name == x.Name));
             }
+
+            RefreshAspectColoration();
         }
 
         private Action<PropertyChangedEventArgs> RaisePropertyChanged()

@@ -92,7 +92,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Button Width="Auto">
+                                    <Button Width="Auto" x:Name="Special">
                                         <Button.Style>
                                             <Style>
                                                 <Style.Triggers>
