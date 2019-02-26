@@ -173,9 +173,13 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             var branchKey = this.GetBranchKey();
             
             var filePath = ItemInformationFacade.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
-            var fileText = System.IO.File.ReadAllText(filePath);
-            
-            this.ItemInfoData.Deserialize(branchKey, fileText);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                var fileText = System.IO.File.ReadAllText(filePath);
+                this.ItemInfoData.Deserialize(branchKey, fileText);
+            }
+
             this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
         }
 

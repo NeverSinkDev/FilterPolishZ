@@ -14,7 +14,19 @@ namespace FilterEconomy.Request.Enrichment
 
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
-            var price = data.Max(x => x.CVal);
+            var ignoredAspects = new List<string>() { "AnchorAspect", "IgnoreAspect", "ProphecyResultAspect", "NonDropAspect" };
+            List<NinjaItem> target = data;
+
+            if (data.Count > 1)
+            {
+                var filteredData = data.Where(x => x.Aspects.All(z => !ignoredAspects.Contains(z.Name))).ToList();
+                if (filteredData.Count >= 1)
+                {
+                    target = filteredData;
+                }
+            }
+
+            var price = target.Max(x => x.CVal);
             data.HighestPrice = price;
         }
     }
