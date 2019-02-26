@@ -37,7 +37,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
         private bool isOnlyDisplayingMultiBases;
-        private HashSet<string> visitedBranches = new HashSet<string>(); // first visit to any branch should load that saved setup
+        private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
 
         public ItemInfoView()
         {
@@ -173,6 +173,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             var branchKey = this.GetBranchKey();
             
             var filePath = ItemInformationFacade.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            if (!System.IO.File.Exists(filePath)) return;
             var fileText = System.IO.File.ReadAllText(filePath);
             
             this.ItemInfoData.Deserialize(branchKey, fileText);
