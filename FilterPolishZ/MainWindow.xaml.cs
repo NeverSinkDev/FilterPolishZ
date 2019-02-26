@@ -123,7 +123,7 @@ namespace FilterPolishZ
 
             PerformItemInfoRequest(variation, "divination");
             PerformItemInfoRequest(variation, "uniques");
-            PerformItemInfoRequest(variation, "uniqueMaps");
+            PerformItemInfoRequest(variation, "maps->uniques");
             PerformItemInfoRequest(variation, "basetypes");
 
             void PerformItemInfoRequest(string loadPath, string requestKey) =>
