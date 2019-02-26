@@ -1,4 +1,6 @@
-﻿using FilterEconomy.Model.ItemInformationData;
+﻿using FilterEconomy.Model;
+using FilterEconomy.Model.ItemInformationData;
+using FilterPolishUtil.Collections;
 using FilterUtilModels.Economy;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,12 @@ namespace FilterEconomy.Processor
     {
         public string GoverningSection { get; set; }
         public List<FilterEconomyRule> EconomyRules { get; set; } = new List<FilterEconomyRule>();
+        public Func<string, ItemList<NinjaItem>> DefaultItemQuery { get; set; }
+        public ItemList<NinjaItem> DefaultSet { get; set; }
 
-        public TieringCommand ProcessItem(string group, string basetype, IEconomyProcessorData processorData)
+        public TieringCommand ProcessItem(string group, string basetype, string selectorString, IEconomyProcessorData processorData)
         {
+            this.DefaultSet = DefaultItemQuery(selectorString);
             return this.EconomyRules.Select(
                 x => 
                     x.Execute(group, basetype, processorData))
@@ -27,6 +32,7 @@ namespace FilterEconomy.Processor
     {
         public string RuleName { get; set; }
         public string TargetTier { get; set; }
+
         public Func<string,bool> Rule { get; set; }
 
         public TieringCommand Execute(string group, string basetype, IEconomyProcessorData processorData)

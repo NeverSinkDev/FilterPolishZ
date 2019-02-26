@@ -24,24 +24,23 @@ namespace FilterPolishZ.Economy
 
         public void Execute()
         {
-            this.suggestions = EconomyInformation.EconomyTierlistOverview["uniques"].Select(z => z.Key).Select(x => this.uniqueRules.ProcessItem("uniques", x, this)).ToList();
+            this.suggestions = EconomyInformation.EconomyTierlistOverview["uniques"].Select(z => z.Key).Select(x => this.uniqueRules.ProcessItem("uniques", x, x, this)).ToList();
         }
 
         private FilterEconomyRuleSet CreateUniqueEconomyRules()
         {
             FilterEconomyRuleSet uniqueRules = new FilterEconomyRuleSet() { GoverningSection = "uniques" };
+            uniqueRules.DefaultItemQuery = new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => EconomyInformation.EconomyTierlistOverview["uniques"][s]);
 
-            List<string> list = new List<string>();
 
             // Anchor item
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
                 TargetTier = "current",
-
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
-                    return items.Select(x => x.Aspects).ToList().Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
+
+                    return uniqueRules.DefaultSet.Select(x => x.Aspects).ToList().Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
                 }
             });
 
@@ -62,8 +61,7 @@ namespace FilterPolishZ.Economy
                 TargetTier = "t1",
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
-                    return items.LowestPrice > FilterPolishConstants.T1BreakPoint;
+                    return uniqueRules.DefaultSet.LowestPrice > FilterPolishConstants.T1BreakPoint;
                 }
             });
 
@@ -72,8 +70,7 @@ namespace FilterPolishZ.Economy
                 TargetTier = "t2",
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
-                    return items.LowestPrice > FilterPolishConstants.T2BreakPoint;
+                    return uniqueRules.DefaultSet.LowestPrice > FilterPolishConstants.T2BreakPoint;
                 }
             });
 
@@ -82,8 +79,25 @@ namespace FilterPolishZ.Economy
                 TargetTier = "Potential",
                 Rule = (string s) =>
                 {
-                    var items = EconomyInformation.EconomyTierlistOverview["uniques"][s];
-                    return items.HighestPrice > FilterPolishConstants.T2BreakPoint;
+                    return uniqueRules.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint;
+                }
+            });
+
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "Potential",
+                Rule = (string s) =>
+                {
+                    return uniqueRules.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint;
+                }
+            });
+
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                TargetTier = "Prophecy",
+                Rule = (string s) =>
+                {
+                    return uniqueRules.DefaultSet.Any(z => z.Aspects.Any(j => j.Name == "ProphecyMaterialAspect"));
                 }
             });
 
