@@ -5,7 +5,9 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:itemVariation="clr-namespace:FilterPolishZ.ModuleWindows.ItemVariationList"
              xmlns:domain="clr-namespace:FilterEconomy.Model;assembly=FilterEconomy" 
+             xmlns:wpfUtil="clr-namespace:FilterPolishZ.Util"
              xmlns:domainItemList="FilterPolishUtil.Collections;assembly=FilterPolishUtil" 
+             xmlns:converter="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -14,6 +16,10 @@
              TextOptions.TextFormattingMode="Ideal" 
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
+    <UserControl.Resources>
+        <wpfUtil:BindingProxy x:Key="proxy" Data="{Binding}" />
+        <converter:ArrayAccessConverter x:Key="ArrayAccess" />
+    </UserControl.Resources>
 
     <DockPanel>
         <Grid>
@@ -72,13 +78,20 @@
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="ItemInfoGrid" SelectionChanged="ItemInfoGrid_SelectionChanged" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
+                <DataGrid x:Name="ItemInfoGrid" SelectionChanged="ItemInfoGrid_SelectionChanged" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding ItemInformationData}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="domainItemList:ItemList">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Value.Count}" />
+                                        <Label>
+                                            <Label.Content>
+                                                <MultiBinding Converter="{StaticResource ArrayAccess}">
+                                                    <Binding Source="{StaticResource proxy}" Path="Data.LowestPriceCapsule"/>
+                                                    <Binding Path="Key"/>
+                                                </MultiBinding>
+                                            </Label.Content>
+                                        </Label>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

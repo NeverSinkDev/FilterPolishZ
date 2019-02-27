@@ -32,12 +32,15 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     {
         public EconomyRequestFacade EconomyData { get; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; } = ItemInformationFacade.GetInstance();
-        public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
+        public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
         private bool isOnlyDisplayingMultiBases;
         private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
+
+        //public Capsule TestString { get; set; } = new Capsule((s) => s.ToString());
+        public Capsule LowestPriceCapsule { get; set; }
 
         public ItemInfoView()
         {
@@ -49,14 +52,16 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
             
             this.DataContext = this;
+
+            LowestPriceCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.LowestPrice.ToString());
         }
 
         private void InitializeItemInformationData()
         {
-            this.UnhandledUniqueItems.Clear();
+            this.ItemInformationData.Clear();
             var ecoData = this.GetCurrentDisplayItems();
-            ecoData.ToList().ForEach(z => this.UnhandledUniqueItems.Add(z));
-            if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = UnhandledUniqueItems;
+            ecoData.ToList().ForEach(z => this.ItemInformationData.Add(z));
+            if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = ItemInformationData;
             
             // load saved data
             if (!this.visitedBranches.Contains(this.GetBranchKey()))

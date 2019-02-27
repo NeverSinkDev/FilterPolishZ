@@ -95,6 +95,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
+    <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
       <SubType>Designer</SubType>
