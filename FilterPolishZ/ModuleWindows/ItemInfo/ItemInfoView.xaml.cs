@@ -39,8 +39,9 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private bool isOnlyDisplayingMultiBases;
         private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
 
-        //public Capsule TestString { get; set; } = new Capsule((s) => s.ToString());
         public Capsule LowestPriceCapsule { get; set; }
+        public Capsule CurrentTierCapsule { get; set; }
+        public Capsule CountCapsule { get; set; }
 
         public ItemInfoView()
         {
@@ -54,6 +55,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.DataContext = this;
 
             LowestPriceCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.LowestPrice.ToString());
+            CurrentTierCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
+            CountCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
         }
 
         private void InitializeItemInformationData()
