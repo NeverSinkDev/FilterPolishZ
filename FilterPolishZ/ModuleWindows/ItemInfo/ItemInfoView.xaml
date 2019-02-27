@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:itemVariation="clr-namespace:FilterPolishZ.ModuleWindows.ItemVariationList" 
+             xmlns:itemVariation="clr-namespace:FilterPolishZ.ModuleWindows.ItemVariationList"
+             xmlns:domain="clr-namespace:FilterEconomy.Model;assembly=FilterEconomy" 
+             xmlns:domainItemList="FilterPolishUtil.Collections;assembly=FilterPolishUtil" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -71,18 +73,17 @@
                 </Grid.ColumnDefinitions>
 
                 <DataGrid x:Name="ItemInfoGrid" SelectionChanged="ItemInfoGrid_SelectionChanged" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding UnhandledUniqueItems2}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
-                    <DataGrid.RowHeaderTemplate>
-                        <DataTemplate>
-                            <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                            </Expander>
-                        </DataTemplate>
-                    </DataGrid.RowHeaderTemplate>
-
-                    <DataGrid.RowDetailsTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="asdasd" Margin="10,5,0,0" />
-                        </DataTemplate>
-                    </DataGrid.RowDetailsTemplate>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="domainItemList:ItemList">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Value.Count}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
                 </DataGrid>
             
                 <!-- SecondaryPart -->
