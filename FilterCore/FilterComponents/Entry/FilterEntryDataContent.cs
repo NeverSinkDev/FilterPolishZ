@@ -77,6 +77,14 @@ namespace FilterCore.Entry
 
         }
 
+        public void RemoveAll(string ident)
+        {
+            if (this.Content.ContainsKey(ident))
+            {
+                this.Content.Remove(ident);
+            }
+        }
+
         public List<string> Serialize()
         {
             return this.Content

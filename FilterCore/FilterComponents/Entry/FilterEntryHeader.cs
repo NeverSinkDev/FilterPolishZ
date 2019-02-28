@@ -71,12 +71,14 @@ namespace FilterCore.Entry
                 {
                     GenerationTag tag; 
                     var split = s.Substring(1);
+                    var lastPos = split.Length - 1;
+                    var command = split.Substring(0, lastPos);
 
-                    if (char.IsDigit(split[split.Length-1]))
+                    // checking if the last char is a digit wont work correctly in cases of e.g. "crafting-83"
+                    // which will save the "3" as strictness, so we instead check if the command is in the EntryCommand list
+                    if (FilterConstants.EntryCommand.ContainsKey(command.ToUpper()))
                     {
-                        var lastPos = split.Length - 1;
                         var digit = short.Parse(split.Substring(lastPos));
-                        var command = split.Substring(0, lastPos);
                         tag = new GenerationTag()
                         {
                             Strictness = digit,

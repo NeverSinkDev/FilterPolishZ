@@ -67,6 +67,8 @@
     <Compile Include="Commands\EntryCommands\IEntryCommand.cs" />
     <Compile Include="Commands\FilterTableOfContentsCreator.cs" />
     <Compile Include="Commands\IFilterCommand.cs" />
+    <Compile Include="Commands\StrictnessGenerator.cs" />
+    <Compile Include="Commands\StyleGenerator.cs" />
     <Compile Include="Constants\FilterConstants.cs" />
     <Compile Include="FilterComponents\Entry\EFilterEntry.cs" />
     <Compile Include="FilterComponents\Entry\FilterEntry.cs" />
