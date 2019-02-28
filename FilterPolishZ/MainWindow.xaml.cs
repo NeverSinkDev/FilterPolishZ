@@ -33,9 +33,9 @@ namespace FilterPolishZ
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
         public EconomyRequestFacade EconomyData { get; set; }
         public ItemInformationFacade ItemInfoData { get; set; }
-        public List<string> FilterRawString { get; set; }
+        public TierListFacade TierListFacade { get; set; }
 
-        public List<KeyValuePair<string, ItemList<NinjaItem>>> UnhandledUniqueItems { get; }
+        public List<string> FilterRawString { get; set; }
 
         public MainWindow()
         {
@@ -45,16 +45,18 @@ namespace FilterPolishZ
             var filterData = this.PerformFilterWorkAsync();
             this.EconomyData = this.LoadEconomyOverviewData();
             this.ItemInfoData = this.LoadItemInformationOverview();
-            var tierListData = this.LoadTierLists(filterData);
+            this.TierListFacade = this.LoadTierLists(filterData);
 
             // Initialize 
             var economyTieringSystem = new ConcreteEconomyRules()
             {
-                TierInformation = tierListData,
+                TierInformation = TierListFacade.TierListData,
                 EconomyInformation = this.EconomyData
             };
 
             economyTieringSystem.Execute();
+
+            this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             // Initialize Settings
             this.InitializeComponent();
@@ -80,11 +82,14 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private Dictionary<string,TierGroup> LoadTierLists(Filter filter)
+        private TierListFacade LoadTierLists(Filter filter)
         {
+            TierListFacade tierList = TierListFacade.GetInstance();
+
             var workTiers = new HashSet<string> { "uniques", "divination", "maps->uniques", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
             var tiers = filter.ExtractTiers(workTiers);
-            return tiers;
+            tierList.TierListData = tiers;
+            return tierList;
         }
 
         [Time]

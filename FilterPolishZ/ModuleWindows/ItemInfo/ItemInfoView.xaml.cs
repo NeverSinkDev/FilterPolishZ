@@ -32,6 +32,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     {
         public EconomyRequestFacade EconomyData { get; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; } = ItemInformationFacade.GetInstance();
+        public TierListFacade TierListData { get; } = TierListFacade.GetInstance();
         public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
