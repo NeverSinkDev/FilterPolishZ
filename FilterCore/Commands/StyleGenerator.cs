@@ -11,19 +11,13 @@ namespace FilterCore.Commands
 {
     public class StyleGenerator
     {
-        private Filter filter;
-        private Dictionary<string, Tuple<string, string>> styleData;
+        private readonly Filter filter;
+        private readonly Dictionary<string, Tuple<string, string>> styleData;
         
         public StyleGenerator(Filter filter, string styleFilePath)
         {
             this.filter = filter;
             this.styleData = new StyleSheetParser(styleFilePath).Parse();
-        }
-
-        public StyleGenerator(Filter filter, IEnumerable<string> styleData)
-        {
-            this.filter = filter;
-            this.styleData = new StyleSheetParser(styleData).Parse();
         }
 
         public void Apply()
@@ -48,7 +42,7 @@ namespace FilterCore.Commands
                     switch (line.Value)
                     {
                         case ColorValueContainer colorVal:
-                            var rgbVals = newValue.Split(' ').Select(x => short.Parse(x)).ToList();
+                            var rgbVals = newValue.Split(' ').Select(short.Parse).ToList();
                             colorVal.R = rgbVals[0];
                             colorVal.G = rgbVals[1];
                             colorVal.B = rgbVals[2];
@@ -79,11 +73,6 @@ namespace FilterCore.Commands
                 this.lineList = System.IO.File.ReadAllLines(filePath);
             }
 
-            public StyleSheetParser(IEnumerable<string> styleContent)
-            {
-                this.lineList = styleContent;
-            }
-
             private readonly IEnumerable<string> lineList;
             private const string StartKey = "START: ";
             private const string CommentStartKey = "// #";
@@ -109,7 +98,8 @@ namespace FilterCore.Commands
                     
                     if (result.ContainsKey(styleName))
                     {
-                        throw new Exception("ERROR: duplicate style name!");
+                        // todo: error case!
+                        continue;
                     }
                     
                     result.Add(styleName, new Tuple<string, string>(newIdent, valueString));

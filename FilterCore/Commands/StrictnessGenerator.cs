@@ -18,13 +18,7 @@ namespace FilterCore.Commands
 
         public void Apply()
         {
-            this.UpdateFilterFileName();
             this.UpdateAllEntries();
-        }
-
-        private void UpdateFilterFileName()
-        {
-//            this.filter.ResultFileName += " todo" + this.StrictnessLevel;
         }
 
         private void UpdateAllEntries()
@@ -38,6 +32,11 @@ namespace FilterCore.Commands
 
                 foreach (var tag in entry.Header.GenerationTags.Where(x => x.Strictness != -1).ToList())
                 {
+                    if (tag.Strictness >= FilterConstants.FilterStrictnessLevels.Count-1)
+                    {
+                        throw new Exception("invalid strictness level");
+                    }
+                    
                     // tag = 1 means: skip if the strictness is 1 or lower
                     if (tag.Strictness >= this.StrictnessLevel)
                     {
@@ -61,10 +60,15 @@ namespace FilterCore.Commands
                             val.Value.First().value = "36";
                             break;
                     
+                        case "hs": // same as "rems", but also hide on the next strictness after that
+                            if (tag.Strictness+1 < this.StrictnessLevel)
+                            {
+                                entry.Header.HeaderValue = "Hide";
+                            }
+                            goto case "rems";
+                        
                         case "rems": // remove highlights (sound, beam, icon)
-                        case "hs": // todo: useless duplicate?
-                            var highlighIdents = new[] {"PlayEffect", "MinimapIcon", "PlayAlertSound"}; // todo: abstract!
-                            highlighIdents.ToList().ForEach(x => entry.Content.RemoveAll(x));
+                            FilterConstants.HighlightingIdents.ToList().ForEach(x => entry.Content.RemoveAll(x));
                             break;
 
                         default:

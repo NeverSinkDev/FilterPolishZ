@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using FilterCore.Constants;
 using FilterPolishZ.Domain;
 using FilterPolishZ.Domain.DataType;
 
@@ -22,6 +23,16 @@ namespace FilterPolishZ.Configuration
         {
             this.config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
             this.AppSettings = ConfigurationManager.AppSettings;
+            
+            var styleSheetFolderPath = this.AppSettings["StyleSheet Folder"];
+            if (!System.IO.Directory.Exists(styleSheetFolderPath))
+            {
+                FilterConstants.FilterStyles = new List<string>();
+            }
+            else
+            {
+                FilterConstants.FilterStyles = System.IO.Directory.EnumerateFiles(styleSheetFolderPath).Select(x => x.Split('\\').Last().Replace(".fsty", ""));
+            }
         }
 
         public static LocalConfiguration GetInstance()

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FilterCore.Constants;
 
 namespace FilterCore.Entry
 {
@@ -35,6 +36,11 @@ namespace FilterCore.Entry
             if (!this.Header.IsActive)
             {
                 return result;
+            }
+
+            if (this.Header.HeaderValue == "Hide")
+            {
+                FilterConstants.HighlightingIdents.ToList().ForEach(x => this.Content.Content.Remove(x));
             }
 
             var headerText = this.Header.Serialize();
