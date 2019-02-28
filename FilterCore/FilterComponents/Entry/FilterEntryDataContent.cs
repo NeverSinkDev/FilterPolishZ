@@ -1,4 +1,5 @@
-﻿using FilterCore.Constants;
+﻿using System;
+using FilterCore.Constants;
 using FilterCore.Line;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,22 @@ namespace FilterCore.Entry
             if (this.Content.ContainsKey(ident))
             {
                 return this.Content[ident].FirstOrDefault();
+            }
+
+            return null;
+        }
+
+        public IFilterLine GetFirstLineWhere(Func<IFilterLine, bool> filterFunc)
+        {
+            foreach (var lineList in this.Content.Values)
+            {
+                foreach (var line in lineList)
+                {
+                    if (filterFunc.Invoke(line))
+                    {
+                        return line;
+                    }
+                }
             }
 
             return null;
