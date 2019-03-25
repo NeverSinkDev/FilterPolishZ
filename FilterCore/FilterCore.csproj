@@ -70,6 +70,7 @@
     <Compile Include="Commands\StrictnessGenerator.cs" />
     <Compile Include="Commands\StyleGenerator.cs" />
     <Compile Include="Constants\FilterConstants.cs" />
+    <Compile Include="FilterAccessFacade.cs" />
     <Compile Include="FilterComponents\Entry\EFilterEntry.cs" />
     <Compile Include="FilterComponents\Entry\FilterEntry.cs" />
     <Compile Include="FilterComponents\Entry\FilterEntryDataContent.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="FilterComponents\Line\Parsing\LineParser.cs" />
     <Compile Include="FilterComponents\Tags\GenerationTag.cs" />
     <Compile Include="FilterComponents\Tags\TierTag.cs" />
+    <Compile Include="FilterComponents\Tags\TierTagSet.cs" />
     <Compile Include="FilterComponents\Tier\EcoTier.cs" />
     <Compile Include="FilterComponents\Tier\SingleTier.cs" />
     <Compile Include="FilterComponents\Tier\TierGroup.cs" />

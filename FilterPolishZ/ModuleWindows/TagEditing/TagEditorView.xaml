@@ -4,8 +4,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
-             xmlns:domain="clr-namespace:FilterEconomy.Model;assembly=FilterEconomy" 
-             xmlns:domainAspects="clr-namespace:FilterEconomy.Model.ItemAspects;assembly=FilterEconomy" 
+             xmlns:domain="clr-namespace:FilterPolishZ.ModuleWindows.TagEditing"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -15,6 +14,27 @@
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TreeView Grid.Row="0" ItemsSource="{Binding MovieCategories}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type domain:IFilterCategoryEntity}" ItemsSource="{Binding FilterTree}">
+                        <TextBlock Text="{Binding Name}" Margin="3 2" />
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+        </Grid>
+
+        <TextBlock  Grid.Column="1">
             
+        </TextBlock>
     </Grid>
 </UserControl>

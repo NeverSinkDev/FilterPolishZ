@@ -6,6 +6,9 @@ namespace FilterCore.FilterComponents.Tags
 {
     public class TierTag
     {
+        // Type->Currency
+        // Type->Currency->Harbinger
+
         public List<string> Tags { get; set; } = new List<string>();
         public string PrimaryTag => Tags.FirstOrDefault();
 
@@ -16,6 +19,31 @@ namespace FilterCore.FilterComponents.Tags
         {
             this.Tags = new List<string>();
             this.Tags.AddRange(tags);
+        }
+
+        public bool IsPartOf(TierTag comparison)
+        {
+            return this.IsPartOf(comparison.Tags);
+        }
+
+        public bool IsPartOf(List<string> comparison)
+        {
+            if (comparison.Count < this.Tags.Count)
+            {
+                return false;
+            }
+
+            int i = 0;
+            foreach (var item in Tags)
+            {
+                if (!item.Equals(comparison[i], System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return false;
+                }
+                i++;
+            }
+
+            return true;
         }
 
         public string Serialize()

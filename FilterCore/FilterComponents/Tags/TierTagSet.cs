@@ -1,0 +1,73 @@
+﻿using FilterCore.Constants;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FilterCore.FilterComponents.Tags
+{
+    public class TierTagSet
+    {
+        public Dictionary<string, TierTag> TierTags { get; set; } = new Dictionary<string, TierTag>();
+
+        public void Add(string s)
+        {
+            if (s[0] == '$')
+            {
+                s = s.Substring(1);
+            }
+
+            var separator = new string[] { "->" };
+            if (s.Contains(separator[0]))
+            {
+                var parts = s.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                this.TierTags.Add(parts.First(), new TierTag(parts));
+            }
+            else
+            {
+                this.TierTags.Add(s, new TierTag(s));
+            }
+        }
+
+        public bool IsPartOf(TierTag comparison)
+        {
+            if (!this.TierTags.ContainsKey(comparison.PrimaryTag))
+            {
+                return false;
+            }
+
+            return this.TierTags[comparison.PrimaryTag].IsPartOf(comparison);
+        }
+
+        public bool IsPartOf(List<string> comparison)
+        {
+            if (!this.TierTags.ContainsKey(comparison[0]))
+            {
+                return false;
+            }
+
+            return this.TierTags[comparison[0]].IsPartOf(comparison);
+        }
+
+        public bool ContainsKey(string s)
+        {
+            return this.TierTags.ContainsKey(s);
+        }
+
+        public TierTag this[string key]
+        {
+            get
+            {
+                return this.TierTags[key];
+            }
+        }
+
+        public string Serialize()
+        {
+            // todo -> sort
+            return string.Join(" ", 
+                this.TierTags.Select(x => x.Value.Serialize()).OrderBy(z => FilterConstants.TierTagSort[z]).ToList());
+        }
+    }
+}

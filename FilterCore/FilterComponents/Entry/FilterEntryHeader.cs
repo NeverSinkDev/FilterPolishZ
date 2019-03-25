@@ -24,7 +24,7 @@ namespace FilterCore.Entry
 
         public string HeaderComment { get; set; }
         public List<GenerationTag> GenerationTags { get; set; }
-        public Dictionary<string,TierTag> TierTags { get; set; }
+        public TierTagSet TierTags { get; set; }
 
         public string Serialize()
         {
@@ -34,7 +34,7 @@ namespace FilterCore.Entry
 
                     var comment = string.Join(" ",
                         string.Join(" ", GenerationTags.Select(x => x.Serialize()).ToList()),
-                        string.Join(" ", TierTags.Select(x => x.Value.Serialize()).ToList()),
+                        this.TierTags?.Serialize(),
                         HeaderComment).Trim();
 
                     if (!string.IsNullOrEmpty(comment))
@@ -54,7 +54,7 @@ namespace FilterCore.Entry
         public void ExtractTagsFromLine(IFilterLine line)
         {
             GenerationTags = new List<GenerationTag>();
-            TierTags = new Dictionary<string, TierTag>();
+            TierTags = new TierTagSet();
 
             bool firstComment = true;
             StringBuilder builder = new StringBuilder();
@@ -97,17 +97,7 @@ namespace FilterCore.Entry
                 }
                 else if (s[0] == '$')
                 {
-                    var split = s.Substring(1);
-                    var separator = new string[] { "->" };
-                    if (split.Contains(separator[0]))
-                    {
-                        var parts = split.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                        this.TierTags.Add(parts.First(), new TierTag(parts));
-                    }
-                    else
-                    {
-                        this.TierTags.Add(split,new TierTag(split));
-                    }
+                    this.TierTags.Add(s);
                 }
                 else
                 {

@@ -34,6 +34,7 @@ namespace FilterPolishZ
         public EconomyRequestFacade EconomyData { get; set; }
         public ItemInformationFacade ItemInfoData { get; set; }
         public TierListFacade TierListFacade { get; set; }
+        public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
 
         public List<string> FilterRawString { get; set; }
 
@@ -42,10 +43,10 @@ namespace FilterPolishZ
             ConcreteEnrichmentProcedures.Initialize();
 
             // Initialize Modules
-            var filterData = this.PerformFilterWorkAsync();
+            this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
             this.EconomyData = this.LoadEconomyOverviewData();
             this.ItemInfoData = this.LoadItemInformationOverview();
-            this.TierListFacade = this.LoadTierLists(filterData);
+            this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // Initialize 
             var economyTieringSystem = new ConcreteEconomyRules()
@@ -62,12 +63,12 @@ namespace FilterPolishZ
             this.InitializeComponent();
             this.DataContext = new MainWindowViewModel();
 
-            Task.Run(() => WriteFilter(filterData));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
 
         }
 
         [Time]
-        private Filter PerformFilterWorkAsync()
+        private Filter PerformFilterWork()
         {
            this.FilterRawString = FileWork.ReadLinesFromFile(Configuration.AppSettings["SeedFile Folder"] + "/" + "NeverSink's filter - SEED (SeedFilter) .filter");
            return new Filter(this.FilterRawString);

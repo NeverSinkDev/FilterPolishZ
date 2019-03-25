@@ -19,10 +19,30 @@ namespace FilterCore.Constants
                 i++;
             }
 
+            short j = 0;
+            foreach (var item in TierTagTypes)
+            {
+                TierTagSort.Add(item, j);
+                j++;
+            }
+
             LineTypesSort.Add("", i);
             i++;
             LineTypesSort.Add("comment", i);
         }
+
+        public static List<string> TierTagTypes = new List<string>()
+        {
+            "Type",
+            "Tier",
+            "League",
+            "ID",
+            "Size",
+            "LVL",
+            "EG",
+            "Intent",
+            "X"
+        };
 
         /// <summary>
         /// Lists all known FilterLine identifiers, their treatment strategy and the sort order.
@@ -85,6 +105,7 @@ namespace FilterCore.Constants
         /// A quick access to the sort order of the filterline idents
         /// </summary>
         public static Dictionary<string, int> LineTypesSort = new Dictionary<string, int>();
+        public static Dictionary<string, int> TierTagSort = new Dictionary<string, int>();
 
         public enum FilterEntryType
         {
