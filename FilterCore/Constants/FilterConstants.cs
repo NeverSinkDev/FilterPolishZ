@@ -30,7 +30,10 @@ namespace FilterCore.Constants
         public static Dictionary<string, ILineStrategy> LineTypes = new Dictionary<string, ILineStrategy>(){
             { "Show",          new VariableLineStrategy(0,0) },
             { "Hide",          new VariableLineStrategy(0,0) },
-
+             
+            { "FracturedItem",       new BoolLineStrategy() },
+            { "SynthesisedItem",     new BoolLineStrategy() },
+            { "AnyEnchantment",      new BoolLineStrategy() },
             { "ShapedMap",     new BoolLineStrategy() },
             { "ElderItem",     new BoolLineStrategy() },
             { "ShaperItem",    new BoolLineStrategy() },

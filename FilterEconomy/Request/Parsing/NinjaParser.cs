@@ -15,6 +15,12 @@ namespace FilterEconomy.Request.Parsing
         public static IEnumerable<NinjaItem> ParseNinjaString(string input)
         {
             dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(input, new JsonSerializerSettings() { CheckAdditionalContent = true });
+
+            if (jsonObj == null)
+            {
+                yield break;
+            }
+
             foreach (JObject job in jsonObj.lines)
             {
                 NinjaItem nItem = new NinjaItem();

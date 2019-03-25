@@ -96,6 +96,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
+    <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
+      <DependentUpon>TagEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
@@ -130,6 +133,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModuleWindows\ItemVariationList\ItemVariationListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModuleWindows\TagEditing\TagEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
