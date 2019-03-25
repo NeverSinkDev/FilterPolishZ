@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:converters="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:domain="clr-namespace:FilterPolishZ.ModuleWindows.TagEditing"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
@@ -13,25 +12,37 @@
              TextOptions.TextFormattingMode="Ideal" 
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TreeView Grid.Row="0" ItemsSource="{Binding MovieCategories}">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type domain:IFilterCategoryEntity}" ItemsSource="{Binding FilterTree}">
-                        <TextBlock Text="{Binding Name}" Margin="3 2" />
-                    </HierarchicalDataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-        </Grid>
+        <DockPanel Grid.Column="0" Background="Gray">
+            <Grid>
+                <TreeView ItemsSource="{Binding FilterTree}" MinWidth="500"
+                      SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type domain:FilterCategory}" ItemsSource="{Binding FilterTree}">
+                            <TextBlock Text="{Binding Name}" Margin="3 2" Background="Pink"/>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type domain:FilterFinalCategory}">
+                            <TextBlock Text="{Binding Name}" Margin="3 2" Background="Lime" />
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </Grid>
+        </DockPanel>
+
 
         <TextBlock  Grid.Column="1">
             

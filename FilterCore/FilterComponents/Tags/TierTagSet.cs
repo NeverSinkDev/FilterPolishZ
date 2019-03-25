@@ -66,8 +66,9 @@ namespace FilterCore.FilterComponents.Tags
         public string Serialize()
         {
             // todo -> sort
-            return string.Join(" ", 
-                this.TierTags.Select(x => x.Value.Serialize()).OrderBy(z => FilterConstants.TierTagSort[z]).ToList());
+            return string.Join(" ",
+                // .OrderBy(z => FilterConstants.TierTagSort[z])
+                this.TierTags.Select(x => x.Value.Serialize()).ToList());
         }
     }
 }

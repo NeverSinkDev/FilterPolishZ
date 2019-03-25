@@ -27,21 +27,42 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         public event PropertyChangedEventHandler PropertyChanged;
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
-        public ObservableCollection<IFilterCategoryEntity> FilterTree = new ObservableCollection<IFilterCategoryEntity>();
+        public ObservableCollection<FilterCategory> FilterTree { get; set; } = new ObservableCollection<FilterCategory>();
         //public ObservableCollection
 
         public TagEditorView()
         {
             this.InitializeTagLogic();
+            this.DataContext = this;
             InitializeComponent();
         }
 
         private void InitializeTagLogic()
         {
-            foreach (var item in FilterTree)
+            IFilterCategoryEntity cursor;
+            foreach (var item in FilterAccessFacade.PrimaryFilter.FilterEntries)
             {
+                if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Filler)
+                {
+                    continue;
+                }
 
+                if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Comment)
+                {
+                    // ...
+                }
+
+                this.FilterTree.Add(new FilterCategory()
+                {
+                    FilterTree = new ObservableCollection<FilterFinalCategory>() { new FilterFinalCategory() },
+                    Name = string.Join(" ", item.Serialize())
+                });
             }
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
         }
     }
 }
