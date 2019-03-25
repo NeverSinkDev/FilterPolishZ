@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FilterCore.Commands;
 
 namespace FilterPolishZ.ModuleWindows.TagEditing
 {
@@ -47,9 +48,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                     continue;
                 }
 
-                if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Comment)
+                if (FilterTableOfContentsCreator.IsSectionTitleEntry(item))
                 {
-                    // ...
+                    var depth = FilterTableOfContentsCreator.GetTitleDepth(item);
+                    var title = FilterTableOfContentsCreator.GetTitle(item, depth);
                 }
 
                 this.FilterTree.Add(new FilterCategory()

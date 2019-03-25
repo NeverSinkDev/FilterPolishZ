@@ -54,7 +54,7 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (!this.IsSectionTitleEntry(entry)) continue;
+                if (!IsSectionTitleEntry(entry)) continue;
                 
                 if (entry.Content.Content["comment"][1].Comment.Contains("[WELCOME]"))
                 {
@@ -69,22 +69,23 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (!this.IsSectionTitleEntry(entry))
+                if (!IsSectionTitleEntry(entry))
                 {
                     continue;
                 }
 
-                var line = this.GetTitleLineFromEntry(entry);
-                var depth = this.GetTitleDepth(line.Comment);
-                var title = this.GetTitle(line.Comment, depth);
+                var line = GetTitleLineFromEntry(entry);
+                var depth = GetTitleDepth(line.Comment);
+                var title = GetTitle(line.Comment, depth);
                 
                 this.AddNewSection(title, depth, line);
             }
         }
         
-        private IFilterLine GetTitleLineFromEntry(IFilterEntry entry) => entry.Content.Content["comment"][SectionTitleLineIndex];
-        
-        private int GetTitleDepth(string line)
+        private static IFilterLine GetTitleLineFromEntry(IFilterEntry entry) => entry.Content.Content["comment"][SectionTitleLineIndex];
+
+        public static int GetTitleDepth(IFilterEntry entry) => GetTitleDepth(GetTitleLineFromEntry(entry).Comment);
+        public static int GetTitleDepth(string line)
         {
             var bracketCount = 0;
             foreach (var c in line)
@@ -96,7 +97,8 @@ namespace FilterCore.Commands
             return bracketCount;
         }
 
-        private string GetTitle(string line, int depth)
+        public static string GetTitle(IFilterEntry entry, int depth) => GetTitle(GetTitleLineFromEntry(entry).Comment, depth);
+        public static string GetTitle(string line, int depth)
         {
             var expectedKeyEnd = SectionTitleKeyIdentEnd.ToString().Times(depth);
             var index = line.IndexOf(expectedKeyEnd, StringComparison.Ordinal);
@@ -172,7 +174,7 @@ namespace FilterCore.Commands
             this.filterEntry.Content.Content["comment"] = lines;
         }
         
-        private bool IsSectionTitleEntry(IFilterEntry entry)
+        public static bool IsSectionTitleEntry(IFilterEntry entry, IFilterEntry tocEntry = null)
         {
             if (entry.Header.Type != FilterConstants.FilterEntryType.Comment)
             {
@@ -180,7 +182,7 @@ namespace FilterCore.Commands
             }
 
             // skip the actual ToC entry, even tho it does look fitting
-            if (entry == this.filterEntry)
+            if (entry == tocEntry || (entry.Content.Content.ContainsKey("comment") && entry.Content.Content["comment"].Count > 5))
             {
                 return false;
             }
@@ -195,7 +197,7 @@ namespace FilterCore.Commands
                 return false;
             }
 
-            var line = this.GetTitleLineFromEntry(entry);
+            var line = GetTitleLineFromEntry(entry);
             if (line.Comment[0] != SectionTitleKeyIdentStart || !line.Comment.Contains(SectionTitleKeyIdentEnd))
             {
                 return false;
