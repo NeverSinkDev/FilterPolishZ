@@ -8,10 +8,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
     public class FilterCategory : IFilterCategoryEntity
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<FilterFinalCategory> FilterTree { get; set; } = new ObservableCollection<FilterFinalCategory>();
+        public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
         public string Name { get; set; }
         public bool IsFinal { get; } = false;
-        public IFilterCategoryEntity Parent { get; }
+        public ObservableCollection<IFilterCategoryEntity> Parent { get; set; }
     }
 
     public class FilterFinalCategory : IFilterCategoryEntity
@@ -20,13 +20,13 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         public event PropertyChangedEventHandler PropertyChanged;
         public string Name { get; set; } = new Random().Next(0, 100000000).ToString();
         public bool IsFinal { get; } = true;
-        public IFilterCategoryEntity Parent { get; }
+        public ObservableCollection<IFilterCategoryEntity> Parent { get; set; }
     }
 
     public interface IFilterCategoryEntity : INotifyPropertyChanged
     {
         string Name { get; set; }
         bool IsFinal { get; }
-        IFilterCategoryEntity Parent { get; }
+        ObservableCollection<IFilterCategoryEntity> Parent { get; set; }
     }
 }

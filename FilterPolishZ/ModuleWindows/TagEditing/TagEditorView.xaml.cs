@@ -28,7 +28,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         public event PropertyChangedEventHandler PropertyChanged;
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
-        public ObservableCollection<FilterCategory> FilterTree { get; set; } = new ObservableCollection<FilterCategory>();
+        public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
         //public ObservableCollection
 
         public TagEditorView()
@@ -40,7 +40,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         private void InitializeTagLogic()
         {
-            IFilterCategoryEntity cursor;
+            ObservableCollection<IFilterCategoryEntity> cursor = this.FilterTree;
             foreach (var item in FilterAccessFacade.PrimaryFilter.FilterEntries)
             {
                 if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Filler)
@@ -52,12 +52,43 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 {
                     var depth = FilterTableOfContentsCreator.GetTitleDepth(item);
                     var title = FilterTableOfContentsCreator.GetTitle(item, depth);
+
+                    if (depth == 2)
+                    {
+                        cursor = this.FilterTree;
+                        var lastCategory = new FilterCategory()
+                        {
+                            Parent = this.FilterTree,
+                            Name = title
+                        };
+
+                        cursor = lastCategory.FilterTree;
+                        this.FilterTree.Add(lastCategory);
+                    }
+                    else
+                    {
+                        cursor = (this.FilterTree.Where(x => x.IsFinal == false)
+                                .Last() as FilterCategory).FilterTree;
+
+                        var lastCategory = new FilterCategory()
+                        {
+                            Parent = cursor,
+                            Name = title
+                        };
+
+                        cursor.Add(lastCategory);
+                        cursor = lastCategory.FilterTree;
+                    }
+                }
+                else if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Comment)
+                {
+                    continue;
                 }
 
-                this.FilterTree.Add(new FilterCategory()
+                cursor.Add(new FilterFinalCategory()
                 {
-                    FilterTree = new ObservableCollection<FilterFinalCategory>() { new FilterFinalCategory() },
-                    Name = string.Join(" ", item.Serialize())
+                    Name = string.Join(" ", item.Serialize()),
+                    Parent = cursor
                 });
             }
         }

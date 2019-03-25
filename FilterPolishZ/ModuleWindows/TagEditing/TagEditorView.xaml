@@ -27,16 +27,16 @@
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Column="0" Background="Gray">
+        <DockPanel Grid.Column="0">
             <Grid>
                 <TreeView ItemsSource="{Binding FilterTree}" MinWidth="500"
                       SelectedItemChanged="TreeView_SelectedItemChanged">
                     <TreeView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type domain:FilterCategory}" ItemsSource="{Binding FilterTree}">
-                            <TextBlock Text="{Binding Name}" Margin="3 2" Background="Pink"/>
+                            <TextBlock Text="{Binding Name}" Margin="3 2"/>
                         </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type domain:FilterFinalCategory}">
-                            <TextBlock Text="{Binding Name}" Margin="3 2" Background="Lime" />
+                            <TextBlock Text="{Binding Name}" Margin="3 2" />
                         </DataTemplate>
                     </TreeView.Resources>
                 </TreeView>
