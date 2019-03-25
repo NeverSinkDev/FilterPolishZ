@@ -79,9 +79,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                         cursor.Add(lastCategory);
                         cursor = lastCategory.FilterTree;
                     }
-                }
-                else if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Comment)
-                {
+
                     continue;
                 }
 
