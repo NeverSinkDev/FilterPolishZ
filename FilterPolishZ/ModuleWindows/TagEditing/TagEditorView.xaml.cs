@@ -17,6 +17,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FilterCore.Commands;
+using FilterCore.FilterComponents.Tags;
+using FilterCore.Constants;
+using FilterPolishUtil.Collections;
 
 namespace FilterPolishZ.ModuleWindows.TagEditing
 {
@@ -29,13 +32,25 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
+
+        public ObservableCollection<TierTag> TierTags { get; set; } = new ObservableCollection<TierTag>();
+
+        public Capsule SelectedTagCapsule => new Capsule((string s) => this.GetCurrentTagValue(s));
+
         //public ObservableCollection
 
         public TagEditorView()
         {
             this.InitializeTagLogic();
+            this.InitializeTierTags();
             this.DataContext = this;
             InitializeComponent();
+        }
+
+        private void InitializeTierTags()
+        {
+            this.TierTags.Clear();
+            FilterConstants.TierTagTypes.ForEach(x => TierTags.Add(new TierTag(x)));
         }
 
         private void InitializeTagLogic()
@@ -86,13 +101,47 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 cursor.Add(new FilterFinalCategory()
                 {
                     Name = string.Join(" ", item.Serialize()),
-                    Parent = cursor
+                    Parent = cursor,
+                    Entry = item as FilterEntry
                 });
+            }
+        }
+
+        private string GetCurrentTagValue(string s)
+        {
+            var selected = this.TreeView?.SelectedItem;
+
+            if (selected == null)
+            {
+                return string.Empty;
+            }
+
+            switch (selected)
+            {
+                case FilterFinalCategory final:
+                    var tag = final.Entry.Header.TierTags;
+                    if (tag == null)
+                    {
+                        return string.Empty;
+                    }
+
+                    if (tag.ContainsKey(s))
+                    {
+                        return tag[s].Serialize();
+                    }
+                    return string.Empty;
+                    break;
+                case FilterCategory cat:
+                    return string.Empty;
+                    break;
+                default:
+                    return string.Empty;
             }
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            this.InitializeTierTags();
 
         }
     }

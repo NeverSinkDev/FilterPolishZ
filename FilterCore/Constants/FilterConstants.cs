@@ -33,15 +33,15 @@ namespace FilterCore.Constants
 
         public static List<string> TierTagTypes = new List<string>()
         {
-            "Type",
-            "Tier",
-            "League",
-            "ID",
-            "Size",
-            "LVL",
-            "EG",
-            "Intent",
-            "X"
+            "type",
+            "tier",
+            "league",
+            "id",
+            "size",
+            "lvl",
+            "eg",
+            "intent",
+            "x"
         };
 
         /// <summary>

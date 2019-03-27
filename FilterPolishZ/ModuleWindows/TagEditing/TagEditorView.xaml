@@ -4,6 +4,9 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:domain="clr-namespace:FilterPolishZ.ModuleWindows.TagEditing"
+             xmlns:domainTag="clr-namespace:FilterCore.FilterComponents.Tags;assembly=FilterCore"
+             xmlns:wpfUtil="clr-namespace:FilterPolishZ.Util"
+             xmlns:converter="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -14,11 +17,8 @@
              Background="{DynamicResource MaterialDesignPaper}">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+                <wpfUtil:BindingProxy x:Key="proxy" Data="{Binding}" />
+                <converter:ArrayAccessConverter x:Key="ArrayAccess" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -29,7 +29,7 @@
 
         <DockPanel Grid.Column="0">
             <Grid>
-                <TreeView ItemsSource="{Binding FilterTree}" MinWidth="500"
+                <TreeView x:Name="TreeView" ItemsSource="{Binding FilterTree}" MinWidth="500"
                       SelectedItemChanged="TreeView_SelectedItemChanged">
                     <TreeView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type domain:FilterCategory}" ItemsSource="{Binding FilterTree}">
@@ -43,9 +43,30 @@
             </Grid>
         </DockPanel>
 
-
-        <TextBlock  Grid.Column="1">
-            
-        </TextBlock>
+        <DockPanel Grid.Column="1">
+            <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="domainTag:TierTag">
+                        <materialDesign:Card Width="Auto">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" MinWidth="120" />
+                                    <ColumnDefinition Width="Auto" MinWidth="200"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding PrimaryTag}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                                <TextBox Grid.Column="1">
+                                    <TextBox.Text>
+                                        <MultiBinding Mode="OneWay" Converter="{StaticResource ArrayAccess}">
+                                            <Binding Source="{StaticResource proxy}" Path="Data.SelectedTagCapsule"/>
+                                            <Binding Path="PrimaryTag"/>
+                                        </MultiBinding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </Grid>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
     </Grid>
 </UserControl>
