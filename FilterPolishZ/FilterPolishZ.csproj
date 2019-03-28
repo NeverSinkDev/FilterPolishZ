@@ -100,9 +100,6 @@
     <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ModuleWindows\TagEditing\TagEditor\TagEditorView.xaml.cs">
-      <DependentUpon>TagEditorView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
@@ -141,10 +138,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModuleWindows\TagEditing\TagEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ModuleWindows\TagEditing\TagEditor\TagEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

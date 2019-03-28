@@ -5,6 +5,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:domain="clr-namespace:FilterPolishZ.ModuleWindows.TagEditing"
              xmlns:domainTag="clr-namespace:FilterCore.FilterComponents.Tags;assembly=FilterCore"
+             xmlns:domainEntry="clr-namespace:FilterCore.Entry;assembly=FilterCore"
              xmlns:wpfUtil="clr-namespace:FilterPolishZ.Util"
              xmlns:converter="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,6 +26,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <DockPanel Grid.Column="0">
@@ -36,14 +38,38 @@
                             <TextBlock Text="{Binding Name}" Margin="3 2"/>
                         </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type domain:FilterFinalCategory}">
-                            <TextBlock Text="{Binding Name}" Margin="3 2" />
+                            <TextBlock Text="{Binding Name}" Margin="3 2">
+                                <!--<TextBlock.Foreground>
+                                        <MultiBinding Mode="OneWay" Converter="{StaticResource ArrayAccess}">
+                                            <Binding Source="{StaticResource proxy}" Path="Data.SelectedTagCapsule"/>
+                                            <Binding Path="PrimaryTag"/>
+                                        </MultiBinding>
+                                </TextBlock.Foreground>-->
+                            </TextBlock>
                         </DataTemplate>
                     </TreeView.Resources>
                 </TreeView>
             </Grid>
         </DockPanel>
 
-        <DockPanel Grid.Column="1">
+        <DockPanel Grid.Column="1" HorizontalAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ListBox ItemsSource="{Binding SelectedEntries}" Grid.Column="0" Width="Auto" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="domainEntry:FilterEntry">
+                            <materialDesign:Card Padding="2 2 2 2" Width="Auto">
+                                <TextBlock Text="{Binding SerializeMergedString}"/>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </DockPanel>
+        
+        <DockPanel Grid.Column="2">
             <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="domainTag:TierTag">

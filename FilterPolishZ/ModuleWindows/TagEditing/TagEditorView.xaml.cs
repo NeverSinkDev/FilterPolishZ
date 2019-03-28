@@ -34,6 +34,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
 
         public ObservableCollection<TierTag> TierTags { get; set; } = new ObservableCollection<TierTag>();
+        public ObservableCollection<FilterEntry> SelectedEntries { get; set; } = new ObservableCollection<FilterEntry>();
 
         public Capsule SelectedTagCapsule => new Capsule((string s) => this.GetCurrentTagValue(s));
 
@@ -42,12 +43,12 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         public TagEditorView()
         {
             this.InitializeTagLogic();
-            this.InitializeTierTags();
+            this.InitializeTierTagsOnChange();
             this.DataContext = this;
             InitializeComponent();
         }
 
-        private void InitializeTierTags()
+        private void InitializeTierTagsOnChange()
         {
             this.TierTags.Clear();
             FilterConstants.TierTagTypes.ForEach(x => TierTags.Add(new TierTag(x)));
@@ -98,11 +99,18 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                     continue;
                 }
 
+                var tagText = item.Header?.TierTags?.Serialize();
+                if (string.IsNullOrEmpty(tagText))
+                {
+                    tagText = "untagged";
+                }
+
                 cursor.Add(new FilterFinalCategory()
                 {
-                    Name = string.Join(" ", item.Serialize()),
+                    Name = tagText , // string.Join(" ", item.Serialize()),
                     Parent = cursor,
                     Entry = item as FilterEntry
+                    
                 });
             }
         }
@@ -115,6 +123,19 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             {
                 return string.Empty;
             }
+
+            var tags = (selected as IFilterCategoryEntity).Select(x => x.Entry.Header.TierTags);
+            var relevantTags = tags
+                .Where(x => x != null)
+                .Where(x => x.ContainsKey(s))
+                .Select(x => x[s].Serialize()).ToList();
+
+            if (relevantTags.Count == 0)
+            {
+                relevantTags.Add("none");
+            }
+
+            return string.Join(System.Environment.NewLine,relevantTags);
 
             switch (selected)
             {
@@ -141,8 +162,17 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            this.InitializeTierTags();
+            this.InitializeTierTagsOnChange();
+            this.InitializeSelectedEntriesOnChange();
+        }
 
+        private void InitializeSelectedEntriesOnChange()
+        {
+            var selected = this.TreeView?.SelectedItem;
+            if (selected is IFilterCategoryEntity ent)
+            {
+                this.SelectedEntries = new ObservableCollection<FilterEntry>(ent.GetEntries().Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content));
+            }
         }
     }
 }

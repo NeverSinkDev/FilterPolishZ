@@ -69,6 +69,8 @@ namespace FilterCore.Entry
             return result;
         }
 
+        public string SerializeMergedString => string.Join(System.Environment.NewLine, this.Serialize());
+
         public static FilterEntry CreateDataEntry(IFilterLine line)
         {
             var entry = new FilterEntry();
