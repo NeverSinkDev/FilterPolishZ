@@ -38,6 +38,8 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         public Capsule SelectedTagCapsule => new Capsule((string s) => this.GetCurrentTagValue(s));
 
+        public string UnknownTags { get; set; }
+
         //public ObservableCollection
 
         public TagEditorView()
@@ -125,17 +127,23 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             }
 
             var tags = (selected as IFilterCategoryEntity).Select(x => x.Entry.Header.TierTags);
+            var count = tags.Count();
+
             var relevantTags = tags
                 .Where(x => x != null)
                 .Where(x => x.ContainsKey(s))
                 .Select(x => x[s].Serialize()).ToList();
 
-            if (relevantTags.Count == 0)
+            var emptyCount = count - relevantTags.Count;
+
+            var results = relevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}]").ToList();
+
+            if (emptyCount > 0)
             {
-                relevantTags.Add("none");
+                results.Add($"[{emptyCount}/{count}] EMPTY");
             }
 
-            return string.Join(System.Environment.NewLine,relevantTags);
+            return string.Join(System.Environment.NewLine, results);
 
             switch (selected)
             {
@@ -163,7 +171,30 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             this.InitializeTierTagsOnChange();
+            this.InitializeUnknownTagsOnChange();
             this.InitializeSelectedEntriesOnChange();
+        }
+
+        private void InitializeUnknownTagsOnChange()
+        {
+            var selected = this.TreeView?.SelectedItem;
+
+            if (selected == null)
+            {
+                this.UnknownTags = "none";
+            }
+
+            var tags = (selected as IFilterCategoryEntity).Select(x => x.Entry.Header.TierTags);
+            var count = tags.Count();
+
+            var irelevantTags = tags
+                .Where(x => x != null)
+                .SelectMany(x => x.TierTags).Where(x => !FilterConstants.TierTagTypes.Contains(x.Key))
+                .Select(x => x.Value.Serialize())
+                .ToList();
+
+            var results = irelevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}]").ToList();
+            this.UnknownTags = string.Join(System.Environment.NewLine, results);
         }
 
         private void InitializeSelectedEntriesOnChange()

@@ -70,29 +70,46 @@
         </DockPanel>
         
         <DockPanel Grid.Column="2">
-            <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="domainTag:TierTag">
-                        <materialDesign:Card Width="Auto">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" MinWidth="120" />
-                                    <ColumnDefinition Width="Auto" MinWidth="200"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding PrimaryTag}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
-                                <TextBox Grid.Column="1">
-                                    <TextBox.Text>
-                                        <MultiBinding Mode="OneWay" Converter="{StaticResource ArrayAccess}">
-                                            <Binding Source="{StaticResource proxy}" Path="Data.SelectedTagCapsule"/>
-                                            <Binding Path="PrimaryTag"/>
-                                        </MultiBinding>
-                                    </TextBox.Text>
-                                </TextBox>
-                            </Grid>
-                        </materialDesign:Card>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView" Grid.Row="0" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="domainTag:TierTag">
+                            <materialDesign:Card Width="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" MinWidth="120" />
+                                        <ColumnDefinition Width="*" MinWidth="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding PrimaryTag}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                                    <TextBox Grid.Column="1">
+                                        <TextBox.Text>
+                                            <MultiBinding Mode="OneWay" Converter="{StaticResource ArrayAccess}">
+                                                <Binding Source="{StaticResource proxy}" Path="Data.SelectedTagCapsule"/>
+                                                <Binding Path="PrimaryTag"/>
+                                            </MultiBinding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                </Grid>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <materialDesign:Card Grid.Row="1" Width="Auto" Background="SandyBrown">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="120" />
+                            <ColumnDefinition Width="*" MinWidth="200"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="???:" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+                        <TextBox Grid.Column="1" Text="{Binding UnknownTags, Mode=OneWay}"/>
+                    </Grid>
+                </materialDesign:Card>
+            </Grid>
+
         </DockPanel>
     </Grid>
 </UserControl>
