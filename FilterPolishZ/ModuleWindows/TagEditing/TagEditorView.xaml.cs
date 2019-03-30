@@ -205,5 +205,33 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 this.SelectedEntries = new ObservableCollection<FilterEntry>(ent.GetEntries().Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content));
             }
         }
+
+        private void OnTagSetButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button button)
+            {
+                if (button.Parent is System.Windows.Controls.Grid parent)
+                {
+                    string tagType, newTagValue;
+                    IFilterEntry entry;
+
+                    if (parent.Children[0] is TextBlock tagTypeText)
+                    {
+                        tagType = tagTypeText.Text;
+                    }
+                    else return;
+
+                    if (parent.Children[1] is TextBox tagInputField)
+                    {
+                        newTagValue = tagInputField.Text;
+                        var tagObject = tagInputField.DataContext as TierTag;
+                        entry = null; //todo
+                    }
+                    else return;
+                    
+                    
+                }
+            }
+        }
     }
 }

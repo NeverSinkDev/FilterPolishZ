@@ -83,6 +83,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" MinWidth="120" />
                                         <ColumnDefinition Width="*" MinWidth="200"/>
+                                        <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding PrimaryTag}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
                                     <TextBox Grid.Column="1">
@@ -93,6 +94,7 @@
                                             </MultiBinding>
                                         </TextBox.Text>
                                     </TextBox>
+                                    <Button Grid.Column="2" Click="OnTagSetButtonClick">Set</Button>
                                 </Grid>
                             </materialDesign:Card>
                         </DataTemplate>
