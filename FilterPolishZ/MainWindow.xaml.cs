@@ -18,6 +18,8 @@ using FilterPolishZ.Domain;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using FilterCore.Commands;
+using FilterCore.Constants;
 using MethodTimer;
 
 namespace FilterPolishZ
@@ -75,11 +77,44 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private async Task WriteFilter(Filter filter)
+        private void WriteFilter(Filter baseFilter)
         {
-            var result = filter.Serialize();
-            var seedFolder = Configuration.AppSettings["SeedFile Folder"];
-            await FileWork.WriteTextAsync(seedFolder + "/" + "test" + ".filter", result);
+            var baseFilterString = baseFilter.Serialize();
+            var outputFolder = Configuration.AppSettings["Output Folder"];
+            var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
+            
+            for (var i = 0; i < FilterConstants.FilterStrictnessLevels.Count; i++)
+            {
+                foreach (var style in FilterConstants.FilterStyles)
+                {
+                    GenerateAllStrictnessLevels(style, i);
+                }
+                
+                // default style
+                GenerateAllStrictnessLevels("", i);
+            }
+
+            void GenerateAllStrictnessLevels(string style, int i)
+            {
+                var filePath = outputFolder;
+                var filter = new Filter(baseFilterString);
+                new FilterTableOfContentsCreator(filter);
+
+                new StrictnessGenerator(filter, i).Apply();
+
+                if (style != "")
+                {
+                    new StyleGenerator(filter, styleSheetFolderPath + style + ".fsty").Apply();
+                    filePath += style + "\\";
+                }
+
+                if (!System.IO.Directory.Exists(filePath)) System.IO.Directory.CreateDirectory(filePath);
+
+                filePath += i + FilterConstants.FilterStrictnessLevels[i] + ".filter";
+                var result = filter.Serialize();
+
+                FileWork.WriteTextAsync(filePath, result);
+            }
         }
 
         [Time]

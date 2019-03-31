@@ -149,7 +149,6 @@ namespace FilterCore
 
         public List<string> Serialize()
         {
-            new FilterTableOfContentsCreator(this);
             var results = new List<string>();
             this.FilterEntries.ForEach(x => results.AddRange(x.Serialize()));
             return results;

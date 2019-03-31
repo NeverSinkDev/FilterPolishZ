@@ -54,11 +54,17 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (!IsSectionTitleEntry(entry)) continue;
-                
-                if (entry.Content.Content["comment"][1].Comment.Contains("[WELCOME]"))
+                if (entry.Header.Type != FilterConstants.FilterEntryType.Comment)
                 {
-                    return entry;
+                    continue;
+                }
+
+                if (entry.Content.Content.ContainsKey("comment") && entry.Content.Content["comment"].Count > 2)
+                {
+                    if (entry.Content.Content["comment"][1].Comment.Contains("[WELCOME]"))
+                    {
+                        return entry;
+                    }
                 }
             }
             
