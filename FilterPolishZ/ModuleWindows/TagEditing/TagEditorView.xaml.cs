@@ -208,30 +208,38 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         private void OnTagSetButtonClick(object sender, RoutedEventArgs e)
         {
-            if (sender is System.Windows.Controls.Button button)
+            if (!(sender is Button button)) return;
+            if (!(button.Parent is Grid parent)) return;
+            
+            string tagType, newTagValue;
+
+            if (parent.Children[0] is TextBlock tagTypeText)
             {
-                if (button.Parent is System.Windows.Controls.Grid parent)
+                tagType = tagTypeText.Text;
+            }
+            else return;
+
+            if (parent.Children[1] is TextBox tagInputField)
+            {
+                newTagValue = tagInputField.Text;
+            }
+            else return;
+
+            foreach (var entry in this.SelectedEntries)
+            {
+                var tags = entry.Header.TierTags; 
+                        
+                if (tags.ContainsKey(tagType))
                 {
-                    string tagType, newTagValue;
-                    IFilterEntry entry;
-
-                    if (parent.Children[0] is TextBlock tagTypeText)
-                    {
-                        tagType = tagTypeText.Text;
-                    }
-                    else return;
-
-                    if (parent.Children[1] is TextBox tagInputField)
-                    {
-                        newTagValue = tagInputField.Text;
-                        var tagObject = tagInputField.DataContext as TierTag;
-                        entry = null; //todo
-                    }
-                    else return;
-                    
-                    
+                    tags[tagType] = new TierTag(newTagValue);
+                }
+                else
+                {
+                    tags.Add(tagType + "->" + newTagValue);
                 }
             }
+
+            // todo: re-serialize filter files for current version
         }
     }
 }

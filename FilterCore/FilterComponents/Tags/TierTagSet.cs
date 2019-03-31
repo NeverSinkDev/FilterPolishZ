@@ -61,6 +61,8 @@ namespace FilterCore.FilterComponents.Tags
             {
                 return this.TierTags[key];
             }
+
+            set { this.TierTags[key] = value; }
         }
 
         public string Serialize()
