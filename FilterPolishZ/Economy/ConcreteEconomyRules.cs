@@ -32,15 +32,14 @@ namespace FilterPolishZ.Economy
             FilterEconomyRuleSet uniqueRules = new FilterEconomyRuleSet() { GoverningSection = "uniques" };
             uniqueRules.DefaultItemQuery = new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => EconomyInformation.EconomyTierlistOverview["uniques"][s]);
 
-
             // Anchor item
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
                 TargetTier = "current",
                 Rule = (string s) =>
                 {
-
-                    return uniqueRules.DefaultSet.Select(x => x.Aspects).ToList().Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
+                    return uniqueRules.DefaultSet.Select(x => x.Aspects).ToList()
+                    .Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
                 }
             });
 

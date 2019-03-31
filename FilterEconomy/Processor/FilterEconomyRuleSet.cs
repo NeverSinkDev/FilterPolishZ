@@ -59,6 +59,7 @@ namespace FilterEconomy.Processor
         public string OldTier { get; set; }
         public string NewTier { get; set; }
         public string Group { get; set; }
+        public bool Change { get; set; }
 
         public void Execute()
         {

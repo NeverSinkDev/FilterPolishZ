@@ -31,6 +31,8 @@ namespace FilterCore.Constants
             LineTypesSort.Add("comment", i);
         }
 
+        public static List<string> ignoredAspects = new List<string>() { "AnchorAspect", "IgnoreAspect", "ProphecyResultAspect", "NonDropAspect" };
+
         public static List<string> TierTagTypes = new List<string>()
         {
             "type",
