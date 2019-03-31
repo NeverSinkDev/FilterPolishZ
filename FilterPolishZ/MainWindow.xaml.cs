@@ -1,4 +1,5 @@
-﻿using FilterCore;
+﻿using System;
+using FilterCore;
 using FilterCore.FilterComponents.Tier;
 using FilterPolishZ.Configuration;
 using System.Collections.Generic;
@@ -77,43 +78,45 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private void WriteFilter(Filter baseFilter)
+        private async Task WriteFilter(Filter baseFilter)
         {
             var baseFilterString = baseFilter.Serialize();
             var outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
+            var generationTasks = new List<Task>();
             
             for (var i = 0; i < FilterConstants.FilterStrictnessLevels.Count; i++)
             {
-                foreach (var style in FilterConstants.FilterStyles)
-                {
-                    GenerateAllStrictnessLevels(style, i);
-                }
-                
+                generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, i)));
+
                 // default style
-                GenerateAllStrictnessLevels("", i);
+                generationTasks.Add(GenerateFilter_Inner("", i));
             }
 
-            void GenerateAllStrictnessLevels(string style, int i)
+            await Task.WhenAll(generationTasks);
+            InfoPopUpMessageDisplay.ShowInfoMessageBox("Filter generation successfully done!");
+
+            // local func
+            async Task GenerateFilter_Inner(string style, int strictnessIndex)
             {
                 var filePath = outputFolder;
+                var fileName = "NeverSink's filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
+                
                 new FilterTableOfContentsCreator(filter);
-
-                new StrictnessGenerator(filter, i).Apply();
+                new StrictnessGenerator(filter, strictnessIndex).Apply();
 
                 if (style != "")
                 {
                     new StyleGenerator(filter, styleSheetFolderPath + style + ".fsty").Apply();
-                    filePath += style + "\\";
+                    filePath += "(STYLE) " + style.ToUpper() + "\\";
+                    fileName += " (" + style + ") ";
                 }
 
                 if (!System.IO.Directory.Exists(filePath)) System.IO.Directory.CreateDirectory(filePath);
-
-                filePath += i + FilterConstants.FilterStrictnessLevels[i] + ".filter";
+                
                 var result = filter.Serialize();
-
-                FileWork.WriteTextAsync(filePath, result);
+                await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
             }
         }
 

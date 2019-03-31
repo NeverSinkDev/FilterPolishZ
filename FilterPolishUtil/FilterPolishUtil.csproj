@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +48,7 @@
     <Compile Include="Constants\FilterPolishConstants.cs" />
     <Compile Include="Extensions\EDictionary.cs" />
     <Compile Include="Extensions\EIEnumerable.cs" />
+    <Compile Include="InfoPopUpMessageDisplay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\AutoBiDictionary.cs" />
     <Compile Include="FileWork.cs" />
