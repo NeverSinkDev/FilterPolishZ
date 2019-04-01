@@ -23,6 +23,40 @@ namespace FilterEconomy.Facades
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierListOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() } };
 
+        public string LeagueType { get; set; }
+        public string BaseStoragePath { get; set; }
+        
+        public void LoadFromSaveFile()
+        {
+            foreach (var branchKey in EconomyRequestFacade.GetInstance().EconomyTierlistOverview.Keys)
+            {
+                var filePath = this.GetItemInfoSaveFilePath(branchKey);
+
+                if (File.Exists(filePath))
+                {
+                    var fileText = File.ReadAllText(filePath);
+                    this.Deserialize(branchKey, fileText);
+                }
+
+                var economyData = EconomyRequestFacade.GetInstance();
+                this.MigrateAspectDataToEcoData(economyData, branchKey);
+            }
+        }
+        
+        public void LoadFromSaveFile(string branchKey)
+        {
+            var filePath = this.GetItemInfoSaveFilePath(branchKey);
+
+            if (File.Exists(filePath))
+            {
+                var fileText = File.ReadAllText(filePath);
+                this.Deserialize(branchKey, fileText);
+            }
+
+            var economyData = EconomyRequestFacade.GetInstance();
+            this.MigrateAspectDataToEcoData(economyData, branchKey);
+        }
+
         public void ExtractAspectDataFromEcoData(EconomyRequestFacade ecoData, string branchKey)
         {
             var targetDic = this.EconomyTierListOverview[branchKey];
@@ -96,9 +130,9 @@ namespace FilterEconomy.Facades
             }
         }
 
-        public void SaveItemInformation(string leagueType, string branchKey, string baseStoragePath)
+        public void SaveItemInformation(string branchKey)
         {
-            var fileFullPath = GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var fileFullPath = GetItemInfoSaveFilePath(branchKey);
             this.SaveItemInformation(fileFullPath, branchKey);
         }
 
@@ -119,9 +153,9 @@ namespace FilterEconomy.Facades
             this.EconomyTierListOverview[branchKey] = newObj;
         }
 
-        public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string leagueType, string branchKey, string baseStoragePath)
+        public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string branchKey)
         {
-            var fileFullPath = GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
+            var fileFullPath = GetItemInfoSaveFilePath(branchKey);
             var responseString = File.Exists(fileFullPath) ? FileWork.ReadFromFile(fileFullPath) : "";
             return ItemInformationParser.CreateOverviewDictionary(ItemInformationParser.ParseItemInformationString(responseString).ToList());
         }
@@ -139,9 +173,9 @@ namespace FilterEconomy.Facades
             }
         }
         
-        public static string GetItemInfoSaveFilePath(string leagueType, string branchKey, string baseStoragePath)
+        private string GetItemInfoSaveFilePath(string branchKey)
         {
-            var directoryPath = $"{baseStoragePath}/{leagueType}";
+            var directoryPath = $"{this.BaseStoragePath}/{this.LeagueType}";
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
 

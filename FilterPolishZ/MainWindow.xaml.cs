@@ -157,20 +157,24 @@ namespace FilterPolishZ
         private ItemInformationFacade LoadItemInformationOverview()
         {
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
-
+            
+            var leagueType = Configuration.AppSettings["Ninja League"];
             var baseStoragePath = Configuration.AppSettings["SeedFile Folder"];
 
-            var variation = "defaultSorting";
+            result.LeagueType = leagueType;
+            result.BaseStoragePath = baseStoragePath;
 
-            PerformItemInfoRequest(variation, "divination");
-            PerformItemInfoRequest(variation, "uniques");
-            PerformItemInfoRequest(variation, "maps->uniques");
-            PerformItemInfoRequest(variation, "basetypes");
+            PerformItemInfoRequest("divination");
+            PerformItemInfoRequest("uniques");
+            PerformItemInfoRequest("maps->uniques");
+            PerformItemInfoRequest("basetypes");
 
-            void PerformItemInfoRequest(string loadPath, string requestKey) =>
+            void PerformItemInfoRequest(string requestKey) =>
                 result.AddToDictionary(requestKey,
-                result.LoadItemInformation(loadPath, requestKey, baseStoragePath));
+                result.LoadItemInformation(requestKey));
 
+            result.LoadFromSaveFile();
+            
             return result;
         }
 

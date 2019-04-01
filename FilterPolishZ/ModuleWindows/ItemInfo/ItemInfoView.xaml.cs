@@ -66,13 +66,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             var ecoData = this.GetCurrentDisplayItems();
             ecoData.ToList().ForEach(z => this.ItemInformationData.Add(z));
             if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = ItemInformationData;
-            
-            // load saved data
-            if (!this.visitedBranches.Contains(this.GetBranchKey()))
-            {
-                this.LoadInsta_Click(null, null);
-                this.visitedBranches.Add(this.GetBranchKey());
-            }
         }
 
         private Dictionary<string, ItemList<NinjaItem>> GetCurrentDisplayItems()
@@ -135,12 +128,9 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void SaveInsta_Click(object sender, RoutedEventArgs e)
         {
-            var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
-            var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
             var branchKey = this.GetBranchKey();
-            
             this.ItemInfoData.ExtractAspectDataFromEcoData(this.EconomyData, branchKey);
-            this.ItemInfoData.SaveItemInformation(leagueType, branchKey, baseStoragePath);
+            this.ItemInfoData.SaveItemInformation(branchKey);
         }
 
         private void SaveInfoAs(object sender, RoutedEventArgs e)
@@ -157,19 +147,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void LoadInsta_Click(object sender, RoutedEventArgs e)
         {
-            var leagueType = LocalConfiguration.GetInstance().AppSettings["Ninja League"];
-            var baseStoragePath = LocalConfiguration.GetInstance().AppSettings["SeedFile Folder"];
-            var branchKey = this.GetBranchKey();
-            
-            var filePath = ItemInformationFacade.GetItemInfoSaveFilePath(leagueType, branchKey, baseStoragePath);
-
-            if (System.IO.File.Exists(filePath))
-            {
-                var fileText = System.IO.File.ReadAllText(filePath);
-                this.ItemInfoData.Deserialize(branchKey, fileText);
-            }
-
-            this.ItemInfoData.MigrateAspectDataToEcoData(this.EconomyData, branchKey);
+            this.ItemInfoData.LoadFromSaveFile(this.GetBranchKey());
         }
 
         private void LoadFromFile(object sender, RoutedEventArgs e)
