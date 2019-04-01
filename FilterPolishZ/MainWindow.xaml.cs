@@ -51,11 +51,7 @@ namespace FilterPolishZ
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // Initialize 
-            var economyTieringSystem = new ConcreteEconomyRules()
-            {
-                TierInformation = TierListFacade.TierListData,
-                EconomyInformation = this.EconomyData
-            };
+            var economyTieringSystem = new ConcreteEconomyRules();
 
             economyTieringSystem.Execute();
 

@@ -20,6 +20,7 @@ namespace FilterPolishZ.Economy
         public ConcreteEconomyRules()
         {
             this.uniqueRules = this.CreateUniqueEconomyRules();
+            this.EconomyInformation = EconomyRequestFacade.GetInstance();
             this.ItemInformation = ItemInformationFacade.GetInstance();
         }
 
