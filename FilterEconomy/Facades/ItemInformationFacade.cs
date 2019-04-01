@@ -59,6 +59,21 @@ namespace FilterEconomy.Facades
             }
         }
 
+        public List<ItemInformationData> this[string tierList,string basetype]
+        {
+            get
+            {
+                var targetTierList = this.EconomyTierListOverview[tierList];
+
+                if (!targetTierList.ContainsKey(basetype))
+                {
+                    return null;
+                }
+
+                return targetTierList[basetype];
+            }
+        }
+
         public void MigrateAspectDataToEcoData(EconomyRequestFacade ecoData, string branchKey)
         {
             var targetDic = ecoData.EconomyTierlistOverview[branchKey];
