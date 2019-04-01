@@ -20,6 +20,7 @@ namespace FilterPolishZ.Economy
         public ConcreteEconomyRules()
         {
             this.uniqueRules = this.CreateUniqueEconomyRules();
+            this.ItemInformation = ItemInformationFacade.GetInstance();
         }
 
         public void Execute()
@@ -96,6 +97,12 @@ namespace FilterPolishZ.Economy
                 TargetTier = "Prophecy",
                 Rule = (string s) =>
                 {
+                    var aspects = ItemInformation["uniques", s];
+                    if (aspects == null)
+                    {
+                        return true;
+                    }
+
                     return uniqueRules.DefaultSet.Any(z => z.Aspects.Any(j => j.Name == "ProphecyMaterialAspect"));
                 }
             });

@@ -20,7 +20,7 @@ namespace FilterEconomy.Request.Enrichment
 
             if (data.Count > 1)
             {
-                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.ignoredAspects.Contains(z.Name))).ToList();
+                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name))).ToList();
                 if (filteredData.Count >= 1)
                 {
                     target = filteredData;

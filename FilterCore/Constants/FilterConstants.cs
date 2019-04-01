@@ -32,6 +32,7 @@ namespace FilterCore.Constants
         }
 
         public static List<string> ignoredAspects = new List<string>() { "AnchorAspect", "IgnoreAspect", "ProphecyResultAspect", "NonDropAspect" };
+        public static List<string> IgnoredLowestPriceAspects { get; } = new List<string>() { "AnchorAspect", "IgnoreAspect", "ProphecyResultAspect", "NonDropAspect" };
 
         public static List<string> TierTagTypes = new List<string>()
         {
