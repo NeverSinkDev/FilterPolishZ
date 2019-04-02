@@ -3,6 +3,7 @@ using FilterCore;
 using FilterCore.FilterComponents.Tier;
 using FilterPolishZ.Configuration;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,8 +67,6 @@ namespace FilterPolishZ
             // Initialize Settings
             this.InitializeComponent();
             this.DataContext = new MainWindowViewModel();
-
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
         }
 
         [Time]
@@ -196,6 +195,35 @@ namespace FilterPolishZ
             }
 
             MenuToggleButton.IsChecked = false;
+        }
+
+        private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
+        }
+
+        private void OpenFilterFolder(object sender, RoutedEventArgs e)
+        {
+            var poePath = "%userprofile%/Documents/My Games/Path of Exile";
+            poePath = Environment.ExpandEnvironmentVariables(poePath);
+            Process.Start(poePath);
+        }
+
+        private void OpenOutputFolder(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Configuration.AppSettings["Output Folder"]);
+        }
+
+        private void CopyResultFilesToFilterFolder(object sender, RoutedEventArgs e)
+        {
+            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile"; 
+            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+            
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            {
+                if (!file.EndsWith(".filter")) continue;
+                System.IO.File.Copy(file, poeFolder + "\\" + file.Split('/', '\\').Last());
+            }
         }
     }
 }

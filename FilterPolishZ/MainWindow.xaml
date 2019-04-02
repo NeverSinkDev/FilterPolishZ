@@ -61,11 +61,12 @@
                             <!-- top right open menu button -->
                             <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                                 <StackPanel>
-                                    <Button Content="Hello World"/>
-                                    <Button Content="Nice Popup"/>
-                                    <Button Content="Can't Touch This" IsEnabled="False" />
+                                    <Button Content="Generate all filters" Click="GenerateAllFilterFiles"/>
                                     <Separator/>
-                                    <Button Content="Goodbye"/>
+                                    <Button Content="Open filter folder" Click="OpenFilterFolder"/>
+                                    <Button Content="Open output folder" Click="OpenOutputFolder"/>
+                                    <Separator/>
+                                    <Button Content="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder"/>
                                 </StackPanel>
                             </materialDesign:PopupBox>
 
