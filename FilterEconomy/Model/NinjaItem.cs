@@ -62,5 +62,8 @@ namespace FilterEconomy.Model
         {
             return this.Icon.Contains("relic=1");
         }
+
+        // this item was manually created because it was missing from the (poeNinja) data
+        public bool IsVirtual { get; set; }
     }
 }

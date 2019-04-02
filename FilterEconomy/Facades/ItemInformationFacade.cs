@@ -30,16 +30,7 @@ namespace FilterEconomy.Facades
         {
             foreach (var branchKey in EconomyRequestFacade.GetInstance().EconomyTierlistOverview.Keys)
             {
-                var filePath = this.GetItemInfoSaveFilePath(branchKey);
-
-                if (File.Exists(filePath))
-                {
-                    var fileText = File.ReadAllText(filePath);
-                    this.Deserialize(branchKey, fileText);
-                }
-
-                var economyData = EconomyRequestFacade.GetInstance();
-                this.MigrateAspectDataToEcoData(economyData, branchKey);
+                this.LoadFromSaveFile(branchKey);
             }
         }
         
@@ -117,13 +108,22 @@ namespace FilterEconomy.Facades
                 var baseType = keyValuePair.Key;
                 var sourceItemList = keyValuePair.Value;
                 
-                if (!targetDic.ContainsKey(baseType)) throw new Exception("unknown base"); // todo
+                if (!targetDic.ContainsKey(baseType))
+                {
+                    targetDic.Add(baseType, new ItemList<NinjaItem>());
+                }
+                
                 var targetItems = targetDic[baseType];
 
                 foreach (var sourceItem in sourceItemList)
                 {
                     var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
-                    if (targetItem == null) throw new Exception("unknown item/unique"); // todo
+                    if (targetItem == null)
+                    {
+                        var newItem = new NinjaItem { BaseType = baseType, Name = sourceItem.Name, IsVirtual = true };
+                        targetItems.Add(newItem);
+                        targetItem = newItem;
+                    }
 
                     targetItem.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects);
                 }

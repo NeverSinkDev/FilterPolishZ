@@ -160,14 +160,12 @@ namespace FilterPolishZ
             result.LeagueType = leagueType;
             result.BaseStoragePath = baseStoragePath;
 
-            PerformItemInfoRequest("divination");
-            PerformItemInfoRequest("uniques");
-            PerformItemInfoRequest("maps->uniques");
-            PerformItemInfoRequest("basetypes");
-
-            void PerformItemInfoRequest(string requestKey) =>
-                result.AddToDictionary(requestKey,
-                result.LoadItemInformation(requestKey));
+            var branchKeys = new List<string>
+            {
+                "divination", "uniques", "maps->uniques", "basetypes"
+            };
+            
+            branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));
 
             result.LoadFromSaveFile();
             
