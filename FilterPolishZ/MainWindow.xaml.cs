@@ -43,6 +43,7 @@ namespace FilterPolishZ
 
         public MainWindow()
         {
+            InfoPopUpMessageDisplay.InitExceptionHandling();
             ConcreteEnrichmentProcedures.Initialize();
 
             // Initialize Modules
@@ -67,7 +68,6 @@ namespace FilterPolishZ
             this.DataContext = new MainWindowViewModel();
 
             Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
-
         }
 
         [Time]
@@ -85,12 +85,12 @@ namespace FilterPolishZ
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
             
-            for (var i = 0; i < FilterConstants.FilterStrictnessLevels.Count; i++)
+            for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
-                generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, i)));
+                generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, strictnessIndex)));
 
                 // default style
-                generationTasks.Add(GenerateFilter_Inner("", i));
+                generationTasks.Add(GenerateFilter_Inner("", strictnessIndex));
             }
 
             await Task.WhenAll(generationTasks);
