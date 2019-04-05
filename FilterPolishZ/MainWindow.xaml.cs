@@ -1,7 +1,9 @@
-﻿using FilterCore;
+﻿using System;
+using FilterCore;
 using FilterCore.FilterComponents.Tier;
 using FilterPolishZ.Configuration;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,6 +44,7 @@ namespace FilterPolishZ
 
         public MainWindow()
         {
+            InfoPopUpMessageDisplay.InitExceptionHandling();
             ConcreteEnrichmentProcedures.Initialize();
 
             // Initialize Modules
@@ -60,9 +63,6 @@ namespace FilterPolishZ
             // Initialize Settings
             this.InitializeComponent();
             this.DataContext = new MainWindowViewModel();
-
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
-
         }
 
         [Time]
@@ -73,43 +73,45 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private void WriteFilter(Filter baseFilter)
+        private async Task WriteFilter(Filter baseFilter)
         {
             var baseFilterString = baseFilter.Serialize();
             var outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
+            var generationTasks = new List<Task>();
             
-            for (var i = 0; i < FilterConstants.FilterStrictnessLevels.Count; i++)
+            for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
-                foreach (var style in FilterConstants.FilterStyles)
-                {
-                    GenerateAllStrictnessLevels(style, i);
-                }
-                
+                generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, strictnessIndex)));
+
                 // default style
-                GenerateAllStrictnessLevels("", i);
+                generationTasks.Add(GenerateFilter_Inner("", strictnessIndex));
             }
 
-            void GenerateAllStrictnessLevels(string style, int i)
+            await Task.WhenAll(generationTasks);
+            InfoPopUpMessageDisplay.ShowInfoMessageBox("Filter generation successfully done!");
+
+            // local func
+            async Task GenerateFilter_Inner(string style, int strictnessIndex)
             {
                 var filePath = outputFolder;
+                var fileName = "NeverSink's filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
+                
                 new FilterTableOfContentsCreator(filter);
-
-                new StrictnessGenerator(filter, i).Apply();
+                new StrictnessGenerator(filter, strictnessIndex).Apply();
 
                 if (style != "")
                 {
                     new StyleGenerator(filter, styleSheetFolderPath + style + ".fsty").Apply();
-                    filePath += style + "\\";
+                    filePath += "(STYLE) " + style.ToUpper() + "\\";
+                    fileName += " (" + style + ") ";
                 }
 
                 if (!System.IO.Directory.Exists(filePath)) System.IO.Directory.CreateDirectory(filePath);
-
-                filePath += i + FilterConstants.FilterStrictnessLevels[i] + ".filter";
+                
                 var result = filter.Serialize();
-
-                FileWork.WriteTextAsync(filePath, result);
+                await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
             }
         }
 
@@ -191,6 +193,35 @@ namespace FilterPolishZ
             }
 
             MenuToggleButton.IsChecked = false;
+        }
+
+        private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter));
+        }
+
+        private void OpenFilterFolder(object sender, RoutedEventArgs e)
+        {
+            var poePath = "%userprofile%/Documents/My Games/Path of Exile";
+            poePath = Environment.ExpandEnvironmentVariables(poePath);
+            Process.Start(poePath);
+        }
+
+        private void OpenOutputFolder(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Configuration.AppSettings["Output Folder"]);
+        }
+
+        private void CopyResultFilesToFilterFolder(object sender, RoutedEventArgs e)
+        {
+            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile"; 
+            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+            
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            {
+                if (!file.EndsWith(".filter")) continue;
+                System.IO.File.Copy(file, poeFolder + "\\" + file.Split('/', '\\').Last());
+            }
         }
     }
 }
