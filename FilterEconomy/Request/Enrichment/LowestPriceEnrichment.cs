@@ -7,6 +7,7 @@ using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Extensions;
 
 namespace FilterEconomy.Request.Enrichment
 {
@@ -20,7 +21,16 @@ namespace FilterEconomy.Request.Enrichment
 
             if (data.Count > 1)
             {
-                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name))).ToList();
+                if (target.All(x => x.Aspects.Any(z => !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))))
+                {
+                    if (target.All(x => x.Aspects.Any(z => FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name))))
+                    {
+                        data.LowestPrice = target.Min(x => x.CVal);
+                        return;
+                    }
+                }
+
+                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))).ToList();
                 if (filteredData.Count >= 1)
                 {
                     target = filteredData;

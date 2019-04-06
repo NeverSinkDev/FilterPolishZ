@@ -9,7 +9,7 @@ namespace FilterEconomy.Facades
 {
     public class TierListFacade
     {
-        public static TierListFacade Instance { get; set; }
+        private static TierListFacade Instance { get; set; }
         public Dictionary<string, TierGroup> TierListData { get; set; } = new Dictionary<string, TierGroup>();
 
         private TierListFacade()
@@ -24,6 +24,16 @@ namespace FilterEconomy.Facades
                 Instance = new TierListFacade();
             }
             return Instance;
+        }
+
+        public bool ContainsTierInformationForBaseType(string group, string basetype)
+        {
+            return TierListData[group].ItemTiering.ContainsKey(basetype);
+        }
+
+        public List<string> GetTiersForBasetype(string group, string basetype)
+        {
+            return TierListData[group].ItemTiering[basetype];
         }
     }
 }

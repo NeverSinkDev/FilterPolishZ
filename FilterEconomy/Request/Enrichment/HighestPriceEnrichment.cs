@@ -19,7 +19,16 @@ namespace FilterEconomy.Request.Enrichment
 
             if (data.Count > 1)
             {
-                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.ignoredAspects.Contains(z.Name))).ToList();
+                if (target.All(x => x.Aspects.All(z => !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))))
+                {
+                    if (target.All(x => x.Aspects.Any(z => FilterConstants.IgnoredHighestPriceAspects.Contains(z.Name))))
+                    {
+                        data.HighestPrice = target.Max(x => x.CVal);
+                        return;
+                    }
+                }
+
+                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.IgnoredHighestPriceAspects.Contains(z.Name) && !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))).ToList();
                 if (filteredData.Count >= 1)
                 {
                     target = filteredData;
