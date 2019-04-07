@@ -62,11 +62,15 @@
                             <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                                 <StackPanel>
                                     <Button Content="Generate all filters" Click="GenerateAllFilterFiles"/>
+                                    <Button Content="Generate filters (no styles)" Click="GenerateFilters_NoStyles"/>
                                     <Separator/>
                                     <Button Content="Open filter folder" Click="OpenFilterFolder"/>
                                     <Button Content="Open output folder" Click="OpenOutputFolder"/>
-                                    <Separator/>
                                     <Button Content="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder"/>
+                                    <Separator/>
+                                    <Button Content="Open seed file" Click="SelectSeedFilterFile"/>
+                                    <Button Content="Save seed file" Click="SaveSeedFile_Unnamed"/>
+                                    <Button Content="Save seed file as..." Click="SaveSeedFileAs"/>
                                 </StackPanel>
                             </materialDesign:PopupBox>
 

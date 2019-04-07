@@ -9,7 +9,22 @@ namespace FilterPolishUtil
     {
         public static void ShowInfoMessageBox(string messageText)
         {
-            MessageBox.Show(messageText);
+            MessageBox.Show(messageText, "I: " + messageText);
+        }
+
+        public static bool DisplayQuestionMessageBox(string questionText)
+        {
+            var res = MessageBox.Show(questionText, "Q: " + questionText, MessageBoxButtons.YesNo);
+
+            switch (res)
+            {
+                case DialogResult.Yes:
+                case DialogResult.OK:
+                    return true;
+                
+                default:
+                    return false;
+            }
         }
 
         public static void InitExceptionHandling()
