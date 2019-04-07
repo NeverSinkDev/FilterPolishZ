@@ -61,16 +61,16 @@
                             <!-- top right open menu button -->
                             <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                                 <StackPanel>
-                                    <Button Content="Generate all filters" Click="GenerateAllFilterFiles"/>
-                                    <Button Content="Generate filters (no styles)" Click="GenerateFilters_NoStyles"/>
+                                    <Button Content="Generate filters (full, with styles)" Click="GenerateAllFilterFiles"/>
+                                    <Button Content="Generate filter" Click="GenerateFilters_NoStyles"/>
+                                    <Button Content="Generate filter as unnamed" Click="GenerateFilterAsUnnamed"/>
+                                    <Button Content="Generate filter as..." Click="GenerateFilterAs"/>
                                     <Separator/>
                                     <Button Content="Open filter folder" Click="OpenFilterFolder"/>
                                     <Button Content="Open output folder" Click="OpenOutputFolder"/>
                                     <Button Content="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder"/>
                                     <Separator/>
                                     <Button Content="Open seed file" Click="SelectSeedFilterFile"/>
-                                    <Button Content="Save seed file" Click="SaveSeedFile_Unnamed"/>
-                                    <Button Content="Save seed file as..." Click="SaveSeedFileAs"/>
                                 </StackPanel>
                             </materialDesign:PopupBox>
 
