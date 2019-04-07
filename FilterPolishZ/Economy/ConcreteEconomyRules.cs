@@ -59,6 +59,7 @@ namespace FilterPolishZ.Economy
             // Anchor item
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "ANCHOR",
                 TargetTier = "ANCHOR",
                 Rule = (string s) =>
                 {
@@ -70,6 +71,7 @@ namespace FilterPolishZ.Economy
             // Unknown Unique
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "unknown",
                 TargetTier = "unknown",
 
                 Rule = (string s) =>
@@ -81,6 +83,7 @@ namespace FilterPolishZ.Economy
             // T1 unique
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "t1",
                 TargetTier = "t1",
                 Rule = (string s) =>
                 {
@@ -90,6 +93,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "t2",
                 TargetTier = "t2",
                 Rule = (string s) =>
                 {
@@ -99,6 +103,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "uncommon",
                 TargetTier = "uncommon",
                 Rule = (string s) =>
                 {
@@ -122,6 +127,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "highVariety",
                 TargetTier = "highVariety",
                 Rule = (string s) =>
                 {
@@ -145,6 +151,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "LeagueDropAspect",
                 TargetTier = "LeagueDropAspect",
                 Rule = (string s) =>
                 {
@@ -168,6 +175,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "???",
                 TargetTier = "???",
                 Rule = (string s) =>
                 {
@@ -186,6 +194,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "Prophecy",
                 TargetTier = "Prophecy",
                 Rule = (string s) =>
                 {
@@ -201,6 +210,7 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
+                RuleName = "Rest",
                 TargetTier = "Rest",
                 Rule = (string s) =>
                 {

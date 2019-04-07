@@ -24,9 +24,9 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <DockPanel Grid.Column="0">
@@ -75,14 +75,18 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView" Grid.Row="0" HorizontalContentAlignment="Stretch">
+                <ListBox ItemsSource="{Binding TierTags}" x:Name="TagView" Grid.Row="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="domainTag:TierTag">
                             <materialDesign:Card Width="Auto">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" MinWidth="120" />
-                                        <ColumnDefinition Width="*" MinWidth="200"/>
+                                        <ColumnDefinition Width="*" MinWidth="150"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*" MinWidth="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding PrimaryTag}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
@@ -94,7 +98,11 @@
                                             </MultiBinding>
                                         </TextBox.Text>
                                     </TextBox>
-                                    <Button Grid.Column="2" Click="OnTagSetButtonClick">Set</Button>
+                                    <TextBlock Text="new:" Grid.Column="2" Margin="2,2,2,2"/>
+                                    <TextBox Grid.Column="3" x:Name="NewValText">
+                                    </TextBox>
+                                    <Button Grid.Column="4" Click="OnTagSetButtonClick">Set</Button>
+                                    <Button Grid.Column="5" Click="OnTagRemoveButtonClick">Remove</Button>
                                 </Grid>
                             </materialDesign:Card>
                         </DataTemplate>
