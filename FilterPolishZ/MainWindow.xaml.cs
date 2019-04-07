@@ -74,7 +74,7 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStyles, bool isGeneratingSeedFilterOnly, string outputFolder, string filterName = "NeverSink's")
+        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStyles, string outputFolder, bool? externalSeedFilter, string filterName = "NeverSink's")
         {
             var isStopping = this.VerifyFilter(baseFilter);
             if (isStopping) return;
@@ -82,10 +82,14 @@ namespace FilterPolishZ
             if (outputFolder == null) outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
-            
-            var seedFilterString = baseFilter.Serialize();
-            await FileWork.WriteTextAsync(outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\seed.filter", seedFilterString);
-            if (isGeneratingSeedFilterOnly) return;
+
+            if (externalSeedFilter.HasValue)
+            {
+                var seedFilterString = baseFilter.Serialize();
+                var seedPath = outputFolder;
+                if (externalSeedFilter.Value) seedPath += "\\ADDITIONAL-FILES\\SeedFilter\\";
+                generationTasks.Add(FileWork.WriteTextAsync(seedPath + filterName + " filter - SEED (SeedFilter) .filter", seedFilterString));
+            }
 
             baseFilter.ExecuteCommandTags();
             
@@ -239,7 +243,7 @@ namespace FilterPolishZ
 
         private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true, false, null));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true, null, true, null));
         }
 
         private void OpenFilterFolder(object sender, RoutedEventArgs e)
@@ -275,23 +279,25 @@ namespace FilterPolishZ
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
         }
 
-        private void SaveSeedFile_Unnamed(object sender, RoutedEventArgs e)
+        private void GenerateFilterAsUnnamed(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, true, null, "unnamed"));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, null, false, "unnamed"));
         }
 
-        private void SaveSeedFileAs(object sender, RoutedEventArgs e)
+        private void GenerateFilterAs(object sender, RoutedEventArgs e)
         {
             var fd = new SaveFileDialog();
             if (fd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             var filePath = fd.FileName;
+            var name = filePath.Split('/', '\\').Last();
+            filePath = filePath.Substring(0, filePath.LastIndexOf(name, StringComparison.Ordinal));
             
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, true, filePath, "unnamed"));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, filePath, false, name));
         }
 
         private void GenerateFilters_NoStyles(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, false, null));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false, null, null));
         }
     }
 }

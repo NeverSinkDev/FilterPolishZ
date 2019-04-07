@@ -229,7 +229,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             {
                 foreach (var item in this.EconomyData.EconomyTierlistOverview[this.GetBranchKey()][itemData.Key])
                 {
-                    if (item.Aspects.Any(x => x is HandledAspect)) return;
+                    if (item.Aspects.Any(x => x is HandledAspect)) continue;
 
                     var aspect = new HandledAspect
                     {
