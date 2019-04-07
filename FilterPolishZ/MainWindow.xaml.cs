@@ -121,6 +121,11 @@ namespace FilterPolishZ
             var workTiers = new HashSet<string> { "uniques", "divination", "maps->uniques", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
             var tiers = filter.ExtractTiers(workTiers);
             tierList.TierListData = tiers;
+
+            foreach (var item in tierList.TierListData.Values)
+            {
+                item.ReEvaluate();
+            }
             return tierList;
         }
 

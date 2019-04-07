@@ -22,5 +22,33 @@ namespace FilterPolishUtil.Extensions
                 }
             }
         }
+
+        public static T Not<T,T1>(this T collection, T1 except) where T : ICollection<T1>, new() where T1 : IComparable
+        {
+            T result = new T();
+            foreach (T1 item in collection)
+            {
+                if (!item.Equals(except))
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+
+        public static T Not<T, T1>(this T collection, Func<T1,bool> except) where T : ICollection<T1>, new() where T1 : IComparable
+        {
+            T result = new T();
+            foreach (T1 item in collection)
+            {
+                if (!except(item))
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
     }
 }

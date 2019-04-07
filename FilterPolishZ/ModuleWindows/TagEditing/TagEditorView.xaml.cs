@@ -109,10 +109,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
                 cursor.Add(new FilterFinalCategory()
                 {
-                    Name = tagText , // string.Join(" ", item.Serialize()),
+                    Name = tagText, // string.Join(" ", item.Serialize()),
                     Parent = cursor,
                     Entry = item as FilterEntry
-                    
+
                 });
             }
         }
@@ -136,7 +136,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
             var emptyCount = count - relevantTags.Count;
 
-            var results = relevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}]").ToList();
+            var results = relevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}").ToList();
 
             if (emptyCount > 0)
             {
@@ -193,7 +193,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 .Select(x => x.Value.Serialize())
                 .ToList();
 
-            var results = irelevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}]").ToList();
+            var results = irelevantTags.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count()).OrderByDescending(x => x.Value).Select(x => $"[{x.Value}/{count}] {x.Key}").ToList();
             this.UnknownTags = string.Join(System.Environment.NewLine, results);
         }
 
@@ -210,7 +210,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         {
             if (!(sender is Button button)) return;
             if (!(button.Parent is Grid parent)) return;
-            
+
             string tagType, newTagValue;
 
             if (parent.Children[0] is TextBlock tagTypeText)
@@ -219,7 +219,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             }
             else return;
 
-            if (parent.Children[1] is TextBox tagInputField)
+            if (parent.Children[3] is TextBox tagInputField)
             {
                 newTagValue = tagInputField.Text;
             }
@@ -227,8 +227,8 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
             foreach (var entry in this.SelectedEntries)
             {
-                var tags = entry.Header.TierTags; 
-                        
+                var tags = entry.Header.TierTags;
+
                 if (tags.ContainsKey(tagType))
                 {
                     tags[tagType] = new TierTag(newTagValue);
@@ -240,6 +240,30 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             }
 
             // todo: re-serialize filter files for current version
+        }
+
+        private void OnTagRemoveButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button button)) return;
+            if (!(button.Parent is Grid parent)) return;
+
+            string tagType, newTagValue;
+
+            if (parent.Children[0] is TextBlock tagTypeText)
+            {
+                tagType = tagTypeText.Text;
+            }
+            else return;
+
+            foreach (var entry in this.SelectedEntries)
+            {
+                var tags = entry.Header.TierTags;
+
+                if (tags.ContainsKey(tagType))
+                {
+                    tags.TierTags.Remove(tagType);
+                }
+            }
         }
     }
 }
