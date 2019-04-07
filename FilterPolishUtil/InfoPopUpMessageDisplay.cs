@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Markup;
 
 namespace FilterPolishUtil
 {
@@ -14,18 +15,16 @@ namespace FilterPolishUtil
         public static void InitExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += HandleException_DisplayError;
-            Application.ThreadException += HandleThreadException_DisplayError;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         }
 
         private static void HandleException_DisplayError(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
-            ShowInfoMessageBox("exc");
-        }
-        
-        private static void HandleThreadException_DisplayError(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
-        {
-            ShowInfoMessageBox("exc 2");
+            if (unhandledExceptionEventArgs.ExceptionObject is XamlParseException e)
+            {
+                ShowInfoMessageBox(e.InnerException?.ToString() ?? "error displaying error");
+            }
+            else ShowInfoMessageBox(unhandledExceptionEventArgs.ExceptionObject.ToString());
         }
     }
 }
