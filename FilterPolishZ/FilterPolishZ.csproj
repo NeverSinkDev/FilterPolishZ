@@ -100,6 +100,9 @@
     <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModuleWindows\TieringSuggestions\TieringSuggestionView.xaml.cs">
+      <DependentUpon>TieringSuggestionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
@@ -121,7 +124,6 @@
     </Compile>
     <Compile Include="ModuleWindows\Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\DataType\ConfigurationData.cs" />
-    <Compile Include="Domain\DataType\NinjaDemoItem.cs" />
     <Compile Include="Economy\ConcreteEconomyRules.cs" />
     <Compile Include="Economy\ConcreteEnrichmentProcedures.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -138,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModuleWindows\TagEditing\TagEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModuleWindows\TieringSuggestions\TieringSuggestionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

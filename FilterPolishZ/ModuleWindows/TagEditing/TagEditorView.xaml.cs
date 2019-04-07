@@ -231,12 +231,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
                 if (tags.ContainsKey(tagType))
                 {
-                    tags[tagType] = new TierTag(newTagValue);
+                    tags.TierTags.Remove(tagType);
                 }
-                else
-                {
-                    tags.Add(tagType + "->" + newTagValue);
-                }
+
+                tags.Add(tagType + "->" + newTagValue);
             }
 
             // todo: re-serialize filter files for current version

@@ -1,4 +1,5 @@
 ﻿using FilterCore.FilterComponents.Tier;
+using FilterEconomy;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterEconomy.Processor;
@@ -18,6 +19,7 @@ namespace FilterPolishZ.Economy
         public EconomyRequestFacade EconomyInformation { get; set; }
         public Dictionary<string, TierGroup> TierInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
+        public TieringSuggestionFacade TieringSuggestions { get; set; }
 
         public ConcreteEconomyRules()
         {
@@ -25,6 +27,7 @@ namespace FilterPolishZ.Economy
             this.EconomyInformation = EconomyRequestFacade.GetInstance();
             this.ItemInformation = ItemInformationFacade.GetInstance();
             this.TierListFacade = TierListFacade.GetInstance();
+            this.TieringSuggestions = TieringSuggestionFacade.GetInstance();
         }
 
         public void Execute()
@@ -38,6 +41,9 @@ namespace FilterPolishZ.Economy
                     item.OldTier = TierListFacade.GetTiersForBasetype("uniques", item.BaseType).First();
                 }
             }
+
+            this.TieringSuggestions.Suggestions.Add("uniques", new List<TieringCommand>());
+            this.TieringSuggestions.Suggestions["uniques"].AddRange(this.suggestions);
 
         }
 

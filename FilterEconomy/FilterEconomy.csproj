@@ -62,6 +62,7 @@
     <Compile Include="Request\Parsing\ItemInformationParser.cs" />
     <Compile Include="Request\Parsing\NinjaParser.cs" />
     <Compile Include="Request\RestRequest.cs" />
+    <Compile Include="TieringSuggestionFacade.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
