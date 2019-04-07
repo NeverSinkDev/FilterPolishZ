@@ -265,5 +265,65 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 }
             }
         }
+
+        private void OnRemoveAllTagsButton(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("REMOVE ALL?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            {
+                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
+                foreach (var entry in source)
+                {
+                    entry.Header.TierTags.TierTags.Clear();
+                }
+            }
+        }
+
+        private void OnRemoveUnknownTagsButton(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Remove ALL UNKNOWN?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            {
+                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
+                foreach (var entry in source)
+                {
+                    var tags = entry.Header.TierTags;
+
+                    List<string> toBeRemove = new List<string>();
+                    foreach (var tag in tags.TierTags)
+                    {
+                        if (!FilterConstants.TierTagSort.ContainsKey(tag.Key))
+                        {
+                            toBeRemove.Add(tag.Key);
+                        }
+                    }
+
+                    foreach (var item in toBeRemove)
+                    {
+                        tags.TierTags.Remove(item);
+                    }
+                }
+            }
+        }
+
+        private void RemoveLocalUnknownTags(object sender, RoutedEventArgs e)
+        {
+            foreach (var entry in this.SelectedEntries)
+            {
+                var tags = entry.Header.TierTags;
+
+                List<string> toBeRemove = new List<string>();
+                foreach (var tag in tags.TierTags)
+                {
+                    if (!FilterConstants.TierTagSort.ContainsKey(tag.Key))
+                    {
+                        toBeRemove.Add(tag.Key);
+                    }
+                }
+
+                foreach (var item in toBeRemove)
+                {
+                    tags.TierTags.Remove(item);
+                }
+            }
+        }
     }
 }

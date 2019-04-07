@@ -23,13 +23,37 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <ToolBarTray Grid.Row="0">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                <Button ToolTip="Remove ALL Tags" Click="OnRemoveAllTagsButton">
+                    <materialDesign:PackIcon Kind="DeleteForever" Foreground="Red" />
+                </Button>
+                <Button ToolTip="Remove ALL unknown Tags" Click="OnRemoveUnknownTagsButton">
+                    <materialDesign:PackIcon Kind="DeleteForever" Foreground="DarkOrange" />
+                </Button>
+                <Separator />
+                <Separator />
+                <Button ToolTip="Remove Current Tags" Click="RemoveLocalUnknownTags">
+                    <materialDesign:PackIcon Kind="Delete" Foreground="White" />
+                </Button>
+
+                
+            </ToolBar>
+        </ToolBarTray>
+   
+    <Grid Grid.Row="1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Column="0">
+        <DockPanel Grid.Row="0">
             <Grid>
                 <TreeView x:Name="TreeView" ItemsSource="{Binding FilterTree}" MinWidth="500"
                       SelectedItemChanged="TreeView_SelectedItemChanged">
@@ -121,5 +145,6 @@
             </Grid>
 
         </DockPanel>
+    </Grid>
     </Grid>
 </UserControl>
