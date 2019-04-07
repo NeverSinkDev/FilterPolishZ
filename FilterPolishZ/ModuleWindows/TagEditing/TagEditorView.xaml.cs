@@ -268,7 +268,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         private void OnRemoveAllTagsButton(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("REMOVE ALL?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            if (MessageBox.Show("REMOVE ALL?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
                 foreach (var entry in source)
@@ -280,7 +280,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         private void OnRemoveUnknownTagsButton(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Remove ALL UNKNOWN?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            if (MessageBox.Show("Remove ALL UNKNOWN?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
                 foreach (var entry in source)
