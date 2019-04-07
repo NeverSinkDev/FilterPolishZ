@@ -6,6 +6,7 @@ using FilterCore.Line.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using FilterCore.Commands;
@@ -142,7 +143,7 @@ namespace FilterCore
 
                 foreach (var command in entry.Header.GenerationTags)
                 {
-                    
+                    // todo
                 }
             }
         }
@@ -152,6 +153,24 @@ namespace FilterCore
             var results = new List<string>();
             this.FilterEntries.ForEach(x => results.AddRange(x.Serialize()));
             return results;
+        }
+
+        public string GetVersion() => this.GetVersionLine().Comment.Split('\t').Last();
+        public void SetVersion(string newVersion) => this.GetVersionLine().Comment = "VERSION: \t" + newVersion;
+        private IFilterLine GetVersionLine()
+        {
+            foreach (var entry in this.FilterEntries)
+            {
+                if (entry.Header.Type != FilterConstants.FilterEntryType.Comment) continue;
+                foreach (var line in entry.Content.Content["comment"])
+                {
+                    var comment = line.Comment;
+                    if (!comment.ToLower().Contains("version")) continue;
+                    return line;
+                }
+            }
+
+            throw new Exception("version entry not found");
         }
     }
 }

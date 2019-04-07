@@ -32,7 +32,6 @@ namespace FilterCore.Commands
         public FilterTableOfContentsCreator(Filter filter)
         {
             this.filter = filter;
-            this.Run();
         }
 
         public void Run()
