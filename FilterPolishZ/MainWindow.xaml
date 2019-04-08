@@ -63,14 +63,14 @@
                                 <StackPanel>
                                     <Button Content="Generate filters (full, with styles)" Click="GenerateAllFilterFiles"/>
                                     <Button Content="Generate filter" Click="GenerateFilters_NoStyles"/>
-                                    <Button Content="Generate filter as unnamed" Click="GenerateFilterAsUnnamed"/>
-                                    <Button Content="Generate filter as..." Click="GenerateFilterAs"/>
                                     <Separator/>
                                     <Button Content="Open filter folder" Click="OpenFilterFolder"/>
                                     <Button Content="Open output folder" Click="OpenOutputFolder"/>
                                     <Button Content="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder"/>
                                     <Separator/>
                                     <Button Content="Open seed file" Click="SelectSeedFilterFile"/>
+                                    <Button Content="Save current as unnamed" Click="SaveSeedFileAsUnnamed"/>
+                                    <Button Content="Save current as..." Click="SaveSeedFilterAs"/>
                                 </StackPanel>
                             </materialDesign:PopupBox>
 
