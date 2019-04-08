@@ -266,7 +266,13 @@ namespace FilterPolishZ
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
                 if (!file.EndsWith(".filter")) continue;
-                System.IO.File.Copy(file, poeFolder + "\\" + file.Split('/', '\\').Last());
+                var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
+
+                if (System.IO.File.Exists(targetPath))
+                {
+                    System.IO.File.Replace(file, targetPath, null);
+                }
+                else System.IO.File.Copy(file, targetPath);
             }
         }
 
