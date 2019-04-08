@@ -24,7 +24,9 @@ using FilterCore.Commands;
 using FilterCore.Constants;
 using FilterCore.Entry;
 using FilterCore.Line;
+using FilterCore.Tests;
 using MethodTimer;
+using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
 
@@ -186,78 +188,7 @@ namespace FilterPolishZ
             }
             else baseFilter.SetHeaderMetaData("version:", newVersion);
             
-            // todo: style tags -> autoFix if possible, else give user option for quick fix
-            var styleDic = new Dictionary<string, Dictionary<string, string>>();
-            var styleIdents = new List<string> { "SetTextColor" }; // todo: outsource to constants?
-            var errorEntries = new Dictionary<string, HashSet<IFilterEntry>>();
-            var unhandledLines = new HashSet<IFilterLine>();
-            styleIdents.ForEach(ident => styleDic.Add(ident, new Dictionary<string, string>()));
-            styleIdents.ForEach(ident => errorEntries.Add(ident, new HashSet<IFilterEntry>()));
-            
-            CheckStyleNames();
-            CheckStyleNames(); // 2nd run in case an early entry is missing style names that were only found later
-
-            void CheckStyleNames()
-            {
-                foreach (var entry in baseFilter.FilterEntries)
-                {
-                    if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
-
-                    foreach (var ident in styleIdents)
-                    {
-                        if (!entry.Content.Content.ContainsKey(ident)) continue;
-                        var line = entry.Content.Content[ident].First();
-                        var value = line.Value.Serialize();
-                        var name = line.Comment;
-                        
-                        // style exists -> compare names
-                        if (styleDic[ident].ContainsValue(value))
-                        {
-                            var expKey = styleDic[ident].Single(x => x.Value.Equals(value)).Key;
-                            if (name != expKey)
-                            {
-                                if (!errorEntries[ident].Contains(entry))
-                                {
-                                    errorMsg.Add("unexpected style name for : " + value + "\nexpected: " + expKey + "\nactual: " + name + "\nentry header: " + entry.Header.Serialize() + "\n");
-                                    errorEntries[ident].Add(entry);
-                                }
-                            }
-                        }
-                        
-                        else if (!string.IsNullOrEmpty(name))
-                        {
-                            // name exists -> compare values
-                            if (styleDic[ident].ContainsKey(name))
-                            {
-                                if (styleDic[ident][name] != value)
-                                {
-                                    if (!errorEntries[ident].Contains(entry))
-                                    {
-                                        errorMsg.Add("Style name difference for: " + name + "\n" + styleDic[ident][name] + "\n" + value + "\nentry header: " + entry.Header.Serialize() + "\n");
-                                        errorEntries[ident].Add(entry);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                styleDic[ident].Add(name, value);
-                            }
-                        }
-                        
-                        else
-                        {
-                            // only happens when the line was unhandled both times(?) -> info log
-                            if (unhandledLines.Contains(line))
-                            {
-                                // unknown style without name -> ??? todo?
-//                                errorMsg.Add("unhandled: " + line.Serialize());
-                            }
-                            
-                            unhandledLines.Add(line);
-                        }
-                    }
-                }
-            }
+//            FilterStyleVerifyer.Run(baseFilter); // todo: re-enable this when the filter doesnt have the tons of errors anymore
 
             if (errorMsg.Count > 0)
             {
