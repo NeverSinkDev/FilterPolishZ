@@ -72,11 +72,27 @@
                                     <Button Content="Save current as unnamed" Click="SaveSeedFileAsUnnamed"/>
                                     <Button Content="Save current as..." Click="SaveSeedFilterAs"/>
                                 </StackPanel>
+                                
                             </materialDesign:PopupBox>
 
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22">FilterPolishZ</TextBlock>
+                                <ToolBarTray Grid.Row="0" Background="Transparent">
+                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" Background="Transparent">
+                                        <Button ToolTip="Remove ALL Tags">
+                                            <materialDesign:PackIcon Kind="DeleteForever" Foreground="Red" />
+                                        </Button>
+                                        <Separator/>
+                                        <Button ToolTip="Remove ALL unknown Tags">
+                                            <materialDesign:PackIcon Kind="DeleteForever" Foreground="DarkOrange" />
+                                        </Button>
+                                        <Button ToolTip="Remove Current Tags" >
+                                            <materialDesign:PackIcon Kind="Delete" Foreground="White" />
+                                        </Button>
 
-                        </DockPanel>
+
+                                    </ToolBar>
+                                </ToolBarTray>
+
+                            </DockPanel>
                     </materialDesign:ColorZone>
                 </DockPanel>
             </materialDesign:DrawerHost>
