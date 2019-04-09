@@ -75,24 +75,44 @@
                                 
                             </materialDesign:PopupBox>
 
-                                <ToolBarTray Grid.Row="0" Background="Transparent">
-                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" Background="Transparent">
-                                        <Button ToolTip="Remove ALL Tags">
-                                            <materialDesign:PackIcon Kind="DeleteForever" Foreground="Red" />
-                                        </Button>
-                                        <Separator/>
-                                        <Button ToolTip="Remove ALL unknown Tags">
-                                            <materialDesign:PackIcon Kind="DeleteForever" Foreground="DarkOrange" />
-                                        </Button>
-                                        <Button ToolTip="Remove Current Tags" >
-                                            <materialDesign:PackIcon Kind="Delete" Foreground="White" />
-                                        </Button>
+                            <ToolBarTray Grid.Row="0" Background="Transparent">
+                                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" Background="Transparent">
+                                    
+                                    <Button ToolTip="Open seed file" Click="SelectSeedFilterFile">
+                                        <materialDesign:PackIcon Kind="FileUploadOutline" />
+                                    </Button>
+                                    <Button ToolTip="CSave current as unnamed" Click="SaveSeedFileAsUnnamed">
+                                        <materialDesign:PackIcon Kind="ContentSave" Foreground="Aqua" />
+                                    </Button>
+                                    <Button ToolTip="Save current as..." Click="SaveSeedFilterAs">
+                                        <materialDesign:PackIcon Kind="ContentSaveAll" />
+                                    </Button>
+                                    
+                                    <Separator/>
+                                    
+                                    <Button ToolTip="Generate filters (including styles)" Click="GenerateAllFilterFiles">
+                                        <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
+                                    </Button>
+                                    <Button ToolTip="Generate filters (no styles)" Click="GenerateFilters_NoStyles">
+                                        <materialDesign:PackIcon Kind="ArrowRightDropCircleOutline" />
+                                    </Button>
+                                    
+                                    <Separator/>
+                                    
+                                    <Button ToolTip="Open PoE filder folder" Click="OpenFilterFolder">
+                                        <materialDesign:PackIcon Kind="FolderDownload" />
+                                    </Button>
+                                    <Button ToolTip="Open output folder" Click="OpenOutputFolder">
+                                        <materialDesign:PackIcon Kind="FolderUpload" />
+                                    </Button>
+                                    <Button ToolTip="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder">
+                                        <materialDesign:PackIcon Kind="FolderMove" />
+                                    </Button>
 
+                                </ToolBar>
+                            </ToolBarTray>
 
-                                    </ToolBar>
-                                </ToolBarTray>
-
-                            </DockPanel>
+                        </DockPanel>
                     </materialDesign:ColorZone>
                 </DockPanel>
             </materialDesign:DrawerHost>
