@@ -19,8 +19,8 @@ namespace FilterPolishUtil.Constants
             { "uniqueMaps", "GetUniqueMapOverview" }
         };
 
-        public static float T1BreakPoint = 16;
-        public static float T2BreakPoint = 7;
+        public static float T1BreakPoint = 20;
+        public static float T2BreakPoint = 5;
         public static float UncommonAspectMultiplier = 1.5f;
         public static float LeagueDropAspectMultiplier = 1.5f;
         public static float HighVarietyMultiplier = 0.5f;
