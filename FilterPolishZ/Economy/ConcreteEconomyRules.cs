@@ -3,6 +3,7 @@ using FilterEconomy;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterEconomy.Processor;
+using FilterPolishUtil;
 using FilterPolishUtil.Constants;
 using FilterUtilModels.Economy;
 using System.Collections.Generic;
@@ -19,7 +20,6 @@ namespace FilterPolishZ.Economy
         public EconomyRequestFacade EconomyInformation { get; set; }
         public Dictionary<string, TierGroup> TierInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
-        public TieringSuggestionFacade TieringSuggestions { get; set; }
 
         public ConcreteEconomyRules()
         {
@@ -27,7 +27,6 @@ namespace FilterPolishZ.Economy
             this.EconomyInformation = EconomyRequestFacade.GetInstance();
             this.ItemInformation = ItemInformationFacade.GetInstance();
             this.TierListFacade = TierListFacade.GetInstance();
-            this.TieringSuggestions = TieringSuggestionFacade.GetInstance();
         }
 
         public void Execute()
@@ -36,15 +35,24 @@ namespace FilterPolishZ.Economy
 
             foreach (var item in suggestions)
             {
+                item.Group = "uniques";
                 if (TierListFacade.ContainsTierInformationForBaseType("uniques", item.BaseType))
                 {
-                    item.OldTier = TierListFacade.GetTiersForBasetype("uniques", item.BaseType).First();
+                    item.OldTier = TierListFacade.GetTiersForBasetype("uniques", item.BaseType).First().SubStringLast("->");
+                }
+                else
+                {
+                    item.OldTier = "rest";
                 }
             }
 
-            this.TieringSuggestions.Suggestions.Add("uniques", new List<TieringCommand>());
-            this.TieringSuggestions.Suggestions["uniques"].AddRange(this.suggestions);
+            this.TierListFacade.Suggestions.Add("uniques", new List<TieringCommand>());
+            this.TierListFacade.Suggestions["uniques"].AddRange(this.suggestions);
 
+            foreach (var item in this.TierListFacade.Suggestions["uniques"])
+            {
+                this.TierListFacade.ApplyCommand(item);
+            }
         }
 
         private FilterEconomyRuleSet CreateUniqueEconomyRules()
@@ -110,7 +118,7 @@ namespace FilterPolishZ.Economy
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
                 RuleName = "uncommon",
-                TargetTier = "uncommon",
+                TargetTier = "multispecial",
                 Rule = (string s) =>
                 {
                     var fit = false;
@@ -134,7 +142,7 @@ namespace FilterPolishZ.Economy
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
                 RuleName = "highVariety",
-                TargetTier = "highVariety",
+                TargetTier = "multispecial",
                 Rule = (string s) =>
                 {
                     var fit = false;
@@ -157,8 +165,8 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
-                RuleName = "LeagueDropAspect",
-                TargetTier = "LeagueDropAspect",
+                RuleName = "leagueDropAspect",
+                TargetTier = "multileague",
                 Rule = (string s) =>
                 {
                     var fit = false;
@@ -200,8 +208,8 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
-                RuleName = "Prophecy",
-                TargetTier = "Prophecy",
+                RuleName = "prophecy",
+                TargetTier = "prophecy",
                 Rule = (string s) =>
                 {
                     var aspects = ItemInformation["uniques", s];
@@ -216,8 +224,8 @@ namespace FilterPolishZ.Economy
 
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
             {
-                RuleName = "Rest",
-                TargetTier = "Rest",
+                RuleName = "rest",
+                TargetTier = "rest",
                 Rule = (string s) =>
                 {
                     return true;

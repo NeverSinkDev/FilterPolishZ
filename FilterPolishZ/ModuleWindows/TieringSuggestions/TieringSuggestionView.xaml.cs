@@ -1,4 +1,5 @@
 ﻿using FilterEconomy;
+using FilterEconomy.Facades;
 using FilterEconomy.Processor;
 using System;
 using System.Collections.Generic;
@@ -24,20 +25,20 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
     /// </summary>
     public partial class TieringSuggestionView : UserControl, INotifyPropertyChanged
     {
-        public TieringSuggestionFacade TieringSuggestionFacade { get; set; }
+        public TierListFacade TierListFacade { get; set; }
         public ObservableCollection<TieringCommand> TieringSuggestions { get; set; } = new ObservableCollection<TieringCommand>();
 
         public TieringSuggestionView()
         {
             InitializeComponent();
-            this.TieringSuggestionFacade = TieringSuggestionFacade.GetInstance();
+            this.TierListFacade = TierListFacade.GetInstance();
             this.InitializeTieringList();
             this.DataContext = this;
         }
 
         private void InitializeTieringList()
         {
-            this.TieringSuggestions = new ObservableCollection<TieringCommand>( this.TieringSuggestionFacade.Suggestions["uniques"] );
+            this.TieringSuggestions = new ObservableCollection<TieringCommand>( this.TierListFacade.Suggestions["uniques"] );
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

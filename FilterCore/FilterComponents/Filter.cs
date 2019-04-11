@@ -97,16 +97,16 @@ namespace FilterCore
                 //..with tiertags
                 if (entry.Header.TierTags != null)
                 {
-                    if (!entry.Header.TierTags.ContainsKey("s") || !entry.Header.TierTags.ContainsKey("t"))
+                    if (!entry.Header.TierTags.ContainsKey("type") || !entry.Header.TierTags.ContainsKey("tier"))
                     {
                         continue;
                     }
 
-                    var primaryTag = entry.Header.TierTags["s"].CombinedTagValue;
+                    var primaryTag = entry.Header.TierTags["type"].CombinedTagValue.ToLower();
 
                     if (addressedTiers.Contains(primaryTag))
                     { 
-                        var tier = entry.Header.TierTags["t"].Serialize();
+                        var tier = entry.Header.TierTags["tier"].CombinedTagValue.ToLower();
 
                         // füge eine neue Hauptgruppe hinzu
                         if (!result.ContainsKey(primaryTag))

@@ -111,6 +111,8 @@ namespace FilterCore.Constants
         public static Dictionary<string, int> LineTypesSort = new Dictionary<string, int>();
         public static Dictionary<string, int> TierTagSort = new Dictionary<string, int>();
 
+        public static HashSet<string> IgnoredSuggestionTiers = new HashSet<string> { "rest", "???" };
+
         public enum FilterEntryType
         {
             Content,

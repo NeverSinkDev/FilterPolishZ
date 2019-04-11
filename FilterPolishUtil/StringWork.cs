@@ -15,8 +15,8 @@ namespace FilterPolishUtil
                 return me;
             }
 
-            var index = me.LastIndexOf(substring);
-            return me.Substring(index + 1);
+            var index = me.LastIndexOf(substring)+substring.Length;
+            return me.Substring(index);
         }
 
         public static string CombinePieces(string combiner, List<string> pieces)

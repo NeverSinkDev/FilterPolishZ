@@ -1,4 +1,5 @@
-﻿using FilterCore.Line;
+﻿using FilterCore.Constants;
+using FilterCore.Line;
 using FilterDomain.LineStrategy;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +8,29 @@ namespace FilterCore.Entry
 {
     public static class EFilterEntry
     {
-        public static FilterLine<T> GetLines<T>(this IFilterEntry me, string type) where T : ILineValueCore
+        public static IEnumerable<FilterLine<T>> GetLines<T>(this IFilterEntry me, string ident) where T : ILineValueCore
         {
-            return me.Content.GetFirst(type) as FilterLine<T>;
+            if (me.Header.Type != FilterConstants.FilterEntryType.Content)
+            {
+                yield break;
+            }
+
+            var results = me.Content.Content.Where(x => x.Key == ident).SelectMany(x => x.Value).ToList();
+
+            foreach (var item in results)
+            {
+                yield return item as FilterLine<T>;
+            }
         }
 
-        public static List<FilterLine<T>> GetLine<T>(this IFilterEntry me, string type) where T : ILineValueCore
+        public static IEnumerable<T> GetValues<T>(this IFilterEntry me, string ident) where T : class, ILineValueCore
         {
-            return me.Content.Get(type) as List<FilterLine<T>>;
-        }
+            var results = me.GetLines<T>(ident);
 
-        public static T GetLineValue<T>(this IFilterEntry me, string type) where T : class, ILineValueCore
-        {
-            return (me.Content.GetFirst(type).Value as T);
-        }
-
-        public static List<T> GetLineValues<T>(this IFilterEntry me, string type) where T : ILineValueCore
-        {
-            return (me.Content.Get(type).Select(x => x.Value).ToList() as List<T>);
+            foreach (var item in results)
+            {
+                yield return item.Value as T;
+            }
         }
     }
 }

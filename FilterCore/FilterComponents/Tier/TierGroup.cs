@@ -20,9 +20,6 @@ namespace FilterCore.FilterComponents.Tier
         // Item : TierKey
         public Dictionary<string, List<string>> ItemTiering = new Dictionary<string, List<string>>();
 
-        // Item : EcoContainer
-        public Dictionary<string, EcoTier> EconomyInformation = new Dictionary<string, EcoTier>();
-
         public void ReEvaluate()
         {
             ItemTiering.Clear();

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FilterCore.Constants;
+using FilterDomain.LineStrategy;
 
 namespace FilterCore.Entry
 {
