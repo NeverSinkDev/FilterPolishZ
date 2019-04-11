@@ -7,7 +7,7 @@
         xmlns:modIteminfo="clr-namespace:FilterPolishZ.ModuleWindows.ItemInfo"
         xmlns:domainWindow="clr-namespace:FilterPolishZ.Domain.WindowType"
         xmlns:generationOptions="clr-namespace:FilterPolishZ.ModuleWindows.GenerationOptions"
-        Title="Material Design in XAML" Height="800" Width="1100"
+        Title="FilterPolishZ by NeverSink" Height="800" Width="1100"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"

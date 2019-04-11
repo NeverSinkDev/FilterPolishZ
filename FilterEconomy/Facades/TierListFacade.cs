@@ -49,6 +49,10 @@ namespace FilterEconomy.Facades
                 return;
             }
 
+            if (command.OldTier.ToLower() == command.NewTier.ToLower())
+            {
+                return;
+            }
 
             if (!FilterConstants.IgnoredSuggestionTiers.Contains(command.OldTier.ToLower()))
             {
