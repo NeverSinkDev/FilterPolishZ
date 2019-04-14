@@ -92,15 +92,23 @@ namespace FilterCore.Constants
             { "PlayEffect",              new VariableLineStrategy(2,3) },
             { "MinimapIcon",             new VariableLineStrategy(3,3) }};
 
-        public static Dictionary<string, IEntryCommand> EntryCommand = new Dictionary<string, IEntryCommand>()
+        public static Dictionary<string, Type> EntryCommand = new Dictionary<string, Type>()
         {
-            { "D",      new DisableEntryCommand() },
-            { "H",      new HideEntryCommand() },
-            { "RF",     null },
-            { "HS",     null },
-            { "REMS",   null },
-            { "UP",     null },
-            { "RVR",    null }
+            { "D",      typeof(DisableEntryCommand) },
+            { "H",      typeof(HideEntryCommand) },
+            { "RF",     typeof(ReduceFontSizeEntryCommand) },
+            { "HS",     typeof(RemoveHighlightsThenHideEntryCommand) },
+            { "REMS",   typeof(RemoveHighlightsEntryCommand) },
+            { "UP",     typeof(RaresUpEntryCommand) },
+            { "RVR",    typeof(RarityVariationRuleEntryCommand) }
+        };
+        
+        public static HashSet<string> StyleIdents = new HashSet<string>
+        {
+            "SetTextColor",
+            "SetBorderColor",
+            "SetBackgroundColor",
+            "PlayAlertSound"
         };
 
         public static char[] WhiteLineChars = new char[] { ' ', '\t' };
