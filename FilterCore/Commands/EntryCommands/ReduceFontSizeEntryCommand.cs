@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FilterCore.Entry;
 using FilterCore.FilterComponents.Tags;
+using FilterDomain.LineStrategy;
 
 namespace FilterCore.Commands.EntryCommands
 {
-    public class DisableEntryCommand : GenerationTag
+    public class ReduceFontSizeEntryCommand : GenerationTag
     {
+        public ReduceFontSizeEntryCommand(FilterEntry target) : base(target) {}
+
         public override void Execute(int? strictness = null)
         {
             if (!this.IsActiveOnStrictness(strictness.Value))
@@ -17,9 +16,12 @@ namespace FilterCore.Commands.EntryCommands
                 return;
             }
             
-            this.Target.IsFrozen = true;
+            var line = this.Target.Content.GetFirst("SetFontSize");
+            if (line == null) return;
+            var val = (VariableValueContainer) line.Value;
+            val.Value.First().value = "36";
         }
-
+        
         public override GenerationTag Clone()
         {
             return new DisableEntryCommand(this.Target)
@@ -28,7 +30,5 @@ namespace FilterCore.Commands.EntryCommands
                 Strictness = this.Strictness
             };
         }
-
-        public DisableEntryCommand(FilterEntry target) : base(target) {}
     }
 }

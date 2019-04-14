@@ -27,7 +27,17 @@ namespace FilterCore.Entry
 
         public IFilterEntry Clone()
         {
-            throw new NotImplementedException();
+            var clone =  new FilterEntry
+            {
+                Content = this.Content.Clone(),
+                Header = this.Header.Clone(),
+                IsFrozen = this.IsFrozen
+            };
+
+            clone.Content.UpdateParent(clone);
+            clone.Header.GenerationTags.ForEach(x => x.Target = clone);
+
+            return clone;
         }
 
         public List<string> Serialize()
@@ -81,7 +91,7 @@ namespace FilterCore.Entry
             entry.Header.IsFrozen = line.identCommented;
             entry.Header.IsActive = true;
             entry.Header.Type = Constants.FilterConstants.FilterEntryType.Content;
-            entry.Header.ExtractTagsFromLine(line);
+            entry.Header.ExtractTagsFromLine(line, entry);
 
             entry.Content = new FilterEntryDataContent();
             entry.Content.Content = new Dictionary<string, List<IFilterLine>>();

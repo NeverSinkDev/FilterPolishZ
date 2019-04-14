@@ -45,5 +45,18 @@ namespace FilterCore.Line
         {
             return $"{(isQuoted ? "\"" : "")}{value}{(isQuoted ? "\"" : "")}";
         }
+
+        public LineToken Clone()
+        {
+            return new LineToken
+            {
+                value = this.value,
+                isCommented = this.isCommented,
+                isIdent = this.isIdent,
+                isQuoted = this.isQuoted,
+                isUtility = this.isUtility,
+                isFluffComment = this.isFluffComment
+            };
+        }
     }
 }

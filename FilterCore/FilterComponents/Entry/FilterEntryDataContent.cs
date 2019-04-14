@@ -3,6 +3,7 @@ using FilterCore.Constants;
 using FilterCore.Line;
 using System.Collections.Generic;
 using System.Linq;
+using FilterDomain.LineStrategy;
 
 namespace FilterCore.Entry
 {
@@ -109,6 +110,42 @@ namespace FilterCore.Entry
                 .OrderBy(x => FilterConstants.LineTypesSort[x.Ident])
                 .Select(x => x.SerializedString)
                 .ToList();
+        }
+
+        public FilterEntryDataContent Clone()
+        {
+            var cloneContent = new Dictionary<string, List<IFilterLine>>();
+
+            foreach (var ident in this.Content)
+            {
+                var list = new List<IFilterLine>();
+                
+                foreach (var line in ident.Value)
+                {
+                    list.Add(line.Clone());
+                }
+                
+                cloneContent.Add(ident.Key, list);
+            }
+            
+            return new FilterEntryDataContent
+            {
+                Content = cloneContent
+            };
+        }
+
+        public void UpdateParent(FilterEntry newParent)
+        {
+            foreach (var ident in this.Content)
+            {
+                foreach (var filterLine in ident.Value)
+                {
+                    if (filterLine is FilterLine<ILineValueCore> line)
+                    {
+                        line.Parent = newParent;
+                    }
+                }
+            }
         }
     }
 }

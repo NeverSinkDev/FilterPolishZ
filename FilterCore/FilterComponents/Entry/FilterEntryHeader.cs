@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FilterCore.Commands.EntryCommands;
 using static FilterCore.Constants.FilterConstants;
 
 namespace FilterCore.Entry
@@ -16,7 +17,8 @@ namespace FilterCore.Entry
         public bool IsFrozen { get; set; } = false;
         public bool IsActive { get; set; } = true;
 
-        public float ID { get; set; } = -1;
+        public string ID { get; set; } = "";
+        private static float cloneID = 1;
 
         public bool IsGenerated { get; set; } = false;
 
@@ -51,7 +53,7 @@ namespace FilterCore.Entry
             }
         }
 
-        public void ExtractTagsFromLine(IFilterLine line)
+        public void ExtractTagsFromLine(IFilterLine line, FilterEntry entry)
         {
             GenerationTags = new List<GenerationTag>();
             TierTags = new TierTagSet();
@@ -78,19 +80,15 @@ namespace FilterCore.Entry
                     // which will save the "3" as strictness, so we instead check if the command is in the EntryCommand list
                     if (FilterConstants.EntryCommand.ContainsKey(command.ToUpper()))
                     {
+                        var tagType = FilterConstants.EntryCommand[command.ToUpper()];
+                        tag = tagType.GetConstructors().Single().Invoke(new object[] {entry}) as GenerationTag;
                         var digit = short.Parse(split.Substring(lastPos));
-                        tag = new GenerationTag()
-                        {
-                            Strictness = digit,
-                            Value = command
-                        };
+                        tag.Strictness = digit;
+                        tag.Value = command;
                     }
                     else
                     {
-                        tag = new GenerationTag()
-                        {
-                            Value = split
-                        };
+                        throw new Exception();
                     }
 
                     this.GenerationTags.Add(tag);
@@ -115,6 +113,22 @@ namespace FilterCore.Entry
             }
 
             HeaderComment = builder.ToString();
+        }
+
+        public FilterEntryHeader Clone()
+        {
+            return new FilterEntryHeader
+            {
+                GenerationTags = this.GenerationTags.Where(x => !(x is IEntryGenerationCommand)).Select(x => x.Clone()).ToList(), // todo
+                Type = this.Type,
+                HeaderValue = this.HeaderValue,
+                HeaderComment = this.HeaderComment,
+                IsFrozen = this.IsFrozen,
+                TierTags = this.TierTags.Clone(),
+                IsActive = this.IsActive,
+                ID = this.ID + "clone" + cloneID++,
+                IsGenerated = true
+            };
         }
     }
 

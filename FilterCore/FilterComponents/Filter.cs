@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using FilterCore.Commands;
+using FilterCore.Commands.EntryCommands;
 
 namespace FilterCore
 {
@@ -141,11 +142,68 @@ namespace FilterCore
                     continue;
                 }
 
+                ExecuteCommandTags_Inner(entry);
+            }
+            
+            // local func
+            void ExecuteCommandTags_Inner(IFilterEntry entry)
+            {
+                int? index = null;
                 foreach (var command in entry.Header.GenerationTags)
                 {
-                    // todo
+                    if (command.IsStrictnessCommand()) continue;
+                    command.Execute();
+
+                    if (command is IEntryGenerationCommand cmd)
+                    {
+                        if (!index.HasValue) index = this.FilterEntries.IndexOf(entry);
+
+                        var newEntries = cmd.NewEntries;
+                        this.InsertEntries(index.Value, newEntries); // todo: exception because list edited during iteration
+                        newEntries.ToList().ForEach(ExecuteCommandTags_Inner);
+                    }
                 }
             }
+        }
+
+        public void ExecuteStrictnessCommands(int strictnessIndex)
+        {
+            foreach (var entry in this.FilterEntries)
+            {
+                if (entry.Header.Type != FilterConstants.FilterEntryType.Content)
+                {
+                    continue;
+                }
+
+                if (entry.Header.IsFrozen)
+                {
+                    continue;
+                }
+
+                foreach (var command in entry.Header.GenerationTags)
+                {
+                    if (!command.IsStrictnessCommand()) continue;
+                    command.Execute(strictnessIndex);
+                }
+            }
+            
+            // update strictness name
+            foreach (var entry in this.FilterEntries)
+            {
+                foreach (var line in entry.Content.Content["comment"])
+                {
+                    if (line.Comment.Contains("TYPE:") && line.Comment.Contains("SEED"))
+                    {
+                        line.Comment = line.Comment.Replace("SEED", strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper());
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void InsertEntries(int index, IEnumerable<IFilterEntry> newEntries)
+        {
+            this.FilterEntries.InsertRange(index, newEntries);
         }
 
         public List<string> Serialize()

@@ -20,7 +20,14 @@ namespace FilterCore.Line
 
         public virtual FilterLine<T> Clone()
         {
-            throw new NotImplementedException();
+            return new FilterLine<T>
+            {
+                Value = this.Value.Clone(),
+                Comment = this.Comment,
+                Ident = this.Ident,
+                IsActive = this.IsActive,
+                identCommented = this.identCommented
+            };
         }
 
         public virtual string Serialize()

@@ -65,9 +65,14 @@
     <Compile Include="Commands\EntryCommands\DisableEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\HideEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\IEntryCommand.cs" />
+    <Compile Include="Commands\EntryCommands\IEntryGenerationCommand.cs" />
+    <Compile Include="Commands\EntryCommands\RaresUpEntryCommand.cs" />
+    <Compile Include="Commands\EntryCommands\RarityVariationRuleEntryCommand.cs" />
+    <Compile Include="Commands\EntryCommands\ReduceFontSizeEntryCommand.cs" />
+    <Compile Include="Commands\EntryCommands\RemoveHighlightsEntryCommand.cs" />
+    <Compile Include="Commands\EntryCommands\RemoveHighlightsThenHideEntryCommand.cs" />
     <Compile Include="Commands\FilterTableOfContentsCreator.cs" />
     <Compile Include="Commands\IFilterCommand.cs" />
-    <Compile Include="Commands\StrictnessGenerator.cs" />
     <Compile Include="Commands\StyleGenerator.cs" />
     <Compile Include="Constants\FilterConstants.cs" />
     <Compile Include="FilterAccessFacade.cs" />
