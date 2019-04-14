@@ -162,9 +162,9 @@ namespace FilterCore.Commands
             if (index.ToString().Length > IndexDigitCount) throw new Exception("ToC index gets too high for selected indexDigitCount");
 
             var line = "";
-            line += " ".Times(spaceCount);                                     // ident spaces            
+            line += " ".Times(spaceCount);                                     // ident spaces
             line += SectionTitleKeyIdentStart.ToString().Times(bracketCount);  // open brackets
-            line += prefix;                                                    // indices of the parents         
+            line += prefix;                                                    // indices of the parents
             line += index.ToString().PadLeft(IndexDigitCount, '0');            // current index with zeros filled on the left
             line += "".PadRight((bracketCount - 1) * IndexDigitCount, '0');    // fill in children-zeros. for "[[0400]] ELDER" the 2 zeros to the right of the 4
             line += SectionTitleKeyIdentEnd.ToString().Times(bracketCount);    // close brackets

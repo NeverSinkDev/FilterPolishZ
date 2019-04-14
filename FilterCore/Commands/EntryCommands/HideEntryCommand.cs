@@ -4,16 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FilterCore.Entry;
+using FilterCore.FilterComponents.Tags;
 
 namespace FilterCore.Commands.EntryCommands
 {
-    public class HideEntryCommand : IEntryCommand
+    public class HideEntryCommand : GenerationTag
     {
-        public FilterEntry Target { get; set; }
-
-        public void Execute()
+        public override void Execute(int? strictness = null)
         {
+            if (!this.IsActiveOnStrictness(strictness.Value))
+            {
+                return;
+            }
+            
             this.Target.Header.HeaderValue = "Hide";
         }
+        
+        public override GenerationTag Clone()
+        {
+            return new DisableEntryCommand(this.Target)
+            {
+                Value = this.Value,
+                Strictness = this.Strictness
+            };
+        }
+
+        public HideEntryCommand(FilterEntry target) : base(target) {}
     }
 }

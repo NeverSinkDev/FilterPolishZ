@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FilterCore.Constants;
 using FilterCore.Entry;
 using FilterCore.FilterComponents.Tags;
 
 namespace FilterCore.Commands.EntryCommands
 {
-    public class DisableEntryCommand : GenerationTag
+    public class RemoveHighlightsEntryCommand : GenerationTag
     {
+        public RemoveHighlightsEntryCommand(FilterEntry target) : base(target) {}
+
         public override void Execute(int? strictness = null)
         {
             if (!this.IsActiveOnStrictness(strictness.Value))
@@ -17,9 +16,9 @@ namespace FilterCore.Commands.EntryCommands
                 return;
             }
             
-            this.Target.IsFrozen = true;
+            FilterConstants.HighlightingIdents.ToList().ForEach(x => this.Target.Content.RemoveAll(x));
         }
-
+        
         public override GenerationTag Clone()
         {
             return new DisableEntryCommand(this.Target)
@@ -28,7 +27,5 @@ namespace FilterCore.Commands.EntryCommands
                 Strictness = this.Strictness
             };
         }
-
-        public DisableEntryCommand(FilterEntry target) : base(target) {}
     }
 }

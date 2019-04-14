@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace FilterCore.Commands.EntryCommands
 {
-    public interface IEntryCommand : IFilterCommand
+    public interface IEntryCommand
     {
         FilterEntry Target { get; set; }
+        void Execute(int? strictness = null);
     }
 }
