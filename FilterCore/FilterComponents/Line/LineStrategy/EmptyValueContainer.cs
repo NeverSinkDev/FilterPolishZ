@@ -14,6 +14,11 @@ namespace FilterCore.Line.LineStrategy
             
         }
 
+        public ILineValueCore Clone()
+        {
+            return new EmptyValueContainer();
+        }
+
         public string Serialize()
         {
             return string.Empty;

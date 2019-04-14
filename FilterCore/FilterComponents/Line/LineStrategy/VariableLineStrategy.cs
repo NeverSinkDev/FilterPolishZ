@@ -39,6 +39,14 @@ namespace FilterDomain.LineStrategy
             }
         }
 
+        public ILineValueCore Clone()
+        {
+            return new VariableValueContainer
+            {
+                Value = this.Value.Select(x => x.Clone()).ToList()
+            };
+        }
+
         public string Serialize()
         {
             return StringWork.CombinePieces(string.Empty,this.Value.Select(x => x.Serialize()).ToArray());

@@ -36,6 +36,14 @@ namespace FilterDomain.LineStrategy
             }
         }
 
+        public ILineValueCore Clone()
+        {
+            return new BoolValueContainer
+            {
+                Value = this.Value
+            };
+        }
+
         public string Serialize()
         {
             return Value ? "True" : "False";

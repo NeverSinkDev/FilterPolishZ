@@ -34,6 +34,14 @@ namespace FilterDomain.LineStrategy
             }
         }
 
+        public ILineValueCore Clone()
+        {
+            return new EnumValueContainer
+            {
+                Value = new HashSet<LineToken>(this.Value.Select(x => x.Clone()))
+            };
+        }
+
         public string Serialize()
         {
             return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).ToList());

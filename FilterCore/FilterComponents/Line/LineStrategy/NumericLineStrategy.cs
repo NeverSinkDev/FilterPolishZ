@@ -46,6 +46,15 @@ namespace FilterDomain.LineStrategy
             }
         }
 
+        public ILineValueCore Clone()
+        {
+            return new NumericValueContainer
+            {
+                Value = this.Value,
+                Operator = this.Operator
+            };
+        }
+
         public string Serialize()
         {
             if (Operator == "=" || string.IsNullOrEmpty(Operator))

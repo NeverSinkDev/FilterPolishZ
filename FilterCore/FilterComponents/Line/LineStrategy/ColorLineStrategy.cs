@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace FilterDomain.LineStrategy
 {
@@ -50,6 +51,17 @@ namespace FilterDomain.LineStrategy
                     O = short.Parse(tokens[3].value);
                 }
             }
+        }
+
+        public ILineValueCore Clone()
+        {
+            return new ColorValueContainer
+            {
+                R = this.R,
+                O = this.O,
+                G = this.G,
+                B = this.B
+            };
         }
 
         public string Serialize()

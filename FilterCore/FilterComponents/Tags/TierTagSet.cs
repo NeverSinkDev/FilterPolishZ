@@ -72,5 +72,13 @@ namespace FilterCore.FilterComponents.Tags
                 // .OrderBy(z => FilterConstants.TierTagSort[z])
                 this.TierTags.Select(x => x.Value.Serialize()).ToList());
         }
+
+        public TierTagSet Clone()
+        {
+            return new TierTagSet
+            {
+                TierTags = new Dictionary<string, TierTag>(this.TierTags)
+            };
+        }
     }
 }
