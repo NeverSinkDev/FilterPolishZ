@@ -4,6 +4,7 @@ using FilterCore.FilterComponents.Tier;
 using FilterCore.Line;
 using FilterDomain.LineStrategy;
 using FilterEconomy.Processor;
+using FilterPolishUtil.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,15 @@ namespace FilterEconomy.Facades
 
         private TierListFacade()
         {
+            this.InitializeSuggestions();
+        }
 
+        public void InitializeSuggestions()
+        {
+            foreach (var item in FilterPolishConstants.TieredGroups.Keys)
+            {
+                this.Suggestions.Add(item, new List<TieringCommand>());
+            }
         }
 
         public static TierListFacade GetInstance()
@@ -40,6 +49,22 @@ namespace FilterEconomy.Facades
         public List<string> GetTiersForBasetype(string group, string basetype)
         {
             return TierListData[group].ItemTiering[basetype];
+        }
+
+        public void ApplyAllSuggestions()
+        {
+            foreach (var section in this.Suggestions)
+            {
+                this.ApplyAllSuggestionsInSection(section.Key);
+            }
+        }
+
+        public void ApplyAllSuggestionsInSection(string section)
+        {
+            foreach (var item in this.Suggestions[section])
+            {
+                this.ApplyCommand(item);
+            }
         }
 
         public void ApplyCommand(TieringCommand command)
@@ -89,6 +114,7 @@ namespace FilterEconomy.Facades
         {
             this.Suggestions.Clear();
             this.TierListData.Clear();
+            this.InitializeSuggestions();
         }
     }
 }

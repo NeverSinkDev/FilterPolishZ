@@ -25,19 +25,9 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                <Button ToolTip="Remove ALL Tags">
-                    <materialDesign:PackIcon Kind="DeleteForever" Foreground="Red" />
+                <Button ToolTip="Reload/Refresh" Click="ReloadClick">
+                    <materialDesign:PackIcon Kind="Refresh" Foreground="White"  />
                 </Button>
-                <Button ToolTip="Remove ALL unknown Tags">
-                    <materialDesign:PackIcon Kind="DeleteForever" Foreground="DarkOrange" />
-                </Button>
-                <Separator />
-                <Separator />
-                <Button ToolTip="Remove Current Tags">
-                    <materialDesign:PackIcon Kind="Delete" Foreground="White" />
-                </Button>
-
-
             </ToolBar>
         </ToolBarTray>
 

@@ -229,6 +229,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private void OnUpdateUiButtonClick(object sender, RoutedEventArgs e)
         {
+            this.Reload();
             this.InitializeItemInformationData();
         }
 

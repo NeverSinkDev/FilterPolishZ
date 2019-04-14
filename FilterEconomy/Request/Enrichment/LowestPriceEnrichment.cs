@@ -28,11 +28,6 @@ namespace FilterEconomy.Request.Enrichment
 
             var cleanedTarget = target.Where(x => !x.Aspects.Any(z => FilterConstants.GlobalIgnoreAspects.Contains(z.Name) || FilterConstants.IgnoredHighestPriceAspects.Contains(z.Name))).ToList();
 
-            if (cleanedTarget.Count != data.Count)
-            {
-                Debug.WriteLine(baseType);
-            }
-
             target = cleanedTarget;
             if (target.Count == 1)
             {

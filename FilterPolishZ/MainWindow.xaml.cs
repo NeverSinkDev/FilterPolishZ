@@ -66,15 +66,17 @@ namespace FilterPolishZ
             this.EconomyData = this.LoadEconomyOverviewData();
             this.ItemInfoData = this.LoadItemInformationOverview();
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
-
+            
             this.EconomyData.EnrichAll();
-
-            // Initialize 
-            var economyTieringSystem = new ConcreteEconomyRules();
-
-            economyTieringSystem.Execute();
-
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+        }
+
+        private void PerformEconomyTiering()
+        {
+            var economyTieringSystem = new ConcreteEconomyRules();
+            economyTieringSystem.Execute();
+            this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+            this.EventGrid.Publish();
         }
 
         private void ResetAllComponents()
@@ -342,6 +344,11 @@ namespace FilterPolishZ
         private void GenerateFilters_NoStyles(object sender, RoutedEventArgs e)
         {
             Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, false));
+        }
+
+        private void PerformAutomatedTiering(object sender, RoutedEventArgs e)
+        {
+            PerformEconomyTiering();
         }
     }
 }

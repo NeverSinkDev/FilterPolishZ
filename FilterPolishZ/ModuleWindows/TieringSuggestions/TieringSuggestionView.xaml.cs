@@ -72,5 +72,10 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             InnerView.Key = command.BaseType;
             InnerView.SelectFirstItem();
         }
+
+        private void ReloadClick(object sender, RoutedEventArgs e)
+        {
+            this.Reload();
+        }
     }
 }

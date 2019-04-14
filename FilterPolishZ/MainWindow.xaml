@@ -89,14 +89,19 @@
                                     </Button>
                                     
                                     <Separator/>
-                                    
+
+                                    <Button ToolTip="Perform Suggesting Generation Routine" Click="PerformAutomatedTiering" Foreground="Gold">
+                                        <materialDesign:PackIcon Kind="AutoFix" />
+                                    </Button>
+                                    <Separator/>
+
                                     <Button ToolTip="Generate filters (including styles)" Click="GenerateAllFilterFiles">
-                                        <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
+                                    <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
                                     </Button>
                                     <Button ToolTip="Generate filters (no styles)" Click="GenerateFilters_NoStyles">
                                         <materialDesign:PackIcon Kind="ArrowRightDropCircleOutline" />
                                     </Button>
-                                    
+
                                     <Separator/>
                                     
                                     <Button ToolTip="Open PoE filder folder" Click="OpenFilterFolder">

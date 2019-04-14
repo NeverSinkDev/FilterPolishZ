@@ -46,7 +46,7 @@ namespace FilterPolishZ.Economy
                 }
             }
 
-            this.TierListFacade.Suggestions.Add("uniques", new List<TieringCommand>());
+            
             this.TierListFacade.Suggestions["uniques"].AddRange(this.suggestions);
 
             foreach (var item in this.TierListFacade.Suggestions["uniques"])
