@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FilterCore.Commands;
 using FilterCore.Commands.EntryCommands;
+using FilterPolishUtil.Collections;
 
 namespace FilterCore
 {
@@ -130,37 +131,39 @@ namespace FilterCore
 
         public void ExecuteCommandTags()
         {
-            foreach (var entry in this.FilterEntries)
+            for (var i = 0; i < this.FilterEntries.Count; i++)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Content)
+                var filterEntry = this.FilterEntries[i];
+                if (filterEntry.Header.Type != FilterConstants.FilterEntryType.Content)
                 {
                     continue;
                 }
 
-                if (entry.Header.IsFrozen)
+                if (filterEntry.Header.IsFrozen)
                 {
                     continue;
                 }
 
-                ExecuteCommandTags_Inner(entry);
-            }
-            
-            // local func
-            void ExecuteCommandTags_Inner(IFilterEntry entry)
-            {
-                int? index = null;
-                foreach (var command in entry.Header.GenerationTags)
+                ExecuteCommandTags_Inner(filterEntry);
+                
+                // local func
+                void ExecuteCommandTags_Inner(IFilterEntry entry)
                 {
-                    if (command.IsStrictnessCommand()) continue;
-                    command.Execute();
-
-                    if (command is IEntryGenerationCommand cmd)
+                    int? index = null;
+                    foreach (var command in entry.Header.GenerationTags)
                     {
-                        if (!index.HasValue) index = this.FilterEntries.IndexOf(entry);
+                        if (command.IsStrictnessCommand()) continue;
+                        command.Execute();
 
-                        var newEntries = cmd.NewEntries;
-                        this.InsertEntries(index.Value, newEntries); // todo: exception because list edited during iteration
-                        newEntries.ToList().ForEach(ExecuteCommandTags_Inner);
+                        if (command is IEntryGenerationCommand cmd)
+                        {
+                            if (!index.HasValue) index = this.FilterEntries.IndexOf(entry);
+
+                            var newEntries = cmd.NewEntries;
+                            this.InsertEntries(index.Value, newEntries);
+                            i += newEntries.ToList().Count * 2; // *2 because of the filler entries/lines in between
+                            newEntries.ToList().ForEach(ExecuteCommandTags_Inner);
+                        }
                     }
                 }
             }
@@ -203,7 +206,15 @@ namespace FilterCore
 
         public void InsertEntries(int index, IEnumerable<IFilterEntry> newEntries)
         {
-            this.FilterEntries.InsertRange(index, newEntries);
+            var list = newEntries.ToList();
+            for (var i = list.Count - 1; i >= 0; i--)
+            {
+                if (i == 0) break;
+                list.Insert(i, FilterEntry.CreateFillerEntry());
+            }
+            list.Add(FilterEntry.CreateFillerEntry());
+            
+            this.FilterEntries.InsertRange(index, list);
         }
 
         public List<string> Serialize()

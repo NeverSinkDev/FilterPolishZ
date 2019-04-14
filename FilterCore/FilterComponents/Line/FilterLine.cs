@@ -60,7 +60,14 @@ namespace FilterCore.Line
 
         IFilterLine IFilterLine.Clone()
         {
-            throw new NotImplementedException();
+            return new FilterLine<T>
+            {
+                Value = this.Value.Clone(),
+                Comment = this.Comment,
+                Ident = this.Ident,
+                identCommented = this.identCommented,
+                IsActive = this.IsActive
+            };
         }
     }
 }
