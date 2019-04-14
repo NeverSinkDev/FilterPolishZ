@@ -90,7 +90,7 @@ namespace FilterPolishZ
 
             if (System.IO.File.Exists(defaultPath))
             {
-                InfoPopUpMessageDisplay.ShowInfoMessageBox("unnamed seed used");
+//                InfoPopUpMessageDisplay.ShowInfoMessageBox("unnamed seed used");
                 filePath = defaultPath;
             }
             else
