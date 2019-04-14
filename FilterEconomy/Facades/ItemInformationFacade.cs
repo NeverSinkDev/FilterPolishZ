@@ -84,6 +84,11 @@ namespace FilterEconomy.Facades
             }
         }
 
+        public void Reset()
+        {
+            this.EconomyTierListOverview.Clear();
+        }
+
         public List<ItemInformationData> this[string tierList,string basetype]
         {
             get

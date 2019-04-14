@@ -46,13 +46,25 @@ namespace FilterPolishZ
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
+
             ConcreteEnrichmentProcedures.Initialize();
 
             // Initialize Modules
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
-            this.ItemInfoData = this.LoadItemInformationOverview();
+            LoadAllComponents();
+
+            // Initialize Settings
+            this.InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
+        }
+
+        private void LoadAllComponents()
+        {
             this.EconomyData = this.LoadEconomyOverviewData();
+            this.ItemInfoData = this.LoadItemInformationOverview();
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
+
+            this.EconomyData.EnrichAll();
 
             // Initialize 
             var economyTieringSystem = new ConcreteEconomyRules();
@@ -60,10 +72,13 @@ namespace FilterPolishZ
             economyTieringSystem.Execute();
 
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+        }
 
-            // Initialize Settings
-            this.InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
+        private void ResetAllComponents()
+        {
+            this.EconomyData.Reset();
+            this.ItemInfoData.Reset();
+            this.TierListFacade.Reset();
         }
 
         [Time]
@@ -300,6 +315,9 @@ namespace FilterPolishZ
             var filePath = fd.FileName;
             var lineList = FileWork.ReadLinesFromFile(filePath);
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
+
+            this.ResetAllComponents();
+            this.LoadAllComponents();
         }
 
         private void SaveSeedFileAsUnnamed(object sender, RoutedEventArgs e)

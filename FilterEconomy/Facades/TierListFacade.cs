@@ -84,5 +84,11 @@ namespace FilterEconomy.Facades
                 command.Change = true;
             }
         }
+
+        public void Reset()
+        {
+            this.Suggestions.Clear();
+            this.TierListData.Clear();
+        }
     }
 }

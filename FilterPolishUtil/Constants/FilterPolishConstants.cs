@@ -8,7 +8,15 @@ namespace FilterPolishUtil.Constants
 {
     public static class FilterPolishConstants
     {
-        public static Dictionary<string, string> Abbreviations { get; set; } = new Dictionary<string, string>()
+        public static Dictionary<string, List<string>> TieredGroups { get; } = new Dictionary<string, List<string>>()
+        {
+            {"divination",new List<string>(){"divination"}},
+            {"maps->uniques",new List<string>(){"uniqueMaps"}},
+            {"uniques",new List<string>(){"uniqueWeapons","uniqueArmours","uniqueFlasks","uniqueAccessory"}},
+            {"basetypes",new List<string>(){"basetypes"}}
+        };
+
+        public static Dictionary<string, string> Abbreviations { get; } = new Dictionary<string, string>()
         {
             { "divination", "GetDivinationCardsOverview" },
             { "basetypes", "ItemOverview?type=BaseType"},

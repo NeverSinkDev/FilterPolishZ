@@ -68,12 +68,26 @@ namespace FilterEconomy.Facades
 
             var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString).ToList());
 
-            foreach (var item in result)
-            {
-                EnrichmentProcedureConfiguration.EnrichmentProcedures[branchKey].ForEach(z => z.Enrich(item.Key, item.Value));
-            }
-
             return result;
+        }
+
+        public void EnrichAll()
+        {
+            foreach (var section in this.EconomyTierlistOverview)
+            {
+                foreach (var item in section.Value)
+                {
+                    foreach (var enrichment in FilterPolishConstants.TieredGroups[section.Key])
+                    {
+                        EnrichmentProcedureConfiguration.EnrichmentProcedures[enrichment].ForEach(z => z.Enrich(item.Key, item.Value));
+                    }
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            this.EconomyTierlistOverview.Clear();
         }
 
         public void AddToDictionary(string leagueKey, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> dictionary)
