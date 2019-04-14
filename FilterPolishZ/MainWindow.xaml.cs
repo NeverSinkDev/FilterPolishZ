@@ -113,7 +113,7 @@ namespace FilterPolishZ
                 var filter = new Filter(baseFilterString);
                 
                 new FilterTableOfContentsCreator(filter).Run();
-                new StrictnessGenerator(filter, strictnessIndex).Apply();
+                filter.ExecuteStrictnessCommands(strictnessIndex);
 
                 if (style != "")
                 {
