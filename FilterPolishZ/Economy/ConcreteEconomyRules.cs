@@ -67,8 +67,13 @@ namespace FilterPolishZ.Economy
 
             List<NinjaItem> AspectCheck(HashSet<string> include, HashSet<string> exclude) =>
                 uniqueRules.DefaultSet.Where(
-                    z => z.Aspects.Any(x => include.Contains(x.Name)) &&
+                    z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
                          z.Aspects.All(x => !exclude.Contains(x.Name))).ToList();
+
+            bool AllItemsFullFill(List<NinjaItem> list ,HashSet<string> include, HashSet<string> exclude) =>
+                list.All(
+                    z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
+                         z.Aspects.All(x => !exclude.Contains(x.Name)));
 
             // Anchor item
             uniqueRules.EconomyRules.Add(new FilterEconomyRule()
@@ -180,6 +185,27 @@ namespace FilterPolishZ.Economy
                             {
                                 return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.T2BreakPoint * FilterPolishConstants.LeagueDropAspectMultiplier;
                             }
+                        }
+                    }
+
+                    return fit;
+                }
+            });
+
+            uniqueRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                RuleName = "BossOnly",
+                TargetTier = "multispecial",
+                Rule = (string s) =>
+                {
+                    var fit = false;
+                    if (uniqueRules.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint)
+                    {
+                        var relevantList = AspectCheck(new HashSet<string> { },new HashSet<string>() { "NonDropAspect" });
+
+                        if (relevantList.Count > 0 && AllItemsFullFill(relevantList, new HashSet<string>() { "BossDropAspect" }, new HashSet<string>()))
+                        {
+                            return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.T2BreakPoint * FilterPolishConstants.LeagueDropAspectMultiplier;
                         }
                     }
 

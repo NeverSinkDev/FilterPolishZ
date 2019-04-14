@@ -21,8 +21,8 @@ namespace FilterPolishUtil.Constants
 
         public static float T1BreakPoint = 20;
         public static float T2BreakPoint = 5;
-        public static float UncommonAspectMultiplier = 1.5f;
-        public static float LeagueDropAspectMultiplier = 1.5f;
+        public static float UncommonAspectMultiplier = 3f;
+        public static float LeagueDropAspectMultiplier = 6f;
         public static float HighVarietyMultiplier = 0.5f;
     }
 }

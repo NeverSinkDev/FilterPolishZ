@@ -42,7 +42,8 @@ namespace FilterEconomy.Processor
                 return new TieringCommand()
                 {
                     NewTier = TargetTier,
-                    BaseType = basetype
+                    BaseType = basetype,
+                    AppliedRule = RuleName
                 };
             }
 
@@ -55,11 +56,13 @@ namespace FilterEconomy.Processor
     {
         public float Price { get; set; }
         public string BaseType { get; set; }
-        public string UniqueName { get; set; }
         public string OldTier { get; set; }
         public string NewTier { get; set; }
         public string Group { get; set; }
         public bool Change { get; set; }
+        public bool Unsure { get; set; }
+        public bool Performed { get; set; }
+        public string AppliedRule { get; internal set; }
 
         public void Execute()
         {

@@ -6,6 +6,7 @@
              xmlns:domain="clr-namespace:FilterPolishZ.ModuleWindows.TagEditing"
              xmlns:domainTag="clr-namespace:FilterCore.FilterComponents.Tags;assembly=FilterCore"
              xmlns:domainEntry="clr-namespace:FilterCore.Entry;assembly=FilterCore"
+             xmlns:itemVariation="clr-namespace:FilterPolishZ.ModuleWindows.ItemVariationList"
              xmlns:wpfUtil="clr-namespace:FilterPolishZ.Util"
              xmlns:converter="clr-namespace:FilterPolishZ.ModuleWindows.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -41,10 +42,21 @@
         </ToolBarTray>
 
         <Grid Grid.Row="1">
-            <DockPanel>
-                <DataGrid x:Name="TieringSuggestionsGrid" ItemsSource="{Binding TieringSuggestions}" Margin="0 8 0 0" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow">
-                </DataGrid>
-            </DockPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                
+                <DockPanel Grid.Column="0">
+                    <DataGrid x:Name="TieringSuggestionsGrid" ItemsSource="{Binding TieringSuggestions}" Margin="0 8 0 0" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" SelectedCellsChanged="TieringSuggestionsGrid_SelectedCellsChanged">
+                    </DataGrid>
+                </DockPanel>
+
+                <DockPanel Grid.Column="1">
+                    <itemVariation:ItemVariationListView x:Name="InnerView" Key="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.BaseType}" />
+                </DockPanel>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

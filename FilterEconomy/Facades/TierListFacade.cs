@@ -44,6 +44,7 @@ namespace FilterEconomy.Facades
 
         public void ApplyCommand(TieringCommand command)
         {
+
             if (command.Change)
             {
                 return;
@@ -51,6 +52,12 @@ namespace FilterEconomy.Facades
 
             if (command.OldTier.ToLower() == command.NewTier.ToLower())
             {
+                return;
+            }
+
+            if (command.NewTier == "???")
+            {
+                command.Unsure = true;
                 return;
             }
 

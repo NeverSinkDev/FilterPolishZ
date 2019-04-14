@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,32 @@ namespace FilterEconomy.Request.Enrichment
         {
             List<NinjaItem> target = data;
 
-            if (data.Count > 1)
+            if (data.Count == 1)
+            {
+                data.LowestPrice = target[0].CVal;
+                return;
+            }
+
+            var cleanedTarget = target.Where(x => !x.Aspects.Any(z => FilterConstants.GlobalIgnoreAspects.Contains(z.Name) || FilterConstants.IgnoredHighestPriceAspects.Contains(z.Name))).ToList();
+
+            if (cleanedTarget.Count != data.Count)
+            {
+                Debug.WriteLine(baseType);
+            }
+
+            target = cleanedTarget;
+            if (target.Count == 1)
+            {
+                data.LowestPrice = target[0].CVal;
+                return;
+            }
+            
+            if (target.Count == 0)
+            {
+                target = data;
+            }
+
+            if (target.Count > 1)
             {
                 if (target.All(x => x.Aspects.Any(z => !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))))
                 {

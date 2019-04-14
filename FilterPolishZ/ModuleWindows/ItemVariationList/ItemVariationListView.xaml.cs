@@ -22,10 +22,10 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public static readonly DependencyProperty KeyProperty = 
+        public static readonly DependencyProperty KeyProperty =
             DependencyProperty.Register(
-                "Key", 
-                typeof(string), 
+                "Key",
+                typeof(string),
                 typeof(ItemVariationListView),
                 new PropertyMetadata(default(string), KeyChangeCallBack));
 
@@ -49,6 +49,8 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 }
             }
         }
+
+        public string BranchKey { get; set; } = "uniques";
 
         public ObservableCollection<NinjaItem> ItemVariationInformation { get; set; } = new ObservableCollection<NinjaItem>();
         public static ObservableCollection<NinjaItem> ItemVariationInformationStatic { get; set; } = new ObservableCollection<NinjaItem>();
@@ -75,7 +77,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             }
 
             // todo: change this hard-coded "uniques"
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[ItemInfoView.CurrentBranchKey][Key].ForEach(x =>
+            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);
             });

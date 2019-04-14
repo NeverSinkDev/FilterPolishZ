@@ -42,5 +42,19 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void TieringSuggestionsGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            if (TieringSuggestionsGrid.SelectedItem == null)
+            {
+                return;
+            }
+
+            TieringCommand command = TieringSuggestionsGrid.SelectedItem as TieringCommand;
+
+            InnerView.BranchKey = command.Group;
+            InnerView.Key = command.BaseType;
+            InnerView.SelectFirstItem();
+        }
     }
 }

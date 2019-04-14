@@ -50,8 +50,8 @@ namespace FilterPolishZ
 
             // Initialize Modules
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
-            this.EconomyData = this.LoadEconomyOverviewData();
             this.ItemInfoData = this.LoadItemInformationOverview();
+            this.EconomyData = this.LoadEconomyOverviewData();
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // Initialize 

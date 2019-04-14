@@ -58,6 +58,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             LowestPriceCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.LowestPrice.ToString());
             CurrentTierCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
             CountCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
+            InnerView.BranchKey = CurrentBranchKey;
         }
 
         private void InitializeItemInformationData()
@@ -113,6 +114,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 if (dependencyObject is ScrollBar) return;
                 dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
             }
+
+            InnerView.BranchKey = CurrentBranchKey;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -124,6 +127,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             {
                 InnerView.SelectFirstItem();
             }
+
+            InnerView.BranchKey = CurrentBranchKey;
         }
 
         private void SaveInsta_Click(object sender, RoutedEventArgs e)
@@ -201,6 +206,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                     this.InitializeItemInformationData();
                     break;
             }
+            InnerView.BranchKey = CurrentBranchKey;
         }
 
         private void OnUpdateUiButtonClick(object sender, RoutedEventArgs e)
