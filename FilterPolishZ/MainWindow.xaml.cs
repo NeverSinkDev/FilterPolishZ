@@ -69,8 +69,23 @@ namespace FilterPolishZ
         [Time]
         private Filter PerformFilterWork()
         {
-           this.FilterRawString = FileWork.ReadLinesFromFile(Configuration.AppSettings["SeedFile Folder"] + "/" + "NeverSink's filter - SEED (SeedFilter) .filter");
-           return new Filter(this.FilterRawString);
+            var outputFolder = Configuration.AppSettings["Output Folder"];
+            var defaultPath = outputFolder + "\\Unnamed filter - SEED (SeedFilter) .filter";
+            string filePath;
+
+            if (System.IO.File.Exists(defaultPath))
+            {
+                InfoPopUpMessageDisplay.ShowInfoMessageBox("unnamed seed used");
+                filePath = defaultPath;
+            }
+            else
+            {
+                this.SelectSeedFilterFile(null, null);
+                return this.FilterAccessFacade.PrimaryFilter;
+            }
+            
+            this.FilterRawString = FileWork.ReadLinesFromFile(filePath);
+            return new Filter(this.FilterRawString);
         }
 
         [Time]
