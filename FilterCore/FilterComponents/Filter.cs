@@ -186,6 +186,19 @@ namespace FilterCore
                     command.Execute(strictnessIndex);
                 }
             }
+            
+            // update strictness name
+            foreach (var entry in this.FilterEntries)
+            {
+                foreach (var line in entry.Content.Content["comment"])
+                {
+                    if (line.Comment.Contains("TYPE:") && line.Comment.Contains("SEED"))
+                    {
+                        line.Comment = line.Comment.Replace("SEED", strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper());
+                        return;
+                    }
+                }
+            }
         }
 
         public void InsertEntries(int index, IEnumerable<IFilterEntry> newEntries)

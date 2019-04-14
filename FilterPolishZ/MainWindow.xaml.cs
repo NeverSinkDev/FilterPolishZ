@@ -132,7 +132,7 @@ namespace FilterPolishZ
 
                 if (style != "")
                 {
-                    new StyleGenerator(filter, styleSheetFolderPath + style + ".fsty").Apply();
+                    new StyleGenerator(filter, styleSheetFolderPath + style + ".fsty", style).Apply();
                     filePath += "(STYLE) " + style.ToUpper() + "\\";
                     fileName += " (" + style + ") ";
                 }

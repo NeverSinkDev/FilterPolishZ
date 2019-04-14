@@ -13,11 +13,13 @@ namespace FilterCore.Commands
     {
         private readonly Filter filter;
         private readonly Dictionary<string, Tuple<string, string>> styleData;
+        private readonly string styleName;
         
-        public StyleGenerator(Filter filter, string styleFilePath)
+        public StyleGenerator(Filter filter, string styleFilePath, string styleName)
         {
             this.filter = filter;
             this.styleData = new StyleSheetParser(styleFilePath).Parse();
+            this.styleName = styleName;
         }
 
         public void Apply()
@@ -29,13 +31,13 @@ namespace FilterCore.Commands
                     continue;
                 }
 
-                foreach (var styleName in this.styleData.Keys)
+                foreach (var name in this.styleData.Keys)
                 {
-                    var line = entry.Content.GetFirstLineWhere(x => x.Comment == styleName);
+                    var line = entry.Content.GetFirstLineWhere(x => x.Comment == name);
                     if (line == null) continue;
 
-                    var newIdent = this.styleData[styleName].Item1;
-                    var newValue = this.styleData[styleName].Item2;
+                    var newIdent = this.styleData[name].Item1;
+                    var newValue = this.styleData[name].Item2;
 
                     line.Ident = newIdent;
 
@@ -59,8 +61,25 @@ namespace FilterCore.Commands
                     }
                 }
             }
+
+            this.EditStyleName();
         }
-        
+
+        private void EditStyleName()
+        {
+            foreach (var entry in this.filter.FilterEntries)
+            {
+                foreach (var line in entry.Content.Content["comment"])
+                {
+                    if (line.Comment.Contains("STYLE:") && line.Comment.Contains("NORMAL"))
+                    {
+                        line.Comment = line.Comment.Replace("NORMAL", this.styleName.ToUpper());
+                        return;
+                    }
+                }
+            }
+        }
+
         private class StyleSheetParser
         {
             public StyleSheetParser(string filePath)
