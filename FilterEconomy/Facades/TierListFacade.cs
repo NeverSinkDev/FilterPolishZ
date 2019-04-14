@@ -70,7 +70,7 @@ namespace FilterEconomy.Facades
         public void ApplyCommand(TieringCommand command)
         {
 
-            if (command.Change)
+            if (command.Change || command.Performed)
             {
                 return;
             }

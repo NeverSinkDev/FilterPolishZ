@@ -1,4 +1,5 @@
-﻿using FilterEconomy.Model;
+﻿using FilterCore.Constants;
+using FilterEconomy.Model;
 using FilterEconomy.Model.ItemInformationData;
 using FilterPolishUtil.Collections;
 using FilterUtilModels.Economy;
@@ -22,7 +23,7 @@ namespace FilterEconomy.Processor
         {
             this.DefaultSet = DefaultItemQuery(selectorString);
             return this.EconomyRules.Select(
-                x => 
+                x =>
                     x.Execute(group, basetype, processorData))
                     .FirstOrDefault(z => z != null);
         }
@@ -33,7 +34,7 @@ namespace FilterEconomy.Processor
         public string RuleName { get; set; }
         public string TargetTier { get; set; }
 
-        public Func<string,bool> Rule { get; set; }
+        public Func<string, bool> Rule { get; set; }
 
         public TieringCommand Execute(string group, string basetype, IEconomyProcessorData processorData)
         {
@@ -54,15 +55,38 @@ namespace FilterEconomy.Processor
     [DebuggerDisplay("{NewTier} // {BaseType}")]
     public class TieringCommand
     {
-        public float Price { get; set; }
+        public string AppliedRule { get; internal set; }
         public string BaseType { get; set; }
         public string OldTier { get; set; }
         public string NewTier { get; set; }
         public string Group { get; set; }
+        public bool IsChange
+        {
+            get
+            {
+                if (this.Performed)
+                {
+                    return false;
+                }
+
+                if (this.NewTier == "???")
+                {
+                    return false;
+                }
+
+                if (this.OldTier.ToLower() == this.NewTier.ToLower())
+                {
+                    return false;
+                }
+
+                return !FilterConstants.IgnoredSuggestionTiers.Contains(this.OldTier.ToLower()) ||
+                    !FilterConstants.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
+            }
+       }
+
         public bool Change { get; set; }
         public bool Unsure { get; set; }
         public bool Performed { get; set; }
-        public string AppliedRule { get; internal set; }
 
         public void Execute()
         {

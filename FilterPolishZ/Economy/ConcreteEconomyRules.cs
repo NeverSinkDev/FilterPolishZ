@@ -45,14 +45,8 @@ namespace FilterPolishZ.Economy
                     item.OldTier = "rest";
                 }
             }
-
             
             this.TierListFacade.Suggestions["uniques"].AddRange(this.suggestions);
-
-            foreach (var item in this.TierListFacade.Suggestions["uniques"])
-            {
-                this.TierListFacade.ApplyCommand(item);
-            }
         }
 
         private FilterEconomyRuleSet CreateUniqueEconomyRules()
