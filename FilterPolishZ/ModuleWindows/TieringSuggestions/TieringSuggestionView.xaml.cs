@@ -1,6 +1,7 @@
 ﻿using FilterEconomy;
 using FilterEconomy.Facades;
 using FilterEconomy.Processor;
+using FilterPolishZ.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,6 +28,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
     {
         public TierListFacade TierListFacade { get; set; }
         public ObservableCollection<TieringCommand> TieringSuggestions { get; set; } = new ObservableCollection<TieringCommand>();
+        public EventGridFacade EventGridFacade { get; }
 
         public TieringSuggestionView()
         {
@@ -34,6 +36,20 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             this.TierListFacade = TierListFacade.GetInstance();
             this.InitializeTieringList();
             this.DataContext = this;
+
+            this.EventGridFacade = EventGridFacade.GetInstance();
+            this.EventGridFacade.FilterChangeEvent += EventGridFacade_FilterChangeEvent;
+        }
+
+        private void EventGridFacade_FilterChangeEvent(object sender, EventArgs e)
+        {
+            this.Reload();
+        }
+
+        public void Reload()
+        {
+            this.TierListFacade = TierListFacade.GetInstance();
+            this.TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions["uniques"]);
         }
 
         private void InitializeTieringList()

@@ -22,6 +22,7 @@ using FilterPolishUtil;
 using FilterPolishZ.Configuration;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
+using FilterPolishZ.Util;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -30,10 +31,10 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
     /// </summary>
     public partial class ItemInfoView : UserControl, INotifyPropertyChanged
     {
-        public EconomyRequestFacade EconomyData { get; } = EconomyRequestFacade.GetInstance();
-        public ItemInformationFacade ItemInfoData { get; } = ItemInformationFacade.GetInstance();
-        public TierListFacade TierListData { get; } = TierListFacade.GetInstance();
-        public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
+        public EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
+        public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
+        public TierListFacade TierListData { get; set; } = TierListFacade.GetInstance();
+        public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
@@ -43,6 +44,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public Capsule LowestPriceCapsule { get; set; }
         public Capsule CurrentTierCapsule { get; set; }
         public Capsule CountCapsule { get; set; }
+        public EventGridFacade EventGridFacade { get; }
 
         public ItemInfoView()
         {
@@ -59,6 +61,22 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             CurrentTierCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
             CountCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
             InnerView.BranchKey = CurrentBranchKey;
+
+            this.EventGridFacade = EventGridFacade.GetInstance();
+            this.EventGridFacade.FilterChangeEvent += EventGridFacade_FilterChangeEvent;
+        }
+
+        private void EventGridFacade_FilterChangeEvent(object sender, EventArgs e)
+        {
+            this.Reload();
+        }
+
+        public void Reload()
+        {
+            this.EconomyData = EconomyRequestFacade.GetInstance();
+            this.ItemInfoData = ItemInformationFacade.GetInstance();
+            this.TierListData = TierListFacade.GetInstance();
+            this.ItemInformationData = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
         }
 
         private void InitializeItemInformationData()

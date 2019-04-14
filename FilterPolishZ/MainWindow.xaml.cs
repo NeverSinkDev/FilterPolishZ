@@ -24,6 +24,7 @@ using FilterCore.Commands;
 using FilterCore.Constants;
 using MethodTimer;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
+using FilterPolishZ.Util;
 
 namespace FilterPolishZ
 {
@@ -35,6 +36,8 @@ namespace FilterPolishZ
         public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
 
         // Components
+        public EventGridFacade EventGrid = EventGridFacade.GetInstance();
+
         public LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
         public EconomyRequestFacade EconomyData { get; set; }
         public ItemInformationFacade ItemInfoData { get; set; }
@@ -318,6 +321,7 @@ namespace FilterPolishZ
 
             this.ResetAllComponents();
             this.LoadAllComponents();
+            this.EventGrid.Publish();
         }
 
         private void SaveSeedFileAsUnnamed(object sender, RoutedEventArgs e)
