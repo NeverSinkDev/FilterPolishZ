@@ -144,9 +144,9 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             if (index != -1)
             {
                 InnerView.SelectFirstItem();
+                InnerView.BranchKey = CurrentBranchKey;
+                InnerView.RefreshAspectColoration();
             }
-
-            InnerView.BranchKey = CurrentBranchKey;
         }
 
         private void SaveInsta_Click(object sender, RoutedEventArgs e)

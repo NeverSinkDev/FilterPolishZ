@@ -102,7 +102,7 @@ namespace FilterCore.Constants
             { "UP",     typeof(RaresUpEntryCommand) },
             { "RVR",    typeof(RarityVariationRuleEntryCommand) }
         };
-        
+
         public static HashSet<string> StyleIdents = new HashSet<string>
         {
             "SetTextColor",

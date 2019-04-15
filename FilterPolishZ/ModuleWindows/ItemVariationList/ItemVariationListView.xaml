@@ -27,7 +27,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
-            <ListBox ItemsSource="{Binding ItemVariationInformation}" x:Name="ItemVariationTable">
+            <ListBox ItemsSource="{Binding ItemVariationInformation}" x:Name="ItemVariationTable" SelectionChanged="ListBox_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="domain:NinjaItem">
                         <materialDesign:Card Padding="16" Margin="4">

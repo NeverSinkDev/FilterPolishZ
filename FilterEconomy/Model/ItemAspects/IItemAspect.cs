@@ -11,6 +11,14 @@ using System.Windows.Media;
 
 namespace FilterEconomy.Model.ItemAspects
 {
+    public enum AspectType
+    {
+        common,
+        uniques,
+        divination,
+        maps
+    }
+
     public abstract class AbstractItemAspect : IItemAspect
     {
         static AbstractItemAspect()
@@ -23,11 +31,27 @@ namespace FilterEconomy.Model.ItemAspects
             }
         }
 
+        public static AspectType RetrieveAspectType(string s)
+        {
+            switch (s)
+            {
+                case "uniques":
+                    return AspectType.uniques;
+                case "divination":
+                    return AspectType.divination;
+                case "maps":
+                    return AspectType.maps;
+                default:
+                    return AspectType.common;
+            }
+        }
+
         public static ObservableCollection<AbstractItemAspect> AvailableAspects = new ObservableCollection<AbstractItemAspect>();
 
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
         public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
+        public virtual AspectType Type => AspectType.common;
     }
 
     public interface IItemAspect
@@ -35,6 +59,7 @@ namespace FilterEconomy.Model.ItemAspects
         string Group { get; }
         string Name { get; }
         SolidColorBrush Color { get; }
+        AspectType Type { get; }
     }
 
     public class HandledAspect : AbstractItemAspect
@@ -57,21 +82,25 @@ namespace FilterEconomy.Model.ItemAspects
     public class NonDropAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class BossDropAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class LeagueDropAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class UncommonAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class EarlyLeagueInterestAspect : AbstractItemAspect
@@ -87,20 +116,24 @@ namespace FilterEconomy.Model.ItemAspects
     public class ProphecyMaterialAspect : AbstractItemAspect
     {
         public override string Group => "Intent";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class ProphecyResultAspect : AbstractItemAspect
     {
         public override string Group => "Intent";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class HighVarietyAspect : AbstractItemAspect
     {
         public override string Group => "ItemProperties";
+        public override AspectType Type => AspectType.uniques;
     }
 
     public class VarietyAspect : AbstractItemAspect
     {
         public override string Group => "ItemProperties";
+        public override AspectType Type => AspectType.uniques;
     }
 }

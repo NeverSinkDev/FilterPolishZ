@@ -50,18 +50,42 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             }
         }
 
-        public string BranchKey { get; set; } = "uniques";
+        public AspectType CurrentAspectGroup = AspectType.common;
+
+        private string branchKey = "uniques";
+
+        public string BranchKey
+        {
+            get
+            {
+                return this.branchKey;
+            }
+            set
+            {
+                if (this.branchKey != value)
+                {
+                    this.branchKey = value;
+                    this.RefreshAvailableAspects(value);
+                }
+            }
+        }
 
         public ObservableCollection<NinjaItem> ItemVariationInformation { get; set; } = new ObservableCollection<NinjaItem>();
         public static ObservableCollection<NinjaItem> ItemVariationInformationStatic { get; set; } = new ObservableCollection<NinjaItem>();
 
-        public ObservableCollection<AbstractItemAspect> AvailableAspects { get; set; } = AbstractItemAspect.AvailableAspects;
+        public ObservableCollection<AbstractItemAspect> AvailableAspects { get; set; }
 
         public ItemVariationListView()
         {
+            RefreshAvailableAspects(this.BranchKey);
             this.InitializeItems();
             InitializeComponent();
             this.DataContext = this;
+        }
+
+        private void RefreshAvailableAspects(string branchKey)
+        {
+            this.AvailableAspects = new ObservableCollection<AbstractItemAspect>(AbstractItemAspect.AvailableAspects.Where(x => x.Type == AspectType.common || x.Type == AbstractItemAspect.RetrieveAspectType(branchKey)));
         }
 
         public void SelectFirstItem()
@@ -84,21 +108,25 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
 
             ItemVariationInformationStatic = ItemVariationInformation;
             AvailableAspects.OrderBy(x => x.Name);
-
-            RefreshAspectColoration();
+            this.RefreshAspectColoration();
         }
 
-        private void RefreshAspectColoration()
+        public void RefreshAspectColoration()
         {
+            if (ItemVariationTable.Items.Count == 0)
+            {
+                return;
+            }
+
             for (int i = 0; i < AspectTable.Items.Count; i++)
             {
                 DependencyObject obj = AspectTable.ItemContainerGenerator.ContainerFromIndex(i);
                 IEnumerable<Button> buttons = WpfUtil.FindVisualChildren<Button>(obj).ToList();
 
-                buttons.Select(x => new { label = AspectTable.Items[i], value = x }).ToList()
+                buttons.Select(x => new { label = (AspectTable.Items[i] as IItemAspect).Name, value = x }).ToList()
                     .ForEach(z =>
                     {
-                        if (((ItemVariationTable.SelectedItem ?? ItemVariationTable.Items[0]) as NinjaItem).Aspects.Contains(z.label))
+                        if (((ItemVariationTable.SelectedItem ?? ItemVariationTable.Items[0]) as NinjaItem).Aspects.Any(y => y.Name.Contains(z.label)))
                         {
                             z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#651fff"));
                         }
@@ -118,6 +146,11 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 return;
             }
 
+            RefreshAspects(control);
+        }
+
+        private void RefreshAspects(ContentControl control)
+        {
             NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
             var clickedAspect = (control.DataContext as AbstractItemAspect);
 
@@ -136,6 +169,14 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
         private Action<PropertyChangedEventArgs> RaisePropertyChanged()
         {
             return args => PropertyChanged?.Invoke(this, args);
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ItemVariationTable?.SelectedItem != null)
+            {
+                this.RefreshAspectColoration();
+            }
         }
     }
 }
