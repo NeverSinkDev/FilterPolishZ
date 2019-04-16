@@ -131,9 +131,33 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.uniques;
     }
 
-    public class VarietyAspect : AbstractItemAspect
+    public class CurrencyTypeAspect : AbstractItemAspect
     {
-        public override string Group => "ItemProperties";
-        public override AspectType Type => AspectType.uniques;
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class LargeRandomPoolAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class QueryableResultAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class SingleCardAspect : AbstractItemAspect
+    {
+        public override string Group => "StackSize";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class LargeDeckAspect : AbstractItemAspect
+    {
+        public override string Group => "StackSize";
+        public override AspectType Type => AspectType.divination;
     }
 }

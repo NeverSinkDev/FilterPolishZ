@@ -25,6 +25,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <ListBox ItemsSource="{Binding ItemVariationInformation}" x:Name="ItemVariationTable" SelectionChanged="ListBox_SelectionChanged">
@@ -84,7 +85,7 @@
                             <materialDesign:Badged MouseUp="OnAspectButtonClick" Badge="{Binding Group}" Focusable="False">
                                 <Grid VerticalAlignment="Stretch" HorizontalAlignment="Center">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="300" />
+                                        <ColumnDefinition Width="250" />
                                     </Grid.ColumnDefinitions>
 
                                     <Grid.RowDefinitions>
@@ -100,6 +101,13 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </DockPanel>
+        </Grid>
+        <Grid Grid.Column="2">
+            <DockPanel>
+                <materialDesign:Card>
+                    <TextBlock Text="{Binding ElementName=ItemVariationTable, Path=SelectedItem.ExplicitModifiers}" />
+                </materialDesign:Card>
             </DockPanel>
         </Grid>
     </Grid>
