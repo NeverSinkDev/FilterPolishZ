@@ -50,6 +50,9 @@ namespace FilterEconomy.Model
         [JsonProperty("count")]
         public float IndexedCount { get; set; }
 
+        [JsonProperty("stackSize")]
+        public int StackSize { get; set; }
+
         //[JsonProperty("sparkline")]
         //public int[] SparkLine {get; set;}
 
