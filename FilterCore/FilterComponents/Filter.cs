@@ -26,7 +26,9 @@ namespace FilterCore
 
             foreach (var rawLine in input)
             {
-                lineList.Add(LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(rawLine)));
+                var tokens = LineParser.TokenizeFilterLineString(rawLine);
+                var line = LineParser.GenerateFilterLine(tokens);
+                lineList.Add(line);
             }
             
             this.FilterLines = lineList;
@@ -225,7 +227,14 @@ namespace FilterCore
         }
 
         public string GetVersion() => this.GetVersionLine().Comment.Split('\t').Last();
-        public void SetVersion(string newVersion) => this.GetVersionLine().Comment = "VERSION: \t" + newVersion;
+        
+        public void SetVersion(string newVersion)
+        {
+            var line = this.GetVersionLine();
+            var oldVers = line.Comment.Trim().Split(' ', '\t').Last();
+            line.Comment = line.Comment.Replace(oldVers, newVersion);
+        }
+
         private IFilterLine GetVersionLine()
         {
             foreach (var entry in this.FilterEntries)

@@ -109,7 +109,7 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStyles)
+        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed)
         {
             var isStopping = this.VerifyFilter(baseFilter);
             if (isStopping) return;
@@ -118,17 +118,19 @@ namespace FilterPolishZ
             var outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
-            
-            var seedPath = outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\" + filterName + " filter - SEED (SeedFilter) .filter";
-            generationTasks.Add(this.WriteSeedFilter(baseFilter, seedPath));
+
+            if (isGeneratingStylesAndSeed)
+            {
+                var seedPath = outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\" + filterName + " filter - SEED (SeedFilter) .filter";
+                generationTasks.Add(this.WriteSeedFilter(baseFilter, seedPath));
+            }
 
             baseFilter.ExecuteCommandTags();
-            
             var baseFilterString = baseFilter.Serialize();
             
             for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
-                if (isGeneratingStyles)
+                if (isGeneratingStylesAndSeed)
                 {
                     generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, strictnessIndex)));
                 }

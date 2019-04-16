@@ -61,8 +61,8 @@
                             <!-- top right open menu button -->
                             <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                                 <StackPanel>
-                                    <Button Content="Generate filters (full, with styles)" Click="GenerateAllFilterFiles"/>
-                                    <Button Content="Generate filter" Click="GenerateFilters_NoStyles"/>
+                                    <Button Content="Generate filters (with styles and seed)" Click="GenerateAllFilterFiles"/>
+                                    <Button Content="Generate filter (no style/seed)" Click="GenerateFilters_NoStyles"/>
                                     <Separator/>
                                     <Button Content="Open filter folder" Click="OpenFilterFolder"/>
                                     <Button Content="Open output folder" Click="OpenOutputFolder"/>
