@@ -62,22 +62,7 @@ namespace FilterCore.Commands
                 }
             }
 
-            this.EditStyleName();
-        }
-
-        private void EditStyleName()
-        {
-            foreach (var entry in this.filter.FilterEntries)
-            {
-                foreach (var line in entry.Content.Content["comment"])
-                {
-                    if (line.Comment.Contains("STYLE:") && line.Comment.Contains("NORMAL"))
-                    {
-                        line.Comment = line.Comment.Replace("NORMAL", this.styleName.ToUpper());
-                        return;
-                    }
-                }
-            }
+            this.filter.SetHeaderMetaData("style:", this.styleName.ToUpper());
         }
 
         private class StyleSheetParser

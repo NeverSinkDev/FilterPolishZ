@@ -192,18 +192,7 @@ namespace FilterCore
                 }
             }
             
-            // update strictness name
-            foreach (var entry in this.FilterEntries)
-            {
-                foreach (var line in entry.Content.Content["comment"])
-                {
-                    if (line.Comment.Contains("TYPE:") && line.Comment.Contains("SEED"))
-                    {
-                        line.Comment = line.Comment.Replace("SEED", strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper());
-                        return;
-                    }
-                }
-            }
+            this.SetHeaderMetaData("type:", strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper());
         }
 
         public void InsertEntries(int index, IEnumerable<IFilterEntry> newEntries)
@@ -226,16 +215,19 @@ namespace FilterCore
             return results;
         }
 
-        public string GetVersion() => this.GetVersionLine().Comment.Split('\t').Last();
-        
-        public void SetVersion(string newVersion)
+        public string GetHeaderMetaData(string key)
         {
-            var line = this.GetVersionLine();
-            var oldVers = line.Comment.Trim().Split(' ', '\t').Last();
-            line.Comment = line.Comment.Replace(oldVers, newVersion);
+            return this.GetHeaderMetaDataLine(key).Comment.Split('\t', ' ').Last();
         }
 
-        private IFilterLine GetVersionLine()
+        public void SetHeaderMetaData(string key, string newVersion)
+        {
+            var line = this.GetHeaderMetaDataLine(key);
+            var oldValue = line.Comment.Trim().Split(' ', '\t').Last();
+            line.Comment = line.Comment.Replace(oldValue, newVersion);
+        }
+        
+        private IFilterLine GetHeaderMetaDataLine(string key)
         {
             foreach (var entry in this.FilterEntries)
             {
@@ -243,7 +235,7 @@ namespace FilterCore
                 foreach (var line in entry.Content.Content["comment"])
                 {
                     var comment = line.Comment;
-                    if (!comment.ToLower().Contains("version")) continue;
+                    if (!comment.ToLower().Contains(key.ToLower())) continue;
                     return line;
                 }
             }

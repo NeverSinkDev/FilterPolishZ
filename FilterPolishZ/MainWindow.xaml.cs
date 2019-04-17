@@ -176,13 +176,13 @@ namespace FilterPolishZ
         {
             var errorMsg = "";
             
-            var oldSeedVersion = baseFilter.GetVersion();
+            var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
             var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
             if (oldSeedVersion == newVersion)
             {
                 errorMsg += "Version did not change! ";
             }
-            else baseFilter.SetVersion(newVersion);
+            else baseFilter.SetHeaderMetaData("version:", newVersion);
             
             // todo: style tags
 
