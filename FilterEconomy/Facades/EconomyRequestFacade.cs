@@ -60,6 +60,11 @@ namespace FilterEconomy.Facades
                     // Store locally
                     Task.Run(() => FileWork.WriteTextAsync(fileFullPath, responseString));
                 }
+
+                if (responseString == null || responseString.Length < 400)
+                {
+                    InfoPopUpMessageDisplay.ShowError("poeNinja web request or file content is null/short:\n\n\n" + responseString);
+                }
             }
             catch
             {
