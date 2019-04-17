@@ -18,6 +18,29 @@ namespace FilterEconomy.Processor
         public List<FilterEconomyRule> EconomyRules { get; set; } = new List<FilterEconomyRule>();
         public Func<string, ItemList<NinjaItem>> DefaultItemQuery { get; set; }
         public ItemList<NinjaItem> DefaultSet { get; set; }
+        public List<Action<TieringCommand>> PostProcessing { get; set; } = new List<Action<TieringCommand>>();
+        public bool Enabled { get; set; } = true;
+
+        public IEnumerable<TieringCommand> GenerateSuggestions(IEconomyProcessorData processor)
+        {
+            if (!Enabled)
+            {
+                yield break;
+            }
+
+            var result = processor.EconomyInformation.EconomyTierlistOverview[this.GoverningSection]
+                .Select(z => z.Key)
+                .Select(x => this.ProcessItem(this.GoverningSection, x, x, processor));
+
+            foreach (var item in result)
+            {
+                foreach (var command in PostProcessing)
+                {
+                    command(item);
+                }
+                yield return item;
+            }
+        }
 
         public TieringCommand ProcessItem(string group, string basetype, string selectorString, IEconomyProcessorData processorData)
         {

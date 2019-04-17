@@ -6,6 +6,7 @@ using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Constants;
 using FilterUtilModels.Economy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,8 @@ namespace FilterPolishZ.Economy
     public class ConcreteEconomyRules : IEconomyProcessorData
     {
         private FilterEconomyRuleSet uniqueRules;
+        private FilterEconomyRuleSet divinationRules;
+
         private List<TieringCommand> suggestions;
 
         public ItemInformationFacade ItemInformation { get; set; }
@@ -24,12 +27,43 @@ namespace FilterPolishZ.Economy
         public ConcreteEconomyRules()
         {
             this.uniqueRules = this.CreateUniqueEconomyRules();
+            this.divinationRules = this.CreateDivinationRules();
+
             this.EconomyInformation = EconomyRequestFacade.GetInstance();
             this.ItemInformation = ItemInformationFacade.GetInstance();
             this.TierListFacade = TierListFacade.GetInstance();
         }
 
+
+
         public void Execute()
+        {
+            PerformUniqueActions();
+            PerfromDivinationCardActions();
+        }
+
+        private void PerfromDivinationCardActions()
+        {
+            this.suggestions = EconomyInformation.EconomyTierlistOverview["divination"].Select(z => z.Key).Select(x => this.divinationRules.ProcessItem("divination", x, x, this)).ToList();
+
+            foreach (var item in suggestions)
+            {
+                item.Group = "divination";
+
+                if (TierListFacade.ContainsTierInformationForBaseType("divination", item.BaseType))
+                {
+                    item.OldTier = TierListFacade.GetTiersForBasetype("divination", item.BaseType).First().SubStringLast("->");
+                }
+                else
+                {
+                    item.OldTier = "rest";
+                }
+            }
+
+            this.TierListFacade.Suggestions["divination"].AddRange(this.suggestions);
+        }
+
+        private void PerformUniqueActions()
         {
             this.suggestions = EconomyInformation.EconomyTierlistOverview["uniques"].Select(z => z.Key).Select(x => this.uniqueRules.ProcessItem("uniques", x, x, this)).ToList();
 
@@ -45,8 +79,26 @@ namespace FilterPolishZ.Economy
                     item.OldTier = "rest";
                 }
             }
-            
+
             this.TierListFacade.Suggestions["uniques"].AddRange(this.suggestions);
+        }
+
+        private FilterEconomyRuleSet CreateDivinationRules()
+        {
+            FilterEconomyRuleSet diviRules = new FilterEconomyRuleSet() { GoverningSection = "divination" };
+            diviRules.DefaultItemQuery = new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => EconomyInformation.EconomyTierlistOverview["divination"][s]);
+
+            diviRules.EconomyRules.Add(new FilterEconomyRule()
+            {
+                RuleName = "rest",
+                TargetTier = "rest",
+                Rule = (string s) =>
+                {
+                    return true;
+                }
+            });
+
+            return diviRules;
         }
 
         private FilterEconomyRuleSet CreateUniqueEconomyRules()
@@ -54,16 +106,13 @@ namespace FilterPolishZ.Economy
             FilterEconomyRuleSet uniqueRules = new FilterEconomyRuleSet() { GoverningSection = "uniques" };
             uniqueRules.DefaultItemQuery = new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => EconomyInformation.EconomyTierlistOverview["uniques"][s]);
 
-            // Test for Aspect
+            // Local Functions
             bool HasAspect(string s) => uniqueRules.DefaultSet.Any(z => z.Aspects.Any(j => j.Name == s));
-
             List<NinjaItem> OfAspect(string s) => uniqueRules.DefaultSet.Where(z => z.Aspects.Any(j => j.Name == s)).ToList();
-
             List<NinjaItem> AspectCheck(HashSet<string> include, HashSet<string> exclude) =>
                 uniqueRules.DefaultSet.Where(
                     z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
                          z.Aspects.All(x => !exclude.Contains(x.Name))).ToList();
-
             bool AllItemsFullFill(List<NinjaItem> list ,HashSet<string> include, HashSet<string> exclude) =>
                 list.All(
                     z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
