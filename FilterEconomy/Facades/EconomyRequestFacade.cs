@@ -36,7 +36,7 @@ namespace FilterEconomy.Facades
         {
             var economySegmentBranch = FilterPolishConstants.Abbreviations[branchKey];
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
-            var fileName = $"{economySegmentBranch}.txt";
+            var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
 
             string responseString;
