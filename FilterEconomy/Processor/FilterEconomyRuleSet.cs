@@ -20,17 +20,18 @@ namespace FilterEconomy.Processor
         public ItemList<NinjaItem> DefaultSet { get; set; }
         public List<Action<TieringCommand>> PostProcessing { get; set; } = new List<Action<TieringCommand>>();
         public bool Enabled { get; set; } = true;
+        public IEconomyProcessorData RuleHost { get; set; }
 
-        public IEnumerable<TieringCommand> GenerateSuggestions(IEconomyProcessorData processor)
+        public IEnumerable<TieringCommand> GenerateSuggestions()
         {
             if (!Enabled)
             {
                 yield break;
             }
 
-            var result = processor.EconomyInformation.EconomyTierlistOverview[this.GoverningSection]
+            var result = RuleHost.EconomyInformation.EconomyTierlistOverview[this.GoverningSection]
                 .Select(z => z.Key)
-                .Select(x => this.ProcessItem(this.GoverningSection, x, x, processor));
+                .Select(x => this.ProcessItem(this.GoverningSection, x, x, RuleHost));
 
             foreach (var item in result)
             {

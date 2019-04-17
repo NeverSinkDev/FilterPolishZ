@@ -19,6 +19,7 @@ namespace FilterPolishZ.Economy.RuleSet
         public RuleSetBuilder(ConcreteEconomyRules ruleHost)
         {
             this.RuleHost = ruleHost;
+            RuleSet.RuleHost = ruleHost;
         }
 
         public RuleSetBuilder SetSection(string s)
@@ -68,9 +69,9 @@ namespace FilterPolishZ.Economy.RuleSet
             this.RuleSet.PostProcessing.Add(new Action<TieringCommand>((TieringCommand tiercom) =>
             {
                 tiercom.Group = this.Section;
-                if (this.RuleHost.TierListFacade.ContainsTierInformationForBaseType("divination", tiercom.BaseType))
+                if (this.RuleHost.TierListFacade.ContainsTierInformationForBaseType(RuleSet.GoverningSection, tiercom.BaseType))
                 {
-                    tiercom.OldTier = RuleHost.TierListFacade.GetTiersForBasetype("divination", tiercom.BaseType).First().SubStringLast("->");
+                    tiercom.OldTier = RuleHost.TierListFacade.GetTiersForBasetype(RuleSet.GoverningSection, tiercom.BaseType).First().SubStringLast("->");
                 }
                 else
                 {
