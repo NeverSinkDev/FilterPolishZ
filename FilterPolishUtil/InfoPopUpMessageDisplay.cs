@@ -42,9 +42,9 @@ namespace FilterPolishUtil
         {
             if (unhandledExceptionEventArgs.ExceptionObject is XamlParseException e)
             {
-                ShowInfoMessageBox(e.InnerException?.ToString() ?? "error displaying error");
+                ShowError(e.InnerException?.ToString() ?? "error displaying error");
             }
-            else ShowInfoMessageBox(unhandledExceptionEventArgs.ExceptionObject.ToString());
+            else ShowError(unhandledExceptionEventArgs.ExceptionObject.ToString());
         }
     }
 }
