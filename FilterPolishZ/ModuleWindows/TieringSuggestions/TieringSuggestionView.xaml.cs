@@ -27,6 +27,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
     public partial class TieringSuggestionView : UserControl, INotifyPropertyChanged
     {
         public TierListFacade TierListFacade { get; set; }
+        public string BranchKey { get; private set; } = "uniques";
         public ObservableCollection<TieringCommand> TieringSuggestions { get; set; } = new ObservableCollection<TieringCommand>();
         public EventGridFacade EventGridFacade { get; }
 
@@ -48,13 +49,18 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
 
         public void Reload()
         {
+            if (string.IsNullOrWhiteSpace(this.BranchKey))
+            {
+                return;
+            }
+
             this.TierListFacade = TierListFacade.GetInstance();
-            this.TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions["uniques"]);
+            this.TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
         }
 
         private void InitializeTieringList()
         {
-            this.TieringSuggestions = new ObservableCollection<TieringCommand>( this.TierListFacade.Suggestions["uniques"] );
+            this.TieringSuggestions = new ObservableCollection<TieringCommand>( this.TierListFacade.Suggestions[this.BranchKey] );
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -76,6 +82,18 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         private void ReloadClick(object sender, RoutedEventArgs e)
         {
             this.Reload();
+        }
+
+        private void SelectedBranchComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.SelectedBranchComboBox.SelectionBoxItem.ToString()))
+            {
+                return;
+            }
+
+            this.BranchKey = (e.AddedItems[0] as ComboBoxItem).Name;
+
+            TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
         }
     }
 }

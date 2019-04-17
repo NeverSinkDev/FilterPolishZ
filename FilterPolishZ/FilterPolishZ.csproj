@@ -95,6 +95,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Economy\RuleSet\DivinationRuleFactory.cs" />
     <Compile Include="Economy\RuleSet\RuleSetBuilder.cs" />
     <Compile Include="Economy\RuleSet\UniqueRulesFactory.cs" />
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />

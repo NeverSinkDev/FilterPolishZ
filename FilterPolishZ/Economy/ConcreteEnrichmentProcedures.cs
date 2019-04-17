@@ -14,7 +14,7 @@ namespace FilterPolishZ.Economy
         public static void Initialize()
         {
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "uniqueWeapons", "uniqueMaps", "uniqueFlasks", "uniqueArmours", "uniqueAccessory" },
+                new List<string>() { "divination", "uniqueWeapons", "uniqueMaps", "uniqueFlasks", "uniqueArmours", "uniqueAccessory" },
                 new List<FilterEconomy.Request.Enrichment.IDataEnrichment>()
                 {
                     new LowestPriceEnrichment(),
@@ -22,7 +22,7 @@ namespace FilterPolishZ.Economy
                 });
 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "divination", "basetypes" },
+                new List<string>() { "basetypes" },
                 new List<FilterEconomy.Request.Enrichment.IDataEnrichment>()
                 {
 

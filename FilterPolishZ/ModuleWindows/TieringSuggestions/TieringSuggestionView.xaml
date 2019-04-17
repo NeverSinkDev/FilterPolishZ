@@ -27,7 +27,13 @@
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
                 <Button ToolTip="Reload/Refresh" Click="ReloadClick">
                     <materialDesign:PackIcon Kind="Refresh" Foreground="White"  />
+
                 </Button>
+
+                <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged">
+                    <ComboBoxItem Name="uniques">uniques</ComboBoxItem>
+                    <ComboBoxItem Name="divination">divination</ComboBoxItem>
+                </ComboBox>
             </ToolBar>
         </ToolBarTray>
 

@@ -28,7 +28,7 @@ namespace FilterPolishZ.Economy
         public ConcreteEconomyRules()
         {
             this.uniqueRules = UniqueRulesFactory.Generate(this);
-            this.divinationRules = this.CreateDivinationRules();
+            this.divinationRules = DivinationRuleFactory.Generate(this);
 
             this.EconomyInformation = EconomyRequestFacade.GetInstance();
             this.ItemInformation = ItemInformationFacade.GetInstance();
@@ -38,7 +38,10 @@ namespace FilterPolishZ.Economy
 
         public void Execute()
         {
+            TierListFacade.Suggestions["uniques"].Clear();
             TierListFacade.Suggestions["uniques"].AddRange(this.uniqueRules.GenerateSuggestions());
+            TierListFacade.Suggestions["divination"].Clear();
+            TierListFacade.Suggestions["divination"].AddRange(this.divinationRules.GenerateSuggestions());
             // PerformUniqueActions();
             // PerfromDivinationCardActions();
         }

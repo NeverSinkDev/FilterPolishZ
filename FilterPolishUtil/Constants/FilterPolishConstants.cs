@@ -32,5 +32,11 @@ namespace FilterPolishUtil.Constants
         public static float UncommonAspectMultiplier = 3f;
         public static float LeagueDropAspectMultiplier = 6f;
         public static float HighVarietyMultiplier = 0.5f;
+
+        public static float T5DiviBreakPoint = 0.5f;
+        public static float T3DiviBreakPoint = 2f;
+        public static float T2DiviBreakPoint = 10f;
+        public static float T1DiviBreakPoint = 20f;
+
     }
 }

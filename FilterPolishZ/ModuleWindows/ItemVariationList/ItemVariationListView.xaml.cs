@@ -121,6 +121,12 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             for (int i = 0; i < AspectTable.Items.Count; i++)
             {
                 DependencyObject obj = AspectTable.ItemContainerGenerator.ContainerFromIndex(i);
+
+                if (obj == null)
+                {
+                    continue;
+                }
+
                 IEnumerable<Button> buttons = WpfUtil.FindVisualChildren<Button>(obj).ToList();
 
                 buttons.Select(x => new { label = (AspectTable.Items[i] as IItemAspect).Name, value = x }).ToList()
