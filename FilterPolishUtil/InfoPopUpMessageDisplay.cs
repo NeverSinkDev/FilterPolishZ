@@ -11,6 +11,11 @@ namespace FilterPolishUtil
         {
             MessageBox.Show(messageText, "I: " + messageText);
         }
+        
+        public static void ShowError(string messageText)
+        {
+            MessageBox.Show(messageText, "E: " + messageText);
+        }
 
         public static bool DisplayQuestionMessageBox(string questionText)
         {
