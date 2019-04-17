@@ -110,7 +110,10 @@ namespace FilterPolishZ
             }
             
             this.FilterRawString = FileWork.ReadLinesFromFile(filePath);
-            // todo
+            if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
+            {
+                InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + this.FilterRawString?.Count);
+            }
             return new Filter(this.FilterRawString);
         }
 
@@ -119,21 +122,24 @@ namespace FilterPolishZ
         {
             var isStopping = this.VerifyFilter(baseFilter);
             if (isStopping) return;
+            
+            new FilterTableOfContentsCreator(baseFilter).Run();
 
             const string filterName = "NeverSink's";
             var outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
+            var seedFilterString = baseFilter.Serialize();
 
             if (isGeneratingStylesAndSeed)
             {
                 var seedPath = outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\" + filterName + " filter - SEED (SeedFilter) .filter";
-                generationTasks.Add(this.WriteSeedFilter(baseFilter, seedPath));
+                generationTasks.Add(FileWork.WriteTextAsync(seedPath, seedFilterString));
             }
-
+            
             baseFilter.ExecuteCommandTags();
             var baseFilterString = baseFilter.Serialize();
-            // todo
+            if (baseFilterString == null || baseFilterString.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
             
             for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
@@ -169,6 +175,14 @@ namespace FilterPolishZ
                 if (!System.IO.Directory.Exists(filePath)) System.IO.Directory.CreateDirectory(filePath);
                 
                 var result = filter.Serialize();
+
+                if (result.Count <= seedFilterString?.Count)
+                {
+                    // todo: temporarily disabled due to missing "up" tags that make the result filter longer
+                    // while things like %hs make the result filter shorter, triggering this error
+//                    InfoPopUpMessageDisplay.ShowError("Error: style/strictness variant is smaller size than seed");
+                }
+                
                 await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
             }
         }
@@ -233,22 +247,27 @@ namespace FilterPolishZ
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
-            var tasks = new List<Task>();
+            
+            var requestData = new List<Tuple<string, string, string>>
+            {
+                new Tuple<string, string, string>("divination", "divination", "?"),
+                new Tuple<string, string, string>("maps->uniques", "uniqueMaps", "?"),
+                new Tuple<string, string, string>("uniques", "uniqueWeapons", "?"),
+                new Tuple<string, string, string>("uniques", "uniqueFlasks", "?"),
+                new Tuple<string, string, string>("uniques", "uniqueArmours", "?"),
+                new Tuple<string, string, string>("uniques", "uniqueAccessory", "?"),
+                new Tuple<string, string, string>("basetypes", "basetypes", "&")
+            };
+            
+            foreach (var tuple in requestData)
+            {
+                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
+            }
 
-            tasks.Add(Task.Run(() => PerformEcoRequest("divination", "divination", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("maps->uniques", "uniqueMaps", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueWeapons", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueFlasks", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueArmours", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueAccessory", "?")));
-            tasks.Add(Task.Run(() => PerformEcoRequest("basetypes", "basetypes", "&")));
-
-            async Task PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
+            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                    await result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
 
-            Task.WaitAll(tasks.ToArray());
-            await Task.WhenAll(tasks);
             return result;
         }
 
@@ -337,7 +356,7 @@ namespace FilterPolishZ
             if (fd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             var filePath = fd.FileName;
             var lineList = FileWork.ReadLinesFromFile(filePath);
-            // todo
+            if (lineList == null || lineList.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + lineList?.Count);
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
 
             this.ResetAllComponents();

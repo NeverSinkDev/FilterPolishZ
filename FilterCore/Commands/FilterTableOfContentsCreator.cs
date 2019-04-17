@@ -6,6 +6,7 @@ using FilterCore.Entry;
 using FilterCore.Line;
 using FilterCore.Line.LineStrategy;
 using FilterPolishUtil;
+using FilterPolishUtil.Collections;
 
 namespace FilterCore.Commands
 {
@@ -185,13 +186,7 @@ namespace FilterCore.Commands
             {
                 return false;
             }
-
-            // skip the actual ToC entry, even tho it does look fitting
-            if (entry == tocEntry || (entry.Content.Content.ContainsKey("comment") && entry.Content.Content["comment"].Count > 5))
-            {
-                return false;
-            }
-
+            
             if (!entry.Content.Content.ContainsKey("comment"))
             {
                 return false;
@@ -203,7 +198,20 @@ namespace FilterCore.Commands
             }
 
             var line = GetTitleLineFromEntry(entry);
-            if (line.Comment[0] != SectionTitleKeyIdentStart || !line.Comment.Contains(SectionTitleKeyIdentEnd))
+            
+            if (line.Comment.Trim()[0] != SectionTitleKeyIdentStart || !line.Comment.Contains(SectionTitleKeyIdentEnd))
+            {
+                return false;
+            }
+            
+            // skip the actual ToC entry, even tho it does look fitting
+            if (entry == tocEntry || line.Comment.ToUpper().Contains("[WELCOME]"))
+            {
+                return false;
+            }
+
+            bool IsDivider(IFilterLine l) => l.Comment.Length > 5 && l.Comment[2] == l.Comment[3] && l.Comment[3] == l.Comment[4];
+            if (!IsDivider(entry.Content.Content["comment"][0]) || !IsDivider(entry.Content.Content["comment"][0]))
             {
                 return false;
             }
