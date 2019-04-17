@@ -25,6 +25,7 @@ using FilterCore.Constants;
 using FilterCore.Entry;
 using FilterCore.Line;
 using FilterCore.Tests;
+using FilterPolishUtil.Constants;
 using MethodTimer;
 using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
@@ -109,6 +110,7 @@ namespace FilterPolishZ
             }
             
             this.FilterRawString = FileWork.ReadLinesFromFile(filePath);
+            // todo
             return new Filter(this.FilterRawString);
         }
 
@@ -131,6 +133,7 @@ namespace FilterPolishZ
 
             baseFilter.ExecuteCommandTags();
             var baseFilterString = baseFilter.Serialize();
+            // todo
             
             for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
@@ -218,25 +221,34 @@ namespace FilterPolishZ
         [Time]
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
+            var task = this.LoadEconomyOverviewData_Inner();
+            Task.WaitAll(task);
+            return task.Result;
+        }
+        
+        private async Task<EconomyRequestFacade> LoadEconomyOverviewData_Inner()
+        {
             var result = EconomyRequestFacade.GetInstance();
-
             var seedFolder = Configuration.AppSettings["SeedFile Folder"];
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
+            var tasks = new List<Task>();
 
-            PerformEcoRequest("divination", "divination", "?");
-            PerformEcoRequest("maps->uniques", "uniqueMaps", "?");
-            PerformEcoRequest("uniques", "uniqueWeapons", "?");
-            PerformEcoRequest("uniques", "uniqueFlasks", "?");
-            PerformEcoRequest("uniques", "uniqueArmours", "?");
-            PerformEcoRequest("uniques", "uniqueAccessory", "?");
-            PerformEcoRequest("basetypes", "basetypes", "&");
+            tasks.Add(Task.Run(() => PerformEcoRequest("divination", "divination", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("maps->uniques", "uniqueMaps", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueWeapons", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueFlasks", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueArmours", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("uniques", "uniqueAccessory", "?")));
+            tasks.Add(Task.Run(() => PerformEcoRequest("basetypes", "basetypes", "&")));
 
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
+            async Task PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
+                    await result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
 
+            Task.WaitAll(tasks.ToArray());
+            await Task.WhenAll(tasks);
             return result;
         }
 
@@ -325,6 +337,7 @@ namespace FilterPolishZ
             if (fd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             var filePath = fd.FileName;
             var lineList = FileWork.ReadLinesFromFile(filePath);
+            // todo
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
 
             this.ResetAllComponents();
