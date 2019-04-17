@@ -47,7 +47,8 @@ namespace FilterPolishZ.Configuration
 
         public void Set(string key, string value, bool doAutoSave = true)
         {
-            this.config.AppSettings.Settings[key].Value = value;            
+            this.config.AppSettings.Settings[key].Value = value;
+            this.AppSettings[key] = value;
             if (doAutoSave) this.Save();
         }
 
@@ -59,6 +60,7 @@ namespace FilterPolishZ.Configuration
 
         public IEnumerable<ConfigurationData> YieldConfiguration()
         {
+
             foreach (string key in AppSettings)
             {
                 yield return new ConfigurationData() { Key = key, Value = AppSettings[key] };
