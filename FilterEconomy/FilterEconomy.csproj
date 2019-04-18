@@ -56,6 +56,7 @@
     <Compile Include="Processor\IEconomyProcessorData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\EnrichmentProcedureConfiguration.cs" />
+    <Compile Include="Request\Enrichment\DivinationCardEnrichment.cs" />
     <Compile Include="Request\Enrichment\HighestPriceEnrichment.cs" />
     <Compile Include="Request\Enrichment\IDataEnrichment.cs" />
     <Compile Include="Request\Enrichment\LowestPriceEnrichment.cs" />

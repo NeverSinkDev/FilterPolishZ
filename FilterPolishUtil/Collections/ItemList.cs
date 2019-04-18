@@ -12,5 +12,6 @@ namespace FilterPolishUtil.Collections
         
         public float HighestPrice { get; set; }
         public float LowestPrice { get; set; }
+        public float ValueMultiplier { get; set; } = 1;
     }
 }

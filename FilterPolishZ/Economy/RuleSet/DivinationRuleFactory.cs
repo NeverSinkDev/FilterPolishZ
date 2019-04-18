@@ -36,49 +36,62 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConstants.T1DiviBreakPoint;
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return price > FilterPolishConstants.T1DiviBreakPoint;
                 }));
 
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConstants.T2DiviBreakPoint;
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return price > FilterPolishConstants.T2DiviBreakPoint;
                 }));
 
+            builder.AddRule("SingleCardSave", "t2",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("SingleCardAspect");
+                }));
 
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConstants.T3DiviBreakPoint;
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return price > FilterPolishConstants.T3DiviBreakPoint;
                 }));
 
+            builder.AddRule("TimelessSave", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("TimelessResultAspect");
+                }));
+
+            builder.AddRule("CurrencySaveT4", "t4c",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return (price > FilterPolishConstants.T5DiviBreakPoint) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                }));
+
+            builder.AddRule("RandomSave", "rest",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("LargeRandomPoolAspect");
+                }));
+
+            builder.AddRule("CurrencySaveT5", "t5c",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return (price < FilterPolishConstants.T5DiviBreakPoint) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                }));
 
             builder.AddRule("t5", "t5",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice < FilterPolishConstants.T5DiviBreakPoint;
-                }));
-
-
-            builder.AddRule("savedRandom", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
-
-
-            builder.AddRule("savedRandom", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
-
-
-            builder.AddRule("savedRandom", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return price < FilterPolishConstants.T5DiviBreakPoint;
                 }));
 
             builder.AddRule("rest", "rest",

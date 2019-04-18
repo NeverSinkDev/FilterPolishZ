@@ -61,12 +61,17 @@ namespace FilterEconomy.Model
 
         public ObservableCollection<IItemAspect> Aspects { get; set; } = new ObservableCollection<IItemAspect>();
 
+        public bool HasAspect(string name)
+        {
+            return this.Aspects.Any(x => x.Name == name);
+        }
+
         public bool isItemRelic()
         {
             return this.Icon.Contains("relic=1");
         }
 
         // this item was manually created because it was missing from the (poeNinja) data
-        public bool IsVirtual { get; set; }
+        public bool IsVirtual { get; set; } = false;
     }
 }

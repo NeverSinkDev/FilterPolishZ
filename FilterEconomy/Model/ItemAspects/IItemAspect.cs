@@ -149,6 +149,12 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.divination;
     }
 
+    public class TimelessResultAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
     public class SingleCardAspect : AbstractItemAspect
     {
         public override string Group => "StackSize";
