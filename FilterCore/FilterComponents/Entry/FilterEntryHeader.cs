@@ -72,20 +72,20 @@ namespace FilterCore.Entry
                 if (s[0] == '%')
                 {
                     GenerationTag tag; 
-                    var split = s.Substring(1);
+                    var split = s.Substring(1).ToUpper();
                     var lastPos = split.Length - 1;
                     var command = split.Substring(0, lastPos);
                     short digit = -1;
 
                     // in case the command is something without digit at the end (like %UP, unlike %h3)
-                    if (FilterConstants.EntryCommand.ContainsKey(split.ToUpper()))
+                    if (FilterConstants.EntryCommand.ContainsKey(split))
                     {
                         command = split;
                     }
 
                     // checking if the last char is a digit wont work correctly in cases of e.g. "crafting-83"
                     // which will save the "3" as strictness, so we instead check if the command is in the EntryCommand list
-                    else if (FilterConstants.EntryCommand.ContainsKey(command.ToUpper()))
+                    else if (FilterConstants.EntryCommand.ContainsKey(command))
                     {
                         digit = short.Parse(split.Substring(lastPos));
                     }
@@ -94,7 +94,7 @@ namespace FilterCore.Entry
                         throw new Exception();
                     }
                     
-                    var tagType = FilterConstants.EntryCommand[command.ToUpper()];
+                    var tagType = FilterConstants.EntryCommand[command];
                     tag = tagType.GetConstructors().Single().Invoke(new object[] {entry}) as GenerationTag;
                     tag.Strictness = digit;
                     tag.Value = command;

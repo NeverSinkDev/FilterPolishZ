@@ -21,14 +21,12 @@ namespace FilterCore.FilterComponents.Tags
 
         public string Serialize()
         {
-            if (Strictness >= 0)
+            if (this.IsStrictnessCommand())
             {
                 return $"%{Value}{Strictness}";
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return $"%{Value}";
         }
 
         public bool IsStrictnessCommand()
