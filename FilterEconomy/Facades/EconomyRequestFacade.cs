@@ -56,6 +56,22 @@ namespace FilterEconomy.Facades
                 {   // Request online file
                     var urlRequest = $"{ninjaUrl}{economySegmentBranch}{prefix}league={variation}";
                     responseString = new RestRequest(urlRequest).Execute();
+                    
+                    // poeNinja down -> use most recent local file
+                    if (responseString == null || responseString.Length < 400)
+                    {
+                        var recentFile = Directory.EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), "")).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
+
+                        if (recentFile != null)
+                        {
+                            responseString = FileWork.ReadFromFile(recentFile + "/" + fileName);
+
+                            if (responseString != null && responseString.Length >= 400)
+                            {
+                                InfoPopUpMessageDisplay.ShowInfoMessageBox("Could not connect to poeNinja. used recent local file instead: " + recentFile + "/" + fileName);
+                            }
+                        }
+                    }
 
                     // Store locally
                     Task.Run(() => FileWork.WriteTextAsync(fileFullPath, responseString));
