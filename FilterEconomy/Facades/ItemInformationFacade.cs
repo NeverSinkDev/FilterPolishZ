@@ -41,8 +41,10 @@ namespace FilterEconomy.Facades
             if (File.Exists(filePath))
             {
                 var fileText = File.ReadAllText(filePath);
+                if (fileText.Length < 2) InfoPopUpMessageDisplay.ShowError("ItemAspect saveFile empty for: " + branchKey);
                 this.Deserialize(branchKey, fileText);
             }
+            else InfoPopUpMessageDisplay.ShowError("no ItemAspect saveFile for: " + branchKey);
 
             var economyData = EconomyRequestFacade.GetInstance();
             this.MigrateAspectDataToEcoData(economyData, branchKey);
