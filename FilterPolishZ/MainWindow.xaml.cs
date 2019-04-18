@@ -251,7 +251,7 @@ namespace FilterPolishZ
             var requestData = new List<Tuple<string, string, string>>
             {
                 new Tuple<string, string, string>("divination", "divination", "?"),
-                new Tuple<string, string, string>("maps->uniques", "uniqueMaps", "?"),
+                new Tuple<string, string, string>("unique->maps", "uniqueMaps", "?"),
                 new Tuple<string, string, string>("uniques", "uniqueWeapons", "?"),
                 new Tuple<string, string, string>("uniques", "uniqueFlasks", "?"),
                 new Tuple<string, string, string>("uniques", "uniqueArmours", "?"),
@@ -263,14 +263,6 @@ namespace FilterPolishZ
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
             }
-
-            PerformEcoRequest("divination", "divination", "?");
-            PerformEcoRequest("unique->maps", "uniqueMaps", "?");
-            PerformEcoRequest("uniques", "uniqueWeapons", "?");
-            PerformEcoRequest("uniques", "uniqueFlasks", "?");
-            PerformEcoRequest("uniques", "uniqueArmours", "?");
-            PerformEcoRequest("uniques", "uniqueAccessory", "?");
-            PerformEcoRequest("basetypes", "basetypes", "&");
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
