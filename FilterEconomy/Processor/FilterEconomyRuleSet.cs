@@ -21,6 +21,18 @@ namespace FilterEconomy.Processor
         public List<Action<TieringCommand>> PostProcessing { get; set; } = new List<Action<TieringCommand>>();
         public bool Enabled { get; set; } = true;
         public IEconomyProcessorData RuleHost { get; set; }
+        public List<TieringCommand> SuggestionTarget {get; set;}
+
+        public void GenerateAndAddSuggestions()
+        {
+            if (!Enabled)
+            {
+                return;
+            }
+
+            this.SuggestionTarget.Clear();
+            this.SuggestionTarget.AddRange(this.GenerateSuggestions());
+        }
 
         public IEnumerable<TieringCommand> GenerateSuggestions()
         {

@@ -58,6 +58,46 @@ namespace FilterPolishZ.Economy.RuleSet
             return this;
         }
 
+        public RuleSetBuilder AddDefaultIntegrationTarget()
+        {
+            this.RuleSet.SuggestionTarget = this.RuleHost.TierListFacade.Suggestions[this.Section];
+            return this;
+        }
+
+        public RuleSetBuilder AddIntegrationTarget(List<TieringCommand> target)
+        {
+            this.RuleSet.SuggestionTarget = target;
+            return this;
+        }
+
+        public RuleSetBuilder AddSimpleAspectContainerRule(string name, string tier, string aspect)
+        {
+            return this.AddRule(name, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    return this.RuleSet.DefaultSet.HasAspect(aspect);
+                }));
+        }
+
+        public RuleSetBuilder AddSimpleComparisonRule(string name, string tier, float comparer)
+        {
+            return this.AddRule(name, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    return price > comparer;
+                }));
+        }
+
+        public RuleSetBuilder AddRestRule()
+        {
+            return this.AddRule("rest", "rest",
+                new Func<string, bool>((string s) =>
+                {
+                    return true;
+                }));
+        }
+
         public RuleSetBuilder AddPostProcessing(Action<TieringCommand> command)
         {
             this.RuleSet.PostProcessing.Add(command);

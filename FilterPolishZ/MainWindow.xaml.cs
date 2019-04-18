@@ -221,7 +221,7 @@ namespace FilterPolishZ
         {
             TierListFacade tierList = TierListFacade.GetInstance();
 
-            var workTiers = new HashSet<string> { "uniques", "divination", "maps->uniques", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
+            var workTiers = new HashSet<string> { "uniques", "divination", "unique->maps", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
             var tiers = filter.ExtractTiers(workTiers);
             tierList.TierListData = tiers;
 
@@ -264,6 +264,14 @@ namespace FilterPolishZ
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
             }
 
+            PerformEcoRequest("divination", "divination", "?");
+            PerformEcoRequest("unique->maps", "uniqueMaps", "?");
+            PerformEcoRequest("uniques", "uniqueWeapons", "?");
+            PerformEcoRequest("uniques", "uniqueFlasks", "?");
+            PerformEcoRequest("uniques", "uniqueArmours", "?");
+            PerformEcoRequest("uniques", "uniqueAccessory", "?");
+            PerformEcoRequest("basetypes", "basetypes", "&");
+
             void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
                     result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
@@ -284,7 +292,7 @@ namespace FilterPolishZ
 
             var branchKeys = new List<string>
             {
-                "divination", "uniques", "maps->uniques", "basetypes"
+                "divination", "uniques", "unique->maps", "basetypes"
             };
             
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));

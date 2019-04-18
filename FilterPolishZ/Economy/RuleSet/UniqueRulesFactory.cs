@@ -15,7 +15,8 @@ namespace FilterPolishZ.Economy.RuleSet
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection("uniques")
                 .UseDefaultQuery()
-                .AddDefaultPreprocessing();
+                .AddDefaultPreprocessing()
+                .AddDefaultIntegrationTarget();
             //var set = builder.Rulebuilder.RuleSet.DefaultSet.DefaultSet;
 
             builder.AddRule("ANCHOR", "ANCHOR",

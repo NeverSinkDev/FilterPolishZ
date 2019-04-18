@@ -11,7 +11,7 @@ namespace FilterPolishUtil.Constants
         public static Dictionary<string, List<string>> TieredGroups { get; } = new Dictionary<string, List<string>>()
         {
             {"divination",new List<string>(){"divination"}},
-            {"maps->uniques",new List<string>(){"uniqueMaps"}},
+            {"unique->maps",new List<string>(){"uniqueMaps"}},
             {"uniques",new List<string>(){"uniqueWeapons","uniqueArmours","uniqueFlasks","uniqueAccessory"}},
             {"basetypes",new List<string>(){"basetypes"}}
         };
@@ -35,7 +35,7 @@ namespace FilterPolishUtil.Constants
 
         public static float T5DiviBreakPoint = 0.5f;
         public static float T3DiviBreakPoint = 2f;
-        public static float T2DiviBreakPoint = 10f;
+        public static float T2DiviBreakPoint = 9.5f;
         public static float T1DiviBreakPoint = 20f;
 
     }

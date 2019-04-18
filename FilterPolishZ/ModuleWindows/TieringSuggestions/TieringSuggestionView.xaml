@@ -33,6 +33,7 @@
                 <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged">
                     <ComboBoxItem Name="uniques">uniques</ComboBoxItem>
                     <ComboBoxItem Name="divination">divination</ComboBoxItem>
+                    <ComboBoxItem Name="mapsuniques">unique->maps</ComboBoxItem>
                 </ComboBox>
             </ToolBar>
         </ToolBarTray>

@@ -91,7 +91,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
                 return;
             }
 
-            this.BranchKey = (e.AddedItems[0] as ComboBoxItem).Name;
+            this.BranchKey = (e.AddedItems[0] as ComboBoxItem).Content.ToString();
 
             TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
         }
