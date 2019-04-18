@@ -91,7 +91,7 @@ namespace FilterEconomy.Processor
     [DebuggerDisplay("{NewTier} // {BaseType}")]
     public class TieringCommand
     {
-        public string AppliedRule { get; internal set; }
+        public string AppliedRule { get; set; }
         public string BaseType { get; set; }
         public string OldTier { get; set; }
         public string NewTier { get; set; }
