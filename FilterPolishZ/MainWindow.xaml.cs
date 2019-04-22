@@ -3,6 +3,7 @@ using FilterCore;
 using FilterCore.FilterComponents.Tier;
 using FilterPolishZ.Configuration;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,6 +65,16 @@ namespace FilterPolishZ
             // Initialize Settings
             this.InitializeComponent();
             this.DataContext = new MainWindowViewModel();
+            Closing += this.OnWindowClose;
+        }
+
+        private void OnWindowClose(object sender, CancelEventArgs e)
+        {
+            var doSave = InfoPopUpMessageDisplay.DisplayQuestionMessageBox("QuickSave as unnamed seedFilter?");
+            if (doSave)
+            {
+                this.SaveSeedFileAsUnnamed(null, null);
+            }
         }
 
         private void LoadAllComponents()
