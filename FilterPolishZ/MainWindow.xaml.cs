@@ -70,11 +70,11 @@ namespace FilterPolishZ
 
         private void OnWindowClose(object sender, CancelEventArgs e)
         {
-            var doSave = InfoPopUpMessageDisplay.DisplayQuestionMessageBox("QuickSave as unnamed seedFilter?");
-            if (doSave)
-            {
-                this.SaveSeedFileAsUnnamed(null, null);
-            }
+//            var doSave = InfoPopUpMessageDisplay.DisplayQuestionMessageBox("QuickSave as unnamed seedFilter?");
+//            if (doSave)
+//            {
+//                this.SaveSeedFileAsUnnamed(null, null);
+//            }
         }
 
         private void LoadAllComponents()
