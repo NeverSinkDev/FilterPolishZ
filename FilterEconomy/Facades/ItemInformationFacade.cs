@@ -182,6 +182,7 @@ namespace FilterEconomy.Facades
         
         private string GetItemInfoSaveFilePath(string branchKey)
         {
+            if (branchKey == "unique->maps") branchKey = "uniqueMaps"; // todo: temp(?) fix to prevent illegal file name.
             var directoryPath = $"{this.BaseStoragePath}/{this.LeagueType}";
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
