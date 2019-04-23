@@ -99,8 +99,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 return;
             }
-
-            // todo: change this hard-coded "uniques"
+            
             EconomyRequestFacade.GetInstance().EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);

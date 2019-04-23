@@ -91,7 +91,7 @@ namespace FilterCore.Entry
                     }
                     else
                     {
-                        throw new Exception();
+                        throw new Exception("unknown entry tag command: " + split);
                     }
                     
                     var tagType = FilterConstants.EntryCommand[command];
@@ -127,7 +127,8 @@ namespace FilterCore.Entry
         {
             return new FilterEntryHeader
             {
-                GenerationTags = this.GenerationTags.Where(x => !(x is IEntryGenerationCommand)).Select(x => x.Clone()).ToList(), // todo
+                // do not copy commands that generate (-> clone) new entries to prevent endless generation loops
+                GenerationTags = this.GenerationTags.Where(x => !(x is IEntryGenerationCommand)).Select(x => x.Clone()).ToList(),
                 Type = this.Type,
                 HeaderValue = this.HeaderValue,
                 HeaderComment = this.HeaderComment,

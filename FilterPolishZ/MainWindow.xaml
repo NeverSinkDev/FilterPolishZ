@@ -81,7 +81,7 @@
                                     <Button ToolTip="Open seed file" Click="SelectSeedFilterFile">
                                         <materialDesign:PackIcon Kind="FileUploadOutline" />
                                     </Button>
-                                    <Button ToolTip="CSave current as unnamed" Click="SaveSeedFileAsUnnamed">
+                                    <Button ToolTip="Save current as unnamed" Click="SaveSeedFileAsUnnamed">
                                         <materialDesign:PackIcon Kind="ContentSave" Foreground="Aqua" />
                                     </Button>
                                     <Button ToolTip="Save current as..." Click="SaveSeedFilterAs">
@@ -104,7 +104,7 @@
 
                                     <Separator/>
                                     
-                                    <Button ToolTip="Open PoE filder folder" Click="OpenFilterFolder">
+                                    <Button ToolTip="Open PoE filter folder" Click="OpenFilterFolder">
                                         <materialDesign:PackIcon Kind="FolderDownload" />
                                     </Button>
                                     <Button ToolTip="Open output folder" Click="OpenOutputFolder">

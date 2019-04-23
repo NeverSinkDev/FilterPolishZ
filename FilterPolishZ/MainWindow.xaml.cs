@@ -189,8 +189,6 @@ namespace FilterPolishZ
 
                 if (result.Count <= seedFilterString?.Count)
                 {
-                    // todo: temporarily disabled due to missing "up" tags that make the result filter longer
-                    // while things like %hs make the result filter shorter, triggering this error
                     InfoPopUpMessageDisplay.ShowError("Error: style/strictness variant is smaller size than seed");
                 }
                 

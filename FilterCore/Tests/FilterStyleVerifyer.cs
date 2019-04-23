@@ -20,11 +20,9 @@ namespace FilterCore.Tests
     /// </summary>
     public class FilterStyleVerifyer
     {
-        private static readonly List<string> StyleIdents = new List<string> { "SetTextColor", "SetBorderColor", "SetBackgroundColor", "PlayAlertSound" }; // todo: outsource to constants?
-
         public static void Run(Filter filter)
         {
-            StyleIdents.ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
+            FilterConstants.StyleIdents.ToList().ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
         }
         
         private class FilterStyleVerifyer_SingleIdent
@@ -117,14 +115,14 @@ namespace FilterCore.Tests
                         {
                             var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
                             foreach (var keyValuePair in removed)
-                            {   
+                            {
                                 var oldValue = keyValuePair.Key;
                                 
                                 this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
                                 
                                 this.valueToNamesDic.Remove(oldValue);
                                 if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
-                                else throw new Exception();
+                                else throw new Exception("unexpected error in filterStyleVerifyer");
                             }
                             break;
                         }
@@ -200,8 +198,7 @@ namespace FilterCore.Tests
 
                 else if (this.nameToValuesDic.ContainsKey(name))
                 {
-                    //todo?
-                    throw new Exception();
+                    throw new Exception("unexpected care for styleVerifier");
                 }
             }
             
