@@ -51,7 +51,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     var price = GetPrice(86) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T1BaseTypeBreakPoint;
-                }));
+                }), nextgroup: "t2");
 
             builder.AddRule("t2-80", "t2-1",
                 new Func<string, bool>((string s) =>

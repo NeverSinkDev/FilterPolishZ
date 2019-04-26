@@ -19,8 +19,6 @@ namespace FilterEconomy.Request.Enrichment
 
             float averagePriceMinimum = 3;
             float approvedPricesMinimum = 8;
-            float minCount = 5;
-            float minExoticCheckCount = 16;
             float unhealthyPriceRange = 500;
 
             var totalQuant = data.Sum(x => x.IndexedCount);
@@ -36,11 +34,11 @@ namespace FilterEconomy.Request.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => highestLevelPrice < maxPrice), -0.2f, 0.1f);
 
             // min price relevant
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.1f, 0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.15f, 0.1f);
 
             // count rules
-            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 2), -0.4f, 0);
-            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 4), -0.2f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 2), -0.5f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 4), -0.3f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 8), -0.1f, 0.05f);
             confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 16), -0.05f, 0.05f);
 
@@ -53,6 +51,10 @@ namespace FilterEconomy.Request.Enrichment
             // outlier rules
             confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConstants.T1BaseTypeBreakPoint), -0.1f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 100),-0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 75), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 50), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 25), -0.1f, 0);
 
             if (confidence <= 0.4f)
             {

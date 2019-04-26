@@ -76,7 +76,7 @@ namespace FilterEconomy.Processor
             //        x.Execute(group, basetype, processorData))
             //        .FirstOrDefault(z => z != null);
 
-            string targetTier = null;
+            string targetTier = "*";
             TieringCommand finalResult = null;
             TieringCommand currentResult = null;
             for (int i = 0; i < this.EconomyRules.Count; i++)
@@ -84,39 +84,34 @@ namespace FilterEconomy.Processor
                 var currentRule = this.EconomyRules[i];
                 currentResult = null;
 
-                if (targetTier == currentRule.RuleGroup)
+                if (targetTier == currentRule.RuleGroup || targetTier == "*")
                 {
                     currentResult = currentRule.Execute(group, basetype, processorData);
-                }
-                else
-                {
-                    continue;
-                }
 
-                if (currentResult == null)
-                {
-                    continue;
-                }
+                    if (currentResult != null)
+                    {
+                        if (finalResult == null)
+                        {
+                            finalResult = currentResult;
+                        }
+                        else
+                        {
+                            finalResult.NewTier = $"{finalResult.NewTier},{currentResult.NewTier}";
+                            finalResult.NewTier = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
+                            finalResult.MultiRule = true;
+                        }
 
-                if (finalResult == null)
-                {
-                    finalResult = currentResult;
-                }
-                else
-                {
-                    finalResult.NewTier = $"{finalResult.NewTier},{currentResult.NewTier}";
-                    finalResult.NewTier = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
-                    finalResult.MultiRule = true;
-                }
+                        if (currentRule.NextRuleGroupToken == null)
+                        {
+                            finalResult.Confidence = this.DefaultSet.ValueMultiplier;
+                            return finalResult;
+                        }
+                        else
+                        {
+                            targetTier = currentRule.NextRuleGroupToken;
+                        }
+                    }
 
-                if (currentResult != null && currentRule.NextRuleGroupToken != null)
-                {
-                    targetTier = currentRule.NextRuleGroupToken;
-                }
-                else if (currentResult != null)
-                {
-                    finalResult.Confidence = this.DefaultSet.ValueMultiplier;
-                    return finalResult;
                 }
             }
 
