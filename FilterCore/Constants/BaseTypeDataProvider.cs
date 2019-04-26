@@ -6,8 +6,10 @@ namespace FilterCore.Constants
     public static class BaseTypeDataProvider
     {
         private const string DataFileUrl = "https://www.filterblade.xyz/datafiles/other/BasetypeStorage.csv";
+        private static Dictionary<string, Dictionary<string, string>> data;
+        public static Dictionary<string, Dictionary<string, string>> BaseTypeData => data ?? (data = LoadData());
 
-        public static Dictionary<string, Dictionary<string, string>> GetData()
+        private static Dictionary<string, Dictionary<string, string>> LoadData()
         {
             var client = new WebClient();
             var fullString = client.DownloadString(DataFileUrl);
