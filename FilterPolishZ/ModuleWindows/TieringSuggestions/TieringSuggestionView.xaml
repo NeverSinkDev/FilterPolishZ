@@ -36,6 +36,7 @@
                     <ComboBoxItem Name="mapsuniques">unique->maps</ComboBoxItem>
                     <ComboBoxItem Name="shaper">rare->shaper</ComboBoxItem>
                     <ComboBoxItem Name="elder">rare->elder</ComboBoxItem>
+                    <ComboBoxItem Name="fossil">currency->fossil</ComboBoxItem>
                 </ComboBox>
             </ToolBar>
         </ToolBarTray>

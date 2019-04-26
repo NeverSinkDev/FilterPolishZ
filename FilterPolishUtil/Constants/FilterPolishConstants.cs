@@ -15,7 +15,8 @@ namespace FilterPolishUtil.Constants
             {"uniques",new List<string>(){"uniqueWeapons","uniqueArmours","uniqueFlasks","uniqueAccessory"}},
             {"rare->shaper",new List<string>(){"rare->shaper"}},
             {"rare->elder",new List<string>(){"rare->elder"}},
-            {"basetypes",new List<string>(){"basetypes"}}
+            {"basetypes",new List<string>(){"basetypes"}},
+            {"currency->fossil",new List<string>(){"currency->fossil"}}
         };
 
         public static Dictionary<string, string> Abbreviations { get; } = new Dictionary<string, string>()
@@ -26,7 +27,9 @@ namespace FilterPolishUtil.Constants
             { "uniqueWeapons", "GetUniqueWeaponOverview" },
             { "uniqueArmours", "GetUniqueArmourOverview"},
             { "uniqueAccessory", "GetUniqueAccessoryOverview" },
-            { "uniqueMaps", "GetUniqueMapOverview" }
+            { "uniqueMaps", "GetUniqueMapOverview" },
+            { "fossil", "ItemOverview?type=Fossil" },
+            { "resonator", "ItemOverview?type=Resonator" }
         };
 
         public static float T1BreakPoint = 20;
