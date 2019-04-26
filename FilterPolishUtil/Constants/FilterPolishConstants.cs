@@ -13,6 +13,8 @@ namespace FilterPolishUtil.Constants
             {"divination",new List<string>(){"divination"}},
             {"unique->maps",new List<string>(){"uniqueMaps"}},
             {"uniques",new List<string>(){"uniqueWeapons","uniqueArmours","uniqueFlasks","uniqueAccessory"}},
+            {"rare->shaper",new List<string>(){"rare->shaper"}},
+            {"rare->elder",new List<string>(){"rare->elder"}},
             {"basetypes",new List<string>(){"basetypes"}}
         };
 
@@ -29,9 +31,13 @@ namespace FilterPolishUtil.Constants
 
         public static float T1BreakPoint = 20;
         public static float T2BreakPoint = 5;
+
         public static float UncommonAspectMultiplier = 3f;
         public static float LeagueDropAspectMultiplier = 6f;
         public static float HighVarietyMultiplier = 0.5f;
+
+        public static float T1BaseTypeBreakPoint = 25f;
+        public static float T2BaseTypeBreakPoint = 6f;
 
         public static float T5DiviBreakPoint = 0.5f;
         public static float T3DiviBreakPoint = 2f;

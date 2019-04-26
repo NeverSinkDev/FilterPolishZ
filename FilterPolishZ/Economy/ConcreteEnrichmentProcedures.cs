@@ -29,6 +29,12 @@ namespace FilterPolishZ.Economy
                     new LowestPriceEnrichment(),
                 });
 
+            EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
+                new List<string>() { "rare->shaper", "rare->elder" },
+                new List<FilterEconomy.Request.Enrichment.IDataEnrichment>()
+                {
+                    new ShaperElderEnrichment(),
+                });
 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
                 new List<string>() { "basetypes" },

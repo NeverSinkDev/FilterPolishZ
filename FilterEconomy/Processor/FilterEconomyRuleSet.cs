@@ -58,6 +58,18 @@ namespace FilterEconomy.Processor
         public TieringCommand ProcessItem(string group, string basetype, string selectorString, IEconomyProcessorData processorData)
         {
             this.DefaultSet = DefaultItemQuery(selectorString);
+
+            if (!this.DefaultSet.Valid)
+            {
+                return new TieringCommand()
+                {
+                    AppliedRule = "disqualified",
+                    BaseType = basetype,
+                    NewTier = "anchor",
+                    Group = group
+                };
+            }
+
             return this.EconomyRules.Select(
                 x =>
                     x.Execute(group, basetype, processorData))

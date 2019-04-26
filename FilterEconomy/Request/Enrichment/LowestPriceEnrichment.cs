@@ -14,8 +14,6 @@ namespace FilterEconomy.Request.Enrichment
 {
     public class LowestPriceEnrichment : IDataEnrichment
     {
-        public string DataKey => "LowestPrice";
-
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             List<NinjaItem> target = data;

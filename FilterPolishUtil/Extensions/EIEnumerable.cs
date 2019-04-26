@@ -50,5 +50,26 @@ namespace FilterPolishUtil.Extensions
 
             return result;
         }
+
+        public static IEnumerable<T1> PairSelect<T,T1>(this IEnumerable<T> collection, Func<T,T,T1> selector)
+        {
+            var initialized = false;
+            T current = default(T);
+            T previous = default(T);
+
+            foreach (var item in collection)
+            {
+                previous = current;
+                current = item;
+
+                if (!initialized)
+                {
+                    initialized = true;
+                    continue;
+                }
+
+                yield return selector(previous, current);
+            }
+        }
     }
 }

@@ -34,6 +34,8 @@
                     <ComboBoxItem Name="uniques">uniques</ComboBoxItem>
                     <ComboBoxItem Name="divination">divination</ComboBoxItem>
                     <ComboBoxItem Name="mapsuniques">unique->maps</ComboBoxItem>
+                    <ComboBoxItem Name="shaper">rare->shaper</ComboBoxItem>
+                    <ComboBoxItem Name="elder">rare->elder</ComboBoxItem>
                 </ComboBox>
             </ToolBar>
         </ToolBarTray>

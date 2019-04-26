@@ -10,7 +10,6 @@ namespace FilterEconomy.Request.Enrichment
 {
     public interface IDataEnrichment
     {
-        string DataKey { get; }
         void Enrich(string baseType, ItemList<NinjaItem> data);
     }
 }

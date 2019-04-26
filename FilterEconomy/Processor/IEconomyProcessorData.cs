@@ -12,6 +12,5 @@ namespace FilterUtilModels.Economy
     {
         ItemInformationFacade ItemInformation { get; set; }
         EconomyRequestFacade EconomyInformation { get; set; }
-        Dictionary<string, TierGroup> TierInformation { get; set; }
     }
 }

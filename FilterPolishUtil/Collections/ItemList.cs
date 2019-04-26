@@ -8,10 +8,13 @@ namespace FilterPolishUtil.Collections
 {
     public class ItemList<T> : List<T>
     {
-        public AutoDictionary<string, string> MetaData { get; set; } = new AutoDictionary<string, string>();
-        
         public float HighestPrice { get; set; }
         public float LowestPrice { get; set; }
         public float ValueMultiplier { get; set; } = 1;
+
+        public bool Valid { get; set; } = true;
+
+        public AutoDictionary<int, float> ftCount { get; set; }
+        public AutoDictionary<int, float> ftPrice { get; set; }
     }
 }

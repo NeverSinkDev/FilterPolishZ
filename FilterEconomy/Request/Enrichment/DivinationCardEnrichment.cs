@@ -10,8 +10,6 @@ namespace FilterEconomy.Request.Enrichment
 {
     public class DivinationCardEnrichment : IDataEnrichment
     {
-        public string DataKey => "DivinationPrice";
-
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             if (data.Count != 1)
@@ -40,7 +38,7 @@ namespace FilterEconomy.Request.Enrichment
 
         }
 
-        public float AdjustPriceBasedOn(NinjaItem item, Func<NinjaItem,bool> rule, float factor)
+        private float AdjustPriceBasedOn(NinjaItem item, Func<NinjaItem,bool> rule, float factor)
         {
             if (rule(item))
             {

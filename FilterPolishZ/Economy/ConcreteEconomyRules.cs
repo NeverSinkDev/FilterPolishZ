@@ -18,11 +18,12 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet uniqueRules;
         private FilterEconomyRuleSet divinationRules;
         private FilterEconomyRuleSet uniquemapsRules;
+        private FilterEconomyRuleSet shaperRules;
+        private FilterEconomyRuleSet elderRules;
         private List<TieringCommand> suggestions;
 
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
-        public Dictionary<string, TierGroup> TierInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
 
         public ConcreteEconomyRules()
@@ -34,58 +35,36 @@ namespace FilterPolishZ.Economy
             this.uniqueRules = UniqueRulesFactory.Generate(this);
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.uniquemapsRules = this.GenerateUniqueMapRules();
+            this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
+            this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
         }
 
-        public void Execute()
+        public void GenerateSuggestions()
         {
             this.uniqueRules.GenerateAndAddSuggestions();
             this.divinationRules.GenerateAndAddSuggestions();
             this.uniquemapsRules.GenerateAndAddSuggestions();
-        }
-
-        private void PerfromDivinationCardActions()
-        {
-            this.suggestions = EconomyInformation.EconomyTierlistOverview["divination"].Select(z => z.Key).Select(x => this.divinationRules.ProcessItem("divination", x, x, this)).ToList();
-
-            foreach (var item in suggestions)
-            {
-                item.Group = "divination";
-
-                if (TierListFacade.ContainsTierInformationForBaseType("divination", item.BaseType))
-                {
-                    item.OldTier = TierListFacade.GetTiersForBasetype("divination", item.BaseType).First().SubStringLast("->");
-                }
-                else
-                {
-                    item.OldTier = "rest";
-                }
-            }
-
-            this.TierListFacade.Suggestions["divination"].AddRange(this.suggestions);
-        }
-
-        private FilterEconomyRuleSet CreateDivinationRules()
-        {
-            FilterEconomyRuleSet diviRules = new FilterEconomyRuleSet() { GoverningSection = "divination" };
-            diviRules.DefaultItemQuery = new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => EconomyInformation.EconomyTierlistOverview["divination"][s]);
-
-            diviRules.EconomyRules.Add(new FilterEconomyRule()
-            {
-                RuleName = "rest",
-                TargetTier = "rest",
-                Rule = (string s) =>
-                {
-                    return true;
-                }
-            });
-
-            return diviRules;
+            this.shaperRules.GenerateAndAddSuggestions();
+            this.elderRules.GenerateAndAddSuggestions();
         }
 
         private FilterEconomyRuleSet GenerateUniqueMapRules()
         {
             return new RuleSetBuilder(this)
                 .SetSection("unique->maps")
+                .UseDefaultQuery()
+                .AddDefaultPreprocessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
+                .AddRestRule()
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateShaperRules()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("shaper")
                 .UseDefaultQuery()
                 .AddDefaultPreprocessing()
                 .AddDefaultIntegrationTarget()

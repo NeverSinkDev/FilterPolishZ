@@ -60,6 +60,7 @@
     <Compile Include="Request\Enrichment\HighestPriceEnrichment.cs" />
     <Compile Include="Request\Enrichment\IDataEnrichment.cs" />
     <Compile Include="Request\Enrichment\LowestPriceEnrichment.cs" />
+    <Compile Include="Request\Enrichment\ShaperElderEnrichment.cs" />
     <Compile Include="Request\Parsing\ItemInformationParser.cs" />
     <Compile Include="Request\Parsing\NinjaParser.cs" />
     <Compile Include="Request\RestRequest.cs" />

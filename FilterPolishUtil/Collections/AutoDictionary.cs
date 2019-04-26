@@ -19,7 +19,7 @@ namespace FilterPolishUtil.Collections
             {
                 if (!this.storage.ContainsKey(key))
                 {
-                    throw new Exception("Key not found");
+                    return default(T);
                 }
 
                 return this.storage[key];

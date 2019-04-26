@@ -82,15 +82,42 @@ namespace FilterPolishZ
             this.EconomyData = this.LoadEconomyOverviewData();
             this.ItemInfoData = this.LoadItemInformationOverview();
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
-            
+            this.CreateSubEconomyTiers();
+
             this.EconomyData.EnrichAll();
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+        }
+
+        private void CreateSubEconomyTiers()
+        {
+            var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+            var elderbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+
+            foreach (var items in this.EconomyData.EconomyTierlistOverview["basetypes"])
+            {
+                var shapergroup = items.Value.Where(x => x.Variant == "Shaper").ToList();
+                if (shapergroup.Count != 0)
+                {
+                    shaperbases.Add(items.Key, new ItemList<NinjaItem>());
+                    shaperbases[items.Key].AddRange((shapergroup));
+                }
+
+                var eldegroup = items.Value.Where(x => x.Variant == "Elder").ToList();
+                if (eldegroup.Count != 0)
+                {
+                    elderbases.Add(items.Key, new ItemList<NinjaItem>());
+                    elderbases[items.Key].AddRange((eldegroup));
+                }
+            }
+
+            this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
+            this.EconomyData.AddToDictionary("rare->elder", elderbases);
         }
 
         private void PerformEconomyTiering()
         {
             var economyTieringSystem = new ConcreteEconomyRules();
-            economyTieringSystem.Execute();
+            economyTieringSystem.GenerateSuggestions();
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
             this.EventGrid.Publish();
         }
@@ -230,7 +257,7 @@ namespace FilterPolishZ
         {
             TierListFacade tierList = TierListFacade.GetInstance();
 
-            var workTiers = new HashSet<string> { "uniques", "divination", "unique->maps", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "rares->shaperbases", "rares->elderbases", "crafting", "currency" };
+            var workTiers = new HashSet<string> { "uniques", "divination", "rare->shaper", "rare->elder", "unique->maps", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "currency" };
             var tiers = filter.ExtractTiers(workTiers);
             tierList.TierListData = tiers;
 
@@ -245,10 +272,11 @@ namespace FilterPolishZ
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
             var task = this.LoadEconomyOverviewData_Inner();
-            Task.WaitAll(task);
+            Task.WaitAll(task); // @Tobnac: why?
+            
             return task.Result;
         }
-        
+
         private async Task<EconomyRequestFacade> LoadEconomyOverviewData_Inner()
         {
             var result = EconomyRequestFacade.GetInstance();
