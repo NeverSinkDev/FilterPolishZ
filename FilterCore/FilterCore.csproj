@@ -74,6 +74,7 @@
     <Compile Include="Commands\FilterTableOfContentsCreator.cs" />
     <Compile Include="Commands\IFilterCommand.cs" />
     <Compile Include="Commands\StyleGenerator.cs" />
+    <Compile Include="Constants\BaseTypeDataProvider.cs" />
     <Compile Include="Constants\FilterConstants.cs" />
     <Compile Include="FilterAccessFacade.cs" />
     <Compile Include="FilterComponents\Entry\EFilterEntry.cs" />
