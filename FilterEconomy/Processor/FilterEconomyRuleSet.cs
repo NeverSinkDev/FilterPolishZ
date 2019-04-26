@@ -70,10 +70,13 @@ namespace FilterEconomy.Processor
                 };
             }
 
-            return this.EconomyRules.Select(
+            var result = this.EconomyRules.Select(
                 x =>
                     x.Execute(group, basetype, processorData))
                     .FirstOrDefault(z => z != null);
+
+            result.Confidence = this.DefaultSet.ValueMultiplier;
+            return result;
         }
     }
 
@@ -81,6 +84,7 @@ namespace FilterEconomy.Processor
     {
         public string RuleName { get; set; }
         public string TargetTier { get; set; }
+        public float Confidence { get; set; }
 
         public Func<string, bool> Rule { get; set; }
 
@@ -92,7 +96,8 @@ namespace FilterEconomy.Processor
                 {
                     NewTier = TargetTier,
                     BaseType = basetype,
-                    AppliedRule = RuleName
+                    AppliedRule = RuleName,
+                    Confidence = this.Confidence
                 };
             }
 
@@ -103,6 +108,7 @@ namespace FilterEconomy.Processor
     [DebuggerDisplay("{NewTier} // {BaseType}")]
     public class TieringCommand
     {
+        public float Confidence { get; set; }
         public string AppliedRule { get; set; }
         public string BaseType { get; set; }
         public string OldTier { get; set; }

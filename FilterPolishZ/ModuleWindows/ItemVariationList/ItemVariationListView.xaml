@@ -51,6 +51,7 @@
                                 <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding BaseType}"/>
 
                                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding StackSize, StringFormat=\{0:#\;0:#;#\}}" Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding LevelRequired, StringFormat=\{0:#\;0:#;#\}}" Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
                                 <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Variant}" />
 
                                 <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding CVal}" Style="{StaticResource MaterialDesignHeadlineTextBlock}"

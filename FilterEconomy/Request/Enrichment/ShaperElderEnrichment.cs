@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Constants;
 using FilterPolishUtil.Extensions;
 
 namespace FilterEconomy.Request.Enrichment
@@ -16,41 +17,56 @@ namespace FilterEconomy.Request.Enrichment
         {
             float confidence = 1;
 
-            float averagePriceMinimum = 2;
+            float averagePriceMinimum = 3;
             float approvedPricesMinimum = 8;
-            float minCount = 4;
+            float minCount = 5;
             float minExoticCheckCount = 16;
-            float unhealthyCount = 250;
+            float unhealthyPriceRange = 500;
 
             var totalQuant = data.Sum(x => x.IndexedCount);
             var minPrice = data.Min(x => x.CVal);
             var maxPrice = data.Max(x => x.CVal);
+            var highestLevelPrice = data.OrderBy(x => x.LevelRequired).Last().CVal;
             var averagePrice = data.Sum(x => x.CVal * x.IndexedCount) / data.Sum(x => x.IndexedCount);
 
             var prices = data.OrderBy(x => x.LevelRequired).Select(x => x.CVal);
             var progression = prices.PairSelect((x, y) => y - x).Sum();
 
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.5f);
+            // correct pricepeak
+            confidence += AdjustConfidenceBasedOn(data, (s => highestLevelPrice < maxPrice), -0.2f, 0.1f);
+
+            // min price relevant
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.1f, 0.1f);
 
             // count rules
-            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= minCount), -0.5f);
-            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= (minCount * 5) && totalQuant <= unhealthyCount), 0.1f);
-            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant >= unhealthyCount), -0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 2), -0.4f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 4), -0.2f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 8), -0.1f, 0.05f);
+            confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 16), -0.05f, 0.05f);
 
             // progression rules
-            confidence += AdjustConfidenceBasedOn(data, (s => progression <= 0), -0.3f);
-            confidence += AdjustConfidenceBasedOn(data, (s => progression >= averagePriceMinimum), 0.1f);
-            confidence += AdjustConfidenceBasedOn(data, (s => progression >= approvedPricesMinimum), 0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= averagePriceMinimum), 0f, 0.05f);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= 0),  -0.1f, 0.05f);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -5),  -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -20), -0.1f, 0);
 
-            confidence += AdjustConfidenceBasedOn(data, new Func<ItemList<NinjaItem>, bool>((ItemList<NinjaItem> s) => s.Count > 0), 1);
+            // outlier rules
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConstants.T1BaseTypeBreakPoint), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
 
+            if (confidence <= 0.4f)
+            {
+                data.Valid = false;
+            }
+
+            data.ValueMultiplier = confidence;
             data.ftPrice = new AutoDictionary<int, float>();
             data.ForEach(x => data.ftPrice[(int)x.LevelRequired] = x.CVal);
 
             Debug.WriteLine($"{baseType} --> {string.Join(" ", prices.Select(x => x.ToString()))}--->{progression}");
         }
 
-        private float AdjustConfidenceBasedOn(ItemList<NinjaItem> target, Func<ItemList<NinjaItem>, bool> rule, float factor)
+        private float AdjustConfidenceBasedOn(ItemList<NinjaItem> target, Func<ItemList<NinjaItem>, bool> rule, float factor, float antifactor)
         {
             if (rule(target))
             {
@@ -58,7 +74,7 @@ namespace FilterEconomy.Request.Enrichment
             }
             else
             {
-                return 0;
+                return antifactor;
             }
         }
     }

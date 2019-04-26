@@ -15,7 +15,7 @@ namespace FilterPolishZ.Economy.RuleSet
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection(segment)
                 .UseDefaultQuery()
-                .AddDefaultPreprocessing()
+                .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
             builder.AddRule("ANCHOR", "ANCHOR",
@@ -64,7 +64,7 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("t2-85", "t2-2",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = GetPrice(84) * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    var price = Math.Max(GetPrice(86),GetPrice(85)) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T2BaseTypeBreakPoint;
                 }));
 

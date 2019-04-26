@@ -15,7 +15,7 @@ namespace FilterPolishZ.Economy.RuleSet
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection("divination")
                 .UseDefaultQuery()
-                .AddDefaultPreprocessing()
+                .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
 

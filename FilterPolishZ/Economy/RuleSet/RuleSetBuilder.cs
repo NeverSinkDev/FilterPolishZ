@@ -104,11 +104,12 @@ namespace FilterPolishZ.Economy.RuleSet
             return this;
         }
 
-        public RuleSetBuilder AddDefaultPreprocessing()
+        public RuleSetBuilder AddDefaultPostProcessing()
         {
             this.RuleSet.PostProcessing.Add(new Action<TieringCommand>((TieringCommand tiercom) =>
             {
                 tiercom.Group = this.Section;
+
                 if (this.RuleHost.TierListFacade.ContainsTierInformationForBaseType(RuleSet.GoverningSection, tiercom.BaseType))
                 {
                     tiercom.OldTier = RuleHost.TierListFacade.GetTiersForBasetype(RuleSet.GoverningSection, tiercom.BaseType).First().SubStringLast("->");
