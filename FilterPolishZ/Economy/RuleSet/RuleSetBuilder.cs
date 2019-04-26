@@ -91,6 +91,16 @@ namespace FilterPolishZ.Economy.RuleSet
                 }));
         }
 
+        public RuleSetBuilder AddSimpleReversedComparisonRule(string name, string tier, float comparer)
+        {
+            return this.AddRule(name, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    return price < comparer;
+                }));
+        }
+
         public RuleSetBuilder AddRestRule()
         {
             return this.AddRule("rest", "rest",

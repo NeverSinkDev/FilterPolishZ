@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 using FilterPolishUtil.Constants;
@@ -16,6 +17,8 @@ namespace FilterEconomy.Request.Enrichment
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             float confidence = 1;
+
+            //BaseTypeDataProvider.GetData()
 
             float averagePriceMinimum = 3;
             float approvedPricesMinimum = 8;

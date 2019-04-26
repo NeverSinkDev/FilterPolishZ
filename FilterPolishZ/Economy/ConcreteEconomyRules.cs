@@ -18,6 +18,7 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet uniqueRules;
         private FilterEconomyRuleSet divinationRules;
         private FilterEconomyRuleSet uniquemapsRules;
+        private FilterEconomyRuleSet fossilrules;
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
         private List<TieringCommand> suggestions;
@@ -25,7 +26,7 @@ namespace FilterPolishZ.Economy
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
-
+        public List<FilterEconomyRuleSet> Rules { get; set; } = new List<FilterEconomyRuleSet>();
         public ConcreteEconomyRules()
         {
             this.EconomyInformation = EconomyRequestFacade.GetInstance();
@@ -36,8 +37,18 @@ namespace FilterPolishZ.Economy
             this.uniqueRules = UniqueRulesFactory.Generate(this);
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.uniquemapsRules = this.GenerateUniqueMapRules();
+            this.fossilrules = this.GenerateFossilTieringRules();
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
+
+            this.Rules.Clear();
+
+            this.Rules.Add(this.uniqueRules);
+            this.Rules.Add(this.divinationRules);
+            this.Rules.Add(this.uniquemapsRules);
+            this.Rules.Add(this.fossilrules);
+            this.Rules.Add(this.elderRules);
+            this.Rules.Add(this.shaperRules);
         }
 
         /// <summary>
@@ -45,11 +56,7 @@ namespace FilterPolishZ.Economy
         /// </summary>
         public void GenerateSuggestions()
         {
-            this.uniqueRules.GenerateAndAddSuggestions();
-            this.divinationRules.GenerateAndAddSuggestions();
-            this.uniquemapsRules.GenerateAndAddSuggestions();
-            this.shaperRules.GenerateAndAddSuggestions();
-            this.elderRules.GenerateAndAddSuggestions();
+            this.Rules.ForEach(x => x.GenerateAndAddSuggestions());
         }
 
         private FilterEconomyRuleSet GenerateUniqueMapRules()
@@ -61,6 +68,20 @@ namespace FilterPolishZ.Economy
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
+                .AddRestRule()
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateFossilTieringRules()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("currency->fossil")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConstants.T5DiviBreakPoint)
                 .AddRestRule()
                 .Build();
         }
