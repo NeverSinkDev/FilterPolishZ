@@ -115,6 +115,7 @@ namespace FilterEconomy.Processor
                 }
                 else if (currentResult != null)
                 {
+                    finalResult.Confidence = this.DefaultSet.ValueMultiplier;
                     return finalResult;
                 }
             }
