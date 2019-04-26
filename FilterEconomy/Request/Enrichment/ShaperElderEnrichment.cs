@@ -18,8 +18,6 @@ namespace FilterEconomy.Request.Enrichment
         {
             float confidence = 1;
 
-            //BaseTypeDataProvider.GetData()
-
             float averagePriceMinimum = 3;
             float approvedPricesMinimum = 8;
             float unhealthyPriceRange = 500;
@@ -59,7 +57,32 @@ namespace FilterEconomy.Request.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 50), -0.1f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 25), -0.1f, 0);
 
-            if (confidence <= 0.4f)
+            // item info based rules
+
+            Dictionary<string, string> itemInfo = null;
+            if (BaseTypeDataProvider.BaseTypeData.ContainsKey(baseType))
+            {
+                itemInfo = BaseTypeDataProvider.BaseTypeData[baseType];
+                int dropLevel = int.Parse(itemInfo["DropLevel"]);
+                string itemClass = itemInfo["Class"].ToLower();
+
+                if (!FilterConstants.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
+                {
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 70),  0, 0.05f);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 60), -0.05f, 0.05f);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 50), -0.05f, 0);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 40), -0.10f, 0);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 30), -0.10f, 0);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 20), -0.15f, 0);
+                    confidence += AdjustConfidenceBasedOn(data, (s => dropLevel < 10), -0.2f, 0);
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Missing BaseType: {baseType}");
+            }
+
+            if (confidence <= 0.35f)
             {
                 data.Valid = false;
             }

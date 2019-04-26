@@ -143,7 +143,12 @@ namespace FilterCore.Constants
         {
             "=", ">=", "<=", ">", "<"
         };
-        
+
+        public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
+        {
+            "rings", "amulets", "belts", "jewels", "daggers", "wands", "sceptres"
+        };
+
         public static readonly List<string> FilterStrictnessLevels = new List<string>
         {
             "Soft", "Regular", "Semi-Strict", "Strict", "Very-Strict", "Uber-Strict", "Uber-Plus-Strict"
