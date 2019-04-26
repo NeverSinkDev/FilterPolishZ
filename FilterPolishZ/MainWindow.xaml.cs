@@ -289,6 +289,7 @@ namespace FilterPolishZ
             {
                 new Tuple<string, string, string>("divination", "divination", "?"),
                 new Tuple<string, string, string>("unique->maps", "uniqueMaps", "?"),
+                new Tuple<string, string, string>("currency->fossil", "fossil", "&"),
                 new Tuple<string, string, string>("uniques", "uniqueWeapons", "?"),
                 new Tuple<string, string, string>("uniques", "uniqueFlasks", "?"),
                 new Tuple<string, string, string>("uniques", "uniqueArmours", "?"),
@@ -321,7 +322,7 @@ namespace FilterPolishZ
 
             var branchKeys = new List<string>
             {
-                "divination", "uniques", "unique->maps", "basetypes"
+                "divination", "uniques", "unique->maps", "basetypes", "currency->fossil"
             };
             
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));

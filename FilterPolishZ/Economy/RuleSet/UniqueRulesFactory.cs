@@ -148,6 +148,23 @@ namespace FilterPolishZ.Economy.RuleSet
                     return builder.RuleSet.DefaultSet.HasAspect("ProphecyMaterialAspect");
                 }));
 
+            builder.AddRule("hideable", "hideable",
+                new Func<string, bool>((string s) =>
+                {
+                    var maxprice = builder.RuleSet.DefaultSet.Max(x => x.CVal);
+                    if (maxprice > FilterPolishConstants.T2BreakPoint * 0.8f)
+                    {
+                        return false;
+                    }
+
+                    if (builder.RuleSet.DefaultSet.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }));
+
             builder.AddRule("rest", "rest",
                 new Func<string, bool>((string s) =>
                 {
