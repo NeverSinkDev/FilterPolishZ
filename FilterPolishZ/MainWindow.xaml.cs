@@ -425,5 +425,12 @@ namespace FilterPolishZ
         {
             PerformEconomyTiering();
         }
+
+        private void ApplyAllSuggestions(object sender, RoutedEventArgs e)
+        {
+            this.TierListFacade.ApplyAllSuggestions();
+            this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+            this.EventGrid.Publish();
+        }
     }
 }

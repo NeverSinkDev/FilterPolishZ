@@ -93,7 +93,11 @@
                                     <Button ToolTip="Perform Suggesting Generation Routine" Click="PerformAutomatedTiering" Foreground="Gold">
                                         <materialDesign:PackIcon Kind="AutoFix" />
                                     </Button>
-                                    <Separator/>
+
+                                    <Button ToolTip="Apply All Suggestions" Click="ApplyAllSuggestions" Foreground="Gold">
+                                        <materialDesign:PackIcon Kind="AutoStories" />
+                                    </Button>
+                                        <Separator/>
 
                                     <Button ToolTip="Generate filters (including styles)" Click="GenerateAllFilterFiles">
                                     <materialDesign:PackIcon Kind="ArrowRightDropCircle" />

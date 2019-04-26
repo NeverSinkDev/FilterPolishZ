@@ -32,6 +32,7 @@ namespace FilterPolishZ.Economy
             this.ItemInformation = ItemInformationFacade.GetInstance();
             this.TierListFacade = TierListFacade.GetInstance();
 
+            // The list of the suggestion-generating rulesets
             this.uniqueRules = UniqueRulesFactory.Generate(this);
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.uniquemapsRules = this.GenerateUniqueMapRules();
@@ -39,6 +40,9 @@ namespace FilterPolishZ.Economy
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
         }
 
+        /// <summary>
+        /// Generates suggestions, but doesn't apply them.
+        /// </summary>
         public void GenerateSuggestions()
         {
             this.uniqueRules.GenerateAndAddSuggestions();

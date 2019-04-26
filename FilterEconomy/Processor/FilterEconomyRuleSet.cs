@@ -97,7 +97,7 @@ namespace FilterEconomy.Processor
                         else
                         {
                             finalResult.NewTier = $"{finalResult.NewTier},{currentResult.NewTier}";
-                            finalResult.NewTier = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
+                            finalResult.AppliedRule = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
                             finalResult.MultiRule = true;
                         }
 
