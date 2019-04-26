@@ -115,9 +115,15 @@ namespace FilterPolishZ.Economy.RuleSet
                 if (this.RuleHost.TierListFacade.ContainsTierInformationForBaseType(RuleSet.GoverningSection, tiercom.BaseType))
                 {
                     tiercom.OldTier = RuleHost.TierListFacade.GetTiersForBasetype(RuleSet.GoverningSection, tiercom.BaseType).First().SubStringLast("->");
-                    if (tiercom.OldTier == "ex")
+
+                    if (tiercom.AppliedRule.ToLower() == "anchor")
                     {
-                        tiercom.NewTier = "ex";
+                        tiercom.NewTier = tiercom.OldTier;
+                    }
+
+                    if (tiercom.OldTier.Contains("ex"))
+                    {
+                        tiercom.NewTier = tiercom.OldTier;
                         tiercom.AppliedRule = "exception";
                     }
                 }
