@@ -60,18 +60,5 @@ namespace FilterPolishZ.Economy
                 .AddRestRule()
                 .Build();
         }
-
-        private FilterEconomyRuleSet GenerateShaperRules()
-        {
-            return new RuleSetBuilder(this)
-                .SetSection("shaper")
-                .UseDefaultQuery()
-                .AddDefaultPostProcessing()
-                .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
-                .AddRestRule()
-                .Build();
-        }
     }
 }

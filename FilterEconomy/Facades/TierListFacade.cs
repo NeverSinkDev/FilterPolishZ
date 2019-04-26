@@ -98,15 +98,20 @@ namespace FilterEconomy.Facades
 
             }
 
-            if (!FilterConstants.IgnoredSuggestionTiers.Contains(command.NewTier.ToLower()))
-            {
-                var additionTarget = this.TierListData[command.Group]
-                    .FilterEntries[command.NewTier].Entry
-                    .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
-                    .SelectMany(x => x).ToList();
+            var newTiers = command.NewTier.Split(',');
 
-                additionTarget.ForEach(x => x.Value.Add(new LineToken() { value = command.BaseType, isQuoted = true }));
-                command.Change = true;
+            foreach (var newTier in newTiers)
+            {
+                if (!FilterConstants.IgnoredSuggestionTiers.Contains(newTier.ToLower()))
+                {
+                    var additionTarget = this.TierListData[command.Group]
+                        .FilterEntries[newTier].Entry
+                        .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
+                        .SelectMany(x => x).ToList();
+
+                    additionTarget.ForEach(x => x.Value.Add(new LineToken() { value = command.BaseType, isQuoted = true }));
+                    command.Change = true;
+                }
             }
         }
 

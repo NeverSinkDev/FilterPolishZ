@@ -62,8 +62,6 @@ namespace FilterEconomy.Request.Enrichment
             data.ValueMultiplier = confidence;
             data.ftPrice = new AutoDictionary<int, float>();
             data.ForEach(x => data.ftPrice[(int)x.LevelRequired] = x.CVal);
-
-            Debug.WriteLine($"{baseType} --> {string.Join(" ", prices.Select(x => x.ToString()))}--->{progression}");
         }
 
         private float AdjustConfidenceBasedOn(ItemList<NinjaItem> target, Func<ItemList<NinjaItem>, bool> rule, float factor, float antifactor)

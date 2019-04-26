@@ -65,18 +65,62 @@ namespace FilterEconomy.Processor
                 {
                     AppliedRule = "disqualified",
                     BaseType = basetype,
-                    NewTier = "anchor",
-                    Group = group
+                    NewTier = "rest",
+                    Group = group,
+                    Confidence = this.DefaultSet.ValueMultiplier
                 };
             }
 
-            var result = this.EconomyRules.Select(
-                x =>
-                    x.Execute(group, basetype, processorData))
-                    .FirstOrDefault(z => z != null);
+            //var result = this.EconomyRules.Select(
+            //    x =>
+            //        x.Execute(group, basetype, processorData))
+            //        .FirstOrDefault(z => z != null);
 
-            result.Confidence = this.DefaultSet.ValueMultiplier;
-            return result;
+            string targetTier = null;
+            TieringCommand finalResult = null;
+            TieringCommand currentResult = null;
+            for (int i = 0; i < this.EconomyRules.Count; i++)
+            {
+                var currentRule = this.EconomyRules[i];
+                currentResult = null;
+
+                if (targetTier == currentRule.RuleGroup)
+                {
+                    currentResult = currentRule.Execute(group, basetype, processorData);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (currentResult == null)
+                {
+                    continue;
+                }
+
+                if (finalResult == null)
+                {
+                    finalResult = currentResult;
+                }
+                else
+                {
+                    finalResult.NewTier = $"{finalResult.NewTier},{currentResult.NewTier}";
+                    finalResult.NewTier = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
+                    finalResult.MultiRule = true;
+                }
+
+                if (currentResult != null && currentRule.NextRuleGroupToken != null)
+                {
+                    targetTier = currentRule.NextRuleGroupToken;
+                }
+                else if (currentResult != null)
+                {
+                    return finalResult;
+                }
+            }
+
+            finalResult.Confidence = this.DefaultSet.ValueMultiplier;
+            return finalResult;
         }
     }
 
@@ -85,6 +129,8 @@ namespace FilterEconomy.Processor
         public string RuleName { get; set; }
         public string TargetTier { get; set; }
         public float Confidence { get; set; }
+        public string RuleGroup { get; set; }
+        public string NextRuleGroupToken { get; set; }
 
         public Func<string, bool> Rule { get; set; }
 
@@ -141,6 +187,7 @@ namespace FilterEconomy.Processor
         public bool Change { get; set; }
         public bool Unsure { get; set; }
         public bool Performed { get; set; }
+        public bool MultiRule { get; internal set; } = false;
 
         public void Execute()
         {

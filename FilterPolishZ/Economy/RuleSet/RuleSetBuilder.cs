@@ -46,13 +46,15 @@ namespace FilterPolishZ.Economy.RuleSet
             return this;
         }
 
-        public RuleSetBuilder AddRule(string rulename, string targetTier, Func<string, bool> rule)
+        public RuleSetBuilder AddRule(string rulename, string targetTier, Func<string, bool> rule, string group = default(string), string nextgroup = default(string))
         {
             this.RuleSet.EconomyRules.Add(new FilterEconomyRule()
             {
                 RuleName = rulename,
                 TargetTier = targetTier,
-                Rule = rule
+                Rule = rule,
+                RuleGroup = group,
+                NextRuleGroupToken = nextgroup
             });
 
             return this;

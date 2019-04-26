@@ -36,7 +36,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     var price = GetPrice(82) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T1BaseTypeBreakPoint;
-                }));
+                }), nextgroup: "t2");
 
 
             builder.AddRule("t1-84", "t1-2",
@@ -44,7 +44,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     var price = GetPrice(84) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T1BaseTypeBreakPoint;
-                }));
+                }), nextgroup: "t2");
 
             builder.AddRule("t1-86", "t1-3",
                 new Func<string, bool>((string s) =>
@@ -58,7 +58,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     var price = GetPrice(82) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T2BaseTypeBreakPoint;
-                }));
+                }), group: "t2");
 
 
             builder.AddRule("t2-85", "t2-2",
@@ -66,7 +66,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     var price = Math.Max(GetPrice(86),GetPrice(85)) * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price > FilterPolishConstants.T2BaseTypeBreakPoint;
-                }));
+                }), group: "t2");
 
             builder.AddRule("rest", "rest",
                 new Func<string, bool>((string s) =>
