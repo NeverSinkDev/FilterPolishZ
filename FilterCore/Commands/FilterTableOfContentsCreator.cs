@@ -94,7 +94,7 @@ namespace FilterCore.Commands
         public static int GetTitleDepth(string line)
         {
             var bracketCount = 0;
-            foreach (var c in line)
+            foreach (var c in line.Trim())
             {
                 if (c == SectionTitleKeyIdentStart) bracketCount++;
                 else break;

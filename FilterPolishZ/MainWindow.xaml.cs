@@ -22,10 +22,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Forms;
 using FilterCore.Commands;
+using FilterCore.Commands.EntryCommands;
 using FilterCore.Constants;
 using FilterCore.Entry;
 using FilterCore.Line;
 using FilterCore.Tests;
+using FilterDomain.LineStrategy;
 using FilterPolishUtil.Constants;
 using MethodTimer;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -174,6 +176,7 @@ namespace FilterPolishZ
                 generationTasks.Add(FileWork.WriteTextAsync(seedPath, seedFilterString));
             }
             
+            baseFilter = new Filter(seedFilterString); // we do not want to edit the seedFilter directly and execute its tag commands
             baseFilter.ExecuteCommandTags();
             var baseFilterString = baseFilter.Serialize();
             if (baseFilterString == null || baseFilterString.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
@@ -182,7 +185,11 @@ namespace FilterPolishZ
             {
                 if (isGeneratingStylesAndSeed)
                 {
-                    generationTasks.AddRange(FilterConstants.FilterStyles.Select(style => GenerateFilter_Inner(style, strictnessIndex)));
+                    foreach (var style in FilterConstants.FilterStyles)
+                    {
+                        if (style.ToLower() == "default") continue;
+                        generationTasks.Add(GenerateFilter_Inner(style, strictnessIndex));
+                    }
                 }
 
                 // default style
@@ -239,6 +246,35 @@ namespace FilterPolishZ
                 errorMsg.Add("Version did not change!");
             }
             else baseFilter.SetHeaderMetaData("version:", newVersion);
+
+            // add missing UP command tags
+            foreach (var entry in baseFilter.FilterEntries)
+            {
+                if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
+                
+                if (!(entry?.Content?.Content?.ContainsKey("ItemLevel") ?? false)) continue;
+                if (entry.Content.Content["ItemLevel"]?.Count != 1) continue;
+                var ilvl = entry.Content.Content["ItemLevel"].Single().Value as NumericValueContainer;
+                if (ilvl == null) continue;
+                if (ilvl.Value != "65" || ilvl.Operator != ">=") continue;
+                
+                if (!(entry?.Content?.Content?.ContainsKey("SetTextColor") ?? false)) continue;
+                
+                if (entry.Header.HeaderValue == "Hide") continue;
+                
+                if (!entry.Content.Content.ContainsKey("Rarity")) continue;
+                var rarity = entry.Content.Content["Rarity"].Single().Value as NumericValueContainer;
+                if (rarity.Value != "Rare") continue;
+                if (!string.IsNullOrEmpty(rarity.Operator))
+                {
+                    if (rarity.Operator.Contains("<") || rarity.Operator.Contains(">")) continue;                    
+                }
+                
+                if (entry.Header.GenerationTags.Any(tag => tag is RaresUpEntryCommand)) continue;
+                
+                InfoPopUpMessageDisplay.ShowInfoMessageBox("Adding UP tag to this entry:\n\n\n" + string.Join("\n", entry.Serialize()));
+                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
+            }
             
 //            FilterStyleVerifyer.Run(baseFilter); // todo: re-enable this when the filter doesnt have the tons of errors anymore
 
@@ -269,14 +305,6 @@ namespace FilterPolishZ
 
         [Time]
         private EconomyRequestFacade LoadEconomyOverviewData()
-        {
-            var task = this.LoadEconomyOverviewData_Inner();
-            Task.WaitAll(task); // @Tobnac: why?
-            
-            return task.Result;
-        }
-
-        private async Task<EconomyRequestFacade> LoadEconomyOverviewData_Inner()
         {
             var result = EconomyRequestFacade.GetInstance();
             var seedFolder = Configuration.AppSettings["SeedFile Folder"];
