@@ -55,7 +55,6 @@ namespace FilterPolishZ
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
-
             ConcreteEnrichmentProcedures.Initialize();
 
             // Initialize Modules
@@ -257,7 +256,7 @@ namespace FilterPolishZ
         {
             TierListFacade tierList = TierListFacade.GetInstance();
 
-            var workTiers = new HashSet<string> { "uniques", "divination", "rare->shaper", "rare->elder", "unique->maps", "currency->fossil", "currency->resonator", "fragments", "currency->prophecy", "currency" };
+            var workTiers = FilterPolishConstants.FilterTierLists;
             var tiers = filter.ExtractTiers(workTiers);
             tierList.TierListData = tiers;
 
@@ -285,26 +284,14 @@ namespace FilterPolishZ
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
             
-            var requestData = new List<Tuple<string, string, string>>
+            foreach (var tuple in FilterPolishConstants.FileRequestData)
             {
-                new Tuple<string, string, string>("divination", "divination", "?"),
-                new Tuple<string, string, string>("unique->maps", "uniqueMaps", "?"),
-                new Tuple<string, string, string>("currency->fossil", "fossil", "&"),
-                new Tuple<string, string, string>("uniques", "uniqueWeapons", "?"),
-                new Tuple<string, string, string>("uniques", "uniqueFlasks", "?"),
-                new Tuple<string, string, string>("uniques", "uniqueArmours", "?"),
-                new Tuple<string, string, string>("uniques", "uniqueAccessory", "?"),
-                new Tuple<string, string, string>("basetypes", "basetypes", "&")
-            };
-            
-            foreach (var tuple in requestData)
-            {
-                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
+                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
             }
 
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string prefix) =>
+            void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, prefix, this.RequestMode, seedFolder, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, url, prefix, this.RequestMode, seedFolder, ninjaUrl));
 
             return result;
         }
@@ -320,11 +307,7 @@ namespace FilterPolishZ
             result.LeagueType = leagueType;
             result.BaseStoragePath = baseStoragePath;
 
-            var branchKeys = new List<string>
-            {
-                "divination", "uniques", "unique->maps", "basetypes", "currency->fossil"
-            };
-            
+            var branchKeys = FilterPolishConstants.TierableEconomySections;
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));
 
             result.LoadFromSaveFile();

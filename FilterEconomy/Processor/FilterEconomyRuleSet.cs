@@ -180,8 +180,6 @@ namespace FilterEconomy.Processor
             }
        }
 
-        public bool Change { get; set; }
-        public bool Unsure { get; set; }
         public bool Performed { get; set; }
         public bool MultiRule { get; internal set; } = false;
 

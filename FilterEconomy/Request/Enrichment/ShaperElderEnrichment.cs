@@ -14,13 +14,13 @@ namespace FilterEconomy.Request.Enrichment
 {
     public class ShaperElderEnrichment : IDataEnrichment
     {
+        public static float averagePriceMinimum = 3;
+        public static float approvedPricesMinimum = 8;
+        public static float unhealthyPriceRange = 500;
+
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             float confidence = 1;
-
-            float averagePriceMinimum = 3;
-            float approvedPricesMinimum = 8;
-            float unhealthyPriceRange = 500;
 
             var totalQuant = data.Sum(x => x.IndexedCount);
             var minPrice = data.Min(x => x.CVal);

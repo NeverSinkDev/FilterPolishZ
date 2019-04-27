@@ -23,6 +23,7 @@ using FilterPolishZ.Configuration;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
+using FilterPolishUtil.Constants;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -49,8 +50,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public ItemInfoView()
         {
             InitializeComponent();
-            
-            var allBranchKeys = this.EconomyData.EconomyTierlistOverview.Keys;
+
+            var allBranchKeys = FilterPolishConstants.TierableEconomySections;
             CurrentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;

@@ -1,6 +1,7 @@
 ﻿using FilterEconomy;
 using FilterEconomy.Facades;
 using FilterEconomy.Processor;
+using FilterPolishUtil.Constants;
 using FilterPolishZ.Util;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,9 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         public TieringSuggestionView()
         {
             InitializeComponent();
+            this.SelectedBranchComboBox.ItemsSource = FilterPolishConstants.FilterTierLists;
+            this.SelectedBranchComboBox.SelectedIndex = 0;
+
             this.TierListFacade = TierListFacade.GetInstance();
             this.InitializeTieringList();
             this.DataContext = this;
@@ -91,7 +95,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
                 return;
             }
 
-            this.BranchKey = (e.AddedItems[0] as ComboBoxItem).Content.ToString();
+            this.BranchKey = e.AddedItems[0].ToString();
 
             TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
         }

@@ -30,22 +30,15 @@
 
                 </Button>
 
-                <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged">
-                    <ComboBoxItem Name="uniques">uniques</ComboBoxItem>
-                    <ComboBoxItem Name="divination">divination</ComboBoxItem>
-                    <ComboBoxItem Name="mapsuniques">unique->maps</ComboBoxItem>
-                    <ComboBoxItem Name="shaper">rare->shaper</ComboBoxItem>
-                    <ComboBoxItem Name="elder">rare->elder</ComboBoxItem>
-                    <ComboBoxItem Name="fossil">currency->fossil</ComboBoxItem>
-                </ComboBox>
+                <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged"/>
             </ToolBar>
         </ToolBarTray>
 
         <Grid Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 
                 <DockPanel Grid.Column="0">

@@ -32,9 +32,9 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
-        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
+        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
         {
-            var economySegmentBranch = FilterPolishConstants.Abbreviations[branchKey];
+            var economySegmentBranch = url;
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
@@ -94,14 +94,13 @@ namespace FilterEconomy.Facades
 
         public void EnrichAll()
         {
+            // for every section (divination card etc)
             foreach (var section in this.EconomyTierlistOverview)
             {
+                // go through every item
                 foreach (var item in section.Value)
                 {
-                    foreach (var enrichment in FilterPolishConstants.TieredGroups[section.Key])
-                    {
-                        EnrichmentProcedureConfiguration.EnrichmentProcedures[enrichment].ForEach(z => z.Enrich(item.Key, item.Value));
-                    }
+                    EnrichmentProcedureConfiguration.EnrichmentProcedures[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
                 }
             }
         }

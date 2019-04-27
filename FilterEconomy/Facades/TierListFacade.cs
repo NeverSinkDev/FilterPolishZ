@@ -26,7 +26,7 @@ namespace FilterEconomy.Facades
 
         public void InitializeSuggestions()
         {
-            foreach (var item in FilterPolishConstants.TieredGroups.Keys)
+            foreach (var item in FilterPolishConstants.FilterTierLists)
             {
                 this.Suggestions.Add(item, new List<TieringCommand>());
             }
@@ -70,7 +70,7 @@ namespace FilterEconomy.Facades
         public void ApplyCommand(TieringCommand command)
         {
 
-            if (command.Change || command.Performed)
+            if (command.Performed)
             {
                 return;
             }
@@ -82,7 +82,6 @@ namespace FilterEconomy.Facades
 
             if (command.NewTier == "???")
             {
-                command.Unsure = true;
                 return;
             }
 
@@ -94,7 +93,7 @@ namespace FilterEconomy.Facades
                     .SelectMany(x => x).ToList();
 
                 removalTarget.ForEach(x => x.Value.RemoveWhere(z => z.value.Equals(command.BaseType, StringComparison.InvariantCultureIgnoreCase)));
-                command.Change = true;
+                command.Performed = true;
 
             }
 
@@ -110,7 +109,7 @@ namespace FilterEconomy.Facades
                         .SelectMany(x => x).ToList();
 
                     additionTarget.ForEach(x => x.Value.Add(new LineToken() { value = command.BaseType, isQuoted = true }));
-                    command.Change = true;
+                    command.Performed = true;
                 }
             }
         }

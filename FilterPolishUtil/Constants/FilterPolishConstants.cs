@@ -8,29 +8,36 @@ namespace FilterPolishUtil.Constants
 {
     public static class FilterPolishConstants
     {
-        public static Dictionary<string, List<string>> TieredGroups { get; } = new Dictionary<string, List<string>>()
+        /// <summary>
+        /// These are the in-filter tierlists we parse, denoted by the $Type->... comment
+        /// It's different from the FileRequestData below, because it contains derived sections such as rare->elder
+        /// </summary>
+        public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            {"divination",new List<string>(){"divination"}},
-            {"unique->maps",new List<string>(){"uniqueMaps"}},
-            {"uniques",new List<string>(){"uniqueWeapons","uniqueArmours","uniqueFlasks","uniqueAccessory"}},
-            {"rare->shaper",new List<string>(){"rare->shaper"}},
-            {"rare->elder",new List<string>(){"rare->elder"}},
-            {"basetypes",new List<string>(){"basetypes"}},
-            {"currency->fossil",new List<string>(){"currency->fossil"}}
+            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "currency->fossil"
         };
 
-        public static Dictionary<string, string> Abbreviations { get; } = new Dictionary<string, string>()
+        /// <summary>
+        /// Information about the requests and economyoverview sections:
+        /// name, filename, requesturl, urlprefix
+        /// </summary>
+        public static List<Tuple<string, string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string, string>>
         {
-            { "divination", "GetDivinationCardsOverview" },
-            { "basetypes", "ItemOverview?type=BaseType"},
-            { "uniqueFlasks", "GetUniqueFlaskOverview" },
-            { "uniqueWeapons", "GetUniqueWeaponOverview" },
-            { "uniqueArmours", "GetUniqueArmourOverview"},
-            { "uniqueAccessory", "GetUniqueAccessoryOverview" },
-            { "uniqueMaps", "GetUniqueMapOverview" },
-            { "fossil", "ItemOverview?type=Fossil" },
-            { "resonator", "ItemOverview?type=Resonator" }
+                // 
+                new Tuple<string, string, string, string>("divination", "divination", "GetDivinationCardsOverview", "?"),
+                new Tuple<string, string, string, string>("unique->maps", "uniqueMaps", "GetUniqueMapOverview", "?"),
+                new Tuple<string, string, string, string>("currency->fossil", "fossil", "ItemOverview?type=Fossil", "&"),
+                new Tuple<string, string, string, string>("uniques", "uniqueWeapons", "GetUniqueWeaponOverview", "?"),
+                new Tuple<string, string, string, string>("uniques", "uniqueFlasks", "GetUniqueFlaskOverview", "?"),
+                new Tuple<string, string, string, string>("uniques", "uniqueArmours", "GetUniqueArmourOverview", "?"),
+                new Tuple<string, string, string, string>("uniques", "uniqueAccessory", "GetUniqueAccessoryOverview", "?"),
+                new Tuple<string, string, string, string>("basetypes", "basetypes", "ItemOverview?type=BaseType", "&")
         };
+
+        /// <summary>
+        /// Useful for easy acquiring the section names above, without redundancy
+        /// </summary>
+        public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
 
         public static float T1BreakPoint = 20;
         public static float T2BreakPoint = 5;
