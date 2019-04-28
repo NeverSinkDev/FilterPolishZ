@@ -247,34 +247,34 @@ namespace FilterPolishZ
             }
             else baseFilter.SetHeaderMetaData("version:", newVersion);
 
-            // add missing UP command tags
-            foreach (var entry in baseFilter.FilterEntries)
-            {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
-                
-                if (!(entry?.Content?.Content?.ContainsKey("ItemLevel") ?? false)) continue;
-                if (entry.Content.Content["ItemLevel"]?.Count != 1) continue;
-                var ilvl = entry.Content.Content["ItemLevel"].Single().Value as NumericValueContainer;
-                if (ilvl == null) continue;
-                if (ilvl.Value != "65" || ilvl.Operator != ">=") continue;
-                
-                if (!(entry?.Content?.Content?.ContainsKey("SetTextColor") ?? false)) continue;
-                
-                if (entry.Header.HeaderValue == "Hide") continue;
-                
-                if (!entry.Content.Content.ContainsKey("Rarity")) continue;
-                var rarity = entry.Content.Content["Rarity"].Single().Value as NumericValueContainer;
-                if (rarity.Value != "Rare") continue;
-                if (!string.IsNullOrEmpty(rarity.Operator))
-                {
-                    if (rarity.Operator.Contains("<") || rarity.Operator.Contains(">")) continue;                    
-                }
-                
-                if (entry.Header.GenerationTags.Any(tag => tag is RaresUpEntryCommand)) continue;
-                
-                InfoPopUpMessageDisplay.ShowInfoMessageBox("Adding UP tag to this entry:\n\n\n" + string.Join("\n", entry.Serialize()));
-                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
-            }
+            // add missing UP command tags // currently unused/unnecessary plus bug: trinkets/amulets/... should not be affected by this!!
+//            foreach (var entry in baseFilter.FilterEntries)
+//            {
+//                if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
+//                
+//                if (!(entry?.Content?.Content?.ContainsKey("ItemLevel") ?? false)) continue;
+//                if (entry.Content.Content["ItemLevel"]?.Count != 1) continue;
+//                var ilvl = entry.Content.Content["ItemLevel"].Single().Value as NumericValueContainer;
+//                if (ilvl == null) continue;
+//                if (ilvl.Value != "65" || ilvl.Operator != ">=") continue;
+//                
+//                if (!(entry?.Content?.Content?.ContainsKey("SetTextColor") ?? false)) continue;
+//                
+//                if (entry.Header.HeaderValue == "Hide") continue;
+//                
+//                if (!entry.Content.Content.ContainsKey("Rarity")) continue;
+//                var rarity = entry.Content.Content["Rarity"].Single().Value as NumericValueContainer;
+//                if (rarity.Value != "Rare") continue;
+//                if (!string.IsNullOrEmpty(rarity.Operator))
+//                {
+//                    if (rarity.Operator.Contains("<") || rarity.Operator.Contains(">")) continue;                    
+//                }
+//                
+//                if (entry.Header.GenerationTags.Any(tag => tag is RaresUpEntryCommand)) continue;
+//                
+//                InfoPopUpMessageDisplay.ShowInfoMessageBox("Adding UP tag to this entry:\n\n\n" + string.Join("\n", entry.Serialize()));
+//                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
+//            }
             
 //            FilterStyleVerifyer.Run(baseFilter); // todo: re-enable this when the filter doesnt have the tons of errors anymore
 
