@@ -75,6 +75,13 @@ namespace FilterPolishZ.Economy.RuleSet
                     return (price > FilterPolishConstants.T5DiviBreakPoint) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
                 }));
 
+            builder.AddRule("CurrencySaveT4X", "t4c",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return builder.RuleSet.DefaultSet.HasAspect("FarmableOrbAspect");
+                }));
+
             builder.AddRule("RandomSave", "rest",
                 new Func<string, bool>((string s) =>
                 {

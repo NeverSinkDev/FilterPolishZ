@@ -166,4 +166,10 @@ namespace FilterEconomy.Model.ItemAspects
         public override string Group => "StackSize";
         public override AspectType Type => AspectType.divination;
     }
+
+    public class FarmableOrbAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
 }
