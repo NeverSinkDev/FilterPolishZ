@@ -34,4 +34,8 @@ steps:
 
 - task: CmdLine@2
   inputs:
+    script: 'git pull https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git master'
+
+- task: CmdLine@2
+  inputs:
     script: 'git push https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git head:master'
