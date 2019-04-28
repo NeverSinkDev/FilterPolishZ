@@ -34,6 +34,14 @@ steps:
 
 - task: CmdLine@2
   inputs:
+    script: 'git config user.name "NeverSinkDev"'
+
+- task: CmdLine@2
+  inputs:
+    script: 'git config user.email "jevjaku@gmail.com"'
+
+- task: CmdLine@2
+  inputs:
     script: 'git pull https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git master --allow-unrelated-histories'
 
 - task: CmdLine@2
