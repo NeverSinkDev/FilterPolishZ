@@ -187,7 +187,7 @@ namespace FilterPolishZ
                 {
                     foreach (var style in FilterConstants.FilterStyles)
                     {
-                        if (style.ToLower() == "default") continue;
+                        if (style.ToLower() == "default" || style.ToLower() == "backup" || style.ToLower() == "streamsound" || style.ToLower() == "crimson") continue;
                         generationTasks.Add(GenerateFilter_Inner(style, strictnessIndex));
                     }
                 }
