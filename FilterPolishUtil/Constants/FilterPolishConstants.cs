@@ -23,7 +23,6 @@ namespace FilterPolishUtil.Constants
         /// </summary>
         public static List<Tuple<string, string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string, string>>
         {
-                // 
                 new Tuple<string, string, string, string>("divination", "divination", "GetDivinationCardsOverview", "?"),
                 new Tuple<string, string, string, string>("unique->maps", "uniqueMaps", "GetUniqueMapOverview", "?"),
                 new Tuple<string, string, string, string>("currency->fossil", "fossil", "ItemOverview?type=Fossil", "&"),

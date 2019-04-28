@@ -44,7 +44,7 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
-            return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).ToList());
+            return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
         }
     }
 }

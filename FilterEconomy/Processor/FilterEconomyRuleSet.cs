@@ -98,7 +98,6 @@ namespace FilterEconomy.Processor
                         {
                             finalResult.NewTier = $"{finalResult.NewTier},{currentResult.NewTier}";
                             finalResult.AppliedRule = $"{finalResult.AppliedRule},{currentResult.AppliedRule}";
-                            finalResult.MultiRule = true;
                         }
 
                         if (currentRule.NextRuleGroupToken == null)
@@ -179,13 +178,7 @@ namespace FilterEconomy.Processor
                     !FilterConstants.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
             }
        }
+       public bool Performed { get; set; }
 
-        public bool Performed { get; set; }
-        public bool MultiRule { get; internal set; } = false;
-
-        public void Execute()
-        {
-
-        }
     }
 }

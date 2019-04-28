@@ -109,7 +109,6 @@
     </Compile>
     <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\EventGridFacade.cs" />
-    <Compile Include="Util\WIP.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
       <SubType>Designer</SubType>

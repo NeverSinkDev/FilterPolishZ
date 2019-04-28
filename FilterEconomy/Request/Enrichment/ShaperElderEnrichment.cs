@@ -82,6 +82,8 @@ namespace FilterEconomy.Request.Enrichment
                 Debug.WriteLine($"Missing BaseType: {baseType}");
             }
 
+            confidence = (float)Math.Round((decimal)confidence, 2, MidpointRounding.AwayFromZero);
+
             if (confidence <= 0.35f)
             {
                 data.Valid = false;

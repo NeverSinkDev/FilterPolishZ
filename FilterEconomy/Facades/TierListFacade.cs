@@ -85,16 +85,21 @@ namespace FilterEconomy.Facades
                 return;
             }
 
-            if (!FilterConstants.IgnoredSuggestionTiers.Contains(command.OldTier.ToLower()))
+            var oldTiers = command.OldTier.Split(',');
+
+            foreach (var oldTier in oldTiers)
             {
-                var removalTarget = this.TierListData[command.Group]
-                    .FilterEntries[command.OldTier].Entry
-                    .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
-                    .SelectMany(x => x).ToList();
+                if (!FilterConstants.IgnoredSuggestionTiers.Contains(oldTier.ToLower()))
+                {
+                    var removalTarget = this.TierListData[command.Group]
+                        .FilterEntries[oldTier].Entry
+                        .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
+                        .SelectMany(x => x).ToList();
 
-                removalTarget.ForEach(x => x.Value.RemoveWhere(z => z.value.Equals(command.BaseType, StringComparison.InvariantCultureIgnoreCase)));
-                command.Performed = true;
+                    removalTarget.ForEach(x => x.Value.RemoveWhere(z => z.value.Equals(command.BaseType, StringComparison.InvariantCultureIgnoreCase)));
+                    command.Performed = true;
 
+                }
             }
 
             var newTiers = command.NewTier.Split(',');
