@@ -16,7 +16,7 @@ namespace FilterCore.Line
         public ILineValueCore Value { get; set; }
         public bool identCommented { get; set; }
 
-        private const int StyleCommentPad = 37;
+        private const int StyleCommentPad = 40;
 
         public virtual FilterLine<T> Clone()
         {
