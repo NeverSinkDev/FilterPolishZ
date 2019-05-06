@@ -11,7 +11,7 @@ namespace FilterCore.Commands.EntryCommands
         public RaresUpEntryCommand(FilterEntry target) : base(target) {}
         public IEnumerable<IFilterEntry> NewEntries { get; set; }
 
-        public override void Execute(int? strictness = null)
+        public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
             var newEntry = this.Target.Clone();
 

@@ -10,9 +10,18 @@ namespace FilterCore.Commands.EntryCommands
 {
     public class HideEntryCommand : GenerationTag
     {
-        public override void Execute(int? strictness = null)
+        public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
-            if (!this.IsActiveOnStrictness(strictness.Value))
+            if (consoleStrictness.HasValue)
+            {
+                var csTag = this.Target.Header.GenerationTags.Single(x => x is ConsoleStrictnessCommand);
+                if (!csTag.IsActiveOnStrictness(consoleStrictness.Value))
+                {
+                    return;
+                }
+            }
+            
+            else if (!this.IsActiveOnStrictness(strictness.Value))
             {
                 return;
             }

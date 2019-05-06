@@ -100,7 +100,8 @@ namespace FilterCore.Constants
             { "HS",     typeof(RemoveHighlightsThenHideEntryCommand) },
             { "REMS",   typeof(RemoveHighlightsEntryCommand) },
             { "UP",     typeof(RaresUpEntryCommand) },
-            { "RVR",    typeof(RarityVariationRuleEntryCommand) }
+            { "RVR",    typeof(RarityVariationRuleEntryCommand) },
+            { "C",    typeof(ConsoleStrictnessCommand) }
         };
 
         public static HashSet<string> StyleIdents = new HashSet<string>

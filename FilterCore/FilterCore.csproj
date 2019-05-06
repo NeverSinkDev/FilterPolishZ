@@ -62,6 +62,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\EntryCommands\ConsoleStrictnessCommand.cs" />
     <Compile Include="Commands\EntryCommands\DisableEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\HideEntryCommand.cs" />
     <Compile Include="Commands\EntryCommands\IEntryCommand.cs" />

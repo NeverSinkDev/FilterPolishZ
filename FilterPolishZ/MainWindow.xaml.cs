@@ -199,18 +199,23 @@ namespace FilterPolishZ
                 generationTasks.Add(GenerateFilter_Inner("", strictnessIndex));
             }
 
+            for (var i = 0; i < 5; i++) // todo @ JJ
+            {
+                generationTasks.Add(GenerateFilter_Inner("", i, i));
+            }
+
             await Task.WhenAll(generationTasks);
             InfoPopUpMessageDisplay.ShowInfoMessageBox("Filter generation successfully done!");
 
             // local func
-            async Task GenerateFilter_Inner(string style, int strictnessIndex)
+            async Task GenerateFilter_Inner(string style, int strictnessIndex, int? consoleStrictness = null)
             {
                 var filePath = outputFolder;
                 var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
                 
                 new FilterTableOfContentsCreator(filter).Run();
-                filter.ExecuteStrictnessCommands(strictnessIndex);
+                filter.ExecuteStrictnessCommands(strictnessIndex, consoleStrictness);
 
                 if (style != "")
                 {
@@ -219,7 +224,13 @@ namespace FilterPolishZ
                     fileName += " (" + style + ") ";
                 }
 
-                if (!System.IO.Directory.Exists(filePath)) System.IO.Directory.CreateDirectory(filePath);
+                if (consoleStrictness.HasValue)
+                {
+                    filePath += "(CONSOLE)\\";
+                    fileName += " Console-Strictness ";
+                }
+
+                if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
                 
                 var result = filter.Serialize();
 

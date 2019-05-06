@@ -10,6 +10,6 @@ namespace FilterCore.Commands.EntryCommands
     public interface IEntryCommand
     {
         FilterEntry Target { get; set; }
-        void Execute(int? strictness = null);
+        void Execute(int? strictness = null, int? consoleStrictness = null);
     }
 }

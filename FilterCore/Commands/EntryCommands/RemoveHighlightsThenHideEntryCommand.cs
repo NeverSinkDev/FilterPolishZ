@@ -10,7 +10,7 @@ namespace FilterCore.Commands.EntryCommands
     {
         public RemoveHighlightsThenHideEntryCommand(FilterEntry target) : base(target) {}
 
-        public override void Execute(int? strictness = null)
+        public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
             if (!this.IsActiveOnStrictness(strictness.Value))
             {

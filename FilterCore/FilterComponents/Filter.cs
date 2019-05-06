@@ -171,7 +171,7 @@ namespace FilterCore
             }
         }
 
-        public void ExecuteStrictnessCommands(int strictnessIndex)
+        public void ExecuteStrictnessCommands(int strictnessIndex, int? consoleStrictness)
         {
             foreach (var entry in this.FilterEntries)
             {
@@ -188,7 +188,7 @@ namespace FilterCore
                 foreach (var command in entry.Header.GenerationTags)
                 {
                     if (!command.IsStrictnessCommand()) continue;
-                    command.Execute(strictnessIndex);
+                    command.Execute(strictnessIndex, consoleStrictness);
                 }
             }
             

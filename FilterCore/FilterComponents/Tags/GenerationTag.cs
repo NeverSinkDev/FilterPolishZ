@@ -34,9 +34,9 @@ namespace FilterCore.FilterComponents.Tags
             return this.Strictness != -1;
         }
 
-        public abstract void Execute(int? strictness = null);
+        public abstract void Execute(int? strictness = null, int? consoleStrictness = null);
 
-        protected bool IsActiveOnStrictness(int strictness)
+        public bool IsActiveOnStrictness(int strictness)
         {
             // tag = 1 means: skip if the strictness is 1 or lower
             if (this.Strictness >= strictness)
