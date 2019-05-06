@@ -12,16 +12,7 @@ namespace FilterCore.Commands.EntryCommands
     {
         public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
-            if (consoleStrictness.HasValue)
-            {
-                var csTag = this.Target.Header.GenerationTags.Single(x => x is ConsoleStrictnessCommand);
-                if (!csTag.IsActiveOnStrictness(consoleStrictness.Value))
-                {
-                    return;
-                }
-            }
-            
-            else if (!this.IsActiveOnStrictness(strictness.Value))
+            if (!this.IsActiveOnStrictness(strictness.Value, consoleStrictness))
             {
                 return;
             }

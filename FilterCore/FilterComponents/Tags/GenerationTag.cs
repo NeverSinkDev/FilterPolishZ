@@ -36,7 +36,7 @@ namespace FilterCore.FilterComponents.Tags
 
         public abstract void Execute(int? strictness = null, int? consoleStrictness = null);
 
-        public bool IsActiveOnStrictness(int strictness)
+        protected bool IsActiveOnStrictness(int strictness)
         {
             // tag = 1 means: skip if the strictness is 1 or lower
             if (this.Strictness >= strictness)
@@ -45,6 +45,20 @@ namespace FilterCore.FilterComponents.Tags
             }
 
             return true;
+        }
+        
+        // use this function instead of the 1 param overload when the tag/command should work with console strictnesses
+        protected bool IsActiveOnStrictness(int strictness, int? consoleStrictness)
+        {
+            // we're not generating console versions -> use normal
+            if (!consoleStrictness.HasValue) return this.IsActiveOnStrictness(strictness);
+            
+            // no console strictness exception present -> use normal handling
+            var csTag = this.Target.Header.GenerationTags.FirstOrDefault(x => x is ConsoleStrictnessCommand);
+            if (csTag == null) return this.IsActiveOnStrictness(strictness);
+            
+            // console strictness exception -> handle via console tag command value + console strictness param
+            return csTag.IsActiveOnStrictness(consoleStrictness.Value);
         }
 
         public abstract GenerationTag Clone();

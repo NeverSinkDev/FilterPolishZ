@@ -199,9 +199,12 @@ namespace FilterPolishZ
                 generationTasks.Add(GenerateFilter_Inner("", strictnessIndex));
             }
 
-            for (var i = 0; i < 5; i++) // todo @ JJ
+            if (isGeneratingStylesAndSeed)
             {
-                generationTasks.Add(GenerateFilter_Inner("", i, i));
+                for (var i = 0; i < 5; i++) // todo @ JJ
+                {
+                    generationTasks.Add(GenerateFilter_Inner("", i, i));
+                }
             }
 
             await Task.WhenAll(generationTasks);
