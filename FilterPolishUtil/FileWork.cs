@@ -42,6 +42,8 @@ namespace FilterPolishUtil
 
         public static async Task WriteTextAsync(string filePath, List<string> input)
         {
+            if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+            
             var mergedText = string.Join(System.Environment.NewLine, input);
             byte[] encodedText = Encoding.UTF8.GetBytes(mergedText);
 
@@ -55,6 +57,7 @@ namespace FilterPolishUtil
 
         public static async Task WriteTextAsync(string filePath, string input)
         {
+            if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
             byte[] encodedText = Encoding.UTF8.GetBytes(input);
 
             using (FileStream sourceStream = new FileStream(filePath,
