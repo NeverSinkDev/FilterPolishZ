@@ -105,6 +105,9 @@
                                     <Button ToolTip="Generate filters (no styles)" Click="GenerateFilters_NoStyles">
                                         <materialDesign:PackIcon Kind="ArrowRightDropCircleOutline" />
                                     </Button>
+                                    <Button ToolTip="Generate filters to..." Click="GenerateAllFilterFilesTo">
+                                        <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
+                                    </Button>
 
                                     <Separator/>
                                     

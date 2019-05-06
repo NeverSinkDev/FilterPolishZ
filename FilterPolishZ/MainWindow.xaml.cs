@@ -5,6 +5,7 @@ using FilterPolishZ.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -157,7 +158,7 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed)
+        private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
             var isStopping = this.VerifyFilter(baseFilter);
             if (isStopping) return;
@@ -165,14 +166,16 @@ namespace FilterPolishZ
             new FilterTableOfContentsCreator(baseFilter).Run();
 
             const string filterName = "NeverSink's";
-            var outputFolder = Configuration.AppSettings["Output Folder"];
+            if (outputFolder == null) outputFolder = Configuration.AppSettings["Output Folder"];
             var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
             var seedFilterString = baseFilter.Serialize();
 
             if (isGeneratingStylesAndSeed)
             {
-                var seedPath = outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\" + filterName + " filter - SEED (SeedFilter) .filter";
+                var seedPath = outputFolder + "ADDITIONAL-FILES\\SeedFilter\\";
+                if (!Directory.Exists(seedPath)) Directory.CreateDirectory(seedPath);
+                seedPath += filterName + " filter - SEED (SeedFilter) .filter";
                 generationTasks.Add(FileWork.WriteTextAsync(seedPath, seedFilterString));
             }
             
@@ -367,6 +370,17 @@ namespace FilterPolishZ
         private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
         {
             Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true));
+        }
+        
+        private void GenerateAllFilterFilesTo(object sender, RoutedEventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true, fbd.SelectedPath + "\\"));
+                }
+            }
         }
 
         private void OpenFilterFolder(object sender, RoutedEventArgs e)
