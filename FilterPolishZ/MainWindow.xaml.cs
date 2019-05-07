@@ -201,17 +201,18 @@ namespace FilterPolishZ
 
             if (isGeneratingStylesAndSeed)
             {
-                for (var i = 0; i < 5; i++) // todo @ JJ
-                {
-                    generationTasks.Add(GenerateFilter_Inner("", i, i));
-                }
+                generationTasks.Add(GenerateFilter_Inner("", 3, 2, explicitName: "NeverSink's filter - 1X-ConStrict"));
+                generationTasks.Add(GenerateFilter_Inner("", 4, 2, explicitName: "NeverSink's filter - 2X-ConStrict"));
+                generationTasks.Add(GenerateFilter_Inner("", 4, 3, explicitName: "NeverSink's filter - 3X-ConStrict"));
+                generationTasks.Add(GenerateFilter_Inner("", 5, 3, explicitName: "NeverSink's filter - 4X-ConStrict"));
+                generationTasks.Add(GenerateFilter_Inner("", 6, 3, explicitName: "NeverSink's filter - 5X-ConStrict"));
             }
 
             await Task.WhenAll(generationTasks);
             InfoPopUpMessageDisplay.ShowInfoMessageBox("Filter generation successfully done!");
 
             // local func
-            async Task GenerateFilter_Inner(string style, int strictnessIndex, int? consoleStrictness = null)
+            async Task GenerateFilter_Inner(string style, int strictnessIndex, int? consoleStrictness = null, string explicitName = null)
             {
                 var filePath = outputFolder;
                 var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
@@ -229,8 +230,14 @@ namespace FilterPolishZ
 
                 if (consoleStrictness.HasValue)
                 {
-                    filePath += "(CONSOLE)\\";
+                    // little dirty fix
+                    filePath += "(Console-Strictness)\\";
                     fileName += " Console-Strictness ";
+                }
+
+                if (explicitName != null)
+                {
+                    fileName = explicitName;
                 }
 
                 if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
