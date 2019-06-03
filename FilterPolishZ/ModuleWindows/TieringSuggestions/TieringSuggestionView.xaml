@@ -31,6 +31,7 @@
                 </Button>
 
                 <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged"/>
+                <ComboBox SelectedIndex="0" x:Name="SelectedTieringFiltersComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedFilters_SelectionChanged"/>
             </ToolBar>
         </ToolBarTray>
 
@@ -42,7 +43,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <DockPanel Grid.Column="0">
-                    <DataGrid x:Name="TieringSuggestionsGrid" ItemsSource="{Binding TieringSuggestions}" Margin="0 8 0 0" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" SelectedCellsChanged="TieringSuggestionsGrid_SelectedCellsChanged">
+                    <DataGrid x:Name="TieringSuggestionsGrid" ItemsSource="{Binding FilteredTieringSuggestions}" Margin="0 8 0 0" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" SelectedCellsChanged="TieringSuggestionsGrid_SelectedCellsChanged">
                     </DataGrid>
                 </DockPanel>
 

@@ -3,6 +3,7 @@ using FilterEconomy.Facades;
 using FilterEconomy.Processor;
 using FilterPolishUtil.Constants;
 using FilterPolishZ.Util;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,6 +31,10 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         public TierListFacade TierListFacade { get; set; }
         public string BranchKey { get; private set; } = "uniques";
         public ObservableCollection<TieringCommand> TieringSuggestions { get; set; } = new ObservableCollection<TieringCommand>();
+        public ObservableCollection<TieringCommand> FilteredTieringSuggestions { get; set; } = new ObservableCollection<TieringCommand>();
+
+        public Dictionary<string, TieringSuggestionFilter> TieringFilters { get; set; } = new Dictionary<string, TieringSuggestionFilter>();
+
         public EventGridFacade EventGridFacade { get; }
 
         public TieringSuggestionView()
@@ -44,6 +49,12 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
 
             this.EventGridFacade = EventGridFacade.GetInstance();
             this.EventGridFacade.FilterChangeEvent += EventGridFacade_FilterChangeEvent;
+
+            this.TieringFilters.Add("none", new TieringSuggestionFilter("none", x => true));
+            this.TieringFilters.Add("Only Changed", new TieringSuggestionFilter("OnlyChangedFilter", x => x.IsChange));
+
+            this.SelectedTieringFiltersComboBox.ItemsSource = this.TieringFilters.Keys;
+            this.SelectedBranchComboBox.SelectedIndex = 0;
         }
 
         private void EventGridFacade_FilterChangeEvent(object sender, EventArgs e)
@@ -59,12 +70,12 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             }
 
             this.TierListFacade = TierListFacade.GetInstance();
-            this.TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
+            RefreshTieringSuggestions();
         }
 
         private void InitializeTieringList()
         {
-            this.TieringSuggestions = new ObservableCollection<TieringCommand>( this.TierListFacade.Suggestions[this.BranchKey] );
+            this.RefreshTieringSuggestions();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -97,7 +108,72 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
 
             this.BranchKey = e.AddedItems[0].ToString();
 
-            TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
+            this.RefreshTieringSuggestions();
+        }
+
+        private void SelectedFilters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.TieringFilters.Values.ToList().ForEach(x => x.Active = false);
+
+            if (string.IsNullOrEmpty(this.SelectedBranchComboBox.SelectionBoxItem.ToString()))
+            {
+                return;
+            }
+
+            var filterKey = e.AddedItems[0].ToString();
+
+            switch (filterKey)
+            {
+                case "none":
+                    break;
+                case "Only Changed":
+                    this.TieringFilters["Only Changed"].Active = true;
+                    break;
+            }
+
+            this.RefreshTieringSuggestions();
+        }
+
+        private void RefreshTieringSuggestions()
+        {
+            this.TieringSuggestions = new ObservableCollection<TieringCommand>(this.TierListFacade.Suggestions[this.BranchKey]);
+            this.FilteredTieringSuggestions = new ObservableCollection<TieringCommand>(this.TieringSuggestions.Where(x => this.IsSuggestionVisible(x)));
+        }
+
+        private bool IsSuggestionVisible(TieringCommand x)
+        {
+            foreach (var item in this.TieringFilters)
+            {
+                if (!item.Value.Applies(x))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public class TieringSuggestionFilter
+    {
+        public string Name { get; set; } = "unnamed filter";
+        public Func<TieringCommand, bool> Rule { get; set; }
+        public bool Active { get; set; } = true;
+
+        public TieringSuggestionFilter(string name, Func<TieringCommand, bool> rule)
+        {
+            this.Rule = rule;
+            this.Name = name;
+        }
+        
+        public bool Applies(TieringCommand x)
+        {
+            if (!this.Active)
+            {
+                return true;
+            }
+
+            return Rule(x);
         }
     }
 }
