@@ -126,11 +126,6 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     tiercom.OldTier = string.Join(",",RuleHost.TierListFacade.GetTiersForBasetype(RuleSet.GoverningSection, tiercom.BaseType).Select(x => x.SubStringLast("->")));
 
-                    if (tiercom.AppliedRule.ToLower() == "anchor")
-                    {
-                        tiercom.NewTier = tiercom.OldTier;
-                    }
-
                     if (tiercom.OldTier.Contains("ex"))
                     {
                         tiercom.NewTier = tiercom.OldTier;
@@ -140,6 +135,11 @@ namespace FilterPolishZ.Economy.RuleSet
                 else
                 {
                     tiercom.OldTier = "rest";
+                }
+
+                if (tiercom.AppliedRule.ToLower() == "anchor")
+                {
+                    tiercom.NewTier = tiercom.OldTier;
                 }
             }));
 

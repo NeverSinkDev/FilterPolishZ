@@ -162,6 +162,7 @@ namespace FilterPolishZ
         private TierListFacade LoadTierLists(Filter filter)
         {
             TierListFacade tierList = TierListFacade.GetInstance();
+            tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
 
             var workTiers = FilterPolishConstants.FilterTierLists;
             var tiers = filter.ExtractTiers(workTiers);
