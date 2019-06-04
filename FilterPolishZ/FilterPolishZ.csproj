@@ -103,6 +103,7 @@
       <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
+    <Compile Include="ModuleWindows\ItemInfo\ItemTieringData.cs" />
     <Compile Include="ModuleWindows\TagEditing\FilterCategory.cs" />
     <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>

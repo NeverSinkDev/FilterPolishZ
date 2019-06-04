@@ -28,7 +28,9 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
     /// </summary>
     public partial class TagEditorView : UserControl, INotifyPropertyChanged
     {
+#pragma warning disable CS4101
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS4101
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
@@ -144,28 +146,6 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             }
 
             return string.Join(System.Environment.NewLine, results);
-
-            switch (selected)
-            {
-                case FilterFinalCategory final:
-                    var tag = final.Entry.Header.TierTags;
-                    if (tag == null)
-                    {
-                        return string.Empty;
-                    }
-
-                    if (tag.ContainsKey(s))
-                    {
-                        return tag[s].Serialize();
-                    }
-                    return string.Empty;
-                    break;
-                case FilterCategory cat:
-                    return string.Empty;
-                    break;
-                default:
-                    return string.Empty;
-            }
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -245,7 +225,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             if (!(sender is Button button)) return;
             if (!(button.Parent is Grid parent)) return;
 
-            string tagType, newTagValue;
+            string tagType;
 
             if (parent.Children[0] is TextBlock tagTypeText)
             {

@@ -35,7 +35,9 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
         public ItemInformationFacade ItemInfoData { get; set; } = ItemInformationFacade.GetInstance();
         public TierListFacade TierListData { get; set; } = TierListFacade.GetInstance();
-        public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
+        // public ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>> ItemInformationData { get; set; } = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
+
+        public ObservableCollection<ItemTieringData> ItemInformationData { get; set; } = new ObservableCollection<ItemTieringData>();
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
@@ -77,15 +79,30 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.EconomyData = EconomyRequestFacade.GetInstance();
             this.ItemInfoData = ItemInformationFacade.GetInstance();
             this.TierListData = TierListFacade.GetInstance();
-            this.ItemInformationData = new ObservableCollection<KeyValuePair<string, ItemList<NinjaItem>>>();
+            this.ItemInformationData = new ObservableCollection<ItemTieringData>();
         }
 
         private void InitializeItemInformationData()
         {
             this.ItemInformationData.Clear();
             var ecoData = this.GetCurrentDisplayItems();
-            ecoData.ToList().ForEach(z => this.ItemInformationData.Add(z));
+            ecoData.ToList().ForEach(z => this.ItemInformationData.Add(this.ConvertToItemInformation(z)));
             if (this.ItemInfoGrid != null) this.ItemInfoGrid.ItemsSource = ItemInformationData;
+        }
+
+        private ItemTieringData ConvertToItemInformation(KeyValuePair<string, ItemList<NinjaItem>> z)
+        {
+            var ecoData = EconomyData.EconomyTierlistOverview[this.GetBranchKey()][z.Key];
+            return new ItemTieringData()
+            {
+                Name = z.Key,
+                Value = z.Value,
+                Count = z.Value.Count,
+                LowestPrice = ecoData?.LowestPrice ?? 0,
+                HighestPrice = ecoData?.HighestPrice ?? 0,
+                Multiplier = ecoData?.ValueMultiplier ?? 0,
+                Valid = ecoData?.Valid
+            };
         }
 
         private Dictionary<string, ItemList<NinjaItem>> GetCurrentDisplayItems()
@@ -137,7 +154,9 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             InnerView.BranchKey = CurrentBranchKey;
         }
 
+#pragma warning disable CS4101
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS4101
 
         private void ItemInfoGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

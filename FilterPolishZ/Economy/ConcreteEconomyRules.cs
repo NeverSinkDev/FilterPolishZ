@@ -21,8 +21,6 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet fossilrules;
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
-        private List<TieringCommand> suggestions;
-
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
