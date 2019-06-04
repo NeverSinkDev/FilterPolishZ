@@ -28,6 +28,8 @@ namespace FilterEconomy.Facades
             return instance;
         }
 
+        private bool didShowNinjaOfflineMessage;
+
         private static EconomyRequestFacade instance;
 
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
@@ -65,7 +67,11 @@ namespace FilterEconomy.Facades
 
                             if (responseString != null && responseString.Length >= 400)
                             {
-                                InfoPopUpMessageDisplay.ShowInfoMessageBox("Could not connect to poeNinja. used recent local file instead: " + recentFile + "/" + fileName);
+                                if (!didShowNinjaOfflineMessage)
+                                {
+                                    InfoPopUpMessageDisplay.ShowInfoMessageBox("Could not connect to poeNinja. used recent local file instead: " + recentFile + "/" + fileName);
+                                    this.didShowNinjaOfflineMessage = true;
+                                }
                             }
                         }
                     }
