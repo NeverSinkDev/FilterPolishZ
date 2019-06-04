@@ -43,11 +43,6 @@ namespace FilterEconomy.Facades
 
             string responseString;
 
-            if (!Directory.Exists(directoryPath))
-            {   // Check directory
-                Directory.CreateDirectory(directoryPath);
-            }
-
             try
             {
                 if (File.Exists(fileFullPath) && requestType != RequestType.ForceOnline)
