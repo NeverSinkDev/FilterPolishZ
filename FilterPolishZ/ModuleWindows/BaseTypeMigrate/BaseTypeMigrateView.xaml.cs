@@ -63,9 +63,9 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeMigrate
             }
         }
 
-#pragma warning disable CS4101
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore CS4101
+#pragma warning restore CS0067
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

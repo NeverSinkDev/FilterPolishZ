@@ -28,9 +28,9 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
     /// </summary>
     public partial class TagEditorView : UserControl, INotifyPropertyChanged
     {
-#pragma warning disable CS4101
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore CS4101
+#pragma warning restore CS0067
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
