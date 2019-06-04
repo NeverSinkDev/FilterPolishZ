@@ -1,3 +1,4 @@
+using FilterEconomy.Facades;
 using FilterPolishUtil;
 using FilterPolishUtil.Reflection;
 using System;
@@ -52,6 +53,11 @@ namespace FilterEconomy.Model.ItemAspects
         public virtual string Group => "Ungrouped";
         public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
         public virtual AspectType Type => AspectType.common;
+
+        public virtual bool IsActive()
+        {
+            return true;
+        }
     }
 
     public interface IItemAspect
@@ -60,6 +66,8 @@ namespace FilterEconomy.Model.ItemAspects
         string Name { get; }
         SolidColorBrush Color { get; }
         AspectType Type { get; }
+
+        bool IsActive();
     }
 
     public class HandledAspect : AbstractItemAspect
@@ -111,6 +119,17 @@ namespace FilterEconomy.Model.ItemAspects
     public class MetaBiasAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";
+        public override bool IsActive()
+        {
+            if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("MetaBiasAspect"))
+            {
+                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"] > DateTime.Now)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     public class ProphecyMaterialAspect : AbstractItemAspect

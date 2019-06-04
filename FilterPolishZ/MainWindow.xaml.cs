@@ -60,6 +60,7 @@ namespace FilterPolishZ
             InfoPopUpMessageDisplay.InitExceptionHandling();
             ConcreteEnrichmentProcedures.Initialize();
 
+
             // Initialize Modules
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
             LoadAllComponents();

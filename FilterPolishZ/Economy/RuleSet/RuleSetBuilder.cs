@@ -151,26 +151,26 @@ namespace FilterPolishZ.Economy.RuleSet
     {
         public static bool HasAspect(this ItemList<NinjaItem> me, string s)
         {
-            return me.Any(z => z.Aspects.Any(j => j.Name == s));
+            return me.Any(z => z.Aspects.Where(x => x.IsActive()).Any(j => j.Name == s));
         }
 
         public static List<NinjaItem> OfAspect(this ItemList<NinjaItem> me, string s)
         {
-            return me.Where(z => z.Aspects.Any(j => j.Name == s)).ToList();
+            return me.Where(z => z.Aspects.Where(x => x.IsActive()).Any(j => j.Name == s && j.IsActive())).ToList();
         }
 
         public static List<NinjaItem> AspectCheck(this ItemList<NinjaItem> me, HashSet<string> include, HashSet<string> exclude)
         {
             return me.Where(
-                z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
-                     z.Aspects.All(x => !exclude.Contains(x.Name))).ToList();
+                z => z.Aspects.Where(x => x.IsActive()).Any(x => include.Contains(x.Name) || include.Count == 0) &&
+                     z.Aspects.Where(x => x.IsActive()).All(x => !exclude.Contains(x.Name))).ToList();
         }
 
         public static bool AllItemsFullFill(this List<NinjaItem> me, HashSet<string> include, HashSet<string> exclude)
         {
             return me.All(
-                z => z.Aspects.Any(x => include.Contains(x.Name) || include.Count == 0) &&
-                     z.Aspects.All(x => !exclude.Contains(x.Name)));
+                z => z.Aspects.Where(x => x.IsActive()).Any(x => include.Contains(x.Name) || include.Count == 0) &&
+                     z.Aspects.Where(x => x.IsActive()).All(x => !exclude.Contains(x.Name)));
         }
     }
 }

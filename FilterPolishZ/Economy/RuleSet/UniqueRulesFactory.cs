@@ -121,6 +121,12 @@ namespace FilterPolishZ.Economy.RuleSet
                     return fit;
                 }));
 
+            builder.AddRule("MetaSave", "t2",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+                }));
+
             builder.AddRule("???", "???",
                 new Func<string, bool>((string s) =>
                 {

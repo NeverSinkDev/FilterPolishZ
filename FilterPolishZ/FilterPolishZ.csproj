@@ -99,6 +99,9 @@
     <Compile Include="Economy\RuleSet\RuleSetBuilder.cs" />
     <Compile Include="Economy\RuleSet\ShaperElderRulesFactory.cs" />
     <Compile Include="Economy\RuleSet\UniqueRulesFactory.cs" />
+    <Compile Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml.cs">
+      <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
     <Compile Include="ModuleWindows\TagEditing\FilterCategory.cs" />
     <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
@@ -111,6 +114,10 @@
     <Compile Include="Util\EventGridFacade.cs" />
     <Compile Include="Util\FilterWriter.cs" />
     <Compile Include="Util\WpfUtil.cs" />
+    <Page Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ModuleWindows\Configuration\ConfigurationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

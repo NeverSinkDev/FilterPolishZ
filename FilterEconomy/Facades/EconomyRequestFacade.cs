@@ -15,7 +15,7 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-
+            this.ActiveMetaTags.Add("MetaBiasAspect", DateTime.Now.AddDays(7));
         }
 
         public static EconomyRequestFacade GetInstance()
@@ -31,6 +31,8 @@ namespace FilterEconomy.Facades
         private static EconomyRequestFacade instance;
 
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
+
+        public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
 
         public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
         {
@@ -109,6 +111,7 @@ namespace FilterEconomy.Facades
         public void Reset()
         {
             this.EconomyTierlistOverview.Clear();
+            this.ActiveMetaTags.Clear();
         }
 
         public void AddToDictionary(string leagueKey, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> dictionary)
