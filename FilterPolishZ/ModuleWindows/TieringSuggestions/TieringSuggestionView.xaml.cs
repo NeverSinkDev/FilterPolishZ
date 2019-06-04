@@ -78,7 +78,9 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             this.RefreshTieringSuggestions();
         }
 
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
 
         private void TieringSuggestionsGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {

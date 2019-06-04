@@ -79,46 +79,12 @@
                 </Grid.ColumnDefinitions>
 
                 <DataGrid x:Name="ItemInfoGrid" SelectionChanged="ItemInfoGrid_SelectionChanged" SelectedCellsChanged="ItemInfoGrid_SelectedCellsChanged" Margin="0 8 0 0" ItemsSource="{Binding ItemInformationData}" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow" Grid.Column="0">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="LowestPrice" SortMemberPath="." CanUserSort="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate DataType="domainItemList:ItemList">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label>
-                                            <Label.Content>
-                                                <MultiBinding Converter="{StaticResource ArrayAccess}">
-                                                    <Binding Source="{StaticResource proxy}" Path="Data.LowestPriceCapsule"/>
-                                                    <Binding Path="Key"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="VariationCount" SortMemberPath="." CanUserSort="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate DataType="domainItemList:ItemList">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label>
-                                            <Label.Content>
-                                                <MultiBinding Converter="{StaticResource ArrayAccess}">
-                                                    <Binding Source="{StaticResource proxy}" Path="Data.CountCapsule"/>
-                                                    <Binding Path="Key"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
                 </DataGrid>
             
                 <!-- SecondaryPart -->
 
                 <DockPanel Grid.Column="1">
-                    <itemVariation:ItemVariationListView x:Name="InnerView" Key="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Key}" />
+                    <itemVariation:ItemVariationListView x:Name="InnerView" Key="{Binding ElementName=ItemInfoGrid, Path=SelectedItem.Name}" />
                 </DockPanel>
 
             </Grid>

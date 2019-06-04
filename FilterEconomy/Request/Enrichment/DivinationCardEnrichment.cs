@@ -15,7 +15,6 @@ namespace FilterEconomy.Request.Enrichment
             if (data.Count != 1)
             {
                 throw new Exception($"{baseType} Divination Card List has non-Single count!");
-                return;
             }
             var target = data[0];
 

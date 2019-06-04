@@ -9,7 +9,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 {
     public class FilterCategory : IFilterCategoryEntity
     {
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
+
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
         public string Name { get; set; }
         public bool IsFinal { get; } = false;
@@ -31,7 +34,10 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
     public class FilterFinalCategory : IFilterCategoryEntity
     {
         public FilterEntry Entry { get; set; }
+
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
         public string Name { get; set; } = new Random().Next(0, 100000000).ToString();
         public bool IsFinal { get; } = true;
         public ObservableCollection<IFilterCategoryEntity> Parent { get; set; }
