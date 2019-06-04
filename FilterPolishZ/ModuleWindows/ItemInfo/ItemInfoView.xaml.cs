@@ -96,7 +96,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             {
                 case "ShowAspectless":
                     ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), true);
-                    ecoData = ecoData.Where(x => x.Value.Any(item => item.Aspects.Count == 0))
+                    ecoData = ecoData.Where(x => x.Value.Any(item => item.Aspects.Where(z => z.IsActive()).ToList().Count == 0))
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
 
@@ -110,7 +110,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
                 case "ShowStable":
                     ecoData = this.ItemInfoData.GetItemsThatAreNotInThisList(ecoData, this.GetBranchKey(), true);
-                    ecoData = ecoData.Where(x => x.Value.All(item => item.Aspects.Count > 0))
+                    ecoData = ecoData.Where(x => x.Value.All(item => item.Aspects.Where(z => z.IsActive()).ToList().Count > 0))
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
 

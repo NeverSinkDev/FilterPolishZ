@@ -21,8 +21,7 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("ANCHOR", "ANCHOR",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.Select(x => x.Aspects).ToList()
-                            .Any(z => z.Any(a => a.ToString() == "AnchorAspect"));
+                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
                 }));
 
             builder.AddRule("unknown", "unknown",
