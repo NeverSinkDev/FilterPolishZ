@@ -46,9 +46,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         private bool isOnlyDisplayingMultiBases;
         private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
 
-        public Capsule LowestPriceCapsule { get; set; }
-        public Capsule CurrentTierCapsule { get; set; }
-        public Capsule CountCapsule { get; set; }
         public EventGridFacade EventGridFacade { get; }
 
         public ItemInfoView()
@@ -61,10 +58,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
             
             this.DataContext = this;
-
-            LowestPriceCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.LowestPrice.ToString());
-            CurrentTierCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
-            CountCapsule = new Capsule((s) => EconomyData.EconomyTierlistOverview[this.GetBranchKey()][s]?.Count.ToString());
             InnerView.BranchKey = CurrentBranchKey;
 
             this.EventGridFacade = EventGridFacade.GetInstance();

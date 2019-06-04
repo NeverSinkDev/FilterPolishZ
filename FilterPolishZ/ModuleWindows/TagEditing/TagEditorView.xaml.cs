@@ -34,10 +34,8 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
         public ObservableCollection<IFilterCategoryEntity> FilterTree { get; set; } = new ObservableCollection<IFilterCategoryEntity>();
-
         public ObservableCollection<TierTag> TierTags { get; set; } = new ObservableCollection<TierTag>();
         public ObservableCollection<FilterEntry> SelectedEntries { get; set; } = new ObservableCollection<FilterEntry>();
-
         public Capsule SelectedTagCapsule => new Capsule((string s) => this.GetCurrentTagValue(s));
 
         public string UnknownTags { get; set; }
