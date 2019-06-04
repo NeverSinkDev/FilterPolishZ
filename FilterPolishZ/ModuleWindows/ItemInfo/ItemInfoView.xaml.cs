@@ -24,6 +24,7 @@ using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
 using FilterPolishUtil.Constants;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -41,6 +42,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
         private string currentDisplayFiltering;
+        private IEnumerable<string> aspectDisplayFilter = new string[] {};
         private bool isOnlyDisplayingMultiBases;
         private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
 
@@ -138,6 +140,17 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             {
                 ecoData = ecoData.Where(x => x.Value.Count > 1).ToDictionary(x => x.Key, x => x.Value);
             }
+
+            // only show items/bases that have the specified aspects
+            ecoData = ecoData
+                .Where(baseType => aspectDisplayFilter
+                    .All(aspect => baseType.Value
+                        .Any(itemName => itemName.Aspects
+                            .Any(asp => asp.Name.ToLower().Contains(aspect.ToLower()))
+                        )
+                    )
+                )
+                .ToDictionary(x => x.Key, x => x.Value);
 
             return ecoData;
         }
@@ -287,6 +300,16 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             }
             
             this.OnUpdateUiButtonClick(null, null);
+        }
+
+        private void OnAspectNameFilteringChange(object sender, TextChangedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.TextBox textBox)
+            {
+                var aspectNames = textBox.Text.Split(',').Select(x => x.Trim()).Where(x => x.Length > 2);
+                this.aspectDisplayFilter = aspectNames;
+                this.OnUpdateUiButtonClick(null, null);
+            }
         }
     }
 }

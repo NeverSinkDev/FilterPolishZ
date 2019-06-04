@@ -55,6 +55,8 @@
                         <ComboBoxItem Name="ShowStable">Fully handled</ComboBoxItem>
                     </ComboBox>
                     
+                    <TextBox materialDesign:HintAssist.Hint="Show items with aspect" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextChanged="OnAspectNameFilteringChange" />
+                    
                     <ComboBox SelectionChanged="OnBranchKeyChange" Name="BranchKeyDisplaySelection">
                         <!-- <ComboBoxItem Name="uniques">Uniques</ComboBoxItem> -->
                         <!-- <ComboBoxItem Name="divination">DivCard</ComboBoxItem> -->
