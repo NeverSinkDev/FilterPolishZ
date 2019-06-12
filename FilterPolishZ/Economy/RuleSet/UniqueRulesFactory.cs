@@ -120,6 +120,12 @@ namespace FilterPolishZ.Economy.RuleSet
                     return fit;
                 }));
 
+            builder.AddRule("Changed?", "metainfluenced",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
+                }));
+
             builder.AddRule("MetaSave", "t2",
                 new Func<string, bool>((string s) =>
                 {

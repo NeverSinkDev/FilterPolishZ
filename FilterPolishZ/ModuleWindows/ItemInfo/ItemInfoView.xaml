@@ -21,6 +21,10 @@
         <converter:ArrayAccessConverter x:Key="ArrayAccess" />
     </UserControl.Resources>
 
+    <UserControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="M" Command="{Binding ToggleMetaCommand}" />
+    </UserControl.InputBindings>
+
     <DockPanel>
         <Grid>
             <Grid.RowDefinitions>

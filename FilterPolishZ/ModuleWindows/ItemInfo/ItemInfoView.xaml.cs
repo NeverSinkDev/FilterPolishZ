@@ -25,6 +25,7 @@ using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
 using FilterPolishUtil.Constants;
 using TextBox = System.Windows.Forms.TextBox;
+using System.Diagnostics;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -62,6 +63,22 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
             this.EventGridFacade = EventGridFacade.GetInstance();
             this.EventGridFacade.FilterChangeEvent += EventGridFacade_FilterChangeEvent;
+
+            RoutedCommand firstSettings = new RoutedCommand();
+            firstSettings.InputGestures.Add(new KeyGesture(Key.M, ModifierKeys.Control));
+            CommandBindings.Add(new CommandBinding(firstSettings, MetaHotkey));
+        }
+
+        private void MetaHotkey(object sender, ExecutedRoutedEventArgs e)
+        {
+            var index = ItemInfoGrid.SelectedIndex;
+            if (index != -1)
+            {
+                InnerView.SelectFirstItem();
+
+                InnerView.BranchKey = CurrentBranchKey;
+                InnerView.ToggleTag("MetaBiasAspect");
+            }
         }
 
         private void EventGridFacade_FilterChangeEvent(object sender, EventArgs e)
@@ -304,5 +321,6 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 this.OnUpdateUiButtonClick(null, null);
             }
         }
+
     }
 }

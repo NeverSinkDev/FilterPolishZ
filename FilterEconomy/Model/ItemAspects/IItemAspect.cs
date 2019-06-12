@@ -111,6 +111,12 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.uniques;
     }
 
+    public class ChangedAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.uniques;
+    }
+
     public class EarlyLeagueInterestAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";

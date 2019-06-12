@@ -110,6 +110,26 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             this.RefreshAspectColoration();
         }
 
+        internal void ToggleTag(string v)
+        {
+            NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
+            if (item != null)
+            {
+                ItemVariationTable.SelectedItem = ItemVariationTable.Items[0];
+            }
+
+            if (!item.HasAspect(v))
+            {
+                item.Aspects.Add(this.AvailableAspects.Where(x => x.Name == v).First());
+            }
+            else
+            {
+                item.Aspects.Remove(this.AvailableAspects.Where(x => x.Name == v).First());
+            }
+
+            this.RefreshAspectColoration();
+        }
+
         public void RefreshAspectColoration()
         {
             if (ItemVariationTable.Items.Count == 0)
