@@ -15,16 +15,16 @@ namespace FilterCore.Constants
         {
             // this client somehow stopped working. on one hand it suddenly needed a user agent specified, on the other it
             // crashed because of endless redirects.
-//            var client = new WebClient();
-//            client.Headers.Add("user-agent", "any");  
-//            var fullString = client.DownloadString(DataFileUrl);
-            
-            var client = (HttpWebRequest) WebRequest.Create(DataFileUrl);
+            //            var client = new WebClient();
+            //            client.Headers.Add("user-agent", "any");  
+            //            var fullString = client.DownloadString(DataFileUrl);
+
+            var client = (HttpWebRequest)WebRequest.Create(DataFileUrl);
             client.UserAgent = "any";
             client.CookieContainer = new CookieContainer();
 
             var fullString = "";
-            var reader = new StreamReader(client.GetResponse().GetResponseStream()); 
+            var reader = new StreamReader(client.GetResponse().GetResponseStream());
             while (!reader.EndOfStream)
             {
                 fullString += (reader.ReadLine()) + "\n";
@@ -37,7 +37,7 @@ namespace FilterCore.Constants
             foreach (var line in fullString.Split('\n'))
             {
                 if (string.IsNullOrEmpty(line)) continue;
-                
+
                 var words = line.Split(',');
 
                 if (isFirstLine)
@@ -63,44 +63,6 @@ namespace FilterCore.Constants
             }
 
             return baseTypeData;
-        }
-
-        private static string GetResponseFromUrl(string dataFileUrl)
-        {
-            string fullString;
-            try
-            {
-                var myUri = new Uri(dataFileUrl);
-                // Create a 'HttpWebRequest' object for the specified url. 
-                var myHttpWebRequest = (HttpWebRequest)WebRequest.Create(myUri);
-                // Set the user agent as if we were a web browser
-                myHttpWebRequest.UserAgent = @"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.4) Gecko/20060508 Firefox/1.5.0.4";
-                myHttpWebRequest.AllowAutoRedirect = false;
-
-                var myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
-                var stream = myHttpWebResponse.GetResponseStream();
-                var reader = new StreamReader(stream);
-                fullString = reader.ReadToEnd();
-                // Release resources of response object.
-
-                if ((int)myHttpWebResponse.StatusCode >= 300 && (int)myHttpWebResponse.StatusCode <= 399)
-                {
-                    string uriString = myHttpWebResponse.Headers["Location"];
-                    Console.WriteLine("Redirect to " + uriString ?? "NULL");
-
-                    fullString = GetResponseFromUrl(uriString);
-                }
-
-                myHttpWebResponse.Close();
-
-            }
-            catch (WebException ex)
-            {
-                using (var sr = new StreamReader(ex.Response.GetResponseStream()))
-                    fullString = sr.ReadToEnd();
-            }
-
-            return fullString;
         }
     }
 }
