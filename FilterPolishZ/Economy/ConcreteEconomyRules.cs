@@ -19,6 +19,7 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet divinationRules;
         private FilterEconomyRuleSet uniquemapsRules;
         private FilterEconomyRuleSet fossilrules;
+        private FilterEconomyRuleSet incubatorrules;
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
         public ItemInformationFacade ItemInformation { get; set; }
@@ -36,6 +37,7 @@ namespace FilterPolishZ.Economy
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.uniquemapsRules = this.GenerateUniqueMapRules();
             this.fossilrules = this.GenerateFossilTieringRules();
+            this.incubatorrules = this.GenerateIncubatorTieringRules();
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
 
@@ -47,6 +49,7 @@ namespace FilterPolishZ.Economy
             this.Rules.Add(this.fossilrules);
             this.Rules.Add(this.elderRules);
             this.Rules.Add(this.shaperRules);
+            this.Rules.Add(this.incubatorrules);
         }
 
         /// <summary>
@@ -66,6 +69,18 @@ namespace FilterPolishZ.Economy
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
+                .AddRestRule()
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateIncubatorTieringRules()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("currency->incubators")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
                 .AddRestRule()
                 .Build();
         }
