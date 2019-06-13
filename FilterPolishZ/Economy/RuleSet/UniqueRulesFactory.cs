@@ -63,6 +63,22 @@ namespace FilterPolishZ.Economy.RuleSet
                     return fit;
                 }));
 
+            builder.AddRule("ExpensiveTwin", "multispecial",
+                new Func<string, bool>((string s) =>
+                {
+                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect" });
+
+                    if (relevantList.Count > 1)
+                    {
+                        if (relevantList.Max(x => x.CVal) > FilterPolishConstants.T2BreakPoint * FilterPolishConstants.CommonTwinAspectMultiplier)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }));
+
             builder.AddRule("highVariety", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
@@ -71,7 +87,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("HighVarietyAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HighVarietyAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect" });
+                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect"});
 
                             if (relevantList.Count > 0)
                             {
@@ -153,7 +169,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     var aspects = builder.RuleHost.ItemInformation["uniques", s];
                     if (aspects == null)
                     {
-                        return true;
+                        return false;
                     }
 
                     return builder.RuleSet.DefaultSet.HasAspect("ProphecyMaterialAspect");

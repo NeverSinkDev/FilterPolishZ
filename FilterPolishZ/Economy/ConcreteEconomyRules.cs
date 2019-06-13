@@ -81,6 +81,7 @@ namespace FilterPolishZ.Economy
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2BreakPoint)
                 .AddRestRule()
                 .Build();
         }
