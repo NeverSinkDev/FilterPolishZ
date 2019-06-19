@@ -20,3 +20,8 @@ TODO: Guide users through getting your code up and running on their own system. 
 
 # Contribute
 *coming soon*
+
+# This project relies on the following nugget libraries/packages:
+
+- Material Design for XAML
+- Fody
