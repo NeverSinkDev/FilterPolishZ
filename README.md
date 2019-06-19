@@ -1,20 +1,22 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+FilterPolishZ is a tool that simplifies the development and management of .filter (Path of Exile filters) files. It has been specifically designed as a personal automation assistant and has a very niche usecase. The codebase however (with some deveopment knowledge) can be adjusted fairly easily to generate other filters.
 
-# Getting Started
+# Features
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+1.	Parses .filter files and creates an internal representation
+2.  Rebuilds and improves the readability .filter files.
+3.	Performs automatic table of content adjustments
+4.	Performs automatic cleaning of .filter files
+5.  Works with filter-tags to create sub-strictnesses and sub-styles of the filter.
+6.  Uses the poe.ninja API to gather economy data
+7.  Performs eoconomy-based auto-tiering for uniques, divination cars, fossils, shaper/elder basetypes.
+8.  Improves the auto-tiering by enriching and data-mining information
+9.  Provides a comfortable UI to do tiering, tag-modification an other operations
+10. Assists in CI/CD operations
+11. Anonates economy data with "aspects" to incease tiering accuracy.
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+*coming soon*
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://www.visualstudio.com/en-us/docs/git/create-a-readme). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+*coming soon*
