@@ -51,7 +51,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("UncommonAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect" });
+                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -66,7 +66,7 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("ExpensiveTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
-                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect" });
+                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
 
                     if (relevantList.Count > 1)
                     {
@@ -87,7 +87,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("HighVarietyAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect"});
+                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect"});
 
                             if (relevantList.Count > 0)
                             {
@@ -107,7 +107,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect" });
+                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "NonEventDropAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -148,6 +148,21 @@ namespace FilterPolishZ.Economy.RuleSet
                     return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
                 }));
 
+            builder.AddRule("SuperLeagueUnique", "multileague",
+                new Func<string, bool>((string s) =>
+                {
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConstants.T1BreakPoint)
+                    {
+                        var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "BossDropAspect", "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
+
+                        if (relevantList.Count > 0)
+                        {
+                            return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.SuperTierBreakPoint;
+                        }
+                    }
+                    return false;
+                }));
+
             builder.AddRule("???", "???",
                 new Func<string, bool>((string s) =>
                 {
@@ -184,7 +199,7 @@ namespace FilterPolishZ.Economy.RuleSet
                         return false;
                     }
 
-                    if (builder.RuleSet.DefaultSet.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
+                    if (builder.RuleSet.DefaultSet.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "NonEventDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
                     {
                         return true;
                     }

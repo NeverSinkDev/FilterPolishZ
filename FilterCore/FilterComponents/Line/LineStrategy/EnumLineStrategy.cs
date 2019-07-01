@@ -1,6 +1,7 @@
 ﻿using FilterCore.Line;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,11 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
+            if (this.Value.Count == 0)
+            {
+                Debug.WriteLine("ERROR! Empty line!");
+            }
+
             return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
         }
     }

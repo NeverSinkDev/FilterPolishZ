@@ -71,7 +71,20 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return (price > FilterPolishConstants.T5DiviBreakPoint) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+
+                    if (builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect"))
+                    {
+                        if (builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect"))
+                        {
+                            return (price > FilterPolishConstants.T5DiviBreakPoint * 2);
+                        }
+                        else
+                        {
+                            return (price > FilterPolishConstants.T5DiviBreakPoint);
+                        }
+                    }
+
+                    return false;
                 }));
 
             builder.AddRule("CurrencySaveT4X", "t4c",
@@ -91,12 +104,17 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return (price < FilterPolishConstants.T5DiviBreakPoint) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                    return (price < FilterPolishConstants.T5DiviBreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
                 }));
 
             builder.AddRule("t5", "t5",
                 new Func<string, bool>((string s) =>
                 {
+                    if (builder.RuleSet.DefaultSet.HasAspect("PreventHidingAspect"))
+                    {
+                        return false;
+                    }
+
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
                     return price < FilterPolishConstants.T5DiviBreakPoint;
                 }));

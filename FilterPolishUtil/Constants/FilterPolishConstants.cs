@@ -39,6 +39,7 @@ namespace FilterPolishUtil.Constants
         /// </summary>
         public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
 
+        public static float SuperTierBreakPoint = 600;
         public static float T1BreakPoint = 20;
         public static float T2BreakPoint = 5;
 

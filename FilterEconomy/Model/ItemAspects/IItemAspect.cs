@@ -99,6 +99,12 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.uniques;
     }
 
+    public class NonEventDropAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
+    }
+
     public class LeagueDropAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
@@ -159,6 +165,18 @@ namespace FilterEconomy.Model.ItemAspects
     public class CurrencyTypeAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class PoorDiviAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class PreventHidingAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
         public override AspectType Type => AspectType.divination;
     }
 
