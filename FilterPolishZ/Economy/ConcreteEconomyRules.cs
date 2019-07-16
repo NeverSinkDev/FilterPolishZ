@@ -22,6 +22,7 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet incubatorrules;
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
+        private FilterEconomyRuleSet prophecyRules;
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
@@ -35,9 +36,12 @@ namespace FilterPolishZ.Economy
             // The list of the suggestion-generating rulesets
             this.uniqueRules = UniqueRulesFactory.Generate(this);
             this.divinationRules = DivinationRuleFactory.Generate(this);
+            this.prophecyRules = ProphecyRulesFactory.Generate(this);
+
             this.uniquemapsRules = this.GenerateUniqueMapRules();
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
+
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
 
@@ -50,6 +54,7 @@ namespace FilterPolishZ.Economy
             this.Rules.Add(this.elderRules);
             this.Rules.Add(this.shaperRules);
             this.Rules.Add(this.incubatorrules);
+            this.Rules.Add(this.prophecyRules);
         }
 
         /// <summary>

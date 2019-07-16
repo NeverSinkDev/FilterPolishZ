@@ -96,13 +96,15 @@ namespace FilterEconomy.Facades
 
             var oldTiers = command.OldTier.Split(',');
 
+            var accessCommand = this.TierListData.First().Value.KeyIdent;
+
             foreach (var oldTier in oldTiers)
             {
                 if (!FilterConstants.IgnoredSuggestionTiers.Contains(oldTier.ToLower()))
                 {
                     var removalTarget = this.TierListData[command.Group]
                         .FilterEntries[oldTier].Entry
-                        .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
+                        .Select(x => x.GetValues<EnumValueContainer>(accessCommand))
                         .SelectMany(x => x).ToList();
 
                     removalTarget.ForEach(x => x.Value.RemoveWhere(z => z.value.Equals(command.BaseType, StringComparison.InvariantCultureIgnoreCase)));
@@ -119,7 +121,7 @@ namespace FilterEconomy.Facades
                 {
                     var additionTarget = this.TierListData[command.Group]
                         .FilterEntries[newTier].Entry
-                        .Select(x => x.GetValues<EnumValueContainer>("BaseType"))
+                        .Select(x => x.GetValues<EnumValueContainer>(accessCommand))
                         .SelectMany(x => x).ToList();
 
                     additionTarget.ForEach(x => x.Value.Add(new LineToken() { value = command.BaseType, isQuoted = true }));

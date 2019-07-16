@@ -107,6 +107,18 @@ namespace FilterPolishZ.Economy.RuleSet
                     return (price < FilterPolishConstants.T5DiviBreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
                 }));
 
+            builder.AddRule("T5RedemptionPrevented", "t5",
+                new Func<string, bool>((string s) =>
+                {
+                    if (builder.GetTierOfItem(s).Contains("t5"))
+                    {
+                        var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                        return price < FilterPolishConstants.T5DiviBreakPoint * 1.5;
+                    }
+
+                    return false;
+                }));
+
             builder.AddRule("t5", "t5",
                 new Func<string, bool>((string s) =>
                 {

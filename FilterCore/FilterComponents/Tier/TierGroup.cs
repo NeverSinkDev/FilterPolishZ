@@ -9,6 +9,11 @@ namespace FilterCore.FilterComponents.Tier
         public TierGroup(string category)
         {
             this.Category = category;
+
+            if (this.Category.ToLower().Contains("prophecy"))
+            {
+                this.KeyIdent = "Prophecy";
+            }
         }
 
         public string KeyIdent { get; set; } = "BaseType";

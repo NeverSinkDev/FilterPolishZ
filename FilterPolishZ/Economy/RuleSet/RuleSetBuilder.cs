@@ -124,7 +124,7 @@ namespace FilterPolishZ.Economy.RuleSet
 
                 if (this.RuleHost.TierListFacade.ContainsTierInformationForBaseType(RuleSet.GoverningSection, tiercom.BaseType))
                 {
-                    tiercom.OldTier = string.Join(",",RuleHost.TierListFacade.GetTiersForBasetype(RuleSet.GoverningSection, tiercom.BaseType).Select(x => x.SubStringLast("->")));
+                    tiercom.OldTier = GetTierOfItem(tiercom.BaseType);
 
                     if (tiercom.OldTier.Contains("ex"))
                     {
@@ -144,6 +144,18 @@ namespace FilterPolishZ.Economy.RuleSet
             }));
 
             return this;
+        }
+
+        public string GetTierOfItem(string basetype)
+        {
+            if (!RuleHost.TierListFacade.ContainsTierInformationForBaseType(this.RuleSet.GoverningSection, basetype))
+            {
+                return "rest";
+            }
+
+            return string.Join(",", 
+                RuleHost.TierListFacade.GetTiersForBasetype(this.RuleSet.GoverningSection, basetype)
+                .Select(x => x.SubStringLast("->")));
         }
     }
 

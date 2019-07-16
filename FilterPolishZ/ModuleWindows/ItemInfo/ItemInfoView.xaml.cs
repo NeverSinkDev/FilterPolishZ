@@ -77,7 +77,15 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 InnerView.SelectFirstItem();
 
                 InnerView.BranchKey = CurrentBranchKey;
-                InnerView.ToggleTag("MetaBiasAspect");
+                if (CurrentBranchKey.ToLower().Contains("divination"))
+                {
+                    InnerView.ToggleTag("PoorDiviAspect");
+                }
+                else if (CurrentBranchKey.ToLower().Contains("unique"))
+                {
+                    InnerView.ToggleTag("MetaBiasAspect");
+                }
+                
             }
         }
 

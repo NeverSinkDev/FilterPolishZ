@@ -66,7 +66,7 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("ExpensiveTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
-                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
+                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
 
                     if (relevantList.Count > 1)
                     {
@@ -136,18 +136,21 @@ namespace FilterPolishZ.Economy.RuleSet
                     return fit;
                 }));
 
+            // uniques that have changed in the latest league
             builder.AddRule("Changed?", "metainfluenced",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
                 }));
 
+            // usually used for new leagues
             builder.AddRule("MetaSave", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
                 }));
 
+            // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events
             builder.AddRule("SuperLeagueUnique", "multileague",
                 new Func<string, bool>((string s) =>
                 {
@@ -163,20 +166,20 @@ namespace FilterPolishZ.Economy.RuleSet
                     return false;
                 }));
 
-            builder.AddRule("???", "???",
-                new Func<string, bool>((string s) =>
-                {
-                    var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint)
-                    {
-                        if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
-                        {
-                            return builder.RuleSet.DefaultSet.OfAspect("LeagueDropAspect").OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.T2BreakPoint;
-                        }
-                    }
+            //builder.AddRule("???", "???",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        var fit = false;
+            //        if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint)
+            //        {
+            //            if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
+            //            {
+            //                return builder.RuleSet.DefaultSet.OfAspect("LeagueDropAspect").OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.T2BreakPoint;
+            //            }
+            //        }
 
-                    return fit;
-                }));
+            //        return fit;
+            //    }));
 
             builder.AddRule("prophecy", "prophecy",
                 new Func<string, bool>((string s) =>
@@ -194,7 +197,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var maxprice = builder.RuleSet.DefaultSet.Max(x => x.CVal);
-                    if (maxprice > FilterPolishConstants.T2BreakPoint * 0.8f)
+                    if (maxprice > FilterPolishConstants.T2BreakPoint * 0.5f)
                     {
                         return false;
                     }
