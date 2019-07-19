@@ -31,11 +31,11 @@ namespace FilterPolishZ.Economy.RuleSet
                     return price > FilterPolishConstants.T1DiviBreakPoint;
                 }));
 
-            builder.AddRule("MultiBase", "t1",
+            builder.AddRule("MultiBase", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.HighestPrice;
-                    return price > FilterPolishConstants.T2DiviBreakPoint;
+                    return price > FilterPolishConstants.T1DiviBreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
