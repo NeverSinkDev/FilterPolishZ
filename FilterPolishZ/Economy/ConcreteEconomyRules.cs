@@ -23,6 +23,9 @@ namespace FilterPolishZ.Economy
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
         private FilterEconomyRuleSet prophecyRules;
+        private FilterEconomyRuleSet scarabRules;
+        private FilterEconomyRuleSet normalRules;
+
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
@@ -38,12 +41,14 @@ namespace FilterPolishZ.Economy
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.prophecyRules = ProphecyRulesFactory.Generate(this);
 
+            this.scarabRules = this.GenerateScarabRuleSet();
             this.uniquemapsRules = this.GenerateUniqueMapRules();
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
+            this.normalRules = ShaperElderRulesFactory.Generate(this, "rare->normal");
 
             this.Rules.Clear();
 
@@ -55,6 +60,8 @@ namespace FilterPolishZ.Economy
             this.Rules.Add(this.shaperRules);
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
+            this.Rules.Add(this.scarabRules);
+            this.Rules.Add(this.normalRules);
         }
 
         /// <summary>
@@ -82,6 +89,19 @@ namespace FilterPolishZ.Economy
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->incubators")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2BreakPoint)
+                .AddRestRule()
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateScarabRuleSet()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("fragments->scarabs")
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()

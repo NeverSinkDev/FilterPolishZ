@@ -14,7 +14,7 @@ namespace FilterPolishUtil.Constants
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "currency->fossil", "currency->incubators", "currency->prophecy"
+            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->normal", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs"
         };
 
         /// <summary>
@@ -32,7 +32,8 @@ namespace FilterPolishUtil.Constants
                 new Tuple<string, string, string, string>("uniques", "uniqueAccessory", "GetUniqueAccessoryOverview", "?"),
                 new Tuple<string, string, string, string>("basetypes", "basetypes", "ItemOverview?type=BaseType", "&"),
                 new Tuple<string, string, string, string>("currency->incubators", "incubators", "ItemOverview?type=Incubator", "&"),
-                new Tuple<string, string, string, string>("currency->prophecy", "prophecy", "ItemOverview?type=Prophecy", "&")
+                new Tuple<string, string, string, string>("currency->prophecy", "prophecy", "ItemOverview?type=Prophecy", "&"),
+                new Tuple<string, string, string, string>("fragments->scarabs", "scarabs", "ItemOverview?type=Scarab", "&")
         };
 
         /// <summary>

@@ -59,6 +59,8 @@ namespace FilterEconomy.Request.Enrichment
 
             // item info based rules
 
+            var z = BaseTypeDataProvider.ClassBasedTierList;
+
             Dictionary<string, string> itemInfo = null;
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(baseType))
             {

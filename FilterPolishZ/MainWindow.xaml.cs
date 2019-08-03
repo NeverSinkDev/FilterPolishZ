@@ -95,6 +95,7 @@ namespace FilterPolishZ
         {
             var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var elderbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+            var otherbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
 
             foreach (var items in this.EconomyData.EconomyTierlistOverview["basetypes"])
             {
@@ -111,10 +112,18 @@ namespace FilterPolishZ
                     elderbases.Add(items.Key, new ItemList<NinjaItem>());
                     elderbases[items.Key].AddRange((eldegroup));
                 }
+
+                var othergroup = items.Value.Where(x => x.Variant != "Shaper" && x.Variant != "Elder").ToList();
+                if (othergroup.Count != 0)
+                {
+                    otherbases.Add(items.Key, new ItemList<NinjaItem>());
+                    otherbases[items.Key].AddRange((othergroup));
+                }
             }
 
             this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
             this.EconomyData.AddToDictionary("rare->elder", elderbases);
+            this.EconomyData.AddToDictionary("rare->normal", otherbases);
         }
 
         private void PerformEconomyTiering()

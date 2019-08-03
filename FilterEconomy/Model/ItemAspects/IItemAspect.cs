@@ -17,7 +17,8 @@ namespace FilterEconomy.Model.ItemAspects
         common,
         uniques,
         divination,
-        maps
+        maps,
+        basetype
     }
 
     public abstract class AbstractItemAspect : IItemAspect
@@ -34,6 +35,11 @@ namespace FilterEconomy.Model.ItemAspects
 
         public static AspectType RetrieveAspectType(string s)
         {
+            if (s.ToLower().Contains("basetype"))
+            {
+                return AspectType.basetype;
+            }
+
             switch (s)
             {
                 case "uniques":
@@ -214,5 +220,23 @@ namespace FilterEconomy.Model.ItemAspects
     {
         public override string Group => "DropType";
         public override AspectType Type => AspectType.divination;
+    }
+
+    public class AtlasBaseAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.basetype;
+    }
+
+    public class SpecialImplicitAspect : AbstractItemAspect
+    {
+        public override string Group => "ItemProperties";
+        public override AspectType Type => AspectType.basetype;
+    }
+
+    public class ExclusiveBaseAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.basetype;
     }
 }
