@@ -357,7 +357,7 @@ namespace FilterPolishZ
             this.TierListFacade.ApplyAllSuggestions();
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
             
-            var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog);
+            var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");
             var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
             FileWork.WriteTextAsync(changeLogPath, json);
             

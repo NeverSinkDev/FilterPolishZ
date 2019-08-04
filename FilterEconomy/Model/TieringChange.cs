@@ -28,7 +28,7 @@ namespace FilterEconomy.Model
             TieringChange result = new TieringChange();
 
             result.BaseType = item.BaseType;
-            result.OldTier = item.NewTier;
+            result.OldTier = item.OldTier;
             result.NewTier = item.NewTier;
             result.Reason = item.AppliedRule;
             result.Confidence = item.Confidence;
