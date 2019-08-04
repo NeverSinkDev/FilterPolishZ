@@ -59,8 +59,6 @@
                         <ComboBoxItem Name="ShowStable">Fully handled</ComboBoxItem>
                     </ComboBox>
                     
-                    <TextBox materialDesign:HintAssist.Hint="Show items with aspect" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextChanged="OnAspectNameFilteringChange" />
-                    
                     <ComboBox SelectionChanged="OnBranchKeyChange" Name="BranchKeyDisplaySelection">
                         <!-- <ComboBoxItem Name="uniques">Uniques</ComboBoxItem> -->
                         <!-- <ComboBoxItem Name="divination">DivCard</ComboBoxItem> -->
@@ -72,7 +70,12 @@
                     
                     <ToggleButton Style="{DynamicResource MaterialDesignActionLightToggleButton}" Click="ToggleMultiBaseOnlyDisplay" ToolTip="Only display multiBase items">MB</ToggleButton>
                     
+                    <TextBox materialDesign:HintAssist.Hint="Show items with aspect" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextChanged="OnAspectNameFilteringChange" />
+                    
                     <Button Click="OnAddHandleToAllButtonClick">Add 'Handled' to all</Button>
+                    
+                    <Button Click="RemoveAspectFromAll" ToolTip="Removes all occurrences of the selected aspect from all currently visible items">Remove aspect:</Button>
+                    <ComboBox Name="AllAspectList"></ComboBox>
                 </ToolBar>
             </ToolBarTray>
 

@@ -24,6 +24,7 @@ using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
 using FilterPolishUtil.Constants;
+using FilterPolishUtil.Extensions;
 using TextBox = System.Windows.Forms.TextBox;
 using System.Diagnostics;
 
@@ -57,6 +58,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
             CurrentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
+
+//            this.AllAspectList.ItemsSource = Aspects; // todo
             
             this.DataContext = this;
             InnerView.BranchKey = CurrentBranchKey;
@@ -327,6 +330,24 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 var aspectNames = textBox.Text.Split(',').Select(x => x.Trim()).Where(x => x.Length > 2);
                 this.aspectDisplayFilter = aspectNames;
                 this.OnUpdateUiButtonClick(null, null);
+            }
+        }
+
+        private void RemoveAspectFromAll(object sender, RoutedEventArgs e)
+        {
+            var aspectFilter = this.AllAspectList.ItemsSource as IEnumerable<string>;
+            if (aspectFilter == null) throw new Exception();
+            
+            var allItems = this.GetCurrentDisplayItems();
+            foreach (var items in allItems.Values)
+            {
+                foreach (var item in items)
+                {
+                    foreach (var aspect in aspectFilter)
+                    {
+                        item.Aspects.RemoveAll(x => x.Name == aspect);
+                    }
+                }
             }
         }
 
