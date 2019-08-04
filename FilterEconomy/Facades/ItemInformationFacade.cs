@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
@@ -21,7 +22,7 @@ namespace FilterEconomy.Facades
         public static ItemInformationFacade GetInstance() => instance ?? (instance = new ItemInformationFacade());
 
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierListOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
-        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() } };
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() }, Formatting = Formatting.Indented };
 
         public string LeagueType { get; set; }
         public string BaseStoragePath { get; set; }
@@ -70,7 +71,7 @@ namespace FilterEconomy.Facades
 
                 foreach (var sourceItem in sourceItemList)
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
+                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name && x.Special == sourceItem.Variant);
                     if (targetItem == null)
                     {
                         targetItem = new ItemInformationData
@@ -126,7 +127,7 @@ namespace FilterEconomy.Facades
 
                 foreach (var sourceItem in sourceItemList)
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
+                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name && x.Variant == sourceItem.Special);
                     if (targetItem == null)
                     {
                         var newItem = new NinjaItem { BaseType = baseType, Name = sourceItem.Name, IsVirtual = true };
@@ -159,7 +160,36 @@ namespace FilterEconomy.Facades
         {
             var newObj = new Dictionary<string, List<ItemInformationData>>();
             JsonConvert.PopulateObject(input, newObj, JsonSettings);
+            this.SynchronizeVariantAspects(newObj);
             this.EconomyTierListOverview[branchKey] = newObj;
+        }
+
+        /// <summary>
+        /// in case of items with multiple variations (e.g. Vessel of Vinktar or shelder ilvl bases) we want them all
+        /// to have the same aspects. This function will take the aspects of the first occurence of the item in the list
+        /// and apply these aspects to all other items of the same type (~ different variation)
+        /// </summary>
+        /// <param name="newObj"></param>
+        private void SynchronizeVariantAspects(Dictionary<string, List<ItemInformationData>> newObj)
+        {
+            foreach (var baseType in newObj)
+            {
+                var aspects = new Dictionary<string, List<IItemAspect>>();
+
+                // get all aspects for different types/uniques
+                foreach (var unique in baseType.Value)
+                {
+                    if (aspects.ContainsKey(unique.Name)) continue;
+                    aspects.Add(unique.Name, unique.Aspects);
+                }
+                
+                // apply saved aspects to all variations of this type/unique
+                foreach (var unique in baseType.Value)
+                {
+                    if (!aspects.ContainsKey(unique.Name)) continue;
+                    unique.Aspects = aspects[unique.Name];
+                }
+            }
         }
 
         public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string branchKey)
