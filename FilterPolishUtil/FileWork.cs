@@ -13,6 +13,7 @@ namespace FilterPolishUtil
         {
             try
             {   // Open the text file using a stream reader.
+
                 var logFile = File.ReadAllLines(adress);
                 var logList = new List<string>(logFile);
                 return logList;

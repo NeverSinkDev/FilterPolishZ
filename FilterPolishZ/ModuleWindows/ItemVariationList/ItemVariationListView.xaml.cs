@@ -99,8 +99,16 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 return;
             }
-            
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
+
+            var requestFacade = EconomyRequestFacade.GetInstance();
+
+            // TODO!
+            //if (this.BranchKey.ToLower().Contains("rare"))
+            //{
+            //    this.branchKey = "basetypes";
+            //}
+
+            requestFacade.EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);
             });

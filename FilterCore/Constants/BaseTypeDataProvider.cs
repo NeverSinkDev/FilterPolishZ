@@ -123,7 +123,7 @@ namespace FilterCore.Constants
                     results[item.Key]
                         .ForEachIndexing((x, index) =>
                         x.Add("ApsSorting",
-                        Math.Round((double.Parse(x["Game:APS"], CultureInfo.InvariantCulture) / max), 2).ToString()));
+                        Math.Round((double.Parse(x["Game:APS"], CultureInfo.InvariantCulture) / max * 100), 0).ToString()));
                 }
                 else
                 {
@@ -141,7 +141,8 @@ namespace FilterCore.Constants
             foreach (var item in results)
             {
                 double classCount = results[item.Key].Count;
-                results[item.Key].ForEachIndexing((x, index) => x.Add("LevelSorting", Math.Round(((double)index / classCount), 2).ToString()));
+                results[item.Key].ForEachIndexing((x, index) => x.Add("LevelSorting", 
+                Math.Round((index / classCount) * 100, 0).ToString()));
             }
 
             int GetItemLevel(Dictionary<string, string> item)
