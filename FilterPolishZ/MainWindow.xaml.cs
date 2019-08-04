@@ -304,12 +304,7 @@ namespace FilterPolishZ
             {
                 if (!file.EndsWith(".filter")) continue;
                 var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
-
-                if (System.IO.File.Exists(targetPath))
-                {
-                    System.IO.File.Replace(file, targetPath, null);
-                }
-                else System.IO.File.Copy(file, targetPath);
+                System.IO.File.Copy(file, targetPath, true);
             }
         }
 

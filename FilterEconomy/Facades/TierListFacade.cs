@@ -116,7 +116,7 @@ namespace FilterEconomy.Facades
 
             var oldTiers = command.OldTier.Split(',');
 
-            var accessCommand = this.TierListData.First().Value.KeyIdent;
+            var accessCommand = this.TierListData[command.Group].KeyIdent;
 
             foreach (var oldTier in oldTiers)
             {
