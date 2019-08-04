@@ -25,6 +25,8 @@ namespace FilterEconomy.Facades
 
         public string LeagueType { get; set; }
         public string BaseStoragePath { get; set; }
+
+        public bool IsAspectFileLeagueSplited { get; set; } = false;
         
         public void LoadFromSaveFile()
         {
@@ -183,7 +185,13 @@ namespace FilterEconomy.Facades
         private string GetItemInfoSaveFilePath(string branchKey)
         {
             if (branchKey.Contains("->")) branchKey = branchKey.Replace("->", "");
-            var directoryPath = $"{this.BaseStoragePath}/{this.LeagueType}";
+            var directoryPath = $"{this.BaseStoragePath}";
+
+            if (IsAspectFileLeagueSplited)
+            {
+                directoryPath += $"/{ this.LeagueType}";
+            }
+
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
 

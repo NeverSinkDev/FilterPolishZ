@@ -82,12 +82,22 @@ namespace FilterPolishZ
 
         private void LoadAllComponents()
         {
+            // request ninja-economy info
             this.EconomyData = this.LoadEconomyOverviewData();
+
+            // load aspects
             this.ItemInfoData = this.LoadItemInformationOverview();
+
+            // load filter tierlists
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
+
+            // add derived tiers (Shaper, Elder)
             this.CreateSubEconomyTiers();
 
+            // run all the enrichment procedures (calculate confidence, min price, max price etc)
             this.EconomyData.EnrichAll();
+
+            // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
         }
 
@@ -211,7 +221,7 @@ namespace FilterPolishZ
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
             
             var leagueType = Configuration.AppSettings["Ninja League"];
-            var baseStoragePath = Configuration.AppSettings["SeedFile Folder"];
+            var baseStoragePath = Configuration.AppSettings["Aspect Folder"];
 
             result.LeagueType = leagueType;
             result.BaseStoragePath = baseStoragePath;
