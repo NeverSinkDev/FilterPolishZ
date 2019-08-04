@@ -118,7 +118,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             this.RefreshAspectColoration();
         }
 
-        internal void ToggleTag(string v)
+        internal void ForceChangeAspect(string v)
         {
             NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
             if (item != null)

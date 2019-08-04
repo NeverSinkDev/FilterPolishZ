@@ -82,11 +82,11 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 InnerView.BranchKey = CurrentBranchKey;
                 if (CurrentBranchKey.ToLower().Contains("divination"))
                 {
-                    InnerView.ToggleTag("PoorDiviAspect");
+                    InnerView.ForceChangeAspect("PoorDiviAspect");
                 }
                 else if (CurrentBranchKey.ToLower().Contains("unique"))
                 {
-                    InnerView.ToggleTag("MetaBiasAspect");
+                    InnerView.ForceChangeAspect("MetaBiasAspect");
                 }
                 
             }

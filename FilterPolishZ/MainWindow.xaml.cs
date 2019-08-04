@@ -58,10 +58,9 @@ namespace FilterPolishZ
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
+            
             ConcreteEnrichmentProcedures.Initialize();
-
-
-            // Initialize Modules
+            // Loads and Parses filter, then loads economy, tierlists, aspects, suggestions
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
             LoadAllComponents();
 

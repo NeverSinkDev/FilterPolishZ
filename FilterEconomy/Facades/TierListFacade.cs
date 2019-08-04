@@ -3,6 +3,7 @@ using FilterCore.Entry;
 using FilterCore.FilterComponents.Tier;
 using FilterCore.Line;
 using FilterDomain.LineStrategy;
+using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Constants;
@@ -20,6 +21,11 @@ namespace FilterEconomy.Facades
         private static TierListFacade Instance { get; set; }
         public Dictionary<string, TierGroup> TierListData { get; set; } = new Dictionary<string, TierGroup>();
         public Dictionary<string, List<TieringCommand>> Suggestions = new Dictionary<string, List<TieringCommand>>();
+
+        public Dictionary<string, List<TieringChange>> Changelog = new Dictionary<string, List<TieringChange>>();
+
+        // Generates simple changelogs
+        private bool generatePrimitiveReport = true;
 
         public Dictionary<string, Dictionary<string, string>> Report { get; set; } = new Dictionary<string, Dictionary<string,string>>();
         public string WriteFolder { get; set; }
@@ -60,12 +66,16 @@ namespace FilterEconomy.Facades
         {
             foreach (var section in this.Suggestions)
             {
+                this.Changelog.Add(section.Key, new List<TieringChange>());
                 this.ApplyAllSuggestionsInSection(section.Key);
             }
 
-            var report = this.GenerateReport();
-            var seedPath = this.WriteFolder + "tierlistchanges\\" + DateTime.Today.ToString().Replace("/","-").Replace(":","") + ".txt";
-            FileWork.WriteTextAsync(seedPath, report);
+            if (this.generatePrimitiveReport)
+            {
+                var report = this.GeneratePrimitiveReport();
+                var seedPath = this.WriteFolder + "tierlistchanges\\" + DateTime.Today.ToString().Replace("/", "-").Replace(":", "") + ".txt";
+                FileWork.WriteTextAsync(seedPath, report);
+            }
         }
 
         public void ApplyAllSuggestionsInSection(string section)
@@ -73,6 +83,7 @@ namespace FilterEconomy.Facades
             foreach (var item in this.Suggestions[section])
             {
                 this.ApplyCommand(item);
+                this.Changelog[section].Add(TieringChange.FromTieringCommand(item));
             }
         }
 
@@ -130,7 +141,7 @@ namespace FilterEconomy.Facades
             }
         }
 
-        public List<string> GenerateReport()
+        public List<string> GeneratePrimitiveReport()
         {
             var result = new List<string>();
             foreach (var section in this.Suggestions)

@@ -52,7 +52,7 @@
     <Compile Include="Model\ItemInformationData\ItemInformationData.cs" />
     <Compile Include="Model\NinjaItem.cs" />
     <Compile Include="Model\Overview\IOverview.cs" />
-    <Compile Include="Model\Suggestion.cs" />
+    <Compile Include="Model\TieringChange.cs" />
     <Compile Include="Processor\FilterEconomyRuleSet.cs" />
     <Compile Include="Processor\IEconomyProcessorData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
