@@ -17,7 +17,7 @@ namespace FilterEconomy.Model
         public int Change { get; set; } = 0;
         public string BaseType { get; set; }
 
-        public List<TieringChangeInnerItemInformaiton> InnerInformation { get; set; }
+        public List<TieringChangeInnerItemInformaiton> InnerInformation { get; set; } = new List<TieringChangeInnerItemInformaiton>();
         public string OldTier { get; set; }
         public string NewTier { get; set; }
         public string Reason { get; set; }
@@ -39,11 +39,14 @@ namespace FilterEconomy.Model
             if (!item.Group.ToLower().Contains("rare"))
             {
                 var items = ItemInformationFacade.GetInstance()[item.Group, item.BaseType];
-                result.InnerInformation = 
-                    items.GroupBy(x => x.Name)
-                    .Select(x => x.First())
-                    .Select(x => new TieringChangeInnerItemInformaiton() { Name = x.Name, Icon = "", Aspects = null})
-                    .ToList();
+                if (items != null)
+                {
+                    result.InnerInformation =
+                        items.GroupBy(x => x.Name)
+                        .Select(x => x.First())
+                        .Select(x => new TieringChangeInnerItemInformaiton() { Name = x.Name, Icon = "", Aspects = null })
+                        .ToList();
+                }
             }
 
             return result;

@@ -61,7 +61,7 @@ namespace FilterPolishZ.Economy
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
             this.Rules.Add(this.scarabRules);
-            this.Rules.Add(this.normalRules);
+            // this.Rules.Add(this.normalRules);
         }
 
         /// <summary>

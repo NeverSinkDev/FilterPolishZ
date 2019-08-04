@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Economy\RuleSet\DivinationRuleFactory.cs" />
+    <Compile Include="Economy\RuleSet\NormalCraftingBasesRuleFactory.cs" />
     <Compile Include="Economy\RuleSet\ProphecyRulesFactory.cs" />
     <Compile Include="Economy\RuleSet\RuleSetBuilder.cs" />
     <Compile Include="Economy\RuleSet\ShaperElderRulesFactory.cs" />
