@@ -64,10 +64,19 @@ namespace FilterEconomy.Facades
 
         public void ApplyAllSuggestions()
         {
+            this.Changelog.Clear();
+
             foreach (var section in this.Suggestions)
             {
                 this.Changelog.Add(section.Key, new List<TieringChange>());
                 this.ApplyAllSuggestionsInSection(section.Key);
+            }
+
+            var keys = this.Changelog.Keys.ToList();
+
+            foreach (var section in keys)
+            {
+                this.Changelog[section] = this.Changelog[section].OrderBy(x => x.BaseType).ToList();
             }
 
             if (this.generatePrimitiveReport)
