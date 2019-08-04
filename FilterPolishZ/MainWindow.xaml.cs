@@ -34,6 +34,7 @@ using MethodTimer;
 using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
+using Newtonsoft.Json;
 
 namespace FilterPolishZ
 {
@@ -355,6 +356,11 @@ namespace FilterPolishZ
         {
             this.TierListFacade.ApplyAllSuggestions();
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+            
+            var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog);
+            var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
+            FileWork.WriteTextAsync(changeLogPath, json);
+            
             this.EventGrid.Publish();
         }
     }
