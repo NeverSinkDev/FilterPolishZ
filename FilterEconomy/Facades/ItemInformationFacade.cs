@@ -69,22 +69,23 @@ namespace FilterEconomy.Facades
                 
                 var targetItems = targetDic[baseType];
 
-                foreach (var sourceItem in sourceItemList)
+                foreach (var sourceItem in sourceItemList.GroupBy(x => x.Name).Select(x => x.OrderByDescending(y => y.CVal).First()))
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name && x.Special == sourceItem.Variant);
-                    if (targetItem == null)
+                    var targetItem = targetItems.Where(x => x.Equals(sourceItem)).ToList();
+                    if (targetItem.Count == 0)
                     {
-                        targetItem = new ItemInformationData
+                        var item = new ItemInformationData
                         {
                             Name = sourceItem.Name,
                             BaseType = sourceItem.BaseType,
                             Special = sourceItem.Variant
                         };
                         
-                        targetItems.Add(targetItem);
+                        targetItem.Add(item);
+                        targetItems.Add(item);
                     }
 
-                    targetItem.Aspects = new List<IItemAspect>(sourceItem.Aspects);
+                    targetItem.ForEach(x => x.Aspects = new List<IItemAspect>(sourceItem.Aspects));
                 }
             }
         }
@@ -125,17 +126,17 @@ namespace FilterEconomy.Facades
                 
                 var targetItems = targetDic[baseType];
 
-                foreach (var sourceItem in sourceItemList)
+                foreach (var sourceItem in sourceItemList.GroupBy(x => x.Name).Select(x => x.First()))
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name && x.Variant == sourceItem.Special);
-                    if (targetItem == null)
+                    var targetItem = targetItems.Where(x => sourceItem.Equals(x)).ToList();
+                    if (targetItem.Count == 0)
                     {
                         var newItem = new NinjaItem { BaseType = baseType, Name = sourceItem.Name, IsVirtual = true };
                         targetItems.Add(newItem);
-                        targetItem = newItem;
+                        targetItem.Add(newItem);
                     }
 
-                    targetItem.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects);
+                    targetItem.ForEach(x => x.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects));
                 }
             }
         }
@@ -160,7 +161,7 @@ namespace FilterEconomy.Facades
         {
             var newObj = new Dictionary<string, List<ItemInformationData>>();
             JsonConvert.PopulateObject(input, newObj, JsonSettings);
-            this.SynchronizeVariantAspects(newObj);
+//            this.SynchronizeVariantAspects(newObj);
             this.EconomyTierListOverview[branchKey] = newObj;
         }
 
@@ -177,7 +178,7 @@ namespace FilterEconomy.Facades
                 var aspects = new Dictionary<string, List<IItemAspect>>();
 
                 // get all aspects for different types/uniques
-                foreach (var unique in baseType.Value)
+                foreach (var unique in baseType.Value.OrderByDescending(x => x.Aspects.Count))
                 {
                     if (aspects.ContainsKey(unique.Name)) continue;
                     aspects.Add(unique.Name, unique.Aspects);
