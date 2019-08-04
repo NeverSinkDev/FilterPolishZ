@@ -54,7 +54,16 @@ namespace FilterEconomy.Facades
                 else
                 {   // Request online file
                     var urlRequest = $"{ninjaUrl}{economySegmentBranch}{prefix}league={variation}";
-                    responseString = new RestRequest(urlRequest).Execute();
+
+                    try
+                    {
+                        responseString = new RestRequest(urlRequest).Execute();
+                    }
+                    catch (Exception e)
+                    {
+                        InfoPopUpMessageDisplay.ShowInfoMessageBox("Error while connecting to poeNinja: " + e);
+                        responseString = null;
+                    }
                     
                     // poeNinja down -> use most recent local file
                     if (responseString == null || responseString.Length < 400)
@@ -77,7 +86,7 @@ namespace FilterEconomy.Facades
                     }
 
                     // Store locally
-                    Task.Run(() => FileWork.WriteTextAsync(fileFullPath, responseString));
+                    FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
                 }
 
                 if (responseString == null || responseString.Length < 400)
@@ -86,9 +95,9 @@ namespace FilterEconomy.Facades
                     responseString = "";
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception("Failed to load economy file: " + branchKey);
+                throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
             }
 
             var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString).ToList());

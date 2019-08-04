@@ -59,6 +59,8 @@ namespace FilterPolishUtil
         public static async Task WriteTextAsync(string filePath, string input)
         {
             if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+            if (!Directory.Exists(System.IO.Path.GetDirectoryName(filePath)))
+                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filePath));
             byte[] encodedText = Encoding.UTF8.GetBytes(input);
 
             using (FileStream sourceStream = new FileStream(filePath,
