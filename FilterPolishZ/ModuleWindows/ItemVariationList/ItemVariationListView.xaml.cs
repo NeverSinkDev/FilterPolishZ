@@ -179,10 +179,10 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 return;
             }
 
-            RefreshAspects(control);
+            ChangeAspectStateFromControl(control);
         }
 
-        private void RefreshAspects(ContentControl control)
+        private void ChangeAspectStateFromControl(ContentControl control)
         {
             NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
             var clickedAspect = (control.DataContext as AbstractItemAspect);
