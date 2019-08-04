@@ -26,5 +26,20 @@ namespace FilterEconomy.Model.ItemInformationData
                 Aspects = new ObservableCollection<IItemAspect>(this.Aspects)
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is NinjaItem ninjaItem)
+            {
+                return ninjaItem.Name == this.Name && ninjaItem.BaseType == this.BaseType; // && ninjaItem.Variant == this.Special;
+            }
+
+            if (obj is ItemInformationData itemData)
+            {
+                return itemData.Name == this.Name && itemData.BaseType == this.BaseType; // && itemData.Special == this.Special;
+            }
+
+            return base.Equals(obj);
+        }
     }
 }
