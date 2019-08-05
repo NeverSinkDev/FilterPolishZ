@@ -46,7 +46,7 @@ namespace FilterPolishZ.Util
                 {
                     foreach (var style in FilterConstants.FilterStyles)
                     {
-                        if (style.ToLower() == "default" || style.ToLower() == "backup" || style.ToLower() == "streamsound" || style.ToLower() == "crimson") continue;
+                        if (style.ToLower() == "default" || style.ToLower() == "backup" || style.ToLower() == "streamsound") continue;
                         generationTasks.Add(GenerateFilter_Inner(style, strictnessIndex));
                     }
                 }
