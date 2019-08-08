@@ -34,6 +34,8 @@ namespace FilterEconomy.Request.Enrichment
 
             // correct pricepeak
             confidence += AdjustConfidenceBasedOn(data, (s => highestLevelPrice < maxPrice), -0.2f, 0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => highestLevelPrice < approvedPricesMinimum), -0.2f, 0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => averagePrice < averagePriceMinimum), -0.2f, 0);
 
             // min price relevant
             confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.15f, 0.1f);
