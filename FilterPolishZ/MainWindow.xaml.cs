@@ -36,6 +36,7 @@ using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
 using Newtonsoft.Json;
 using FilterPolishUtil.Model;
+using System.IO.Compression;
 
 namespace FilterPolishZ
 {
@@ -383,6 +384,40 @@ namespace FilterPolishZ
             FileWork.WriteTextAsync(changeLogPath, json);
             
             this.EventGrid.Publish();
+        }
+
+        private void CopyResultsToGitHubFolder(object sender, RoutedEventArgs e)
+        {
+            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile";
+            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+
+            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+            LoggingFacade.LogInfo($"Copying filter files to: {Configuration.AppSettings["Git Folder"]}");
+
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            {
+                if (!file.EndsWith(".filter") || !file.EndsWith(".json")) continue;
+                if (file.ToLower().Contains("unnamed")) continue;
+
+                var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
+                System.IO.File.Copy(file, targetPath, true);
+            }
+
+            Process.Start(Configuration.AppSettings["Git Folder"]);
+        }
+
+        private void CreateZipFiles(object sender, RoutedEventArgs e)
+        {
+            using (var zipFileStream = new FileStream(Configuration.AppSettings["Output Folder"]+"RESULTS.zip", FileMode.OpenOrCreate))
+            {
+                using (var zipArch = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+                {
+                    zipArch.ZipDirectory(Configuration.AppSettings["Output Folder"], x => x.Contains(".filter"), x => (x.Contains("STYLE") || x.Contains("Console")));
+                }
+            }
+
+            Process.Start(Configuration.AppSettings["Output Folder"]);
+            LoggingFacade.LogInfo("Succesfully Archived Files!");
         }
     }
 }
