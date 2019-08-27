@@ -3,6 +3,7 @@ using FilterEconomy.Request.Parsing;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
 using FilterPolishUtil.Constants;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,6 +50,8 @@ namespace FilterEconomy.Facades
             {
                 if (File.Exists(fileFullPath) && requestType != RequestType.ForceOnline)
                 {   // Load existing file
+
+                    LoggingFacade.LogInfo($"Loading Economy: Loading Cached File {fileFullPath}");
                     responseString = FileWork.ReadFromFile(fileFullPath);
                 }
                 else
@@ -61,7 +64,7 @@ namespace FilterEconomy.Facades
                     }
                     catch (Exception e)
                     {
-                        InfoPopUpMessageDisplay.ShowInfoMessageBox("Error while connecting to poeNinja: " + e);
+                        LoggingFacade.LogError($"Loading Economy: Requesting From Ninja {urlRequest}");
                         responseString = null;
                     }
                     
@@ -78,7 +81,7 @@ namespace FilterEconomy.Facades
                             {
                                 if (!didShowNinjaOfflineMessage)
                                 {
-                                    InfoPopUpMessageDisplay.ShowInfoMessageBox("Could not connect to poeNinja. used recent local file instead: " + recentFile + "/" + fileName);
+                                    LoggingFacade.LogWarning("Could not connect to poeNinja. used recent local file instead: " + recentFile + "/" + fileName);
                                     this.didShowNinjaOfflineMessage = true;
                                 }
                             }
@@ -91,7 +94,7 @@ namespace FilterEconomy.Facades
 
                 if (responseString == null || responseString.Length < 400)
                 {
-                    InfoPopUpMessageDisplay.ShowError("poeNinja web request or file content is null/short:\n\n\n" + responseString);
+                    LoggingFacade.LogError("poeNinja web request or file content is null/short:\n\n\n" + responseString);
                     responseString = "";
                 }
             }
@@ -107,15 +110,20 @@ namespace FilterEconomy.Facades
 
         public void EnrichAll()
         {
+            LoggingFacade.LogInfo($"Starting Enriching Economy Information");
+
             // for every section (divination card etc)
             foreach (var section in this.EconomyTierlistOverview)
             {
+                LoggingFacade.LogDebug($"Enriching Economy Information: {section.Key}");
                 // go through every item
                 foreach (var item in section.Value)
                 {
                     EnrichmentProcedureConfiguration.EnrichmentProcedures[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
                 }
             }
+
+            LoggingFacade.LogInfo($"Done Enriching Economy Information");
         }
 
         public void Reset()

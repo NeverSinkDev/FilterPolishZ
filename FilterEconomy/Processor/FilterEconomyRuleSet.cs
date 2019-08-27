@@ -2,6 +2,7 @@
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemInformationData;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Model;
 using FilterUtilModels.Economy;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,17 @@ namespace FilterEconomy.Processor
 
         public void GenerateAndAddSuggestions()
         {
+            LoggingFacade.LogDebug($"Generating Suggestions for: {this.GoverningSection}");
+
             if (!Enabled)
             {
+                LoggingFacade.LogWarning($"SKIP Suggestions generation for: {this.GoverningSection}");
                 return;
             }
 
             this.SuggestionTarget.Clear();
             this.SuggestionTarget.AddRange(this.GenerateSuggestions());
+
         }
 
         public IEnumerable<TieringCommand> GenerateSuggestions()

@@ -7,6 +7,7 @@ using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Constants;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,6 +65,7 @@ namespace FilterEconomy.Facades
 
         public void ApplyAllSuggestions()
         {
+            LoggingFacade.LogInfo("Applying All Suggestions!");
             this.Changelog.Clear();
 
             foreach (var section in this.Suggestions)
@@ -89,6 +91,7 @@ namespace FilterEconomy.Facades
 
         public void ApplyAllSuggestionsInSection(string section)
         {
+            LoggingFacade.LogDebug($"Applying Suggestions in section: {section}");
             foreach (var item in this.Suggestions[section])
             {
                 this.ApplyCommand(item);

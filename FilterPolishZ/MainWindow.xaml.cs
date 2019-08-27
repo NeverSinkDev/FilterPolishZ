@@ -35,6 +35,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
 using Newtonsoft.Json;
+using FilterPolishUtil.Model;
 
 namespace FilterPolishZ
 {
@@ -59,8 +60,8 @@ namespace FilterPolishZ
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
-            
             ConcreteEnrichmentProcedures.Initialize();
+
             // Loads and Parses filter, then loads economy, tierlists, aspects, suggestions
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
             LoadAllComponents();
@@ -73,11 +74,6 @@ namespace FilterPolishZ
 
         private void OnWindowClose(object sender, CancelEventArgs e)
         {
-//            var doSave = InfoPopUpMessageDisplay.DisplayQuestionMessageBox("QuickSave as unnamed seedFilter?");
-//            if (doSave)
-//            {
-//                this.SaveSeedFileAsUnnamed(null, null);
-//            }
         }
 
         private void LoadAllComponents()
@@ -99,10 +95,14 @@ namespace FilterPolishZ
 
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+
+            LoggingFacade.LogInfo($"FilterBlade main subroutine loaded succesfully");
         }
 
         private void CreateSubEconomyTiers()
         {
+            LoggingFacade.LogInfo($"Generating Sub-Economy Tiers");
+
             var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var elderbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var otherbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
@@ -134,6 +134,8 @@ namespace FilterPolishZ
             this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
             this.EconomyData.AddToDictionary("rare->elder", elderbases);
             this.EconomyData.AddToDictionary("rare->normal", otherbases);
+
+            LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
 
         private void PerformEconomyTiering()
@@ -160,7 +162,6 @@ namespace FilterPolishZ
 
             if (System.IO.File.Exists(defaultPath))
             {
-//                InfoPopUpMessageDisplay.ShowInfoMessageBox("unnamed seed used");
                 filePath = defaultPath;
             }
             else
@@ -168,11 +169,14 @@ namespace FilterPolishZ
                 this.SelectSeedFilterFile(null, null);
                 return this.FilterAccessFacade.PrimaryFilter;
             }
-            
+
+            LoggingFacade.LogInfo($"Loading Filter: {filePath}");
+
             this.FilterRawString = FileWork.ReadLinesFromFile(filePath);
+
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
             {
-                InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + this.FilterRawString?.Count);
+                LoggingFacade.LogWarning($"Loading Filter: Filter Content Suspiciously Short");
             }
             return new Filter(this.FilterRawString);
         }
@@ -180,6 +184,8 @@ namespace FilterPolishZ
         [Time]
         private TierListFacade LoadTierLists(Filter filter)
         {
+            LoggingFacade.LogDebug($"Loading Tierlists...");
+
             TierListFacade tierList = TierListFacade.GetInstance();
             tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
 
@@ -189,14 +195,19 @@ namespace FilterPolishZ
 
             foreach (var item in tierList.TierListData.Values)
             {
+                LoggingFacade.LogDebug($"Loading Tierlist: {item.Category}");
                 item.ReEvaluate();
             }
+
+            LoggingFacade.LogInfo($"Done Loading Tierlists...");
             return tierList;
         }
 
         [Time]
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
+            LoggingFacade.LogDebug("Loading Economy Data...");
+
             var result = EconomyRequestFacade.GetInstance();
             var seedFolder = Configuration.AppSettings["SeedFile Folder"];
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
@@ -206,11 +217,14 @@ namespace FilterPolishZ
             foreach (var tuple in FilterPolishConstants.FileRequestData)
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                LoggingFacade.LogInfo($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
             }
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
                     result.PerformRequest(league, variation, requestKey, url, prefix, this.RequestMode, seedFolder, ninjaUrl));
+
+            LoggingFacade.LogInfo("Economy Data Loaded...");
 
             return result;
         }
@@ -219,7 +233,9 @@ namespace FilterPolishZ
         private ItemInformationFacade LoadItemInformationOverview()
         {
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
-            
+
+            LoggingFacade.LogDebug("Economy Item Information Loaded...");
+
             var leagueType = Configuration.AppSettings["Ninja League"];
             var baseStoragePath = Configuration.AppSettings["Aspect Folder"];
 
@@ -230,7 +246,9 @@ namespace FilterPolishZ
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));
 
             result.LoadFromSaveFile();
-            
+
+            LoggingFacade.LogDebug("Item Information Loaded...");
+
             return result;
         }
 
@@ -263,8 +281,10 @@ namespace FilterPolishZ
 
         private async Task WriteSeedFilter(Filter baseFilter, string filePath)
         {
+            LoggingFacade.LogInfo("Writing SeedFilter!");
             var seedFilterString = baseFilter.Serialize();
             await FileWork.WriteTextAsync(filePath, seedFilterString);
+            LoggingFacade.LogInfo("DONE: Writing SeedFilter!");
         }
 
         private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
@@ -314,7 +334,7 @@ namespace FilterPolishZ
             if (fd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             var filePath = fd.FileName;
             var lineList = FileWork.ReadLinesFromFile(filePath);
-            if (lineList == null || lineList.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + lineList?.Count);
+            if (lineList == null || lineList.Count < 4500) LoggingFacade.LogError("Warning: (seed) filter result line count: " + lineList?.Count);
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
 
             this.ResetAllComponents();
@@ -350,6 +370,7 @@ namespace FilterPolishZ
         private void ApplyAllSuggestions(object sender, RoutedEventArgs e)
         {
             this.TierListFacade.ApplyAllSuggestions();
+
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
             
             var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");

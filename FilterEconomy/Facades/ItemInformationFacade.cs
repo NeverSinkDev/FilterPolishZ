@@ -11,6 +11,7 @@ using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
 using Newtonsoft.Json;
+using FilterPolishUtil.Model;
 
 namespace FilterEconomy.Facades
 {
@@ -33,6 +34,7 @@ namespace FilterEconomy.Facades
         {
             foreach (var branchKey in EconomyRequestFacade.GetInstance().EconomyTierlistOverview.Keys)
             {
+                LoggingFacade.LogDebug($"Loading AspectFile: {branchKey}");
                 this.LoadFromSaveFile(branchKey);
             }
         }
@@ -44,10 +46,10 @@ namespace FilterEconomy.Facades
             if (File.Exists(filePath))
             {
                 var fileText = File.ReadAllText(filePath);
-                if (fileText.Length < 2) InfoPopUpMessageDisplay.ShowError("ItemAspect saveFile empty for: " + branchKey);
+                if (fileText.Length < 2) LoggingFacade.LogWarning("ItemAspect saveFile empty for: " + branchKey);
                 this.Deserialize(branchKey, fileText);
             }
-            else InfoPopUpMessageDisplay.ShowError("no ItemAspect saveFile for: " + branchKey);
+            else LoggingFacade.LogError("no ItemAspect saveFile for: " + branchKey);
 
             var economyData = EconomyRequestFacade.GetInstance();
             this.MigrateAspectDataToEcoData(economyData, branchKey);
@@ -149,6 +151,7 @@ namespace FilterEconomy.Facades
 
         public void SaveItemInformation(string filePath, string branchKey)
         {
+            LoggingFacade.LogDebug($"Saving AspectFile: {branchKey}");
             FileWork.WriteTextAsync(filePath, this.Serialize(branchKey));
         }
 
