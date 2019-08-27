@@ -91,11 +91,11 @@
                                     <Separator/>
 
                                     <Button ToolTip="Perform Suggesting Generation Routine" Click="PerformAutomatedTiering" Foreground="Gold">
-                                        <materialDesign:PackIcon Kind="AutoFix" />
+                                            <materialDesign:PackIcon Kind="AutoStories" />
                                     </Button>
 
                                     <Button ToolTip="Apply All Suggestions" Click="ApplyAllSuggestions" Foreground="Gold">
-                                        <materialDesign:PackIcon Kind="AutoStories" />
+                                            <materialDesign:PackIcon Kind="AutoFix" />
                                     </Button>
                                         <Separator/>
 

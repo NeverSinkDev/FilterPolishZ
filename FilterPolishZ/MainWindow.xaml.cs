@@ -319,7 +319,10 @@ namespace FilterPolishZ
         {
             var poeFolder = "%userprofile%/Documents/My Games/Path of Exile"; 
             poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
-            
+
+            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+            LoggingFacade.LogInfo($"Copying filter files to: {Configuration.AppSettings["Output Folder"]}");
+
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
                 if (!file.EndsWith(".filter")) continue;
@@ -372,7 +375,9 @@ namespace FilterPolishZ
             this.TierListFacade.ApplyAllSuggestions();
 
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
-            
+
+            LoggingFacade.LogInfo($"Writing Changelog! Tiers Logged: {this.TierListFacade.Changelog.Select(x => x.Value.Count).Sum()}");
+
             var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");
             var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
             FileWork.WriteTextAsync(changeLogPath, json);

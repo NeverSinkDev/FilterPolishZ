@@ -20,6 +20,7 @@ namespace FilterPolishUtil.Model
         Debug,
         Info,
         Warning,
-        Errors
+        Errors,
+        Item
     }
 }

@@ -14,9 +14,24 @@
         Background="{DynamicResource MaterialDesignPaper}">
 
     <Grid>
-        <DockPanel>
-            <Grid>
-                <DataGrid x:Name="LoggingGrid" Margin="0 8 0 0" ItemsSource="{Binding LoggingData}" CanUserSortColumns="True" CanUserAddRows="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBarTray Grid.Row="0" VerticalAlignment="Center">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                <ToggleButton FontSize="16" x:Name="ItemButton" Style="{DynamicResource MaterialDesignSwitchToggleButton}"     IsChecked="false"  Click="ItemButton_Click" ToolTip="Toggle Item Overlay">Item</ToggleButton>
+                <ToggleButton FontSize="16" x:Name="DebugButton" Style="{DynamicResource MaterialDesignSwitchToggleButton}"    IsChecked="false"  Click="DebugButton_Click" ToolTip="Toggle Item Overlay">Debug</ToggleButton>
+                <ToggleButton FontSize="16" x:Name="InfoButton" Style="{DynamicResource MaterialDesignSwitchToggleButton}"     IsChecked="true"  Click="InfoButton_Click" ToolTip="Toggle Item Overlay">Info</ToggleButton>
+                <ToggleButton FontSize="16" x:Name="WarningButton" Style="{DynamicResource MaterialDesignSwitchToggleButton}"  IsChecked="true"  Click="WarningButton_Click" ToolTip="Toggle Item Overlay">Warning</ToggleButton>
+                <ToggleButton FontSize="16" x:Name="ErrorButton" Style="{DynamicResource MaterialDesignSwitchToggleButton}"    IsChecked="true"  Click="ErrorButton_Click" ToolTip="Toggle Item Overlay">Error</ToggleButton>
+            </ToolBar>
+        </ToolBarTray>
+
+        <DockPanel Grid.Row="1">
+            <Grid >
+                <DataGrid x:Name="LoggingGrid" Margin="0 8 0 0" ItemsSource="{Binding FilteredLoggingData}" CanUserSortColumns="True" CanUserAddRows="False">
                 </DataGrid>
             </Grid>
         </DockPanel>
