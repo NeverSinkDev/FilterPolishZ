@@ -287,11 +287,6 @@ namespace FilterPolishZ
             await FileWork.WriteTextAsync(filePath, seedFilterString);
             LoggingFacade.LogInfo("DONE: Writing SeedFilter!");
         }
-
-        private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
-        {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true));
-        }
         
         private void GenerateAllFilterFilesTo(object sender, RoutedEventArgs e)
         {
@@ -412,7 +407,9 @@ namespace FilterPolishZ
             {
                 using (var zipArch = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
                 {
-                    zipArch.ZipDirectory(Configuration.AppSettings["Output Folder"], x => x.Contains(".filter"), x => (x.Contains("STYLE") || x.Contains("Console")));
+                    zipArch.ZipDirectory(Configuration.AppSettings["Output Folder"],
+                        x => (x.Contains(".filter") && !x.ToLower().Contains("unnamed") && !x.ToLower().Contains("copy") && !x.ToLower().Contains("seed")), 
+                        x => (x.Contains("STYLE") || x.Contains("Console")));
                 }
             }
 
