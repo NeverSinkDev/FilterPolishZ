@@ -49,6 +49,11 @@ namespace FilterPolishUtil.Model
             GetInstance().Log(info, LoggingLevel.Errors);
         }
 
+        public static void LogItem(string info)
+        {
+            GetInstance().Log(info, LoggingLevel.Item);
+        }
+
         public static void LogInfo(string info, bool showMessage = false)
         {
             if (showMessage)

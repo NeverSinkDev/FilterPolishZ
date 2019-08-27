@@ -396,7 +396,7 @@ namespace FilterPolishZ
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
-                if (!file.EndsWith(".filter") || !file.EndsWith(".json")) continue;
+                if (!file.EndsWith(".filter") || !file.EndsWith(".json") || !file.EndsWith(".fsty")) continue;
                 if (file.ToLower().Contains("unnamed")) continue;
 
                 var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();

@@ -5,6 +5,7 @@ using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Constants;
+using FilterPolishUtil.Model;
 using FilterPolishZ.Economy.RuleSet;
 using FilterUtilModels.Economy;
 using System;
@@ -70,6 +71,7 @@ namespace FilterPolishZ.Economy
         public void GenerateSuggestions()
         {
             this.Rules.ForEach(x => x.GenerateAndAddSuggestions());
+            LoggingFacade.LogInfo("Done (Re)generating Tiering Suggestions");
         }
 
         private FilterEconomyRuleSet GenerateUniqueMapRules()

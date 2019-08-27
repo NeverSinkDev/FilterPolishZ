@@ -125,7 +125,7 @@
                                         <Button ToolTip="Create Zip Files" Click="CreateZipFiles">
                                             <materialDesign:PackIcon Kind="Package" />
                                         </Button>
-                                        <Button ToolTip="Copy filters from output to project folder" Click="CopyResultsToGitHubFolder">
+                                    <Button ToolTip="Copy filters from output to project folder" Click="CopyResultsToGitHubFolder">
                                         <materialDesign:PackIcon Kind="Git" />
                                     </Button>
 
