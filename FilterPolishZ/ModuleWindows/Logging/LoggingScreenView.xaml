@@ -16,7 +16,7 @@
     <Grid>
         <DockPanel>
             <Grid>
-                <DataGrid x:Name="ConfigGrid" Margin="0 8 0 0" ItemsSource="{Binding LoggingData}" CanUserSortColumns="True" CanUserAddRows="False">
+                <DataGrid x:Name="LoggingGrid" Margin="0 8 0 0" ItemsSource="{Binding LoggingData}" CanUserSortColumns="True" CanUserAddRows="False">
                 </DataGrid>
             </Grid>
         </DockPanel>
