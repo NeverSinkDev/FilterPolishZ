@@ -387,17 +387,17 @@ namespace FilterPolishZ
             poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
 
             LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
-            LoggingFacade.LogInfo($"Copying filter files to: {Configuration.AppSettings["Git Folder"]}");
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
                 if (!file.EndsWith(".filter") || !file.EndsWith(".json") || !file.EndsWith(".fsty")) continue;
-                if (file.ToLower().Contains("unnamed")) continue;
+                if (file.ToLower().Contains("unnamed") && !file.ToLower().Contains("copy")) continue;
 
                 var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
                 System.IO.File.Copy(file, targetPath, true);
             }
 
+            LoggingFacade.LogInfo($"Done Copying filter files to: {Configuration.AppSettings["Git Folder"]}");
             Process.Start(Configuration.AppSettings["Git Folder"]);
         }
 
