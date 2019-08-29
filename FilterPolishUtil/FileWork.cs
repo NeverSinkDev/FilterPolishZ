@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,26 @@ namespace FilterPolishUtil
             {
                 await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
             };
+        }
+
+        public static void ZipDirectory(this ZipArchive zipArchive, string srcDir, Func<string, bool> fileFilter, Func<string, bool> folderFilter, string rootDir = "")
+        {
+            if (!Directory.Exists(srcDir)) throw new Exception("source directory for zipping doesn't exit");
+            var dir = new DirectoryInfo(srcDir);
+
+            dir.GetFiles().ToList().ForEach((file) => {
+                if (fileFilter(file.Name))
+                {
+                    zipArchive.CreateEntryFromFile(file.FullName, string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
+                }
+            });
+
+            dir.GetDirectories().ToList().ForEach((directory) => {
+                if (folderFilter(directory.Name))
+                {
+                    zipArchive.ZipDirectory(directory.FullName, fileFilter, folderFilter, string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
+                }
+            });
         }
     }
 }

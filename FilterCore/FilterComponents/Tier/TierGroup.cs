@@ -51,28 +51,5 @@ namespace FilterCore.FilterComponents.Tier
             }
         }
     }
-
-    // First we grab all entries:
-    // FILTERENTRIES:   TierKey >> Entry
-    // We then establish existing tiering
-    // ITEMTIERING:     Item >> TierKey
-    // Load Local Information
-    // ITEMINFORMATION: Item >> SavedItemInformation
-    // Grab online information
-    // ECOTIER:         Item >> EconomyInformation
-
-    // Iterate through all item information, process based on available tiering
-    // Adjust ITEMINFORMATION/ECOTIER and create changes
-    // Changes (when executed) affect ITEMTIERING
-    // Iterate through ITEMTIERING, merge things into FILTERENTRIES
-
-
-    //public void GetOverview()
-    //{
-    //    var results = this.FilterEntries
-    //        .SelectMany(x => x.Value.GetLineValue<EnumValueContainer>("BaseType").Value.Select(y => y.value),
-    //        (x,c) => new { key = x.Key, val = c })
-    //        .ToList();
-    //}
 }
 

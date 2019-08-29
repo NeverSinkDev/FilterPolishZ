@@ -1,4 +1,5 @@
 ﻿using FilterCore.Line;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,7 +48,7 @@ namespace FilterDomain.LineStrategy
         {
             if (this.Value.Count == 0)
             {
-                Debug.WriteLine("ERROR! Empty line!");
+                LoggingFacade.LogError("ERROR! Empty line in EnumValueContainer!");
             }
 
             return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());

@@ -35,6 +35,8 @@ using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
 using Newtonsoft.Json;
+using FilterPolishUtil.Model;
+using System.IO.Compression;
 
 namespace FilterPolishZ
 {
@@ -59,8 +61,8 @@ namespace FilterPolishZ
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
-            
             ConcreteEnrichmentProcedures.Initialize();
+
             // Loads and Parses filter, then loads economy, tierlists, aspects, suggestions
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
             LoadAllComponents();
@@ -73,11 +75,6 @@ namespace FilterPolishZ
 
         private void OnWindowClose(object sender, CancelEventArgs e)
         {
-//            var doSave = InfoPopUpMessageDisplay.DisplayQuestionMessageBox("QuickSave as unnamed seedFilter?");
-//            if (doSave)
-//            {
-//                this.SaveSeedFileAsUnnamed(null, null);
-//            }
         }
 
         private void LoadAllComponents()
@@ -99,10 +96,14 @@ namespace FilterPolishZ
 
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+
+            LoggingFacade.LogInfo($"FilterBlade main subroutine loaded succesfully");
         }
 
         private void CreateSubEconomyTiers()
         {
+            LoggingFacade.LogInfo($"Generating Sub-Economy Tiers");
+
             var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var elderbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var otherbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
@@ -134,6 +135,8 @@ namespace FilterPolishZ
             this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
             this.EconomyData.AddToDictionary("rare->elder", elderbases);
             this.EconomyData.AddToDictionary("rare->normal", otherbases);
+
+            LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
 
         private void PerformEconomyTiering()
@@ -160,7 +163,6 @@ namespace FilterPolishZ
 
             if (System.IO.File.Exists(defaultPath))
             {
-//                InfoPopUpMessageDisplay.ShowInfoMessageBox("unnamed seed used");
                 filePath = defaultPath;
             }
             else
@@ -168,11 +170,14 @@ namespace FilterPolishZ
                 this.SelectSeedFilterFile(null, null);
                 return this.FilterAccessFacade.PrimaryFilter;
             }
-            
+
+            LoggingFacade.LogInfo($"Loading Filter: {filePath}");
+
             this.FilterRawString = FileWork.ReadLinesFromFile(filePath);
+
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
             {
-                InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + this.FilterRawString?.Count);
+                LoggingFacade.LogWarning($"Loading Filter: Filter Content Suspiciously Short");
             }
             return new Filter(this.FilterRawString);
         }
@@ -180,6 +185,8 @@ namespace FilterPolishZ
         [Time]
         private TierListFacade LoadTierLists(Filter filter)
         {
+            LoggingFacade.LogDebug($"Loading Tierlists...");
+
             TierListFacade tierList = TierListFacade.GetInstance();
             tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
 
@@ -189,14 +196,19 @@ namespace FilterPolishZ
 
             foreach (var item in tierList.TierListData.Values)
             {
+                LoggingFacade.LogDebug($"Loading Tierlist: {item.Category}");
                 item.ReEvaluate();
             }
+
+            LoggingFacade.LogInfo($"Done Loading Tierlists...");
             return tierList;
         }
 
         [Time]
         private EconomyRequestFacade LoadEconomyOverviewData()
         {
+            LoggingFacade.LogDebug("Loading Economy Data...");
+
             var result = EconomyRequestFacade.GetInstance();
             var seedFolder = Configuration.AppSettings["SeedFile Folder"];
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
@@ -206,11 +218,14 @@ namespace FilterPolishZ
             foreach (var tuple in FilterPolishConstants.FileRequestData)
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                LoggingFacade.LogInfo($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
             }
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
                     result.PerformRequest(league, variation, requestKey, url, prefix, this.RequestMode, seedFolder, ninjaUrl));
+
+            LoggingFacade.LogInfo("Economy Data Loaded...");
 
             return result;
         }
@@ -219,7 +234,9 @@ namespace FilterPolishZ
         private ItemInformationFacade LoadItemInformationOverview()
         {
             ItemInformationFacade result = ItemInformationFacade.GetInstance();
-            
+
+            LoggingFacade.LogDebug("Economy Item Information Loaded...");
+
             var leagueType = Configuration.AppSettings["Ninja League"];
             var baseStoragePath = Configuration.AppSettings["Aspect Folder"];
 
@@ -230,7 +247,9 @@ namespace FilterPolishZ
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));
 
             result.LoadFromSaveFile();
-            
+
+            LoggingFacade.LogDebug("Item Information Loaded...");
+
             return result;
         }
 
@@ -263,13 +282,10 @@ namespace FilterPolishZ
 
         private async Task WriteSeedFilter(Filter baseFilter, string filePath)
         {
+            LoggingFacade.LogInfo("Writing SeedFilter!");
             var seedFilterString = baseFilter.Serialize();
             await FileWork.WriteTextAsync(filePath, seedFilterString);
-        }
-
-        private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
-        {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true));
+            LoggingFacade.LogInfo("DONE: Writing SeedFilter!");
         }
         
         private void GenerateAllFilterFilesTo(object sender, RoutedEventArgs e)
@@ -299,7 +315,10 @@ namespace FilterPolishZ
         {
             var poeFolder = "%userprofile%/Documents/My Games/Path of Exile"; 
             poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
-            
+
+            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+            LoggingFacade.LogInfo($"Copying filter files to: {Configuration.AppSettings["Output Folder"]}");
+
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
                 if (!file.EndsWith(".filter")) continue;
@@ -314,7 +333,7 @@ namespace FilterPolishZ
             if (fd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             var filePath = fd.FileName;
             var lineList = FileWork.ReadLinesFromFile(filePath);
-            if (lineList == null || lineList.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + lineList?.Count);
+            if (lineList == null || lineList.Count < 4500) LoggingFacade.LogError("Warning: (seed) filter result line count: " + lineList?.Count);
             this.FilterAccessFacade.PrimaryFilter = new Filter(lineList);
 
             this.ResetAllComponents();
@@ -350,13 +369,52 @@ namespace FilterPolishZ
         private void ApplyAllSuggestions(object sender, RoutedEventArgs e)
         {
             this.TierListFacade.ApplyAllSuggestions();
+
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
-            
+
+            LoggingFacade.LogInfo($"Writing Changelog! Tiers Logged: {this.TierListFacade.Changelog.Select(x => x.Value.Count).Sum()}");
+
             var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");
             var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
             FileWork.WriteTextAsync(changeLogPath, json);
             
             this.EventGrid.Publish();
+        }
+
+        private void CopyResultsToGitHubFolder(object sender, RoutedEventArgs e)
+        {
+            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile";
+            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+
+            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            {
+                if (!file.EndsWith(".filter") || !file.EndsWith(".json") || !file.EndsWith(".fsty")) continue;
+                if (file.ToLower().Contains("unnamed") && !file.ToLower().Contains("copy")) continue;
+
+                var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
+                System.IO.File.Copy(file, targetPath, true);
+            }
+
+            LoggingFacade.LogInfo($"Done Copying filter files to: {Configuration.AppSettings["Git Folder"]}");
+            Process.Start(Configuration.AppSettings["Git Folder"]);
+        }
+
+        private void CreateZipFiles(object sender, RoutedEventArgs e)
+        {
+            using (var zipFileStream = new FileStream(Configuration.AppSettings["Output Folder"]+"RESULTS.zip", FileMode.OpenOrCreate))
+            {
+                using (var zipArch = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+                {
+                    zipArch.ZipDirectory(Configuration.AppSettings["Output Folder"],
+                        x => (x.Contains(".filter") && !x.ToLower().Contains("unnamed") && !x.ToLower().Contains("copy") && !x.ToLower().Contains("seed")), 
+                        x => (x.Contains("STYLE") || x.Contains("Console")));
+                }
+            }
+
+            Process.Start(Configuration.AppSettings["Output Folder"]);
+            LoggingFacade.LogInfo("Succesfully Archived Files!");
         }
     }
 }

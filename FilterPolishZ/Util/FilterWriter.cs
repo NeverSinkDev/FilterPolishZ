@@ -6,6 +6,7 @@ using FilterCore;
 using FilterCore.Commands;
 using FilterCore.Constants;
 using FilterPolishUtil;
+using FilterPolishUtil.Model;
 using FilterPolishZ.Configuration;
 
 namespace FilterPolishZ.Util
@@ -16,6 +17,8 @@ namespace FilterPolishZ.Util
         
         public static async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
+            LoggingFacade.LogInfo($"STARTING: FILTER GENERATION");
+
             var isStopping = VerifyFilter(baseFilter);
             if (isStopping) return;
             
@@ -38,7 +41,7 @@ namespace FilterPolishZ.Util
             baseFilter = new Filter(seedFilterString); // we do not want to edit the seedFilter directly and execute its tag commands
             baseFilter.ExecuteCommandTags();
             var baseFilterString = baseFilter.Serialize();
-            if (baseFilterString == null || baseFilterString.Count < 4500) InfoPopUpMessageDisplay.ShowError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
+            if (baseFilterString == null || baseFilterString.Count < 4500) LoggingFacade.LogError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
             
             for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
             {
@@ -65,7 +68,7 @@ namespace FilterPolishZ.Util
             }
 
             await Task.WhenAll(generationTasks);
-            InfoPopUpMessageDisplay.ShowInfoMessageBox("Filter generation successfully done!");
+            LoggingFacade.LogInfo("Filter generation successfully done!", true);
 
             // local func
             async Task GenerateFilter_Inner(string style, int strictnessIndex, int? consoleStrictness = null, string explicitName = null)
@@ -73,7 +76,9 @@ namespace FilterPolishZ.Util
                 var filePath = outputFolder;
                 var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
-                
+
+                LoggingFacade.LogDebug($"GENERATING: {fileName}");
+
                 new FilterTableOfContentsCreator(filter).Run();
                 filter.ExecuteStrictnessCommands(strictnessIndex, consoleStrictness);
 
@@ -102,10 +107,11 @@ namespace FilterPolishZ.Util
 
                 if (result.Count <= seedFilterString?.Count)
                 {
-                    InfoPopUpMessageDisplay.ShowError("Error: style/strictness variant is smaller size than seed");
+                    LoggingFacade.LogError("Error: style/strictness variant is smaller size than seed");
                 }
-                
+
                 await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
+                LoggingFacade.LogInfo($"DONE GENERATING: {fileName}");
             }
         }
         

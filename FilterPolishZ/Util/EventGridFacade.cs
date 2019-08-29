@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FilterPolishUtil.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace FilterPolishZ.Util
         public void Publish()
         {
             FilterChangeEvent?.Invoke(null, EventArgs.Empty);
+            LoggingFacade.LogDebug($"EVENT: Reset event published");
         }
 
         private EventGridFacade()

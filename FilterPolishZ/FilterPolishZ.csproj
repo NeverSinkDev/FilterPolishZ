@@ -72,6 +72,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -106,6 +108,9 @@
     </Compile>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
     <Compile Include="ModuleWindows\ItemInfo\ItemTieringData.cs" />
+    <Compile Include="ModuleWindows\Logging\LoggingScreenView.xaml.cs">
+      <DependentUpon>LoggingScreenView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModuleWindows\TagEditing\FilterCategory.cs" />
     <Compile Include="ModuleWindows\TagEditing\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
@@ -152,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModuleWindows\ItemVariationList\ItemVariationListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModuleWindows\Logging\LoggingScreenView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -222,9 +231,7 @@
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ModuleWindows\Reporting\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets" Condition="Exists('..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
