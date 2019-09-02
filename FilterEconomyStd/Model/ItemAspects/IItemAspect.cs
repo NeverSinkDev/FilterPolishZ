@@ -52,7 +52,6 @@ namespace FilterEconomy.Model.ItemAspects
 
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
-        public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
         public virtual AspectType Type => AspectType.common;
 
         public virtual bool IsActive()
@@ -65,7 +64,6 @@ namespace FilterEconomy.Model.ItemAspects
     {
         string Group { get; }
         string Name { get; }
-        SolidColorBrush Color { get; }
         AspectType Type { get; }
 
         bool IsActive();
