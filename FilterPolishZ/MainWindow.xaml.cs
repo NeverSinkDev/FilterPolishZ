@@ -37,6 +37,7 @@ using FilterPolishZ.Util;
 using Newtonsoft.Json;
 using FilterPolishUtil.Model;
 using System.IO.Compression;
+using FilterPolishWindowUtils;
 
 namespace FilterPolishZ
 {
