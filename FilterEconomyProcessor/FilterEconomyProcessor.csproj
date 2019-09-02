@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FilterEconomyStd\FilterEconomy.csproj" />
+    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
   </ItemGroup>
 
 </Project>

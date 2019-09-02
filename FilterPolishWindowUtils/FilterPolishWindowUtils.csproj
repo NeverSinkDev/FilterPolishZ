@@ -44,7 +44,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FilterPolishUtilNew\FilterPolishUtil.csproj">
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
       <Project>{fb9b4f87-458e-4fea-9a55-32c56dd02b7c}</Project>
       <Name>FilterPolishUtil</Name>
     </ProjectReference>

@@ -10,14 +10,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterPolishZ", "FilterPoli
 		{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C} = {FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterCore", "FilterCoreStd\FilterCore.csproj", "{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterCore", "FilterCore\FilterCore.csproj", "{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C} = {FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterPolishUtil", "FilterPolishUtilNew\FilterPolishUtil.csproj", "{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterPolishUtil", "FilterPolishUtil\FilterPolishUtil.csproj", "{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterEconomy", "FilterEconomyStd\FilterEconomy.csproj", "{C0372637-8FD2-450A-B084-FEF2512FEF1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterEconomy", "FilterEconomy\FilterEconomy.csproj", "{C0372637-8FD2-450A-B084-FEF2512FEF1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterPolishWindowUtils", "FilterPolishWindowUtils\FilterPolishWindowUtils.csproj", "{932D9604-083E-4A35-9935-007ECC39C960}"
 EndProject

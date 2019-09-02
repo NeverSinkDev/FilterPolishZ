@@ -210,7 +210,7 @@
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FilterCoreStd\FilterCore.csproj">
+    <ProjectReference Include="..\FilterCore\FilterCore.csproj">
       <Project>{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}</Project>
       <Name>FilterCore</Name>
     </ProjectReference>
@@ -218,11 +218,11 @@
       <Project>{235362D7-83F3-42F4-8DD5-E9C3CFD90A5E}</Project>
       <Name>FilterEconomyProcessor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FilterEconomyStd\FilterEconomy.csproj">
+    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj">
       <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
       <Name>FilterEconomy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FilterPolishUtilNew\FilterPolishUtil.csproj">
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
       <Project>{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}</Project>
       <Name>FilterPolishUtil</Name>
     </ProjectReference>
