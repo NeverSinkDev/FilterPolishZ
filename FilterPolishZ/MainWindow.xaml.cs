@@ -381,7 +381,7 @@ namespace FilterPolishZ
 
             var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");
             var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
-            FileWork.WriteTextAsync(changeLogPath, json);
+            FileWork.WriteTextAsync(changeLogPath, json).Wait();
             
             this.EventGrid.Publish();
         }
