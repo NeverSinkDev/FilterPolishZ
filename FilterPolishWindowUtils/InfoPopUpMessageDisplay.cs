@@ -1,12 +1,18 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Markup;
+using System.Xaml;
+using FilterPolishUtil.Model;
 
-namespace FilterPolishUtil
+namespace FilterPolishWindowUtils
 {
     public static class InfoPopUpMessageDisplay
     {
+        static InfoPopUpMessageDisplay()
+        {
+            LoggingFacade.GetInstance().CustomLoggingAction += ShowInfoMessageBox;
+        }
+
         public static void ShowInfoMessageBox(string messageText)
         {
             MessageBox.Show(messageText, "I: " + messageText);
@@ -35,7 +41,7 @@ namespace FilterPolishUtil
         public static void InitExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += HandleException_DisplayError;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+//            MediaTypeNames.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         }
 
         private static void HandleException_DisplayError(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
