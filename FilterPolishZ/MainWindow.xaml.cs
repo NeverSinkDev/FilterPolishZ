@@ -299,6 +299,11 @@ namespace FilterPolishZ
             }
         }
 
+        private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true));
+        }
+
         private void OpenFilterFolder(object sender, RoutedEventArgs e)
         {
             var poePath = "%userprofile%/Documents/My Games/Path of Exile";
