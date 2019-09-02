@@ -215,23 +215,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FilterCore\FilterCoreOld.csproj">
-      <Project>{0A75F2CB-4AD2-4900-845A-6505029F64CF}</Project>
-      <Name>FilterCoreOld</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FilterEconomy\FilterEconomyOld.csproj">
-      <Project>{30DD41C8-5321-4153-A9B9-9F91CDC5D2DC}</Project>
-      <Name>FilterEconomyOld</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtilOld.csproj">
-      <Project>{F19797E3-6953-4EDD-9D10-52E65B842C82}</Project>
-      <Name>FilterPolishUtilOld</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FilterCoreStd\FilterCore.csproj">
+      <Project>{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}</Project>
+      <Name>FilterCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FilterEconomyStd\FilterEconomy.csproj">
+      <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
+      <Name>FilterEconomy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FilterPolishUtilNew\FilterPolishUtil.csproj">
+      <Project>{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}</Project>
+      <Name>FilterPolishUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets" Condition="Exists('..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
