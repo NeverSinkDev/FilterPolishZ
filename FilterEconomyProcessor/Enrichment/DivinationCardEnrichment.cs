@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 
-namespace FilterEconomy.Request.Enrichment
+namespace FilterEconomyProcessor.Enrichment
 {
     public class DivinationCardEnrichment : IDataEnrichment
     {

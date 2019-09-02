@@ -1,4 +1,6 @@
 ﻿using FilterEconomy.Processor;
+using FilterEconomyProcessor;
+using FilterEconomyProcessor.RuleSet;
 using FilterPolishUtil.Constants;
 using System;
 using System.Collections.Generic;

@@ -97,12 +97,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Economy\RuleSet\DivinationRuleFactory.cs" />
-    <Compile Include="Economy\RuleSet\NormalCraftingBasesRuleFactory.cs" />
-    <Compile Include="Economy\RuleSet\ProphecyRulesFactory.cs" />
-    <Compile Include="Economy\RuleSet\RuleSetBuilder.cs" />
-    <Compile Include="Economy\RuleSet\ShaperElderRulesFactory.cs" />
-    <Compile Include="Economy\RuleSet\UniqueRulesFactory.cs" />
     <Compile Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml.cs">
       <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
     </Compile>
@@ -145,8 +139,6 @@
     </Compile>
     <Compile Include="ModuleWindows\Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\DataType\ConfigurationData.cs" />
-    <Compile Include="Economy\ConcreteEconomyRules.cs" />
-    <Compile Include="Economy\ConcreteEnrichmentProcedures.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -221,6 +213,10 @@
     <ProjectReference Include="..\FilterCoreStd\FilterCore.csproj">
       <Project>{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}</Project>
       <Name>FilterCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FilterEconomyProcessor\FilterEconomyProcessor.csproj">
+      <Project>{235362D7-83F3-42F4-8DD5-E9C3CFD90A5E}</Project>
+      <Name>FilterEconomyProcessor</Name>
     </ProjectReference>
     <ProjectReference Include="..\FilterEconomyStd\FilterEconomy.csproj">
       <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
