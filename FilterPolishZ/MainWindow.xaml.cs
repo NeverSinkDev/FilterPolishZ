@@ -382,24 +382,36 @@ namespace FilterPolishZ
 
             var json = JsonConvert.SerializeObject(this.TierListFacade.Changelog).Replace("->", "_");
             var changeLogPath = LocalConfiguration.GetInstance().AppSettings["Output Folder"] + "/Changelog/changelog.json";
-            FileWork.WriteTextAsync(changeLogPath, json).Wait();
+            FileWork.WriteTextAsync(changeLogPath, json);
             
             this.EventGrid.Publish();
         }
 
         private void CopyResultsToGitHubFolder(object sender, RoutedEventArgs e)
         {
-            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile";
-            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+            var gitFolder = Configuration.AppSettings["Git Folder"];
 
-            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+            LoggingFacade.LogInfo($"Copying filter files from: {gitFolder}");
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
-                if (!file.EndsWith(".filter") || !file.EndsWith(".json") || !file.EndsWith(".fsty")) continue;
-                if (file.ToLower().Contains("unnamed") && !file.ToLower().Contains("copy")) continue;
+                var valid = false;
 
-                var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
+                if (file.EndsWith(".filter") || file.EndsWith(".json") || file.EndsWith(".fsty"))
+                {
+                    valid = true;
+                }
+                if (file.ToLower().Contains("unnamed") || file.ToLower().Contains("copy"))
+                {
+                    continue;
+                }
+
+                if (!valid)
+                {
+                    continue;
+                }
+
+                var targetPath = gitFolder + "\\" + file.Split('/', '\\').Last();
                 System.IO.File.Copy(file, targetPath, true);
             }
 
