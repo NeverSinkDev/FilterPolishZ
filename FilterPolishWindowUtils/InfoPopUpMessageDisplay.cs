@@ -41,7 +41,7 @@ namespace FilterPolishWindowUtils
         public static void InitExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += HandleException_DisplayError;
-//            MediaTypeNames.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         }
 
         private static void HandleException_DisplayError(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
