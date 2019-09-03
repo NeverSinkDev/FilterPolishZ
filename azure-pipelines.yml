@@ -40,11 +40,18 @@ steps:
   inputs:
     script: 'git config user.email "jevjaku@gmail.com"'
 
+- task: DeleteFiles@1
+  displayName: 'Delete folder'
+  inputs:
+    SourceFolder:
+    Contents: '.vscode*'
+    RemoveSourceFolder: true
+
 - task: CmdLine@2
   inputs:
     script: 'git pull https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git master'
 
-- task: DeleteFiles@1
+- task: DeleteFiles@2
   displayName: 'Delete folder'
   inputs:
     SourceFolder:
