@@ -95,7 +95,7 @@ namespace FilterCore.Entry
                     }
                     
                     var tagType = FilterGenerationConfig.EntryCommand[command];
-                    tag = tagType.GetConstructors().Single().Invoke(new object[] {entry}) as GenerationTag;
+                    tag = tagType(entry) as GenerationTag;
                     tag.Strictness = digit;
                     tag.Value = command;
 

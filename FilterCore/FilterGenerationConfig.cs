@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore.Entry;
 
 namespace FilterCore
 {
@@ -92,16 +93,16 @@ namespace FilterCore
             { "PlayEffect",              new VariableLineStrategy(2,3) },
             { "MinimapIcon",             new VariableLineStrategy(3,3) }};
 
-        public static Dictionary<string, Type> EntryCommand = new Dictionary<string, Type>()
+        public static Dictionary<string, Func<FilterEntry, IEntryCommand>> EntryCommand = new Dictionary<string, Func<FilterEntry, IEntryCommand>>
         {
-            { "D",      typeof(DisableEntryCommand) },
-            { "H",      typeof(HideEntryCommand) },
-            { "RF",     typeof(ReduceFontSizeEntryCommand) },
-            { "HS",     typeof(RemoveHighlightsThenHideEntryCommand) },
-            { "REMS",   typeof(RemoveHighlightsEntryCommand) },
-            { "UP",     typeof(RaresUpEntryCommand) },
-            { "RVR",    typeof(RarityVariationRuleEntryCommand) },
-            { "C",    typeof(ConsoleStrictnessCommand) }
+            { "D",      entry => new DisableEntryCommand(entry) },
+            { "H",      entry => new HideEntryCommand(entry) },
+            { "RF",     entry => new ReduceFontSizeEntryCommand(entry) },
+            { "HS",     entry => new RemoveHighlightsThenHideEntryCommand(entry) },
+            { "REMS",   entry => new RemoveHighlightsEntryCommand(entry) },
+            { "UP",     entry => new RaresUpEntryCommand(entry) },
+            { "RVR",    entry => new RarityVariationRuleEntryCommand(entry) },
+            { "C",      entry => new ConsoleStrictnessCommand(entry) }
         };
 
         public static HashSet<string> StyleIdents = new HashSet<string>
