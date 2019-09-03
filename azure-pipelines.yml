@@ -48,7 +48,7 @@ steps:
   displayName: 'Delete folder'
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '.vscode*'
+    Contents: '\.vscode*'
     RemoveSourceFolder:
 
 
