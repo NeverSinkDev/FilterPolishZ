@@ -70,7 +70,11 @@ namespace FilterEconomy.Facades
                     // poeNinja down -> use most recent local file
                     if (responseString == null || responseString.Length < 400)
                     {
-                        var recentFile = Directory.EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), "")).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
+                        var recentFile = Directory
+                            .EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), ""))
+                            .Where(x => File.Exists(x + "/" + fileName))
+                            .OrderByDescending(Directory.GetCreationTime)
+                            .FirstOrDefault();
 
                         if (recentFile != null && File.Exists(recentFile + "/" + fileName))
                         {
@@ -85,9 +89,13 @@ namespace FilterEconomy.Facades
                                 }
                             }
                         }
+                        else
+                        {
+                            throw new Exception("did not find any old ninja files");
+                        }
                     }
 
-                    if (responseString != null)
+                    if (!string.IsNullOrEmpty(responseString))
                     {
                         // Store locally
                         FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
@@ -97,7 +105,7 @@ namespace FilterEconomy.Facades
                 if (responseString == null || responseString.Length < 400)
                 {
                     LoggingFacade.LogError("poeNinja web request or file content is null/short:\n\n\n" + responseString);
-                    responseString = "";
+                    throw new Exception("poeNinja web request or file content is null/short:\n\n\n" + responseString);
                 }
             }
             catch (Exception e)
