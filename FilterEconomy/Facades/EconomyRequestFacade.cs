@@ -72,7 +72,7 @@ namespace FilterEconomy.Facades
                     {
                         var recentFile = Directory.EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), "")).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
 
-                        if (recentFile != null)
+                        if (recentFile != null && File.Exists(recentFile + "/" + fileName))
                         {
                             responseString = FileWork.ReadFromFile(recentFile + "/" + fileName);
 
@@ -87,8 +87,11 @@ namespace FilterEconomy.Facades
                         }
                     }
 
-                    // Store locally
-                    FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
+                    if (responseString != null)
+                    {
+                        // Store locally
+                        FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
+                    }
                 }
 
                 if (responseString == null || responseString.Length < 400)
