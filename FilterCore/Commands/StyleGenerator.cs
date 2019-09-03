@@ -24,7 +24,7 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Content)
+                if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Content)
                 {
                     continue;
                 }

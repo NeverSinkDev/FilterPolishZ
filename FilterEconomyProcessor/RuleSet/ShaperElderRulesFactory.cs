@@ -1,10 +1,6 @@
 ﻿using FilterEconomy.Processor;
-using FilterPolishUtil.Constants;
+using FilterPolishUtil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterEconomyProcessor.RuleSet
 {
@@ -41,7 +37,7 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     var price = GetPrice(82) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConstants.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
                 }), nextgroup: "t2");
 
 
@@ -54,7 +50,7 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     var price = GetPrice(84) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConstants.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
                 }), nextgroup: "t2");
 
             builder.AddRule("t1-86", "t1-3",
@@ -66,14 +62,14 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     var price = GetPrice(86) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConstants.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
                 }), nextgroup: "t2");
 
             builder.AddRule("t2-80", "t2-1",
                 new Func<string, bool>((string s) =>
                 {
                     var price = GetPrice(82) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConstants.T2BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
                 }), group: "t2");
 
 
@@ -81,7 +77,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = Math.Max(GetPrice(86),GetPrice(85)) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConstants.T2BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
                 }), group: "t2");
 
             builder.AddRule("rest", "rest",

@@ -1,12 +1,8 @@
 ﻿using FilterEconomy.Processor;
 using FilterEconomyProcessor;
 using FilterEconomyProcessor.RuleSet;
-using FilterPolishUtil.Constants;
+using FilterPolishUtil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterPolishZ.Economy.RuleSet
 {
@@ -39,7 +35,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return price > FilterPolishConstants.T1DiviBreakPoint;
+                    return price > FilterPolishConfig.T1DiviBreakPoint;
                 }));
 
 
@@ -47,7 +43,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return price > FilterPolishConstants.T2DiviBreakPoint;
+                    return price > FilterPolishConfig.T2DiviBreakPoint;
                 }));
 
             builder.AddRule("SingleCardSave", "t2",
@@ -60,7 +56,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return price > FilterPolishConstants.T3DiviBreakPoint;
+                    return price > FilterPolishConfig.T3DiviBreakPoint;
                 }));
 
             builder.AddRule("TimelessSave", "t3",
@@ -78,11 +74,11 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect"))
                         {
-                            return (price > FilterPolishConstants.T5DiviBreakPoint * 2);
+                            return (price > FilterPolishConfig.T5DiviBreakPoint * 2);
                         }
                         else
                         {
-                            return (price > FilterPolishConstants.T5DiviBreakPoint);
+                            return (price > FilterPolishConfig.T5DiviBreakPoint);
                         }
                     }
 
@@ -106,7 +102,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return (price < FilterPolishConstants.T5DiviBreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                    return (price < FilterPolishConfig.T5DiviBreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
                 }));
 
             builder.AddRule("T5RedemptionPrevented", "t5",
@@ -115,7 +111,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     if (builder.GetTierOfItem(s).Contains("t5"))
                     {
                         var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                        return price < FilterPolishConstants.T5DiviBreakPoint * 1.5;
+                        return price < FilterPolishConfig.T5DiviBreakPoint * 1.5;
                     }
 
                     return false;
@@ -130,7 +126,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     }
 
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return price < FilterPolishConstants.T5DiviBreakPoint;
+                    return price < FilterPolishConfig.T5DiviBreakPoint;
                 }));
 
             builder.AddRule("rest", "rest",

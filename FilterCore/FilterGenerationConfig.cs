@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterCore.Constants
+namespace FilterCore
 {
-    public class FilterConstants
+    public class FilterGenerationConfig
     {
-        static FilterConstants()
+        static FilterGenerationConfig()
         {
             short i = 0;
             foreach (var keys in LineTypes)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore;
 using FilterCore.Constants;
 using FilterCore.Line;
 
@@ -29,7 +30,7 @@ namespace FilterDomain.LineStrategy
         {
             for (int i = 0; i < tokens.Count; i++)
             {
-                if (i == 0 && FilterConstants.FilterOperators.Contains(tokens[0].value))
+                if (i == 0 && FilterGenerationConfig.FilterOperators.Contains(tokens[0].value))
                 {
                     Operator = tokens[0].value;
                 }

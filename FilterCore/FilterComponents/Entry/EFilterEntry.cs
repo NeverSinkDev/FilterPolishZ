@@ -10,7 +10,7 @@ namespace FilterCore.Entry
     {
         public static IEnumerable<FilterLine<T>> GetLines<T>(this IFilterEntry me, string ident) where T : ILineValueCore
         {
-            if (me.Header.Type != FilterConstants.FilterEntryType.Content)
+            if (me.Header.Type != FilterGenerationConfig.FilterEntryType.Content)
             {
                 yield break;
             }

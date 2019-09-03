@@ -1,16 +1,11 @@
 ﻿using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
-using FilterPolishZ.Domain;
-using FilterPolishZ.Domain.DataType;
-using FilterPolishZ.ModuleWindows.ItemVariationList;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,14 +14,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil;
-using FilterPolishZ.Configuration;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
-using FilterPolishUtil.Constants;
 using FilterPolishUtil.Extensions;
-using TextBox = System.Windows.Forms.TextBox;
-using System.Diagnostics;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -54,7 +45,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         {
             InitializeComponent();
 
-            var allBranchKeys = FilterPolishConstants.TierableEconomySections;
+            var allBranchKeys = FilterPolishConfig.TierableEconomySections;
             CurrentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;

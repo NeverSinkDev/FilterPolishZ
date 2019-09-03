@@ -18,7 +18,7 @@ namespace FilterCore.Tests
     {
         public static void Run(Filter filter)
         {
-            FilterConstants.StyleIdents.ToList().ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
+            FilterGenerationConfig.StyleIdents.ToList().ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
         }
         
         private class FilterStyleVerifyer_SingleIdent
@@ -126,7 +126,7 @@ namespace FilterCore.Tests
             {
                 foreach (var entry in baseFilter.FilterEntries)
                 {
-                    if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
+                    if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Content) continue;
                     if (!entry.Content.Content.ContainsKey(ident)) continue;
                     var line = entry.Content.Content[ident].Single();
                     var value = line.Value.Serialize();

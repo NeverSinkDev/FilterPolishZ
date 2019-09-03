@@ -37,13 +37,13 @@ namespace FilterCore
 
             FilterEntry lastDataEntry = new FilterEntry();
             FilterEntry lastCommentEntry = new FilterEntry();
-            FilterConstants.FilterEntryType entryType = FilterConstants.FilterEntryType.Unknown;
+            FilterGenerationConfig.FilterEntryType entryType = FilterGenerationConfig.FilterEntryType.Unknown;
 
             foreach (var line in lineList)
             {
                 if (!string.IsNullOrEmpty(line.Ident))
                 {
-                    entryType = FilterConstants.FilterEntryType.Content;
+                    entryType = FilterGenerationConfig.FilterEntryType.Content;
                     if (line.Ident == "Show" || line.Ident == "Hide")
                     {
                         lastDataEntry = FilterEntry.CreateDataEntry(line);
@@ -57,29 +57,29 @@ namespace FilterCore
 
                 else if (line.Comment != string.Empty)
                 {
-                    if (entryType != FilterConstants.FilterEntryType.Comment)
+                    if (entryType != FilterGenerationConfig.FilterEntryType.Comment)
                     {
                         lastCommentEntry = FilterEntry.CreateCommentEntry(line);
-                        entryType = FilterConstants.FilterEntryType.Comment;
+                        entryType = FilterGenerationConfig.FilterEntryType.Comment;
                         FilterEntries.Add(lastCommentEntry);
                     }
                     else
                     {
                         lastCommentEntry.Content.AddComment(line);
                     }
-                    entryType = FilterConstants.FilterEntryType.Comment;
+                    entryType = FilterGenerationConfig.FilterEntryType.Comment;
                 }
 
                 else if (line.Comment == string.Empty)
                 {
-                    if (entryType == FilterConstants.FilterEntryType.Filler)
+                    if (entryType == FilterGenerationConfig.FilterEntryType.Filler)
                     {
                         continue;
                     }
                     else
                     {
                         FilterEntries.Add(FilterEntry.CreateFillerEntry());
-                        entryType = FilterConstants.FilterEntryType.Filler;
+                        entryType = FilterGenerationConfig.FilterEntryType.Filler;
                     }
                 }
             }
@@ -131,7 +131,7 @@ namespace FilterCore
             for (var i = 0; i < this.FilterEntries.Count; i++)
             {
                 var filterEntry = this.FilterEntries[i];
-                if (filterEntry.Header.Type != FilterConstants.FilterEntryType.Content)
+                if (filterEntry.Header.Type != FilterGenerationConfig.FilterEntryType.Content)
                 {
                     continue;
                 }
@@ -170,7 +170,7 @@ namespace FilterCore
         {
             foreach (var entry in this.FilterEntries)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Content)
+                if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Content)
                 {
                     continue;
                 }
@@ -187,7 +187,7 @@ namespace FilterCore
                 }
             }
             
-            this.SetHeaderMetaData("type:", strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper());
+            this.SetHeaderMetaData("type:", strictnessIndex + "-" + FilterGenerationConfig.FilterStrictnessLevels[strictnessIndex].ToUpper());
         }
 
         public void InsertEntries(int index, IEnumerable<IFilterEntry> newEntries)
@@ -226,7 +226,7 @@ namespace FilterCore
         {
             foreach (var entry in this.FilterEntries)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Comment) continue;
+                if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Comment) continue;
                 foreach (var line in entry.Content.Content["comment"])
                 {
                     var comment = line.Comment;

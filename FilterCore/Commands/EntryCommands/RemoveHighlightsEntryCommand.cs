@@ -16,7 +16,7 @@ namespace FilterCore.Commands.EntryCommands
                 return;
             }
             
-            FilterConstants.HighlightingIdents.ToList().ForEach(x => this.Target.Content.RemoveAll(x));
+            FilterGenerationConfig.HighlightingIdents.ToList().ForEach(x => this.Target.Content.RemoveAll(x));
         }
         
         public override GenerationTag Clone()

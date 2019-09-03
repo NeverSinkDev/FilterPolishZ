@@ -54,7 +54,7 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Comment)
+                if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Comment)
                 {
                     continue;
                 }
@@ -182,7 +182,7 @@ namespace FilterCore.Commands
         
         public static bool IsSectionTitleEntry(IFilterEntry entry, IFilterEntry tocEntry = null)
         {
-            if (entry.Header.Type != FilterConstants.FilterEntryType.Comment)
+            if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Comment)
             {
                 return false;
             }

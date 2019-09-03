@@ -1,10 +1,6 @@
 ﻿using FilterEconomy.Processor;
-using FilterPolishUtil.Constants;
+using FilterPolishUtil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterEconomyProcessor.RuleSet
 {
@@ -28,21 +24,21 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice;
-                    return price > FilterPolishConstants.T1DiviBreakPoint;
+                    return price > FilterPolishConfig.T1DiviBreakPoint;
                 }));
 
             builder.AddRule("MultiBase", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.HighestPrice;
-                    return price > FilterPolishConstants.T1DiviBreakPoint;
+                    return price > FilterPolishConfig.T1DiviBreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice;
-                    return price > FilterPolishConstants.T2DiviBreakPoint;
+                    return price > FilterPolishConfig.T2DiviBreakPoint;
                 }));
 
             builder.AddRule("rest", "rest",

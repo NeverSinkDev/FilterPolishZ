@@ -44,11 +44,11 @@ namespace FilterPolishZ.Util
             var baseFilterString = baseFilter.Serialize();
             if (baseFilterString == null || baseFilterString.Count < 4500) LoggingFacade.LogError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
             
-            for (var strictnessIndex = 0; strictnessIndex < FilterConstants.FilterStrictnessLevels.Count; strictnessIndex++)
+            for (var strictnessIndex = 0; strictnessIndex < FilterGenerationConfig.FilterStrictnessLevels.Count; strictnessIndex++)
             {
                 if (isGeneratingStylesAndSeed)
                 {
-                    foreach (var style in FilterConstants.FilterStyles)
+                    foreach (var style in FilterGenerationConfig.FilterStyles)
                     {
                         if (style.ToLower() == "default" || style.ToLower() == "backup" || style.ToLower() == "streamsound") continue;
                         generationTasks.Add(GenerateFilter_Inner(style, strictnessIndex));
@@ -75,7 +75,7 @@ namespace FilterPolishZ.Util
             async Task GenerateFilter_Inner(string style, int strictnessIndex, int? consoleStrictness = null, string explicitName = null)
             {
                 var filePath = outputFolder;
-                var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterConstants.FilterStrictnessLevels[strictnessIndex].ToUpper();
+                var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterGenerationConfig.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
 
                 LoggingFacade.LogDebug($"GENERATING: {fileName}");

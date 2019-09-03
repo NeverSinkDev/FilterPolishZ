@@ -1,4 +1,4 @@
-﻿using FilterCore.Constants;
+﻿using FilterCore;
 using FilterCore.Entry;
 using FilterCore.FilterComponents.Tier;
 using FilterCore.Line;
@@ -6,14 +6,10 @@ using FilterDomain.LineStrategy;
 using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
-using FilterPolishUtil.Constants;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterEconomy.Facades
 {
@@ -38,7 +34,7 @@ namespace FilterEconomy.Facades
 
         public void InitializeSuggestions()
         {
-            foreach (var item in FilterPolishConstants.FilterTierLists)
+            foreach (var item in FilterPolishConfig.FilterTierLists)
             {
                 this.Suggestions.Add(item, new List<TieringCommand>());
             }
@@ -123,7 +119,7 @@ namespace FilterEconomy.Facades
 
             foreach (var oldTier in oldTiers)
             {
-                if (!FilterConstants.IgnoredSuggestionTiers.Contains(oldTier.ToLower()))
+                if (!FilterGenerationConfig.IgnoredSuggestionTiers.Contains(oldTier.ToLower()))
                 {
                     var removalTarget = this.TierListData[command.Group]
                         .FilterEntries[oldTier].Entry
@@ -140,7 +136,7 @@ namespace FilterEconomy.Facades
 
             foreach (var newTier in newTiers)
             {
-                if (!FilterConstants.IgnoredSuggestionTiers.Contains(newTier.ToLower()))
+                if (!FilterGenerationConfig.IgnoredSuggestionTiers.Contains(newTier.ToLower()))
                 {
                     var additionTarget = this.TierListData[command.Group]
                         .FilterEntries[newTier].Entry

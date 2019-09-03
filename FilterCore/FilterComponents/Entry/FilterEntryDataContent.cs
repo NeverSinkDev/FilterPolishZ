@@ -107,7 +107,7 @@ namespace FilterCore.Entry
         {
             return this.Content
                 .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize() }))
-                .OrderBy(x => FilterConstants.LineTypesSort[x.Ident])
+                .OrderBy(x => FilterGenerationConfig.LineTypesSort[x.Ident])
                 .Select(x => x.SerializedString)
                 .ToList();
         }

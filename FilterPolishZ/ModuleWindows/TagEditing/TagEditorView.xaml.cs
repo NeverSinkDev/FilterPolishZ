@@ -53,7 +53,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         private void InitializeTierTagsOnChange()
         {
             this.TierTags.Clear();
-            FilterConstants.TierTagTypes.ForEach(x => TierTags.Add(new TierTag(x)));
+            FilterGenerationConfig.TierTagTypes.ForEach(x => TierTags.Add(new TierTag(x)));
         }
 
         private void InitializeTagLogic()
@@ -61,7 +61,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             ObservableCollection<IFilterCategoryEntity> cursor = this.FilterTree;
             foreach (var item in FilterAccessFacade.PrimaryFilter.FilterEntries)
             {
-                if (item.Header.Type == FilterCore.Constants.FilterConstants.FilterEntryType.Filler)
+                if (item.Header.Type == FilterGenerationConfig.FilterEntryType.Filler)
                 {
                     continue;
                 }
@@ -167,7 +167,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
 
             var irelevantTags = tags
                 .Where(x => x != null)
-                .SelectMany(x => x.TierTags).Where(x => !FilterConstants.TierTagTypes.Contains(x.Key))
+                .SelectMany(x => x.TierTags).Where(x => !FilterGenerationConfig.TierTagTypes.Contains(x.Key))
                 .Select(x => x.Value.Serialize())
                 .ToList();
 
@@ -180,7 +180,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
             var selected = this.TreeView?.SelectedItem;
             if (selected is IFilterCategoryEntity ent)
             {
-                this.SelectedEntries = new ObservableCollection<FilterEntry>(ent.GetEntries().Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content));
+                this.SelectedEntries = new ObservableCollection<FilterEntry>(ent.GetEntries().Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content));
             }
         }
 
@@ -246,7 +246,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         {
             if (MessageBox.Show("REMOVE ALL?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
+                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content);
                 foreach (var entry in source)
                 {
                     entry.Header.TierTags.TierTags.Clear();
@@ -258,7 +258,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
         {
             if (MessageBox.Show("Remove ALL UNKNOWN?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterConstants.FilterEntryType.Content);
+                var source = this.FilterAccessFacade.PrimaryFilter.FilterEntries.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content);
                 foreach (var entry in source)
                 {
                     var tags = entry.Header.TierTags;
@@ -266,7 +266,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                     List<string> toBeRemove = new List<string>();
                     foreach (var tag in tags.TierTags)
                     {
-                        if (!FilterConstants.TierTagSort.ContainsKey(tag.Key))
+                        if (!FilterGenerationConfig.TierTagSort.ContainsKey(tag.Key))
                         {
                             toBeRemove.Add(tag.Key);
                         }
@@ -289,7 +289,7 @@ namespace FilterPolishZ.ModuleWindows.TagEditing
                 List<string> toBeRemove = new List<string>();
                 foreach (var tag in tags.TierTags)
                 {
-                    if (!FilterConstants.TierTagSort.ContainsKey(tag.Key))
+                    if (!FilterGenerationConfig.TierTagSort.ContainsKey(tag.Key))
                     {
                         toBeRemove.Add(tag.Key);
                     }

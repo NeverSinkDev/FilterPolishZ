@@ -1,17 +1,11 @@
-﻿using FilterCore.FilterComponents.Tier;
-using FilterEconomy;
-using FilterEconomy.Facades;
-using FilterEconomy.Model;
+﻿using FilterEconomy.Facades;
 using FilterEconomy.Processor;
 using FilterEconomyProcessor.RuleSet;
 using FilterPolishUtil;
-using FilterPolishUtil.Constants;
 using FilterPolishUtil.Model;
 using FilterPolishZ.Economy.RuleSet;
 using FilterUtilModels.Economy;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FilterEconomyProcessor
 {
@@ -82,8 +76,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -95,8 +89,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2BreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2BreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -108,8 +102,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2BreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2BreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -121,9 +115,9 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConstants.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConstants.T2DiviBreakPoint)
-                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConstants.T5DiviBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint)
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.T5DiviBreakPoint)
                 .AddRestRule()
                 .Build();
         }

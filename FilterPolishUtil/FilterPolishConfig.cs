@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterPolishUtil.Constants
+namespace FilterPolishUtil
 {
-    public static class FilterPolishConstants
+    public static class FilterPolishConfig
     {
         /// <summary>
         /// These are the in-filter tierlists we parse, denoted by the $Type->... comment

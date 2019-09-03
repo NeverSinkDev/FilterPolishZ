@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore;
 using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
@@ -24,7 +25,7 @@ namespace FilterEconomyProcessor.Enrichment
                 return;
             }
 
-            var cleanedTarget = target.Where(x => !x.Aspects.Any(z => FilterConstants.GlobalIgnoreAspects.Contains(z.Name) || FilterConstants.IgnoredHighestPriceAspects.Contains(z.Name))).ToList();
+            var cleanedTarget = target.Where(x => !x.Aspects.Any(z => FilterGenerationConfig.GlobalIgnoreAspects.Contains(z.Name) || FilterGenerationConfig.IgnoredHighestPriceAspects.Contains(z.Name))).ToList();
 
             target = cleanedTarget;
             if (target.Count == 1)
@@ -40,16 +41,16 @@ namespace FilterEconomyProcessor.Enrichment
 
             if (target.Count > 1)
             {
-                if (target.All(x => x.Aspects.Any(z => !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))))
+                if (target.All(x => x.Aspects.Any(z => !FilterGenerationConfig.GlobalIgnoreAspects.Contains(z.Name))))
                 {
-                    if (target.All(x => x.Aspects.Any(z => FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name))))
+                    if (target.All(x => x.Aspects.Any(z => FilterGenerationConfig.IgnoredLowestPriceAspects.Contains(z.Name))))
                     {
                         data.LowestPrice = target.Min(x => x.CVal);
                         return;
                     }
                 }
 
-                var filteredData = data.Where(x => x.Aspects.All(z => !FilterConstants.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterConstants.GlobalIgnoreAspects.Contains(z.Name))).ToList();
+                var filteredData = data.Where(x => x.Aspects.All(z => !FilterGenerationConfig.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterGenerationConfig.GlobalIgnoreAspects.Contains(z.Name))).ToList();
                 if (filteredData.Count >= 1)
                 {
                     target = filteredData;

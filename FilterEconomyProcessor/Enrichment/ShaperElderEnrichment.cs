@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FilterCore;
 using FilterCore.Constants;
 using FilterEconomy.Model;
+using FilterPolishUtil;
 using FilterPolishUtil.Collections;
-using FilterPolishUtil.Constants;
 using FilterPolishUtil.Extensions;
 
 namespace FilterEconomyProcessor.Enrichment
@@ -53,7 +52,7 @@ namespace FilterEconomyProcessor.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => progression <= -20), -0.1f, 0);
 
             // outlier rules
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConstants.T1BaseTypeBreakPoint), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.T1BaseTypeBreakPoint), -0.1f, 0);
 
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
 
@@ -72,7 +71,7 @@ namespace FilterEconomyProcessor.Enrichment
 
                 string itemClass = itemInfo["Class"].ToLower();
 
-                if (!FilterConstants.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
+                if (!FilterGenerationConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
                 {
                     var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
                     var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);

@@ -1,4 +1,5 @@
-﻿using FilterCore.Constants;
+﻿using FilterCore;
+using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemInformationData;
 using FilterPolishUtil.Collections;
@@ -179,8 +180,8 @@ namespace FilterEconomy.Processor
                     return false;
                 }
 
-                return !FilterConstants.IgnoredSuggestionTiers.Contains(this.OldTier.ToLower()) ||
-                    !FilterConstants.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
+                return !FilterGenerationConfig.IgnoredSuggestionTiers.Contains(this.OldTier.ToLower()) ||
+                    !FilterGenerationConfig.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
             }
        }
        public bool Performed { get; set; }

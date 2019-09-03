@@ -17,7 +17,6 @@ using FilterPolishZ.Domain;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Forms;
-using FilterPolishUtil.Constants;
 using MethodTimer;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
@@ -180,7 +179,7 @@ namespace FilterPolishZ
             TierListFacade tierList = TierListFacade.GetInstance();
             tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
 
-            var workTiers = FilterPolishConstants.FilterTierLists;
+            var workTiers = FilterPolishConfig.FilterTierLists;
             var tiers = filter.ExtractTiers(workTiers);
             tierList.TierListData = tiers;
 
@@ -205,7 +204,7 @@ namespace FilterPolishZ
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
             
-            foreach (var tuple in FilterPolishConstants.FileRequestData)
+            foreach (var tuple in FilterPolishConfig.FileRequestData)
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
                 LoggingFacade.LogInfo($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
@@ -233,7 +232,7 @@ namespace FilterPolishZ
             result.LeagueType = leagueType;
             result.BaseStoragePath = baseStoragePath;
 
-            var branchKeys = FilterPolishConstants.TierableEconomySections;
+            var branchKeys = FilterPolishConfig.TierableEconomySections;
             branchKeys.ForEach(key => result.EconomyTierListOverview.Add(key, new Dictionary<string, List<ItemInformationData>>()));
 
             result.LoadFromSaveFile();
