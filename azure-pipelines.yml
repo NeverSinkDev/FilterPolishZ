@@ -45,9 +45,9 @@ steps:
     script: 'git pull https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git master'
 
 - task: DeleteFiles@1
-  displayName: 'Delete files from node_modules'
+  displayName: 'Delete folder'
   inputs:
-    SourceFolder: '.vscode'
+    Contents: .vscode
 
 - task: CmdLine@2
   inputs:
