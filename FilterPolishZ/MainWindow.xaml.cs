@@ -1,6 +1,5 @@
 ﻿using System;
 using FilterCore;
-using FilterCore.FilterComponents.Tier;
 using FilterPolishZ.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,35 +7,26 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using FilterPolishUtil;
 using FilterEconomy.Facades;
-using FilterPolishZ.Economy;
 using FilterEconomy.Model.ItemInformationData;
 using System.Linq;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
-using FilterPolishZ.ModuleWindows.ItemInfo;
-using FilterPolishZ.ModuleWindows.Configuration;
 using FilterPolishZ.Domain;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Forms;
-using FilterCore.Commands;
-using FilterCore.Commands.EntryCommands;
-using FilterCore.Constants;
-using FilterCore.Entry;
-using FilterCore.Line;
-using FilterCore.Tests;
-using FilterDomain.LineStrategy;
 using FilterPolishUtil.Constants;
 using MethodTimer;
-using MessageBox = System.Windows.Forms.MessageBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using FilterPolishZ.Util;
 using Newtonsoft.Json;
 using FilterPolishUtil.Model;
 using System.IO.Compression;
+using FilterPolishWindowUtils;
+using FilterPolishZ.Economy;
+using FilterEconomyProcessor;
 
 namespace FilterPolishZ
 {
@@ -92,7 +82,7 @@ namespace FilterPolishZ
             this.CreateSubEconomyTiers();
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
-            this.EconomyData.EnrichAll();
+            this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
 
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
@@ -388,17 +378,29 @@ namespace FilterPolishZ
 
         private void CopyResultsToGitHubFolder(object sender, RoutedEventArgs e)
         {
-            var poeFolder = "%userprofile%/Documents/My Games/Path of Exile";
-            poeFolder = Environment.ExpandEnvironmentVariables(poeFolder);
+            var gitFolder = Configuration.AppSettings["Git Folder"];
 
-            LoggingFacade.LogInfo($"Copying filter files from: {poeFolder}");
+            LoggingFacade.LogInfo($"Copying filter files from: {gitFolder}");
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {
-                if (!file.EndsWith(".filter") || !file.EndsWith(".json") || !file.EndsWith(".fsty")) continue;
-                if (file.ToLower().Contains("unnamed") && !file.ToLower().Contains("copy")) continue;
+                var valid = false;
 
-                var targetPath = poeFolder + "\\" + file.Split('/', '\\').Last();
+                if (file.EndsWith(".filter") || file.EndsWith(".json") || file.EndsWith(".fsty"))
+                {
+                    valid = true;
+                }
+                if (file.ToLower().Contains("unnamed") || file.ToLower().Contains("copy"))
+                {
+                    continue;
+                }
+
+                if (!valid)
+                {
+                    continue;
+                }
+
+                var targetPath = gitFolder + "\\" + file.Split('/', '\\').Last();
                 System.IO.File.Copy(file, targetPath, true);
             }
 

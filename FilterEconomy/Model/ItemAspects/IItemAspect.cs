@@ -2,13 +2,8 @@ using FilterEconomy.Facades;
 using FilterPolishUtil;
 using FilterPolishUtil.Reflection;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace FilterEconomy.Model.ItemAspects
 {
@@ -57,7 +52,6 @@ namespace FilterEconomy.Model.ItemAspects
 
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
-        public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
         public virtual AspectType Type => AspectType.common;
 
         public virtual bool IsActive()
@@ -70,7 +64,6 @@ namespace FilterEconomy.Model.ItemAspects
     {
         string Group { get; }
         string Name { get; }
-        SolidColorBrush Color { get; }
         AspectType Type { get; }
 
         bool IsActive();

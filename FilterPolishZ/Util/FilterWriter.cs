@@ -7,6 +7,7 @@ using FilterCore.Commands;
 using FilterCore.Constants;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
+using FilterPolishWindowUtils;
 using FilterPolishZ.Configuration;
 
 namespace FilterPolishZ.Util

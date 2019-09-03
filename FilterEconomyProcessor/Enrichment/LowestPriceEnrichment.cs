@@ -10,7 +10,7 @@ using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
 using FilterPolishUtil.Extensions;
 
-namespace FilterEconomy.Request.Enrichment
+namespace FilterEconomyProcessor.Enrichment
 {
     public class LowestPriceEnrichment : IDataEnrichment
     {

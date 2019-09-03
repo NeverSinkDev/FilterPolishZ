@@ -14,6 +14,8 @@ namespace FilterPolishUtil.Model
 
         public ObservableCollection<LogEntryModel> Logs { get; set; } = new ObservableCollection<LogEntryModel>();
 
+        public Action<string> CustomLoggingAction { get; set; }
+
         private LoggingFacade()
         {
 
@@ -39,13 +41,13 @@ namespace FilterPolishUtil.Model
 
         public static void LogWarning(string info)
         {
-            InfoPopUpMessageDisplay.ShowInfoMessageBox(info);
+            GetInstance().CustomLoggingAction(info);
             GetInstance().Log(info, LoggingLevel.Warning);
         }
 
         public static void LogError(string info)
         {
-            InfoPopUpMessageDisplay.ShowError(info);
+            GetInstance().CustomLoggingAction(info);
             GetInstance().Log(info, LoggingLevel.Errors);
         }
 
@@ -58,13 +60,18 @@ namespace FilterPolishUtil.Model
         {
             if (showMessage)
             {
-                InfoPopUpMessageDisplay.ShowInfoMessageBox(info);
+                GetInstance().CustomLoggingAction(info);
             }
 
             GetInstance().Log(info, LoggingLevel.Info);
         }
 
         public static void LogDebug(string info) => GetInstance().Log(info, LoggingLevel.Debug);
+
+        public void SetCustomLoggingAction(Action<string> action)
+        {
+            this.CustomLoggingAction = action;
+        }
 
         public void Log(string info, LoggingLevel level)
         {

@@ -1,12 +1,18 @@
 using System;
-using System.Threading;
+using System.Net.Mime;
 using System.Windows.Forms;
-using System.Windows.Markup;
+using System.Xaml;
+using FilterPolishUtil.Model;
 
-namespace FilterPolishUtil
+namespace FilterPolishWindowUtils
 {
     public static class InfoPopUpMessageDisplay
     {
+        static InfoPopUpMessageDisplay()
+        {
+            LoggingFacade.GetInstance().CustomLoggingAction += ShowInfoMessageBox;
+        }
+
         public static void ShowInfoMessageBox(string messageText)
         {
             MessageBox.Show(messageText, "I: " + messageText);

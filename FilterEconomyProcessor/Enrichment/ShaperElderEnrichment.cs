@@ -11,7 +11,7 @@ using FilterPolishUtil.Collections;
 using FilterPolishUtil.Constants;
 using FilterPolishUtil.Extensions;
 
-namespace FilterEconomy.Request.Enrichment
+namespace FilterEconomyProcessor.Enrichment
 {
     public class ShaperElderEnrichment : IDataEnrichment
     {

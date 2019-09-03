@@ -3,6 +3,7 @@ using FilterEconomy;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterEconomy.Processor;
+using FilterEconomyProcessor.RuleSet;
 using FilterPolishUtil;
 using FilterPolishUtil.Constants;
 using FilterPolishUtil.Model;
@@ -12,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FilterPolishZ.Economy
+namespace FilterEconomyProcessor
 {
     public class ConcreteEconomyRules : IEconomyProcessorData
     {

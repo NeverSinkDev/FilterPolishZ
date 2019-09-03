@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using FilterCore.Constants;
-using FilterCore.Entry;
 using FilterCore.Line;
 using FilterCore.Line.Parsing;
-using FilterDomain.LineStrategy;
-using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 
 namespace FilterCore.Tests
@@ -71,14 +67,11 @@ namespace FilterCore.Tests
                             i++;
                         }
 
-                        msg += "Do you want to select the name #" + index + " as style name?";
-                    
-                        var res = InfoPopUpMessageDisplay.DisplayQuestionMessageBox(msg);
-                        if (res)
-                        {
-                            pair.Value.RemoveAll(x => x.Key != selectedName);
-                            break;
-                        }
+
+                        // TODO: Add: "Do you want to select the name #" + index + " as style name?";
+
+                        pair.Value.RemoveAll(x => x.Key != selectedName);
+                        break;
 
                         index++;
                     }
@@ -108,24 +101,21 @@ namespace FilterCore.Tests
                             i++;
                         }
 
+                        // TODO: Make it conditional
                         msg += "Do you want to select value #" + index + " as style value?";
-                    
-                        var res = InfoPopUpMessageDisplay.DisplayQuestionMessageBox(msg);
-                        if (res)
+
+                        var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
+                        foreach (var keyValuePair in removed)
                         {
-                            var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
-                            foreach (var keyValuePair in removed)
-                            {
-                                var oldValue = keyValuePair.Key;
-                                
-                                this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
-                                
-                                this.valueToNamesDic.Remove(oldValue);
-                                if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
-                                else throw new Exception("unexpected error in filterStyleVerifyer");
-                            }
-                            break;
+                            var oldValue = keyValuePair.Key;
+
+                            this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
+
+                            this.valueToNamesDic.Remove(oldValue);
+                            if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
+                            else throw new Exception("unexpected error in filterStyleVerifyer");
                         }
+                        break;
 
                         index++;
                     }

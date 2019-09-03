@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilterPolishZ.Economy.RuleSet
+namespace FilterEconomyProcessor.RuleSet
 {
     public class RuleSetBuilder
     {

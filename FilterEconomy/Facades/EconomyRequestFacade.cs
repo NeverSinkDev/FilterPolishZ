@@ -1,4 +1,5 @@
-﻿using FilterEconomy.Request;
+﻿using FilterEconomy.Model;
+using FilterEconomy.Request;
 using FilterEconomy.Request.Parsing;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
@@ -108,7 +109,7 @@ namespace FilterEconomy.Facades
             return result;
         }
 
-        public void EnrichAll()
+        public void EnrichAll(Dictionary<string, List<IDataEnrichment>> enrichments)
         {
             LoggingFacade.LogInfo($"Starting Enriching Economy Information");
 
@@ -119,7 +120,7 @@ namespace FilterEconomy.Facades
                 // go through every item
                 foreach (var item in section.Value)
                 {
-                    EnrichmentProcedureConfiguration.EnrichmentProcedures[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
+                    enrichments[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
                 }
             }
 

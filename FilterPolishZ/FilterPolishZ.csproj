@@ -97,12 +97,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Economy\RuleSet\DivinationRuleFactory.cs" />
-    <Compile Include="Economy\RuleSet\NormalCraftingBasesRuleFactory.cs" />
-    <Compile Include="Economy\RuleSet\ProphecyRulesFactory.cs" />
-    <Compile Include="Economy\RuleSet\RuleSetBuilder.cs" />
-    <Compile Include="Economy\RuleSet\ShaperElderRulesFactory.cs" />
-    <Compile Include="Economy\RuleSet\UniqueRulesFactory.cs" />
     <Compile Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml.cs">
       <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
     </Compile>
@@ -145,8 +139,6 @@
     </Compile>
     <Compile Include="ModuleWindows\Configuration\LocalConfiguration.cs" />
     <Compile Include="Domain\DataType\ConfigurationData.cs" />
-    <Compile Include="Economy\ConcreteEconomyRules.cs" />
-    <Compile Include="Economy\ConcreteEnrichmentProcedures.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -215,23 +207,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FilterCore\FilterCore.csproj">
-      <Project>{0A75F2CB-4AD2-4900-845A-6505029F64CF}</Project>
+      <Project>{81A4CD6B-9C6C-4139-8A56-A20074D5B0A7}</Project>
       <Name>FilterCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FilterEconomyProcessor\FilterEconomyProcessor.csproj">
+      <Project>{235362D7-83F3-42F4-8DD5-E9C3CFD90A5E}</Project>
+      <Name>FilterEconomyProcessor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj">
-      <Project>{30DD41C8-5321-4153-A9B9-9F91CDC5D2DC}</Project>
+      <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
       <Name>FilterEconomy</Name>
     </ProjectReference>
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
-      <Project>{F19797E3-6953-4EDD-9D10-52E65B842C82}</Project>
+      <Project>{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}</Project>
       <Name>FilterPolishUtil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FilterPolishWindowUtils\FilterPolishWindowUtils.csproj">
+      <Project>{932d9604-083e-4a35-9935-007ecc39c960}</Project>
+      <Name>FilterPolishWindowUtils</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets" Condition="Exists('..\packages\ShowMeTheXAML.MSBuild.1.0.11\build\net45\ShowMeTheXAML.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

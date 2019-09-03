@@ -7,7 +7,7 @@ using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 
-namespace FilterEconomy.Request.Enrichment
+namespace FilterEconomyProcessor.Enrichment
 {
     public class HighestPriceEnrichment : IDataEnrichment
     {
