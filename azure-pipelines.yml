@@ -47,7 +47,7 @@ steps:
 - task: DeleteFiles@1
   displayName: 'Delete folder'
   inputs:
-    SourceFolder:
+    SourceFolder: '$(Agent.BuildDirectory)'
     Contents: '.vscode*'
     RemoveSourceFolder: true
 
