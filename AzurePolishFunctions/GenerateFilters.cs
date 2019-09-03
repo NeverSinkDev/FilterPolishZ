@@ -7,11 +7,20 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using FilterEconomy.Facades;
+using FilterCore;
+using FilterEconomyProcessor;
+using System.Linq;
 
 namespace AzurePolishFunctions
 {
     public static class GenerateFilters
     {
+        public static EconomyRequestFacade EconomyData { get; set; }
+        public static ItemInformationFacade ItemInfoData { get; set; }
+        public static TierListFacade TierListFacade { get; set; }
+        public static FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
+
         [FunctionName("GenerateFilters")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req,
@@ -33,11 +42,15 @@ namespace AzurePolishFunctions
         public static void PerformMainRoutine()
         {
             // 0) Establish Logging, Facades
+
             // 0) Get Current League information etc
             // 1) Acquire Data
             // 2) Test Data
             // 3) Initialize static enrichment information
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
+
+            EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+            TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
             // 5) Generate Suggestions 
             // 6) Apply suggestions
             // 7) Generate Filters

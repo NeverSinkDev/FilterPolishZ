@@ -18,4 +18,8 @@
   <ItemGroup>
     <Folder Include="Workflow\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FilterCore\FilterCore.csproj" />
+    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
+  </ItemGroup>
 </Project>
