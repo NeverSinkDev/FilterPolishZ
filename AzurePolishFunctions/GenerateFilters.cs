@@ -29,5 +29,20 @@ namespace AzurePolishFunctions
                 ? (ActionResult)new OkObjectResult($"Hello, {name}")
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
+
+        public static void PerformMainRoutine()
+        {
+            // 0) Establish Logging, Facades
+            // 0) Get Current League information etc
+            // 1) Acquire Data
+            // 2) Test Data
+            // 3) Initialize static enrichment information
+            // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
+            // 5) Generate Suggestions 
+            // 6) Apply suggestions
+            // 7) Generate Filters
+            // 8) Generate changelogs
+            // 9) Upload filters
+        }
     }
 }
