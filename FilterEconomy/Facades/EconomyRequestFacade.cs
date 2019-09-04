@@ -68,7 +68,7 @@ namespace FilterEconomy.Facades
                     }
                     
                     // poeNinja down -> use most recent local file
-                    if (responseString == null || responseString.Length < 400)
+                    if ((responseString == null || responseString.Length < 400) && requestType == RequestType.Dynamic)
                     {
                         var recentFile = Directory
                             .EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), ""))

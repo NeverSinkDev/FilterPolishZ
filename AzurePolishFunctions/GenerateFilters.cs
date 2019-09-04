@@ -11,6 +11,7 @@ using FilterEconomy.Facades;
 using FilterCore;
 using FilterEconomyProcessor;
 using System.Linq;
+using AzurePolishFunctions.DataFileRequests;
 
 namespace AzurePolishFunctions
 {
@@ -20,6 +21,7 @@ namespace AzurePolishFunctions
         public static ItemInformationFacade ItemInfoData { get; set; }
         public static TierListFacade TierListFacade { get; set; }
         public static FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
+        public static DataFileRequestFacade DataFiles { get; set; }
 
         [FunctionName("GenerateFilters")]
         public static async Task<IActionResult> Run(
@@ -45,6 +47,9 @@ namespace AzurePolishFunctions
 
             // 0) Get Current League information etc
             // 1) Acquire Data
+            DataFiles = new DataFileRequestFacade();
+            DataFiles.GetAllFiles("Standard");
+            
             // 2) Test Data
             // 3) Initialize static enrichment information
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
