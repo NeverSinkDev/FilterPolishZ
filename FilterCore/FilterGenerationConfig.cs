@@ -103,7 +103,9 @@ namespace FilterCore
             { "REMS",   entry => new RemoveHighlightsEntryCommand(entry) },
             { "UP",     entry => new RaresUpEntryCommand(entry) },
             { "RVR",    entry => new RarityVariationRuleEntryCommand(entry) },
-            { "C",      entry => new ConsoleStrictnessCommand(entry) }
+            { "C",      entry => new ConsoleStrictnessCommand(entry) },
+            { "SENDER", entry => new SenderEntryCommand(entry) },
+            { "RECEIVER",entry => new ReceiverEntryCommand(entry) },
         };
 
         public static HashSet<string> StyleIdents = new HashSet<string>

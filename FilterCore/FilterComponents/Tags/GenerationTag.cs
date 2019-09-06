@@ -26,6 +26,15 @@ namespace FilterCore.FilterComponents.Tags
                 return $"%{Value}{Strictness}";
             }
 
+            if (this is ReceiverEntryCommand rec)
+            {
+                return $"%{this.Value}{rec.TypeValue}";
+            }
+            if (this is SenderEntryCommand sen)
+            {
+                return $"%{this.Value}{sen.TypeValue}";
+            }
+
             return $"%{Value}";
         }
 
