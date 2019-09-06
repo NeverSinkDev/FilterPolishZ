@@ -11,6 +11,9 @@ using FilterEconomy.Facades;
 using FilterCore;
 using FilterEconomyProcessor;
 using System.Linq;
+using System.Collections.Generic;
+using FilterPolishUtil.Collections;
+using FilterEconomy.Model;
 
 namespace AzurePolishFunctions
 {
@@ -49,13 +52,59 @@ namespace AzurePolishFunctions
             // 3) Initialize static enrichment information
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
 
+            //FilterAccessFacade.PrimaryFilter = PerformFilterWork();
+
             EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+
             // 5) Generate Suggestions 
+
+            var economyTieringSystem = new ConcreteEconomyRules();
+            economyTieringSystem.GenerateSuggestions();
+            TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+
             // 6) Apply suggestions
+
+            TierListFacade.ApplyAllSuggestions();
+
             // 7) Generate Filters
             // 8) Generate changelogs
             // 9) Upload filters
+        }
+
+        private static void CreateSubEconomyTiers()
+        {
+            var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+            var elderbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+            var otherbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+
+            foreach (var items in EconomyData.EconomyTierlistOverview["basetypes"])
+            {
+                var shapergroup = items.Value.Where(x => x.Variant == "Shaper").ToList();
+                if (shapergroup.Count != 0)
+                {
+                    shaperbases.Add(items.Key, new ItemList<NinjaItem>());
+                    shaperbases[items.Key].AddRange((shapergroup));
+                }
+
+                var eldegroup = items.Value.Where(x => x.Variant == "Elder").ToList();
+                if (eldegroup.Count != 0)
+                {
+                    elderbases.Add(items.Key, new ItemList<NinjaItem>());
+                    elderbases[items.Key].AddRange((eldegroup));
+                }
+
+                var othergroup = items.Value.Where(x => x.Variant != "Shaper" && x.Variant != "Elder").ToList();
+                if (othergroup.Count != 0)
+                {
+                    otherbases.Add(items.Key, new ItemList<NinjaItem>());
+                    otherbases[items.Key].AddRange((othergroup));
+                }
+            }
+
+            EconomyData.AddToDictionary("rare->shaper", shaperbases);
+            EconomyData.AddToDictionary("rare->elder", elderbases);
+            EconomyData.AddToDictionary("rare->normal", otherbases);
         }
     }
 }

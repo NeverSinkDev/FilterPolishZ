@@ -59,6 +59,7 @@ namespace FilterCore
             { "FracturedItem",       new BoolLineStrategy() },
             { "SynthesisedItem",     new BoolLineStrategy() },
             { "AnyEnchantment",      new BoolLineStrategy() },
+            { "BlightedMap",   new BoolLineStrategy() },
             { "ShapedMap",     new BoolLineStrategy() },
             { "ElderItem",     new BoolLineStrategy() },
             { "ShaperItem",    new BoolLineStrategy() },
