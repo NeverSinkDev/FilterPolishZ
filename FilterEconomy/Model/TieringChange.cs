@@ -34,6 +34,12 @@ namespace FilterEconomy.Model
             result.Confidence = item.Confidence;
             result.Category = item.Group;
 
+            if (item.LocalIgnore)
+            {
+                result.NewTier = result.OldTier;
+                result.Reason = $"Change overriden, suggested change was: {item.NewTier}";
+            }
+
             result.Change = TranslateChange(item);
 
             if (!item.Group.ToLower().Contains("rare"))

@@ -125,6 +125,18 @@ namespace FilterEconomy.Model.ItemAspects
     public class EarlyLeagueInterestAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";
+
+        public override bool IsActive()
+        {
+            if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("EarlyLeagueInterestAspect"))
+            {
+                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"] > DateTime.Now)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     public class MetaBiasAspect : AbstractItemAspect

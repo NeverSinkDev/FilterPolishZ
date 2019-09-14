@@ -151,7 +151,7 @@ namespace FilterCore
 
         public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
         {
-            "rings", "amulets", "belts", "jewels", "daggers", "wands", "sceptres"
+            "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres"
         };
 
         public static readonly List<string> FilterStrictnessLevels = new List<string>

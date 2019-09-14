@@ -14,7 +14,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->normal", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs"
+            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->normal", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
         };
 
         /// <summary>
@@ -33,7 +33,8 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string, string>("basetypes", "basetypes", "ItemOverview?type=BaseType", "&"),
                 new Tuple<string, string, string, string>("currency->incubators", "incubators", "ItemOverview?type=Incubator", "&"),
                 new Tuple<string, string, string, string>("currency->prophecy", "prophecy", "ItemOverview?type=Prophecy", "&"),
-                new Tuple<string, string, string, string>("fragments->scarabs", "scarabs", "ItemOverview?type=Scarab", "&")
+                new Tuple<string, string, string, string>("fragments->scarabs", "scarabs", "ItemOverview?type=Scarab", "&"),
+                new Tuple<string, string, string, string>("currency->oil", "oil", "ItemOverview?type=Oil", "&")
         };
 
         /// <summary>
@@ -41,17 +42,19 @@ namespace FilterPolishUtil
         /// </summary>
         public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
 
-        public static float SuperTierBreakPoint = 600;          // Exception for league only, uncommon, special uniques
+        public static float GlobalPriceModifier = 0.72f;
 
-        public static float T1BreakPoint = 20;
-        public static float T2BreakPoint = 5;
+        public static float SuperTierBreakPoint = 600 * GlobalPriceModifier;          // Exception for league only, uncommon, special uniques
 
-        public static float T1BaseTypeBreakPoint = 25f;
-        public static float T2BaseTypeBreakPoint = 6f;
+        public static float T1BreakPoint = 20 * GlobalPriceModifier;
+        public static float T2BreakPoint = 5 * GlobalPriceModifier;
 
-        public static float T1DiviBreakPoint = 20f;
-        public static float T2DiviBreakPoint = 9f;
-        public static float T3DiviBreakPoint = 2f;
+        public static float T1BaseTypeBreakPoint = 25f * GlobalPriceModifier;
+        public static float T2BaseTypeBreakPoint = 6f * GlobalPriceModifier;
+
+        public static float T1DiviBreakPoint = 20f * GlobalPriceModifier;
+        public static float T2DiviBreakPoint = 9f * GlobalPriceModifier;
+        public static float T3DiviBreakPoint = 2f * GlobalPriceModifier;
         public static float T5DiviBreakPoint = 0.5f;
 
         public static float UncommonAspectMultiplier = 2.5f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint

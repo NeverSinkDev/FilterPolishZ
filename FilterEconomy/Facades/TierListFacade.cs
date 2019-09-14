@@ -97,6 +97,10 @@ namespace FilterEconomy.Facades
 
         public void ApplyCommand(TieringCommand command)
         {
+            if (command.LocalIgnore)
+            {
+                return;
+            }
 
             if (command.Performed)
             {

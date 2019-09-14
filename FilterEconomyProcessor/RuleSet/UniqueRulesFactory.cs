@@ -135,17 +135,23 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
 
             // uniques that have changed in the latest league
-            builder.AddRule("Changed?", "metainfluenced",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
-                }));
+            //builder.AddRule("Changed?", "metainfluenced",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
+            //    }));
 
             // usually used for new leagues
-            builder.AddRule("MetaSave", "t2",
+            //builder.AddRule("MetaSave", "t2",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+            //    }));
+
+            builder.AddRule("EarlyLeagueInterest", "metainfluenced",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+                    return builder.RuleSet.DefaultSet.HasAspect("EarlyLeagueInterestAspect");
                 }));
 
             // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events

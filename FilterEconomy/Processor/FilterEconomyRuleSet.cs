@@ -184,7 +184,10 @@ namespace FilterEconomy.Processor
                     !FilterGenerationConfig.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
             }
        }
-       public bool Performed { get; set; }
+
+        public bool LocalIgnore { get; set; } = false;
+
+        public bool Performed { get; set; }
 
     }
 }

@@ -379,7 +379,7 @@ namespace FilterPolishZ
         {
             var gitFolder = Configuration.AppSettings["Git Folder"];
 
-            LoggingFacade.LogInfo($"Copying filter files from: {gitFolder}");
+            LoggingFacade.LogInfo($"Copying filter files to: {gitFolder}");
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
             {

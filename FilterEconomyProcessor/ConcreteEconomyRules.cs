@@ -21,6 +21,8 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet prophecyRules;
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
+        private FilterEconomyRuleSet oilRules;
+
 
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
@@ -41,6 +43,7 @@ namespace FilterEconomyProcessor
             this.uniquemapsRules = this.GenerateUniqueMapRules();
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
+            this.oilRules = this.GenerateBlightOilRuleSet();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
@@ -57,6 +60,7 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
             this.Rules.Add(this.scarabRules);
+            this.Rules.Add(this.oilRules);
             // this.Rules.Add(this.normalRules);
         }
 
@@ -79,7 +83,7 @@ namespace FilterEconomyProcessor
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint)
                 .AddRestRule()
-                .Build();
+                .Build();       
         }
 
         private FilterEconomyRuleSet GenerateIncubatorTieringRules()
@@ -102,7 +106,7 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint * 1.25f)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2BreakPoint)
                 .AddRestRule()
                 .Build();
@@ -115,10 +119,24 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint * 1.25f)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint)
                 .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.T5DiviBreakPoint)
                 .AddRestRule()
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateBlightOilRuleSet()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("currency->oil")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint * 1.5f)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint * 1.25f)
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.T5DiviBreakPoint * 1.5f)
+                .AddExplicitRest("t3","t3")
                 .Build();
         }
     }

@@ -15,7 +15,7 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            //this.ActiveMetaTags.Add("MetaBiasAspect", DateTime.Now.AddDays(7));
+            //this.ActiveMetaTags.Add("EarlyLeagueInterestAspect", DateTime.Now.AddDays(7));
         }
 
         public static EconomyRequestFacade GetInstance()
