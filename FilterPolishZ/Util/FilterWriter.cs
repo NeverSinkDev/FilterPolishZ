@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FilterCore;
 using FilterCore.Commands;
 using FilterCore.Constants;
+using FilterCore.Tests;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
 using FilterPolishWindowUtils;
@@ -157,7 +158,7 @@ namespace FilterPolishZ.Util
 //                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
 //            }
             
-//            FilterStyleVerifyer.Run(baseFilter); // todo: re-enable this when the filter doesnt have the tons of errors anymore
+            FilterStyleVerifyer.Run(baseFilter);
 
             if (errorMsg.Count > 0)
             {

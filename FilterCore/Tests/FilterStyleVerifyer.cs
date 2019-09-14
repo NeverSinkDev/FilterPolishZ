@@ -66,9 +66,9 @@ namespace FilterCore.Tests
                             msg += " \n";
                             i++;
                         }
-
-
+                        
                         // TODO: Add: "Do you want to select the name #" + index + " as style name?";
+                        return;
 
                         pair.Value.RemoveAll(x => x.Key != selectedName);
                         break;
@@ -103,6 +103,7 @@ namespace FilterCore.Tests
 
                         // TODO: Make it conditional
                         msg += "Do you want to select value #" + index + " as style value?";
+                        return;
 
                         var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
                         foreach (var keyValuePair in removed)
@@ -113,7 +114,11 @@ namespace FilterCore.Tests
 
                             this.valueToNamesDic.Remove(oldValue);
                             if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
-                            else throw new Exception("unexpected error in filterStyleVerifyer");
+                            else
+                            {
+//                                throw new Exception("unexpected error in filterStyleVerifyer");
+                                this.valueToNamesDic[selectedValue].Add(pair.Key, keyValuePair.Value);
+                            }
                         }
                         break;
 
@@ -181,36 +186,38 @@ namespace FilterCore.Tests
                 if (this.valueToNamesDic.ContainsKey(value))
                 {
                     var styleNames = this.valueToNamesDic[value];
-                    var newName = styleNames.Keys.Single();
+                    var newName = styleNames.OrderByDescending(x => x.Value).First().Key;
                     if (newName == name) return;
                     line.Comment = newName;
                 }
 
                 else if (this.nameToValuesDic.ContainsKey(name))
                 {
-                    throw new Exception("unexpected care for styleVerifier");
+                    Console.WriteLine("todo");
+//                    throw new Exception("unexpected care for styleVerifier");
                 }
             }
             
             private void VerifyStyleValues(string value, string name, IFilterLine line)
             {
-                if (this.nameToValuesDic.ContainsKey(name))
-                {
-                    var newValue = this.nameToValuesDic[name].Keys.Single();
-                    if (newValue == value) return;
-                    
-                    var newLine = LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(line.Ident + " " + newValue));
-                    line.Value = newLine.Value;
-                }
+//                if (this.nameToValuesDic.ContainsKey(name))
+//                {
+//                    var newValue = this.nameToValuesDic[name].OrderByDescending(x => x.Value).First().Key;
+////                    if (newValue == value) return;
+//
+//                    var newLine = LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(line.Ident + " " + newValue));
+//                    line.Value = newLine.Value;
+//                }
 
-                else if (this.valueToNamesDic.ContainsKey(value))
+                if (this.valueToNamesDic.ContainsKey(value))
                 {
                     // style name was removed -> check dic for new name
-                    var newName = this.valueToNamesDic[value].Keys.Single();
+                    var newName = this.valueToNamesDic[value].OrderByDescending(x => x.Value).First().Key;
                     if (newName == name) return;
-                    
+
                     line.Comment = newName;
                 }
+            
             }
         }
     }
