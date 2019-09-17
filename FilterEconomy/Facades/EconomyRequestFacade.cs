@@ -98,7 +98,7 @@ namespace FilterEconomy.Facades
                     if (!string.IsNullOrEmpty(responseString))
                     {
                         // Store locally
-                        FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
+                        FileWork.WriteTextAsync(fileFullPath, responseString).Wait();
                     }
                 }
 

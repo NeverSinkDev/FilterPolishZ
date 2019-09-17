@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Model;
 
 namespace AzurePolishFunctions.DataFileRequests
 {
@@ -29,20 +33,32 @@ namespace AzurePolishFunctions.DataFileRequests
 
             // Lade Economy Dateien -> ninja API
             this.LoadEcoData(ninjaLeague);
+            
+            var itemData = ItemInformationFacade.GetInstance();
+            var economyData = EconomyRequestFacade.GetInstance();
+            foreach (var branchKey in economyData.EconomyTierlistOverview.Keys)
+            {
+                itemData.Deserialize(branchKey, String.Join(Environment.NewLine, this.ItemAspects[branchKey.Replace("->", "")]));
+                itemData.MigrateAspectDataToEcoData(economyData, branchKey);
+            }
         }
 
         private void LoadEcoData(string ninjaLeague)
         {
-            var result = FilterEconomy.Facades.EconomyRequestFacade.GetInstance();
+            var result = GenerateFilters.EconomyData;
             var ninjaUrl = "http://poe.ninja/api/Data/"; //Configuration.AppSettings["Ninja Request URL"];
             var variation = ninjaLeague; //Configuration.AppSettings["Ninja League"];
             var league = ""; // Configuration.AppSettings["betrayal"];
-            var requestMode = FilterEconomy.Facades.EconomyRequestFacade.RequestType.ForceOnline;
+            var requestMode = FilterEconomy.Facades.EconomyRequestFacade.RequestType.Dynamic; //FilterEconomy.Facades.EconomyRequestFacade.RequestType.ForceOnline;
 
+            var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+//                tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
             }
+//            tasks.ForEach(x => x.Start());
+//            Task.WaitAll(tasks.ToArray());
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
@@ -67,13 +83,13 @@ namespace AzurePolishFunctions.DataFileRequests
             System.IO.Directory
                 .EnumerateFiles(repoDlPath + styleFolderRepoPath)
                 .ToList()
-                .ForEach(x => this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x), System.IO.File.ReadAllLines(x).ToList()));
+                .ForEach(x => this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x).Split(".").First(), System.IO.File.ReadAllLines(x).ToList()));
             
             // aspects
             System.IO.Directory
                 .EnumerateFiles(new GitHubFileDownloader().Download(nsName, "Filter-ItemEconomyAspects"))
                 .ToList()
-                .ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x), System.IO.File.ReadAllLines(x).ToList()));
+                .ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
         }
 
     }

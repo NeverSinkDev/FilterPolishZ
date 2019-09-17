@@ -11,63 +11,56 @@ using FilterEconomy.Facades;
 using FilterCore;
 using FilterEconomyProcessor;
 using System.Linq;
-<<<<<<< HEAD
 using System.Collections.Generic;
 using FilterPolishUtil.Collections;
 using FilterEconomy.Model;
-=======
 using AzurePolishFunctions.DataFileRequests;
->>>>>>> Azure-Kickoff
+using FilterPolishUtil;
 
 namespace AzurePolishFunctions
 {
     public static class GenerateFilters
     {
-        public static EconomyRequestFacade EconomyData { get; set; }
+        public static EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
         public static ItemInformationFacade ItemInfoData { get; set; }
-        public static TierListFacade TierListFacade { get; set; }
+        public static TierListFacade TierListFacade { get; set; } = TierListFacade.GetInstance();
         public static FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
         public static DataFileRequestFacade DataFiles { get; set; }
 
         [FunctionName("GenerateFilters")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return PerformMainRoutine();
         }
 
-        public static void PerformMainRoutine()
+        public static IActionResult PerformMainRoutine()
         {
             // 0) Establish Logging, Facades
 
             // 0) Get Current League information etc
             // 1) Acquire Data
-            DataFiles = new DataFileRequestFacade();
-            DataFiles.GetAllFiles("Standard");
+            if (DataFiles == null)
+            {
+                // todo: handling for repeated function calls after static vars already initialized
+                DataFiles = new DataFileRequestFacade();
+                DataFiles.GetAllFiles("Standard");
+            }
             
             // 2) Test Data
             // 3) Initialize static enrichment information
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
 
-            //FilterAccessFacade.PrimaryFilter = PerformFilterWork();
+            FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
 
+            ConcreteEnrichmentProcedures.Initialize();
             EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
-            // 5) Generate Suggestions 
+            // 5) Generate Suggestions
 
             var economyTieringSystem = new ConcreteEconomyRules();
+            TierListFacade.TierListData = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
             economyTieringSystem.GenerateSuggestions();
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
@@ -78,6 +71,8 @@ namespace AzurePolishFunctions
             // 7) Generate Filters
             // 8) Generate changelogs
             // 9) Upload filters
+            
+            return new OkObjectResult("successfully generated filters");
         }
 
         private static void CreateSubEconomyTiers()

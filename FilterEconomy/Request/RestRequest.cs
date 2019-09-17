@@ -29,12 +29,12 @@ namespace FilterEconomy.Request
 
         private static string PerformRequest(string url)
         {
+            return new WebClient().DownloadString(url);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             // request.ContentType = contentType;
             request.Method = WebRequestMethods.Http.Get;
             request.Timeout = 20000;
-            request.Proxy = null;
-            WebResponse response = request.GetResponse();
+            WebResponse response = request.GetResponse(); // todo: 
 
             using (Stream responseStream = response.GetResponseStream())
             using (StreamReader sr = new StreamReader(responseStream))
