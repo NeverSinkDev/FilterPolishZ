@@ -381,7 +381,7 @@ namespace FilterPolishZ
 
             LoggingFacade.LogInfo($"Copying filter files to: {gitFolder}");
 
-            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"], "*", SearchOption.AllDirectories))
             {
                 var valid = false;
 
@@ -389,6 +389,7 @@ namespace FilterPolishZ
                 {
                     valid = true;
                 }
+
                 if (file.ToLower().Contains("unnamed") || file.ToLower().Contains("copy"))
                 {
                     continue;
@@ -399,7 +400,8 @@ namespace FilterPolishZ
                     continue;
                 }
 
-                var targetPath = gitFolder + "\\" + file.Split('/', '\\').Last();
+                var targetPath = gitFolder + file.SkipSegment(Configuration.AppSettings["Output Folder"]);
+                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(targetPath));
                 System.IO.File.Copy(file, targetPath, true);
             }
 
