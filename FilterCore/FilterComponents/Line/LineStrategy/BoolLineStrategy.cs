@@ -48,5 +48,10 @@ namespace FilterDomain.LineStrategy
         {
             return Value ? "True" : "False";
         }
+
+        public bool IsValid()
+        {
+            return true;
+        }
     }
 }

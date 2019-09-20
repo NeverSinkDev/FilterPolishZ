@@ -14,7 +14,12 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->normal", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+        };
+
+        public static HashSet<string> SpecialBases { get; set; } = new HashSet<string>()
+        {
+            "Opal Ring", "Steel Ring", "Vermillion Ring", "Blue Pearl Amulet", "Bone Helmet", "Cerulean Ring", "Convoking Wand", "Crystal Belt", "Fingerless Silk Gloves", "Gripped Gloves", "Marble Amulet", "Sacrificial Garb", "Spiked Gloves", "Stygian Vise", "Two-Toned Boots", "Vanguard Belt"
         };
 
         /// <summary>
@@ -42,20 +47,30 @@ namespace FilterPolishUtil
         /// </summary>
         public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
 
-        public static float GlobalPriceModifier = 0.72f;
+        public static float GlobalPriceModifier = 0.8f;
 
         public static float SuperTierBreakPoint = 600 * GlobalPriceModifier;          // Exception for league only, uncommon, special uniques
 
+        // Unique Breakpoints - uniques have a lower breakpoints, due to item stat variations
         public static float T1BreakPoint = 20 * GlobalPriceModifier;
         public static float T2BreakPoint = 5 * GlobalPriceModifier;
 
-        public static float T1BaseTypeBreakPoint = 25f * GlobalPriceModifier;
+        // BaseType Pricing - basetype tiered items can be more expensive due to a plethora of different factors
+        // However, to minimize disapointing mistakes, we keep the T1 breakpoint up high
+        public static float T1BaseTypeBreakPoint = 35f * GlobalPriceModifier;
         public static float T2BaseTypeBreakPoint = 6f * GlobalPriceModifier;
 
-        public static float T1DiviBreakPoint = 20f * GlobalPriceModifier;
-        public static float T2DiviBreakPoint = 9f * GlobalPriceModifier;
+        // Divination cards are tricky
+        public static float T1DiviBreakPoint = 25f * GlobalPriceModifier;
+        public static float T2DiviBreakPoint = 8f * GlobalPriceModifier;
         public static float T3DiviBreakPoint = 2f * GlobalPriceModifier;
         public static float T5DiviBreakPoint = 0.5f;
+
+        // Fossils and scarabs are often predictable -drops-. Predictable drops are often best kept at high threshholds
+        public static float T1MiscBreakPoint = 35f * GlobalPriceModifier;
+        public static float T2MiscBreakPoint = 10f * GlobalPriceModifier;
+        public static float T3MiscBreakPoint = 3f * GlobalPriceModifier;
+        public static float T4MiscBreakPoint = 1f;
 
         public static float UncommonAspectMultiplier = 2.5f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
         public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint

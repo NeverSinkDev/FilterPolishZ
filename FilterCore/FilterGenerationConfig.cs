@@ -166,5 +166,10 @@ namespace FilterCore
         {
             "PlayEffect", "MinimapIcon", "PlayAlertSound", "CustomAlertSound", "PlayAlertSoundPositional"
         };
+
+        public static readonly HashSet<string> ValidRarities = new HashSet<string>
+        {
+            "Normal", "Magic", "Rare", "Unique"
+        };
     }
 }

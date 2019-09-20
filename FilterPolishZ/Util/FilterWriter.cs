@@ -158,7 +158,7 @@ namespace FilterPolishZ.Util
 //                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
 //            }
             
-            FilterStyleVerifyer.Run(baseFilter);
+            // FilterStyleVerifyer.Run(baseFilter);
 
             if (errorMsg.Count > 0)
             {

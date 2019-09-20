@@ -36,7 +36,7 @@ namespace FilterEconomyProcessor
                 });
 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "rare->shaper", "rare->elder", "rare->normal" },
+                new List<string>() { "rare->shaper", "rare->elder", "generalcrafting" },
                 new List<IDataEnrichment>()
                 {
                     new ShaperElderEnrichment(),

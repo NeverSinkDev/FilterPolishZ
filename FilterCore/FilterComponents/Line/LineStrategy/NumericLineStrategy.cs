@@ -67,5 +67,18 @@ namespace FilterDomain.LineStrategy
                 return $"{Operator?.ToString() ?? string.Empty} {Value.ToString()}";
             }
         }
+
+        public bool IsValid()
+        {
+            int number = 0;
+            bool success = int.TryParse(this.Value, out number);
+
+            if (success)
+            {
+                return number >= 0;
+            }
+
+            return FilterGenerationConfig.ValidRarities.Contains(this.Value);
+        }
     }
 }

@@ -22,6 +22,9 @@ namespace FilterCore.FilterComponents.Tier
         // TierKey : Tier
         public Dictionary<string, SingleTier> FilterEntries { get; set; } = new Dictionary<string, SingleTier>();
 
+        // List of entries that do not fit in the "disable if empty" concept
+        public HashSet<string> NonBaseTypeEntries { get; set; } = new HashSet<string>();
+
         // Item : TierKey
         public Dictionary<string, List<string>> ItemTiering = new Dictionary<string, List<string>>();
 

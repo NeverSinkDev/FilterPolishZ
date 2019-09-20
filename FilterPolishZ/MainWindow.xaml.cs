@@ -123,7 +123,7 @@ namespace FilterPolishZ
 
             this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
             this.EconomyData.AddToDictionary("rare->elder", elderbases);
-            this.EconomyData.AddToDictionary("rare->normal", otherbases);
+            this.EconomyData.AddToDictionary("generalcrafting", otherbases);
 
             LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }

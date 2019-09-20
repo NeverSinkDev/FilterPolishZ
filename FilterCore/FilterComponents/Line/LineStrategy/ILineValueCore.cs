@@ -8,5 +8,6 @@ namespace FilterDomain.LineStrategy
         string Serialize();
         void Parse(List<LineToken> tokens);
         ILineValueCore Clone();
+        bool IsValid();
     }
 }

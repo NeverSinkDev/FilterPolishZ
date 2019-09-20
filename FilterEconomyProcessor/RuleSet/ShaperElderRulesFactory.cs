@@ -31,7 +31,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1-82", "t1-1",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.8f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.85f)
                     {
                         return false;
                     }
@@ -44,7 +44,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1-84", "t1-2",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.7f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.75f)
                     {
                         return false;
                     }
@@ -56,7 +56,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1-86", "t1-3",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.6f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.65f)
                     {
                         return false;
                     }

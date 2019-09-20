@@ -42,7 +42,7 @@ namespace FilterEconomy.Model
 
             result.Change = TranslateChange(item);
 
-            if (!item.Group.ToLower().Contains("rare"))
+            if (!item.Group.ToLower().Contains("rare") && !item.Group.ToLower().Contains("craft"))
             {
                 var items = ItemInformationFacade.GetInstance()[item.Group, item.BaseType];
                 if (items != null)

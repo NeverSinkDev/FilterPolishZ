@@ -46,12 +46,17 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
-            if (this.Value.Count == 0)
+            return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
+        }
+
+        public bool IsValid()
+        {
+            if (this.Value == null || this.Value.Count == 0)
             {
-                LoggingFacade.LogError("ERROR! Empty line in EnumValueContainer!");
+                return false;
             }
 
-            return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
+            return true;
         }
     }
 }
