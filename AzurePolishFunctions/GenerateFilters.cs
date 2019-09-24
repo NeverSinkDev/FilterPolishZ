@@ -34,24 +34,34 @@ namespace AzurePolishFunctions
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            return PerformMainRoutine();
+
+            Logging?.Clean();
+            Logging = LoggingFacade.GetInstance();
+
+            try
+            {
+                PerformMainRoutine();
+            }
+            catch (Exception e)
+            {
+                Logging.Log(e.Message, LoggingLevel.Errors);
+            }
+
+            return new OkObjectResult("successfully generated filters");
         }
 
-        public static IActionResult PerformMainRoutine()
+        public static void PerformMainRoutine()
         {
             // 0) Cleanup
-
             EconomyData?.Clean();
             ItemInfoData?.Clean();
             TierListFacade?.Clean();
             FilterAccessFacade?.Clean();
-            Logging?.Clean();
 
             EconomyData = EconomyRequestFacade.GetInstance();
             TierListFacade = TierListFacade.GetInstance();
             FilterAccessFacade = FilterAccessFacade.GetInstance();
             ItemInfoData = ItemInformationFacade.GetInstance();
-            Logging = LoggingFacade.GetInstance();
 
             // 0) Get Current League information etc
             // 1) Acquire Data
@@ -92,8 +102,7 @@ namespace AzurePolishFunctions
             // 7) Generate Filters
             // 8) Generate changelogs
             // 9) Upload filters
-            
-            return new OkObjectResult("successfully generated filters");
+
         }
 
         private static void CreateSubEconomyTiers()
