@@ -49,7 +49,7 @@ namespace FilterPolishUtil
 
         public static float GlobalPriceModifier = 0.8f;
 
-        public static float SuperTierBreakPoint = 600 * GlobalPriceModifier;          // Exception for league only, uncommon, special uniques
+        public static float SuperTierBreakPoint = 600 * GlobalPriceModifier; // Exception for league only, uncommon, special uniques
 
         // Unique Breakpoints - uniques have a lower breakpoints, due to item stat variations
         public static float T1BreakPoint = 20 * GlobalPriceModifier;
@@ -76,9 +76,5 @@ namespace FilterPolishUtil
         public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
         public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
         public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
-
-
-
-
     }
 }

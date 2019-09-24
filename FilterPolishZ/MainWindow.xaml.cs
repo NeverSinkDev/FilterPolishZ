@@ -401,7 +401,12 @@ namespace FilterPolishZ
                 }
 
                 var targetPath = gitFolder + file.SkipSegment(Configuration.AppSettings["Output Folder"]);
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(targetPath));
+
+                if (!Directory.Exists(System.IO.Path.GetDirectoryName(targetPath)))
+                {
+                    Directory.CreateDirectory(System.IO.Path.GetDirectoryName(targetPath));
+                }
+                
                 System.IO.File.Copy(file, targetPath, true);
             }
 
