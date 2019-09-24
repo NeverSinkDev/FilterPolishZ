@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FilterPolishUtil.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FilterPolishUtil.Model
 {
-    public class LoggingFacade
+    public class LoggingFacade : ICleanable
     {
         private static LoggingFacade instance;
 
@@ -95,6 +96,12 @@ namespace FilterPolishUtil.Model
         public void ClearLogs()
         {
             Logs.Clear();
+        }
+
+        public void Clean()
+        {
+            this.ClearLogs();
+            instance = null;
         }
     }
 }

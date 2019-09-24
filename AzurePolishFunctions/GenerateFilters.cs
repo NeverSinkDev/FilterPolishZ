@@ -16,16 +16,19 @@ using FilterPolishUtil.Collections;
 using FilterEconomy.Model;
 using AzurePolishFunctions.DataFileRequests;
 using FilterPolishUtil;
+using FilterPolishUtil.Model;
 
 namespace AzurePolishFunctions
 {
     public static class GenerateFilters
     {
-        public static EconomyRequestFacade EconomyData { get; set; } = EconomyRequestFacade.GetInstance();
+        public static EconomyRequestFacade EconomyData { get; set; } 
         public static ItemInformationFacade ItemInfoData { get; set; }
-        public static TierListFacade TierListFacade { get; set; } = TierListFacade.GetInstance();
-        public static FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
+        public static TierListFacade TierListFacade { get; set; }
+        public static FilterAccessFacade FilterAccessFacade { get; set; }
         public static DataFileRequestFacade DataFiles { get; set; }
+
+        public static LoggingFacade Logging { get; set; }
 
         [FunctionName("GenerateFilters")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req, ILogger log)
@@ -36,7 +39,19 @@ namespace AzurePolishFunctions
 
         public static IActionResult PerformMainRoutine()
         {
-            // 0) Establish Logging, Facades
+            // 0) Cleanup
+
+            EconomyData?.Clean();
+            ItemInfoData?.Clean();
+            TierListFacade?.Clean();
+            FilterAccessFacade?.Clean();
+            Logging?.Clean();
+
+            EconomyData = EconomyRequestFacade.GetInstance();
+            TierListFacade = TierListFacade.GetInstance();
+            FilterAccessFacade = FilterAccessFacade.GetInstance();
+            ItemInfoData = ItemInformationFacade.GetInstance();
+            Logging = LoggingFacade.GetInstance();
 
             // 0) Get Current League information etc
             // 1) Acquire Data
@@ -46,13 +61,17 @@ namespace AzurePolishFunctions
                 DataFiles = new DataFileRequestFacade();
                 DataFiles.GetAllFiles("Standard");
             }
-            
+
             // 2) Test Data
+
+
+
             // 3) Initialize static enrichment information
+
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
 
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
-
+            CreateSubEconomyTiers();
             ConcreteEnrichmentProcedures.Initialize();
             EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
@@ -107,7 +126,7 @@ namespace AzurePolishFunctions
 
             EconomyData.AddToDictionary("rare->shaper", shaperbases);
             EconomyData.AddToDictionary("rare->elder", elderbases);
-            EconomyData.AddToDictionary("rare->normal", otherbases);
+            EconomyData.AddToDictionary("generalcrafting", otherbases);
         }
     }
 }

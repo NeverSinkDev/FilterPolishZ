@@ -3,6 +3,7 @@ using FilterEconomy.Request;
 using FilterEconomy.Request.Parsing;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Interfaces;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Linq;
 
 namespace FilterEconomy.Facades
 {
-    public class EconomyRequestFacade
+    public class EconomyRequestFacade : ICleanable
     {
         private EconomyRequestFacade()
         {
@@ -153,6 +154,12 @@ namespace FilterEconomy.Facades
             {
                 this.EconomyTierlistOverview[leagueKey].Add(keyvalue.Key, keyvalue.Value);
             }
+        }
+
+        public void Clean()
+        {
+            this.Reset();
+            instance = null;
         }
 
         public enum RequestType

@@ -7,6 +7,7 @@ using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
+using FilterPolishUtil.Interfaces;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Linq;
 
 namespace FilterEconomy.Facades
 {
-    public class TierListFacade
+    public class TierListFacade : ICleanable
     {
         private static TierListFacade Instance { get; set; }
         public Dictionary<string, TierGroup> TierListData { get; set; } = new Dictionary<string, TierGroup>();
@@ -283,6 +284,14 @@ namespace FilterEconomy.Facades
             this.Suggestions.Clear();
             this.TierListData.Clear();
             this.InitializeSuggestions();
+        }
+
+        public void Clean()
+        {
+            this.Reset();
+            this.Changelog.Clear();
+            this.Report.Clear();
+            Instance = null;
         }
     }
 }

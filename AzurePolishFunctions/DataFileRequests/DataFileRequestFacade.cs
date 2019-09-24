@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Interfaces;
 using FilterPolishUtil.Model;
 
 namespace AzurePolishFunctions.DataFileRequests
 {
-    public class DataFileRequestFacade
+    public class DataFileRequestFacade : ICleanable
     {
         public Dictionary<string, List<string>> FilterStyleSheets { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, List<string>> ItemAspects { get; set; } = new Dictionary<string, List<string>>();
@@ -18,7 +19,14 @@ namespace AzurePolishFunctions.DataFileRequests
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
         public List<string> SeedFilter { get; set; }
 
-        
+        public void Clean()
+        {
+            this.FilterStyleSheets?.Clear();
+            this.ItemAspects?.Clear();
+            this.BaseTypeData?.Clear();
+            EconomyData?.Clear();
+        }
+
         public void GetAllFiles(string ninjaLeague)
         {
             FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomLoggingAction = x => Console.WriteLine("err: " + x);

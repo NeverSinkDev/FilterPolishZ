@@ -12,10 +12,11 @@ using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
 using Newtonsoft.Json;
 using FilterPolishUtil.Model;
+using FilterPolishUtil.Interfaces;
 
 namespace FilterEconomy.Facades
 {
-    public class ItemInformationFacade
+    public class ItemInformationFacade : ICleanable
     {
         // singleton
         private ItemInformationFacade() { }
@@ -269,6 +270,12 @@ namespace FilterEconomy.Facades
             }
             
             return result;
+        }
+
+        public void Clean()
+        {
+            EconomyTierListOverview.Clear();
+            instance = null;
         }
     }
 }
