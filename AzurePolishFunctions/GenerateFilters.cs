@@ -71,7 +71,11 @@ namespace AzurePolishFunctions
             // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
 
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
+
+            var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
+            TierListFacade.TierListData = tiers;
             CreateSubEconomyTiers();
+
             ConcreteEnrichmentProcedures.Initialize();
             EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
@@ -79,9 +83,7 @@ namespace AzurePolishFunctions
             // 5) Generate Suggestions
 
             var economyTieringSystem = new ConcreteEconomyRules();
-            TierListFacade.TierListData = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
             economyTieringSystem.GenerateSuggestions();
-            TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             // 6) Apply suggestions
 
