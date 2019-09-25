@@ -62,11 +62,11 @@ namespace AzurePolishFunctions.DataFileRequests
             var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {
-                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
-//                tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
+//                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
             }
-//            tasks.ForEach(x => x.Start());
-//            Task.WaitAll(tasks.ToArray());
+            tasks.ForEach(x => x.Start());
+            Task.WaitAll(tasks.ToArray());
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
@@ -92,12 +92,13 @@ namespace AzurePolishFunctions.DataFileRequests
                 .EnumerateFiles(repoDlPath + styleFolderRepoPath)
                 .ToList()
                 .ForEach(x => this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x).Split(".").First(), System.IO.File.ReadAllLines(x).ToList()));
+            System.IO.Directory.Delete(repoDlPath, true);
             
             // aspects
-            System.IO.Directory
-                .EnumerateFiles(new GitHubFileDownloader().Download(nsName, "Filter-ItemEconomyAspects"))
-                .ToList()
-                .ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
+            var aspectFolder = new GitHubFileDownloader().Download(nsName, "Filter-ItemEconomyAspects");
+            var aspectFiles = System.IO.Directory.EnumerateFiles(aspectFolder).ToList();
+            aspectFiles.ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
+            System.IO.Directory.Delete(aspectFolder, true);
         }
 
     }

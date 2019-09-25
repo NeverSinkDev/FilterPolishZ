@@ -29,6 +29,12 @@ namespace FilterEconomy.Request
 
         private static string PerformRequest(string url)
         {
+//            using (WebClient wc = new WebClient() )
+//            {
+//                wc.Proxy=null;
+//                return wc.DownloadString(url);
+//            }
+            
             return new WebClient().DownloadString(url);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             // request.ContentType = contentType;
