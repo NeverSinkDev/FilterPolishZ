@@ -266,7 +266,16 @@ namespace FilterPolishZ
         [Time]
         private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
-            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder);
+            var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
+            var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
+            if (oldSeedVersion == newVersion)
+            {
+                var isStopping = !InfoPopUpMessageDisplay.DisplayQuestionMessageBox("Error: \n\nVersion did not change!\nDo you want to continue the filter generation?");
+                if (isStopping) return;
+            }
+            else baseFilter.SetHeaderMetaData("version:", newVersion);
+
+            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder, Configuration.AppSettings["StyleSheet Folder"]);
         }
 
         private async Task WriteSeedFilter(Filter baseFilter, string filePath)

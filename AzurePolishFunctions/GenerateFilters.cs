@@ -94,9 +94,11 @@ namespace AzurePolishFunctions
             // 6) Apply suggestions
             TierListFacade.ApplyAllSuggestions();
 
-            // 7) Generate Filters
-            // 8) Generate changelogs
-            // 9) Upload filters
+            // 7) Generate changelogs
+            // todo
+            
+            // 8) Generate and Upload Filters
+            new FilterPublisher(FilterAccessFacade.PrimaryFilter).Run();
         }
 
         private static void CreateSubEconomyTiers()
