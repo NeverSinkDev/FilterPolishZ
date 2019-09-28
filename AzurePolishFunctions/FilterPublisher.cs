@@ -18,7 +18,7 @@ namespace AzurePolishFunctions
         public void Run()
         {
             var repoName = "NeverSink-EconomyUpdated-Filter";
-            var filterOutFolder = Path.GetTempPath() + "/filterGenerationResult";
+            var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + repoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
             
@@ -37,7 +37,7 @@ namespace AzurePolishFunctions
             // push + login
             RunCommand(repoFolder,  "git",  "config --global user.name \"AutomatedEconomyUpdate\"");
 //            var gitToken = File.ReadAllText(filterOutFolder + "\\githubPAT.txt");
-//            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt user@github.com", "yes");
+            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt jevjaku@gmail.com", "yes");
             RunCommand(repoFolder,  "git",  "push https://github.com/NeverSinkDev/" + repoName + ".git master");
             
             // cleanUp

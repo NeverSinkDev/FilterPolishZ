@@ -41,13 +41,15 @@ namespace AzurePolishFunctions
             try
             {
                 PerformMainRoutine();
+                return new OkObjectResult("successfully generated filters");
             }
             catch (Exception e)
             {
                 Logging.Log(e.Message, LoggingLevel.Errors);
+                return new ConflictObjectResult(e);
             }
 
-            return new OkObjectResult("successfully generated filters");
+            
         }
 
         public static void PerformMainRoutine()

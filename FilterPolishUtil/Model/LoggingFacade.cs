@@ -77,7 +77,7 @@ namespace FilterPolishUtil.Model
         public void Log(string info, LoggingLevel level)
         {
             var mth = new StackTrace().GetFrame(2).GetMethod();
-            var cls = mth.ReflectedType.Name;
+            var cls = mth?.ReflectedType?.Name ?? "unknown name";
             var methodName = mth.Name;
 
             lock(_itemsLock)
