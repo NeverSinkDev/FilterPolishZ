@@ -19,6 +19,8 @@ namespace FilterEconomyProcessor
     {
         public static void Initialize()
         {
+            EnrichmentProcedureConfiguration.EnrichmentProcedures.Clear();
+            
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
                 new List<string>() { "uniques", "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil" },
                 new List<IDataEnrichment>()

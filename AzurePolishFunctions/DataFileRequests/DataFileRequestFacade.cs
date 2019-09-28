@@ -11,21 +11,13 @@ using FilterPolishUtil.Model;
 
 namespace AzurePolishFunctions.DataFileRequests
 {
-    public class DataFileRequestFacade : ICleanable
+    public class DataFileRequestFacade
     {
         public Dictionary<string, List<string>> FilterStyleSheets { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, List<string>> ItemAspects { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
         public List<string> SeedFilter { get; set; }
-
-        public void Clean()
-        {
-            this.FilterStyleSheets?.Clear();
-            this.ItemAspects?.Clear();
-            this.BaseTypeData?.Clear();
-            EconomyData?.Clear();
-        }
 
         public void GetAllFiles(string ninjaLeague)
         {

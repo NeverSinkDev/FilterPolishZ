@@ -65,12 +65,9 @@ namespace AzurePolishFunctions
 
             // 0) Get Current League information etc
             // 1) Acquire Data
-            if (DataFiles == null)
-            {
-                // todo: handling for repeated function calls after static vars already initialized
-                DataFiles = new DataFileRequestFacade();
-                DataFiles.GetAllFiles("Standard");
-            }
+            var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process);
+            DataFiles = new DataFileRequestFacade();
+            DataFiles.GetAllFiles(league);
 
             // 2) Test Data
 
