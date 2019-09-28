@@ -7,13 +7,17 @@ namespace AzurePolishFunctions.DataFileRequests
     public class GitHubFileDownloader
     {
         public string Download(string user, string repo)
-        {
+        {   
             var client = new WebClient();
 
             var zipFile = Path.GetTempPath() + "\\" + "tempRepoDownload" + user + "_" + repo + ".zip";
             var extractedPath = Path.GetTempPath() + "\\" + "tempRepoDownload" + user + "_" + repo + "_Unzipped";
             if (System.IO.File.Exists(zipFile)) System.IO.File.Delete(zipFile);
-            if (System.IO.Directory.Exists(extractedPath)) System.IO.Directory.Delete(extractedPath, true);
+            if (System.IO.Directory.Exists(extractedPath)) FilterPublisher.DeleteDirectory(extractedPath);
+
+            System.IO.Directory.CreateDirectory(extractedPath);
+            FilterPublisher.RunCommand(extractedPath, "git", "clone https://github.com/NeverSinkDev/" + repo + ".git");
+            return extractedPath + "\\" + repo;
             
             client.Headers.Add("user-agent", "Anything");
             client.DownloadFile("https://api.github.com/repos/" + user + "/" + repo + "/zipball", zipFile);

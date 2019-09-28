@@ -62,7 +62,7 @@ namespace AzurePolishFunctions
             Directory.Delete(targetDir, false);
         }
 
-        private static void RunCommand(string workDir, string cmd, string param, string input = null)
+        public static void RunCommand(string workDir, string cmd, string param, string input = null)
         {
             var proc = Process.Start(new ProcessStartInfo
             {

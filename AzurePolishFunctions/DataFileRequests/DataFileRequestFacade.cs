@@ -84,13 +84,13 @@ namespace AzurePolishFunctions.DataFileRequests
                 .EnumerateFiles(repoDlPath + styleFolderRepoPath)
                 .ToList()
                 .ForEach(x => this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x).Split(".").First(), System.IO.File.ReadAllLines(x).ToList()));
-            System.IO.Directory.Delete(repoDlPath, true);
+            FilterPublisher.DeleteDirectory(repoDlPath);
             
             // aspects
             var aspectFolder = new GitHubFileDownloader().Download(nsName, "Filter-ItemEconomyAspects");
             var aspectFiles = System.IO.Directory.EnumerateFiles(aspectFolder).ToList();
             aspectFiles.ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
-            System.IO.Directory.Delete(aspectFolder, true);
+            FilterPublisher.DeleteDirectory(aspectFolder);
         }
 
     }
