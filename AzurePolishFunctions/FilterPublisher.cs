@@ -35,7 +35,7 @@ namespace AzurePolishFunctions
             
             // push + login
             RunCommand(repoFolder,  "git",  "config --global user.name \"AutomatedEconomyUpdate\"");
-            var gitToken = File.ReadAllText(filterOutFolder + "\\githubPAT.txt");
+            var gitToken = Environment.GetEnvironmentVariable("githubPAT", EnvironmentVariableTarget.Process);
 //            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt jevjaku@github.com", "yes");
             RunCommand(repoFolder,  "git",  "push https://" + gitToken + "@github.com/NeverSinkDev/" + repoName + ".git master");
             
