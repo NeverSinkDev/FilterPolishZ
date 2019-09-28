@@ -48,7 +48,7 @@ namespace FilterEconomy.Facades
 
             try
             {
-                if (File.Exists(fileFullPath) && requestType != RequestType.ForceOnline)
+                if (requestType != RequestType.ForceOnline && File.Exists(fileFullPath))
                 {   // Load existing file
 
                     LoggingFacade.LogInfo($"Loading Economy: Loading Cached File {fileFullPath}");
@@ -96,7 +96,7 @@ namespace FilterEconomy.Facades
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(responseString))
+                    if (!string.IsNullOrEmpty(responseString) && requestType == RequestType.Dynamic)
                     {
                         // Store locally
                         FileWork.WriteTextAsync(fileFullPath, responseString).Wait();
