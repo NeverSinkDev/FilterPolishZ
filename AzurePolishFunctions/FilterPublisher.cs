@@ -23,12 +23,11 @@ namespace AzurePolishFunctions
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
             
             // clone
-            if (Directory.Exists(repoName)) DeleteDirectory(repoFolder);
+            if (Directory.Exists(repoFolder)) DeleteDirectory(repoFolder);
             RunCommand(filterOutFolder, "git", "clone https://github.com/NeverSinkDev/" + repoName + ".git");
             
             // create filter
             FilterWriter.WriteFilter(this.Filter, false, repoFolder, null);
-            File.WriteAllText(repoFolder + "\\testCommit", "testContent");
 
             // commit
             RunCommand(repoFolder,  "git",  "add -A");
@@ -36,9 +35,9 @@ namespace AzurePolishFunctions
             
             // push + login
             RunCommand(repoFolder,  "git",  "config --global user.name \"AutomatedEconomyUpdate\"");
-//            var gitToken = File.ReadAllText(filterOutFolder + "\\githubPAT.txt");
-            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt jevjaku@gmail.com", "yes");
-            RunCommand(repoFolder,  "git",  "push https://github.com/NeverSinkDev/" + repoName + ".git master");
+            var gitToken = File.ReadAllText(filterOutFolder + "\\githubPAT.txt");
+//            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt jevjaku@github.com", "yes");
+            RunCommand(repoFolder,  "git",  "push https://" + gitToken + "@github.com/NeverSinkDev/" + repoName + ".git master");
             
             // cleanUp
             DeleteDirectory(repoFolder);

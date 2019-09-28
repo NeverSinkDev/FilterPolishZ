@@ -57,7 +57,7 @@ namespace AzurePolishFunctions.DataFileRequests
             var ninjaUrl = "http://poe.ninja/api/Data/"; //Configuration.AppSettings["Ninja Request URL"];
             var variation = ninjaLeague; //Configuration.AppSettings["Ninja League"];
             var league = ""; // Configuration.AppSettings["betrayal"];
-            var requestMode = FilterEconomy.Facades.EconomyRequestFacade.RequestType.Dynamic; //FilterEconomy.Facades.EconomyRequestFacade.RequestType.ForceOnline;
+            var requestMode = FilterEconomy.Facades.EconomyRequestFacade.RequestType.ForceOnline;
 
             var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)

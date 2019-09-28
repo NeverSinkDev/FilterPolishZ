@@ -48,8 +48,6 @@ namespace AzurePolishFunctions
                 Logging.Log(e.Message, LoggingLevel.Errors);
                 return new ConflictObjectResult(e);
             }
-
-            
         }
 
         public static void PerformMainRoutine()
