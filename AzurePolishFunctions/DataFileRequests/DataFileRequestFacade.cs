@@ -49,7 +49,6 @@ namespace AzurePolishFunctions.DataFileRequests
             var ninjaUrl = "http://poe.ninja/api/Data/"; //Configuration.AppSettings["Ninja Request URL"];
             var variation = ninjaLeague; //Configuration.AppSettings["Ninja League"];
             var league = ""; // Configuration.AppSettings["betrayal"];
-            var requestMode = FilterEconomy.Facades.EconomyRequestFacade.RequestType.ForceOnline;
 
             var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
@@ -62,7 +61,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, prefix, requestMode, null, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl));
 
             this.EconomyData = result.EconomyTierlistOverview;
         }

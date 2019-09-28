@@ -1,3 +1,4 @@
+using LibGit2Sharp;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,8 +17,10 @@ namespace AzurePolishFunctions.DataFileRequests
             if (System.IO.Directory.Exists(extractedPath)) FilterPublisher.DeleteDirectory(extractedPath);
 
             System.IO.Directory.CreateDirectory(extractedPath);
-            FilterPublisher.RunCommand(extractedPath, "git", "clone https://github.com/NeverSinkDev/" + repo + ".git");
-            return extractedPath + "\\" + repo;
+
+            Repository.Clone("https://github.com/NeverSinkDev/" + repo + ".git", extractedPath);
+            // FilterPublisher.RunCommand(extractedPath, "git", "clone https://github.com/NeverSinkDev/" + repo + ".git");
+            return extractedPath;
             
             client.Headers.Add("user-agent", "Anything");
             client.DownloadFile("https://api.github.com/repos/" + user + "/" + repo + "/zipball", zipFile);

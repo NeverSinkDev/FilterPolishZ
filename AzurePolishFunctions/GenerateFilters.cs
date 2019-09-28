@@ -66,6 +66,17 @@ namespace AzurePolishFunctions
             // 0) Get Current League information etc
             // 1) Acquire Data
             var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process);
+            var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process);
+
+            if (localMode == "true")
+            {
+                FilterPolishConfig.ActiveRequestMode = RequestType.Dynamic;
+            }
+            else
+            {
+                FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
+            }
+
             DataFiles = new DataFileRequestFacade();
             DataFiles.GetAllFiles(league);
 

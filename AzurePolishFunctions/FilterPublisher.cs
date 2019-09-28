@@ -3,14 +3,16 @@ using System.Diagnostics;
 using System.IO;
 using FilterCore;
 using FilterPolishZ.Util;
+using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
 
 namespace AzurePolishFunctions
 {
     public class FilterPublisher
     {
-        public Filter Filter { get; set; }
+        public FilterCore.Filter Filter { get; set; }
         
-        public FilterPublisher(Filter filter)
+        public FilterPublisher(FilterCore.Filter filter)
         {
             this.Filter = filter;
         }
@@ -24,20 +26,44 @@ namespace AzurePolishFunctions
             
             // clone
             if (Directory.Exists(repoFolder)) DeleteDirectory(repoFolder);
-            RunCommand(filterOutFolder, "git", "clone https://github.com/NeverSinkDev/" + repoName + ".git");
-            
+            // RunCommand(filterOutFolder, "git", "clone https://github.com/NeverSinkDev/" + repoName + ".git");
+
+            Repository.Clone("https://github.com/NeverSinkDev/" + repoName + ".git", repoFolder);
+
             // create filter
             FilterWriter.WriteFilter(this.Filter, false, repoFolder, null);
 
-            // commit
-            RunCommand(repoFolder,  "git",  "add -A");
-            RunCommand(repoFolder,  "git",  "commit -m \"automated economy update\"");
-            
-            // push + login
-            RunCommand(repoFolder,  "git",  "config --global user.name \"AutomatedEconomyUpdate\"");
             var gitToken = Environment.GetEnvironmentVariable("githubPAT", EnvironmentVariableTarget.Process);
+
+            Signature author = new Signature("FilterBlade", "@neversinkdev", DateTime.Now);
+            Signature committer = author;
+
+            using (var repo = new Repository(repoFolder))
+            {
+                Commands.Stage(repo, "*");
+                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString(), author, committer);
+
+                LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
+                options.CredentialsProvider = new CredentialsHandler(
+                    (url, usernameFromUrl, types) =>
+                        new UsernamePasswordCredentials()
+                        {
+                            Username = "FilterBladeTeam",
+                            Password = gitToken
+                        });
+                repo.Network.Push(repo.Branches["master"], options);
+            }
+
+            // Commit to the repository
+
+
+            // commit
+            // RunCommand(repoFolder,  "git",  "add -A");
+            // RunCommand(repoFolder,  "git",  "commit -m \"automated economy update\"");
+            // push + login
+            // RunCommand(repoFolder,  "git",  "config --global user.name \"AutomatedEconomyUpdate\"");
 //            RunCommand(repoFolder,  "ssh",  "-i " + filterOutFolder + "\\githubPAT.txt jevjaku@github.com", "yes");
-            RunCommand(repoFolder,  "git",  "push https://" + gitToken + "@github.com/NeverSinkDev/" + repoName + ".git master");
+            // RunCommand(repoFolder,  "git",  "push https://" + gitToken + "@github.com/NeverSinkDev/" + repoName + ".git master");
             
             // cleanUp
             DeleteDirectory(repoFolder);

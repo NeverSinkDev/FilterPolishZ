@@ -35,7 +35,7 @@ namespace FilterPolishZ
     public partial class MainWindow : Window
     {
         public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
-
+        
         // Components
         public EventGridFacade EventGrid = EventGridFacade.GetInstance();
 

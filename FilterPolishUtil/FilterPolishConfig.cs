@@ -23,6 +23,11 @@ namespace FilterPolishUtil
         };
 
         /// <summary>
+        /// Saves, caches and uses requested files if active.
+        /// </summary>
+        public static RequestType ActiveRequestMode = RequestType.Dynamic;
+
+        /// <summary>
         /// Information about the requests and economyoverview sections:
         /// name, filename, requesturl, urlprefix
         /// </summary>
@@ -76,5 +81,11 @@ namespace FilterPolishUtil
         public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
         public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
         public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
+    }
+
+    public enum RequestType
+    {
+        Dynamic,
+        ForceOnline
     }
 }

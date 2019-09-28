@@ -33,11 +33,12 @@ namespace FilterEconomy.Facades
 
         private static EconomyRequestFacade instance;
 
+
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
         public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
 
-        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
+        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, string baseStoragePath, string ninjaUrl)
         {
             var economySegmentBranch = url;
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
@@ -48,7 +49,7 @@ namespace FilterEconomy.Facades
 
             try
             {
-                if (requestType != RequestType.ForceOnline && File.Exists(fileFullPath))
+                if (FilterPolishConfig.ActiveRequestMode != RequestType.ForceOnline && File.Exists(fileFullPath))
                 {   // Load existing file
 
                     LoggingFacade.LogInfo($"Loading Economy: Loading Cached File {fileFullPath}");
@@ -69,7 +70,7 @@ namespace FilterEconomy.Facades
                     }
                     
                     // poeNinja down -> use most recent local file
-                    if ((responseString == null || responseString.Length < 400) && requestType == RequestType.Dynamic)
+                    if ((responseString == null || responseString.Length < 400) && FilterPolishConfig.ActiveRequestMode == RequestType.Dynamic)
                     {
                         var recentFile = Directory
                             .EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), ""))
@@ -96,7 +97,7 @@ namespace FilterEconomy.Facades
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(responseString) && requestType == RequestType.Dynamic)
+                    if (!string.IsNullOrEmpty(responseString) && FilterPolishConfig.ActiveRequestMode == RequestType.Dynamic)
                     {
                         // Store locally
                         FileWork.WriteTextAsync(fileFullPath, responseString).Wait();
@@ -160,12 +161,6 @@ namespace FilterEconomy.Facades
         {
             this.Reset();
             instance = null;
-        }
-
-        public enum RequestType
-        {
-            Dynamic,
-            ForceOnline
         }
     }
 }
