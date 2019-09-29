@@ -31,7 +31,7 @@ namespace AzurePolishFunctions
         public static LoggingFacade Logging { get; set; }
 
         [FunctionName("GenerateFilters")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", "post", Route = null)] HttpRequest req, ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
