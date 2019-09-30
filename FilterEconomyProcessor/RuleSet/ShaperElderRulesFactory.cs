@@ -95,7 +95,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return 0;
                 }
 
-                if (builder.RuleSet.DefaultSet.ftPrice.ContainsKey(level))
+                if (builder.RuleSet.DefaultSet.ftPrice?.ContainsKey(level) == true)
                 {
                     return builder.RuleSet.DefaultSet.ftPrice[level];
                 }
