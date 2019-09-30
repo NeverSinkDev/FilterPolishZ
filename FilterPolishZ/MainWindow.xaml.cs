@@ -33,9 +33,7 @@ namespace FilterPolishZ
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
-        public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
-        
+    {        
         // Components
         public EventGridFacade EventGrid = EventGridFacade.GetInstance();
 
@@ -177,7 +175,7 @@ namespace FilterPolishZ
             LoggingFacade.LogDebug($"Loading Tierlists...");
 
             TierListFacade tierList = TierListFacade.GetInstance();
-            tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
+            tierList.WriteFolder = Configuration.AppSettings["EcoFile Folder"];
 
             var workTiers = FilterPolishConfig.FilterTierLists;
             var tiers = filter.ExtractTiers(workTiers);
@@ -199,7 +197,7 @@ namespace FilterPolishZ
             LoggingFacade.LogDebug("Loading Economy Data...");
 
             var result = EconomyRequestFacade.GetInstance();
-            var seedFolder = Configuration.AppSettings["SeedFile Folder"];
+            var seedFolder = Configuration.AppSettings["EcoFile Folder"];
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
@@ -212,7 +210,7 @@ namespace FilterPolishZ
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, prefix, this.RequestMode, seedFolder, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, url, prefix, seedFolder, ninjaUrl));
 
             LoggingFacade.LogInfo("Economy Data Loaded...");
 

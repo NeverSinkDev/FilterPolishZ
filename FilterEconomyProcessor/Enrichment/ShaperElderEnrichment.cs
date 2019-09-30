@@ -73,7 +73,7 @@ namespace FilterEconomyProcessor.Enrichment
 
                 string itemClass = itemInfo["Class"].ToLower();
 
-                if (!FilterGenerationConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
+                if (!FilterPolishConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
                 {
                     var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
                     var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);

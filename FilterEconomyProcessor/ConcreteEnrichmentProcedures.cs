@@ -20,7 +20,7 @@ namespace FilterEconomyProcessor
         public static void Initialize()
         {
             EnrichmentProcedureConfiguration.EnrichmentProcedures.Clear();
-            
+
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
                 new List<string>() { "uniques", "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil" },
                 new List<IDataEnrichment>()
@@ -49,6 +49,14 @@ namespace FilterEconomyProcessor
                 new List<IDataEnrichment>()
                 {
 
+                });
+
+            EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
+                new List<string>() { "currency" },
+                new List<IDataEnrichment>()
+                {
+                    new CurrencyInformationExtractionEnrichment(),
+                    new LowestPriceEnrichment()
                 });
         }
     }

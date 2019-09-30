@@ -14,7 +14,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
         };
 
         public static HashSet<string> SpecialBases { get; set; } = new HashSet<string>()
@@ -34,6 +34,7 @@ namespace FilterPolishUtil
         public static List<Tuple<string, string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string, string>>
         {
                 new Tuple<string, string, string, string>("divination", "divination", "GetDivinationCardsOverview", "?"),
+                new Tuple<string, string, string, string>("currency", "currency", "currencyoverview?type=Currency", "&"),
                 new Tuple<string, string, string, string>("unique->maps", "uniqueMaps", "GetUniqueMapOverview", "?"),
                 new Tuple<string, string, string, string>("currency->fossil", "fossil", "ItemOverview?type=Fossil", "&"),
                 new Tuple<string, string, string, string>("uniques", "uniqueWeapons", "GetUniqueWeaponOverview", "?"),
@@ -47,10 +48,21 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string, string>("currency->oil", "oil", "ItemOverview?type=Oil", "&")
         };
 
+        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
+        public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
+        public static List<string> IgnoredLowestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect", "BossDropAspect", "LeagueDropAspect" };
+
+        public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
+        {
+            "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres"
+        };
+
         /// <summary>
         /// Useful for easy acquiring the section names above, without redundancy
         /// </summary>
         public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
+
+        public static float ExaltedOrbPrice = 50f;
 
         public static float GlobalPriceModifier = 0.8f;
 

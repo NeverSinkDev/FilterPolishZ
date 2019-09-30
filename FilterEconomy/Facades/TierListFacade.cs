@@ -24,7 +24,7 @@ namespace FilterEconomy.Facades
         public Dictionary<string, List<TieringChange>> Changelog = new Dictionary<string, List<TieringChange>>();
 
         // Generates simple changelogs
-        private bool generatePrimitiveReport = true;
+        private bool generatePrimitiveReport = false;
 
         public Dictionary<string, Dictionary<string, string>> Report { get; set; } = new Dictionary<string, Dictionary<string,string>>();
         public string WriteFolder { get; set; }

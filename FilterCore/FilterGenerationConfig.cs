@@ -32,10 +32,6 @@ namespace FilterCore
             LineTypesSort.Add("comment", i);
         }
 
-        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
-        public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
-        public static List<string> IgnoredLowestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect", "BossDropAspect", "LeagueDropAspect" };
-
         public static List<string> TierTagTypes = new List<string>()
         {
             "type",
@@ -147,11 +143,6 @@ namespace FilterCore
         public static HashSet<string> FilterOperators = new HashSet<string>()
         {
             "=", ">=", "<=", ">", "<"
-        };
-
-        public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
-        {
-            "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres"
         };
 
         public static readonly List<string> FilterStrictnessLevels = new List<string>

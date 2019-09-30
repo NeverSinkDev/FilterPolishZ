@@ -100,7 +100,7 @@ namespace FilterEconomy.Facades
                     if (!string.IsNullOrEmpty(responseString) && FilterPolishConfig.ActiveRequestMode == RequestType.Dynamic)
                     {
                         // Store locally
-                        FileWork.WriteTextAsync(fileFullPath, responseString).Wait();
+                        FileWork.WriteText(fileFullPath, responseString);
                     }
                 }
 
@@ -115,7 +115,7 @@ namespace FilterEconomy.Facades
                 throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
             }
 
-            var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString).ToList());
+            var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString, branchKey).ToList());
 
             return result;
         }
