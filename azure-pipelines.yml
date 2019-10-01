@@ -17,11 +17,11 @@ variables:
 steps:
 - task: NuGetToolInstaller@0
 
-- script: dotnet restore
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    feedsToUse: 'select'
+
 
 - task: VSBuild@1
   inputs:
