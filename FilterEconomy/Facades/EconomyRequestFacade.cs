@@ -131,6 +131,11 @@ namespace FilterEconomy.Facades
                 // go through every item
                 foreach (var item in section.Value)
                 {
+                    if (!enrichments.ContainsKey(section.Key))
+                    {
+                        continue;
+                    }
+
                     enrichments[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
                 }
             }

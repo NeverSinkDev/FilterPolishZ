@@ -12,6 +12,7 @@ namespace FilterEconomyProcessor
 {
     public static class EnrichmentProcedureConfiguration
     {
+        public static Dictionary<string, List<IDataEnrichment>> PriorityEnrichmentProcedures = new Dictionary<string, List<IDataEnrichment>>();
         public static Dictionary<string, List<IDataEnrichment>> EnrichmentProcedures = new Dictionary<string, List<IDataEnrichment>>();
     }
 
@@ -19,8 +20,19 @@ namespace FilterEconomyProcessor
     {
         public static void Initialize()
         {
+            EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures.Clear();
             EnrichmentProcedureConfiguration.EnrichmentProcedures.Clear();
 
+            // Ugly implementation, but needs to be implemented first, since we're relying on the 
+            EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures.AddToMultiple(
+                new List<string>() { "currency" },
+                new List<IDataEnrichment>()
+                {
+                    new LowestPriceEnrichment(),
+                    new CurrencyInformationExtractionEnrichment()
+                });
+
+            // Now perform all the 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
                 new List<string>() { "uniques", "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil" },
                 new List<IDataEnrichment>()
@@ -49,14 +61,6 @@ namespace FilterEconomyProcessor
                 new List<IDataEnrichment>()
                 {
 
-                });
-
-            EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "currency" },
-                new List<IDataEnrichment>()
-                {
-                    new CurrencyInformationExtractionEnrichment(),
-                    new LowestPriceEnrichment()
                 });
         }
     }

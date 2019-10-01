@@ -80,8 +80,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2DiviBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.UniqueT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
                 .AddRestRule()
                 .Build();       
         }
@@ -93,8 +93,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1DiviBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2BreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.DiviT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.DiviT2BreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -106,8 +106,8 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1MiscBreakPoint * 1.25f)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2MiscBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -119,9 +119,9 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1MiscBreakPoint * 1.25f)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2MiscBreakPoint)
-                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.T4MiscBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.MiscT4BreakPoint)
                 .AddRestRule()
                 .Build();
         }
@@ -133,9 +133,9 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.T1MiscBreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.T2MiscBreakPoint)
-                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.T4MiscBreakPoint)
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.MiscT4BreakPoint * 0.5f) // to prevent from getting most oils into the trash tier.
                 .AddExplicitRest("t3","t3")
                 .Build();
         }

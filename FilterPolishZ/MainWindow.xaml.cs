@@ -79,6 +79,8 @@ namespace FilterPolishZ
             this.CreateSubEconomyTiers();
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
+            this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
+            FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
 
             // run tiering
@@ -239,14 +241,6 @@ namespace FilterPolishZ
 
             return result;
         }
-
-//        private void OnScreenTabSelect(object sender, RoutedEventArgs e)
-//        {
-//            GenerationOptions.Vo;
-//            this.DataContext = ConfigurationView;
-//            GenerationOptions.OpenSc
-//            MainBorder.Child = new GenerationOptions();
-//        }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {

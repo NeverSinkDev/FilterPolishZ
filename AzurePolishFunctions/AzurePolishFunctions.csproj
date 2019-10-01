@@ -2,6 +2,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <SignAssembly>false</SignAssembly>
+    <Authors>NeverSink, Tobnac</Authors>
+    <Company>NeverSinkDev</Company>
+    <Copyright>By NeverSink, MIT Licenced</Copyright>
+    <PackageProjectUrl>https://github.com/NeverSinkDev/FilterPolishZ</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NeverSinkDev/FilterPolishZ</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.26.1" />
@@ -16,9 +22,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Workflow\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FilterCore\FilterCore.csproj" />

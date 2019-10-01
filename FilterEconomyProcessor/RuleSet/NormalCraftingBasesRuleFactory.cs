@@ -25,7 +25,7 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     var price = Math.Max(GetPrice(86), GetPrice(85));
-                    return price > FilterPolishConfig.T1BaseTypeBreakPoint * 1.5f;
+                    return price > FilterPolishConfig.BaseTypeT1BreakPoint * 1.5f;
                 }));
 
             builder.AddRule("rest", "rest",

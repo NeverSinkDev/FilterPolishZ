@@ -53,7 +53,7 @@ namespace FilterEconomyProcessor.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => progression <= -50), -0.2f, 0);
 
             // outlier rules
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.T1BaseTypeBreakPoint), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.BaseTypeT1BreakPoint), -0.1f, 0);
 
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
 

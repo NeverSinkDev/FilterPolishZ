@@ -65,8 +65,8 @@ namespace AzurePolishFunctions
 
             // 0) Get Current League information etc
             // 1) Acquire Data
-            var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process);
-            var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process);
+            var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process) ?? "tmpstandard";
+            var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
 
             if (localMode == "true")
             {
@@ -81,18 +81,21 @@ namespace AzurePolishFunctions
             DataFiles.GetAllFiles(league);
 
             // 2) Test Data
+            // todo
 
-            // 3) Initialize static enrichment information
-
-            // 4) Parse filter, Load All files (Economy, Basetype, Tierlist) -> All facade
+            // 3) Parse filter
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
 
+            // 4) Load ier list information and enrichment procedures
             var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
             TierListFacade.TierListData = tiers;
             CreateSubEconomyTiers();
 
             ConcreteEnrichmentProcedures.Initialize();
+            EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
+            FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
             EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+
             TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             // 5) Generate Suggestions
