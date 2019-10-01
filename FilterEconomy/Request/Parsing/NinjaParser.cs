@@ -12,7 +12,7 @@ namespace FilterEconomy.Request.Parsing
 {
     public class NinjaParser
     {
-        public static IEnumerable<NinjaItem> ParseNinjaString(string input)
+        public static IEnumerable<NinjaItem> ParseNinjaString(string input, string branchKey)
         {
             dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(input, new JsonSerializerSettings() { CheckAdditionalContent = true });
 
@@ -21,10 +21,28 @@ namespace FilterEconomy.Request.Parsing
                 yield break;
             }
 
+            if (branchKey.ToLower() == "currency")
+            {
+                JObject jo = new JObject(jsonObj);
+                CurrencyNinjaItem nCItem = new CurrencyNinjaItem();
+                JsonConvert.PopulateObject(jo.ToString(), nCItem);
+                foreach (var item in nCItem.ToNinjaItems())
+                {
+                    yield return item;
+                }
+
+                yield break;
+            }
+
             foreach (JObject job in jsonObj.lines)
             {
                 NinjaItem nItem = new NinjaItem();
-                job["explicitModifiers"] = job["explicitModifiers"].ToString();
+
+                if (job.ContainsKey("explicitModifiers"))
+                {
+                    job["explicitModifiers"] = job["explicitModifiers"].ToString();
+                }
+
                 JsonConvert.PopulateObject(job.ToString(), nItem);
                 yield return nItem;
             }

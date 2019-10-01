@@ -89,6 +89,12 @@ namespace FilterCore.Entry
                     {
                         digit = short.Parse(split.Substring(lastPos));
                     }
+
+                    else if(FilterGenerationConfig.EntryCommand.ContainsKey(split.Split(new[] {"->"}, StringSplitOptions.None).First()))
+                    {
+                        command = split.Split(new[] {"->"}, StringSplitOptions.None).First();
+                    }
+                    
                     else
                     {
                         throw new Exception("unknown entry tag command: " + split);
@@ -98,6 +104,9 @@ namespace FilterCore.Entry
                     tag = tagType(entry) as GenerationTag;
                     tag.Strictness = digit;
                     tag.Value = command;
+                    
+                    if (tag is ReceiverEntryCommand r) r.TypeValue = split.Replace(command, "");
+                    if (tag is SenderEntryCommand se) se.TypeValue = split.Replace(command, "");
 
                     this.GenerationTags.Add(tag);
                 }

@@ -3,6 +3,7 @@ using FilterEconomy.Request;
 using FilterEconomy.Request.Parsing;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Interfaces;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ using System.Linq;
 
 namespace FilterEconomy.Facades
 {
-    public class EconomyRequestFacade
+    public class EconomyRequestFacade : ICleanable
     {
         private EconomyRequestFacade()
         {
-            //this.ActiveMetaTags.Add("MetaBiasAspect", DateTime.Now.AddDays(7));
+            //this.ActiveMetaTags.Add("EarlyLeagueInterestAspect", DateTime.Now.AddDays(7));
         }
 
         public static EconomyRequestFacade GetInstance()
@@ -32,11 +33,12 @@ namespace FilterEconomy.Facades
 
         private static EconomyRequestFacade instance;
 
+
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
         public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
 
-        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, RequestType requestType, string baseStoragePath, string ninjaUrl)
+        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, string baseStoragePath, string ninjaUrl)
         {
             var economySegmentBranch = url;
             var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
@@ -47,7 +49,7 @@ namespace FilterEconomy.Facades
 
             try
             {
-                if (File.Exists(fileFullPath) && requestType != RequestType.ForceOnline)
+                if (FilterPolishConfig.ActiveRequestMode != RequestType.ForceOnline && File.Exists(fileFullPath))
                 {   // Load existing file
 
                     LoggingFacade.LogInfo($"Loading Economy: Loading Cached File {fileFullPath}");
@@ -68,7 +70,7 @@ namespace FilterEconomy.Facades
                     }
                     
                     // poeNinja down -> use most recent local file
-                    if (responseString == null || responseString.Length < 400)
+                    if ((responseString == null || responseString.Length < 400) && FilterPolishConfig.ActiveRequestMode == RequestType.Dynamic)
                     {
                         var recentFile = Directory
                             .EnumerateDirectories(directoryPath.Replace(StringWork.GetDateString(), ""))
@@ -95,10 +97,10 @@ namespace FilterEconomy.Facades
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(responseString))
+                    if (!string.IsNullOrEmpty(responseString) && FilterPolishConfig.ActiveRequestMode == RequestType.Dynamic)
                     {
                         // Store locally
-                        FileWork.WriteTextAsync(fileFullPath, responseString).Wait(1000);
+                        FileWork.WriteText(fileFullPath, responseString);
                     }
                 }
 
@@ -113,7 +115,7 @@ namespace FilterEconomy.Facades
                 throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
             }
 
-            var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString).ToList());
+            var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString, branchKey).ToList());
 
             return result;
         }
@@ -129,6 +131,11 @@ namespace FilterEconomy.Facades
                 // go through every item
                 foreach (var item in section.Value)
                 {
+                    if (!enrichments.ContainsKey(section.Key))
+                    {
+                        continue;
+                    }
+
                     enrichments[section.Key].ForEach(z => z.Enrich(item.Key, item.Value));
                 }
             }
@@ -155,10 +162,10 @@ namespace FilterEconomy.Facades
             }
         }
 
-        public enum RequestType
+        public void Clean()
         {
-            Dynamic,
-            ForceOnline
+            this.Reset();
+            instance = null;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FilterPolishUtil.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FilterCore
 {
-    public class FilterAccessFacade
+    public class FilterAccessFacade : ICleanable
     {
         private static FilterAccessFacade instance;
         private FilterAccessFacade()
@@ -29,6 +30,12 @@ namespace FilterCore
             }
 
             return instance;
+        }
+
+        public void Clean()
+        {
+            FilterStorage.Clear();
+            instance = null;
         }
     }
 }

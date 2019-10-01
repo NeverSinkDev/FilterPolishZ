@@ -32,20 +32,20 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.T1BreakPoint;
+                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.UniqueT1BreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.T2BreakPoint;
+                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
             builder.AddRule("uncommon", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.T2BreakPoint)
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("UncommonAspect"))
                         {
@@ -53,7 +53,7 @@ namespace FilterEconomyProcessor.RuleSet
 
                             if (relevantList.Count > 0)
                             {
-                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.UncommonAspectMultiplier;
+                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.UncommonAspectMultiplier;
                             }
                         }
                     }
@@ -68,7 +68,7 @@ namespace FilterEconomyProcessor.RuleSet
 
                     if (relevantList.Count > 1)
                     {
-                        if (relevantList.Max(x => x.CVal) > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.CommonTwinAspectMultiplier)
+                        if (relevantList.Max(x => x.CVal) > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.CommonTwinAspectMultiplier)
                         {
                             return true;
                         }
@@ -81,7 +81,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.HighVarietyMultiplier)
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.HighVarietyMultiplier)
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("HighVarietyAspect"))
                         {
@@ -89,7 +89,7 @@ namespace FilterEconomyProcessor.RuleSet
 
                             if (relevantList.Count > 0)
                             {
-                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.HighVarietyMultiplier;
+                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.HighVarietyMultiplier;
                             }
                         }
                     }
@@ -101,7 +101,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.T2BreakPoint)
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
                         if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
                         {
@@ -109,7 +109,7 @@ namespace FilterEconomyProcessor.RuleSet
 
                             if (relevantList.Count > 0)
                             {
-                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.LeagueDropAspectMultiplier;
+                                return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.LeagueDropAspectMultiplier;
                             }
                         }
                     }
@@ -121,13 +121,13 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.T2BreakPoint)
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
                         var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
 
                         if (relevantList.Count > 0 && relevantList.AllItemsFullFill(new HashSet<string>() { "BossDropAspect" }, new HashSet<string>()))
                         {
-                            return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.T2BreakPoint * FilterPolishConfig.LeagueDropAspectMultiplier;
+                            return relevantList.OrderByDescending(x => x.CVal).First().CVal > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.LeagueDropAspectMultiplier;
                         }
                     }
 
@@ -135,24 +135,30 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
 
             // uniques that have changed in the latest league
-            builder.AddRule("Changed?", "metainfluenced",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
-                }));
+            //builder.AddRule("Changed?", "metainfluenced",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
+            //    }));
 
             // usually used for new leagues
-            builder.AddRule("MetaSave", "t2",
+            //builder.AddRule("MetaSave", "t2",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+            //    }));
+
+            builder.AddRule("EarlyLeagueInterest", "metainfluenced",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+                    return builder.RuleSet.DefaultSet.HasAspect("EarlyLeagueInterestAspect");
                 }));
 
             // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events
             builder.AddRule("SuperLeagueUnique", "multileague",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.T1BreakPoint)
+                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
                     {
                         var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "BossDropAspect", "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
 
@@ -195,7 +201,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var maxprice = builder.RuleSet.DefaultSet.Max(x => x.CVal);
-                    if (maxprice > FilterPolishConfig.T2BreakPoint * 0.5f)
+                    if (maxprice > FilterPolishConfig.UniqueT2BreakPoint * 0.35f)
                     {
                         return false;
                     }

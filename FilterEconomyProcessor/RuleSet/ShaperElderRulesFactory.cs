@@ -31,45 +31,45 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1-82", "t1-1",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.8f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.85f)
                     {
                         return false;
                     }
 
                     var price = GetPrice(82) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT1BreakPoint;
                 }), nextgroup: "t2");
 
 
             builder.AddRule("t1-84", "t1-2",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.7f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.75f)
                     {
                         return false;
                     }
 
                     var price = GetPrice(84) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT1BreakPoint;
                 }), nextgroup: "t2");
 
             builder.AddRule("t1-86", "t1-3",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.6f)
+                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.65f)
                     {
                         return false;
                     }
 
                     var price = GetPrice(86) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT1BreakPoint;
                 }), nextgroup: "t2");
 
             builder.AddRule("t2-80", "t2-1",
                 new Func<string, bool>((string s) =>
                 {
                     var price = GetPrice(82) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT2BreakPoint;
                 }), group: "t2");
 
 
@@ -77,7 +77,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = Math.Max(GetPrice(86),GetPrice(85)) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT2BreakPoint;
                 }), group: "t2");
 
             builder.AddRule("rest", "rest",
@@ -95,7 +95,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return 0;
                 }
 
-                if (builder.RuleSet.DefaultSet.ftPrice.ContainsKey(level))
+                if (builder.RuleSet.DefaultSet.ftPrice?.ContainsKey(level) == true)
                 {
                     return builder.RuleSet.DefaultSet.ftPrice[level];
                 }

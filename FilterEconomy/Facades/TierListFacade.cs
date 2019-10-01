@@ -6,6 +6,8 @@ using FilterDomain.LineStrategy;
 using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
+using FilterPolishUtil.Extensions;
+using FilterPolishUtil.Interfaces;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ using System.Linq;
 
 namespace FilterEconomy.Facades
 {
-    public class TierListFacade
+    public class TierListFacade : ICleanable
     {
         private static TierListFacade Instance { get; set; }
         public Dictionary<string, TierGroup> TierListData { get; set; } = new Dictionary<string, TierGroup>();
@@ -22,7 +24,7 @@ namespace FilterEconomy.Facades
         public Dictionary<string, List<TieringChange>> Changelog = new Dictionary<string, List<TieringChange>>();
 
         // Generates simple changelogs
-        private bool generatePrimitiveReport = true;
+        private bool generatePrimitiveReport = false;
 
         public Dictionary<string, Dictionary<string, string>> Report { get; set; } = new Dictionary<string, Dictionary<string,string>>();
         public string WriteFolder { get; set; }
@@ -88,15 +90,100 @@ namespace FilterEconomy.Facades
         public void ApplyAllSuggestionsInSection(string section)
         {
             LoggingFacade.LogDebug($"Applying Suggestions in section: {section}");
+
+            this.AddNonBaseTypeExceptionList(section);
+            this.AddBaseTypeLinesIfMissing(section);
+
             foreach (var item in this.Suggestions[section])
             {
                 this.ApplyCommand(item);
                 this.Changelog[section].Add(TieringChange.FromTieringCommand(item));
             }
+
+            this.RemoveBaseTypeLinesIfEmpty(section);
+            this.HandleEnabledDisabledState(section);
+        }
+
+        private void AddNonBaseTypeExceptionList(string section)
+        {
+            var ident = this.TierListData[section].KeyIdent;
+            this.TierListData[section].FilterEntries
+                .SelectMany(x => x.Value.Entry).ToList()
+                .ForEach(x =>
+                {
+                    if (!x.HasLine<EnumValueContainer>(ident) && x.Header.IsFrozen == false)
+                    {
+                        this.TierListData[section].NonBaseTypeEntries.AddIfNew(x.Header.TierTags.Serialize());
+                    }
+                });
+        }
+
+        private void HandleEnabledDisabledState(string section)
+        {
+            var ident = this.TierListData[section].KeyIdent;
+
+            this.TierListData[section].FilterEntries
+                .SelectMany(x => x.Value.Entry)
+                .Where(x => !this.TierListData[section].NonBaseTypeEntries.Contains(x.Header.TierTags.Serialize())).ToList()
+                .ForEach(x =>
+                {
+                    if (x.HasLine<EnumValueContainer>(ident))
+                    {
+                        x.SetEnabled(true);
+                    }
+                    else
+                    {
+                        x.SetEnabled(false);
+                        LoggingFacade.LogDebug($"Disabling empty entry: {x.Header.TierTags.Serialize()}");
+                    }
+                });
+        }
+
+        private void RemoveBaseTypeLinesIfEmpty(string section)
+        {
+            var ident = this.TierListData[section].KeyIdent;
+
+            this.TierListData[section].FilterEntries
+                .SelectMany(x => x.Value.Entry)
+                .Where(x => !x.GetLines<EnumValueContainer>(ident).Any(z => z.Value.IsValid()) 
+                    && !this.TierListData[section].NonBaseTypeEntries.Contains(x.Header.TierTags.Serialize())).ToList()
+                .ForEach(x =>
+                {
+                    x.Content.RemoveAll(ident);
+                    LoggingFacade.LogDebug($"Removing Empty BaseType Line: {x.Header.TierTags.Serialize()}");
+                });
+        }
+
+        private void AddBaseTypeLinesIfMissing(string section)
+        {
+            var ident = this.TierListData[section].KeyIdent;
+
+            this.TierListData[section].FilterEntries
+                .SelectMany(x => x.Value.Entry)
+                .Where(x => !x.HasLine<EnumValueContainer>(ident) 
+                    && !this.TierListData[section].NonBaseTypeEntries.Contains(x.Header.TierTags.Serialize())).ToList()
+                .ForEach(x =>
+                {
+                    x.Content.Content.Add(ident, new List<IFilterLine>
+                        {
+                            new FilterLine<EnumValueContainer>
+                            {
+                                Ident = ident,
+                                Parent = x,
+                                Value = new EnumValueContainer()
+                            }
+                        });
+
+                    LoggingFacade.LogDebug($"Adding Missing BaseType Line: {x.Header.TierTags.Serialize()}");
+                });
         }
 
         public void ApplyCommand(TieringCommand command)
         {
+            if (command.LocalIgnore)
+            {
+                return;
+            }
 
             if (command.Performed)
             {
@@ -128,7 +215,6 @@ namespace FilterEconomy.Facades
 
                     removalTarget.ForEach(x => x.Value.RemoveWhere(z => z.value.Equals(command.BaseType, StringComparison.InvariantCultureIgnoreCase)));
                     command.Performed = true;
-
                 }
             }
 
@@ -198,6 +284,14 @@ namespace FilterEconomy.Facades
             this.Suggestions.Clear();
             this.TierListData.Clear();
             this.InitializeSuggestions();
+        }
+
+        public void Clean()
+        {
+            this.Reset();
+            this.Changelog.Clear();
+            this.Report.Clear();
+            Instance = null;
         }
     }
 }

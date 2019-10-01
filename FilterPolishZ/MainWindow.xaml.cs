@@ -33,9 +33,7 @@ namespace FilterPolishZ
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
-        public EconomyRequestFacade.RequestType RequestMode { get; set; } = EconomyRequestFacade.RequestType.Dynamic;
-
+    {        
         // Components
         public EventGridFacade EventGrid = EventGridFacade.GetInstance();
 
@@ -81,6 +79,8 @@ namespace FilterPolishZ
             this.CreateSubEconomyTiers();
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
+            this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
+            FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
 
             // run tiering
@@ -123,7 +123,7 @@ namespace FilterPolishZ
 
             this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
             this.EconomyData.AddToDictionary("rare->elder", elderbases);
-            this.EconomyData.AddToDictionary("rare->normal", otherbases);
+            this.EconomyData.AddToDictionary("generalcrafting", otherbases);
 
             LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
@@ -177,7 +177,7 @@ namespace FilterPolishZ
             LoggingFacade.LogDebug($"Loading Tierlists...");
 
             TierListFacade tierList = TierListFacade.GetInstance();
-            tierList.WriteFolder = Configuration.AppSettings["SeedFile Folder"];
+            tierList.WriteFolder = Configuration.AppSettings["EcoFile Folder"];
 
             var workTiers = FilterPolishConfig.FilterTierLists;
             var tiers = filter.ExtractTiers(workTiers);
@@ -199,7 +199,7 @@ namespace FilterPolishZ
             LoggingFacade.LogDebug("Loading Economy Data...");
 
             var result = EconomyRequestFacade.GetInstance();
-            var seedFolder = Configuration.AppSettings["SeedFile Folder"];
+            var seedFolder = Configuration.AppSettings["EcoFile Folder"];
             var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
             var variation = Configuration.AppSettings["Ninja League"];
             var league = Configuration.AppSettings["betrayal"];
@@ -212,7 +212,7 @@ namespace FilterPolishZ
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
                 result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, prefix, this.RequestMode, seedFolder, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, url, prefix, seedFolder, ninjaUrl));
 
             LoggingFacade.LogInfo("Economy Data Loaded...");
 
@@ -242,14 +242,6 @@ namespace FilterPolishZ
             return result;
         }
 
-//        private void OnScreenTabSelect(object sender, RoutedEventArgs e)
-//        {
-//            GenerationOptions.Vo;
-//            this.DataContext = ConfigurationView;
-//            GenerationOptions.OpenSc
-//            MainBorder.Child = new GenerationOptions();
-//        }
-
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             //until we had a StaysOpen glag to Drawer, this will help with scroll bars
@@ -266,7 +258,16 @@ namespace FilterPolishZ
         [Time]
         private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
-            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder);
+            var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
+            var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
+            if (oldSeedVersion == newVersion)
+            {
+                var isStopping = !InfoPopUpMessageDisplay.DisplayQuestionMessageBox("Error: \n\nVersion did not change!\nDo you want to continue the filter generation?");
+                if (isStopping) return;
+            }
+            else baseFilter.SetHeaderMetaData("version:", newVersion);
+
+            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder, Configuration.AppSettings["StyleSheet Folder"]);
         }
 
         private async Task WriteSeedFilter(Filter baseFilter, string filePath)
@@ -379,9 +380,9 @@ namespace FilterPolishZ
         {
             var gitFolder = Configuration.AppSettings["Git Folder"];
 
-            LoggingFacade.LogInfo($"Copying filter files from: {gitFolder}");
+            LoggingFacade.LogInfo($"Copying filter files to: {gitFolder}");
 
-            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"]))
+            foreach (var file in System.IO.Directory.EnumerateFiles(Configuration.AppSettings["Output Folder"], "*", SearchOption.AllDirectories))
             {
                 var valid = false;
 
@@ -389,6 +390,7 @@ namespace FilterPolishZ
                 {
                     valid = true;
                 }
+
                 if (file.ToLower().Contains("unnamed") || file.ToLower().Contains("copy"))
                 {
                     continue;
@@ -399,7 +401,13 @@ namespace FilterPolishZ
                     continue;
                 }
 
-                var targetPath = gitFolder + "\\" + file.Split('/', '\\').Last();
+                var targetPath = gitFolder + file.SkipSegment(Configuration.AppSettings["Output Folder"]);
+
+                if (!Directory.Exists(System.IO.Path.GetDirectoryName(targetPath)))
+                {
+                    Directory.CreateDirectory(System.IO.Path.GetDirectoryName(targetPath));
+                }
+                
                 System.IO.File.Copy(file, targetPath, true);
             }
 

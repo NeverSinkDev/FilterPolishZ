@@ -19,6 +19,11 @@ namespace FilterPolishUtil
             return me.Substring(index);
         }
 
+        public static string SkipSegment(this string me, string segment)
+        {
+            return me.Substring(me.LastIndexOf(segment) + segment.Length);
+        }
+
         public static string CombinePieces(string combiner, List<string> pieces)
         {
             return CombinePieces(combiner, pieces.ToArray());

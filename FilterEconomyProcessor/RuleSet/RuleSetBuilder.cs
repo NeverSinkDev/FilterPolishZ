@@ -110,6 +110,15 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
         }
 
+        public RuleSetBuilder AddExplicitRest(string rule, string tier)
+        {
+            return this.AddRule(rule, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    return true;
+                }));
+        }
+
         public RuleSetBuilder AddPostProcessing(Action<TieringCommand> command)
         {
             this.RuleSet.PostProcessing.Add(command);

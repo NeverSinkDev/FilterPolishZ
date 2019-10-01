@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FilterCore.Commands.EntryCommands;
+using FilterCore.FilterComponents.Tags;
+using FilterDomain.LineStrategy;
 
 namespace FilterCore
 {
@@ -143,6 +145,7 @@ namespace FilterCore
 
                 ExecuteCommandTags_Inner(filterEntry);
                 
+                
                 // local func
                 void ExecuteCommandTags_Inner(IFilterEntry entry)
                 {
@@ -151,6 +154,7 @@ namespace FilterCore
                     {
                         if (command.IsStrictnessCommand()) continue;
                         command.Execute();
+                        ExecuteGlobalCommand(command);
 
                         if (command is IEntryGenerationCommand cmd)
                         {
@@ -162,6 +166,35 @@ namespace FilterCore
                             newEntries.ToList().ForEach(ExecuteCommandTags_Inner);
                         }
                     }
+                }
+
+                void ExecuteGlobalCommand(GenerationTag command)
+                {
+                    if (!(command is SenderEntryCommand send)) return;
+                    var itemList = command.Target.GetLines<EnumValueContainer>("BaseType").Single().Value;
+                    var targetEntries = this.FilterEntries.Where(CanReceive).ToList();
+
+                    foreach (var entry in targetEntries)
+                    {
+                        entry.Content.RemoveAll("BaseType");
+                        
+                        entry.Content.Content.Add("BaseType", new List<IFilterLine>
+                        {
+                            new FilterLine<NumericValueContainer>
+                            {
+                                Ident = "BaseType",
+                                Parent = entry,
+                                Value = itemList.Clone()  
+                            }
+                        });
+                    }
+                        
+                    bool CanReceive(IFilterEntry ent)
+                    {
+                        if (ent.Header.Type != FilterGenerationConfig.FilterEntryType.Content) return false;
+                        return ent.Header.GenerationTags.SingleOrDefault(cmd => cmd is ReceiverEntryCommand rec && rec.TypeValue == send.TypeValue) != null;
+                    }
+
                 }
             }
         }

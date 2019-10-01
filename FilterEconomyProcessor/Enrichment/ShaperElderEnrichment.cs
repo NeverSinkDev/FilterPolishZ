@@ -48,11 +48,12 @@ namespace FilterEconomyProcessor.Enrichment
             // progression rules
             confidence += AdjustConfidenceBasedOn(data, (s => progression <= averagePriceMinimum), 0f, 0.05f);
             confidence += AdjustConfidenceBasedOn(data, (s => progression <= 0), -0.1f, 0.05f);
-            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -5), -0.1f, 0);
-            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -20), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -5), -0.15f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -20), -0.2f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => progression <= -50), -0.2f, 0);
 
             // outlier rules
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.T1BaseTypeBreakPoint), -0.1f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.BaseTypeT1BreakPoint), -0.1f, 0);
 
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
 
@@ -62,6 +63,7 @@ namespace FilterEconomyProcessor.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 25), -0.1f, 0);
 
             // item info based rules
+            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.SpecialBases.Contains(baseType)), 0.2f, 0);
 
             Dictionary<string, string> itemInfo = null;
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(baseType))
@@ -71,7 +73,7 @@ namespace FilterEconomyProcessor.Enrichment
 
                 string itemClass = itemInfo["Class"].ToLower();
 
-                if (!FilterGenerationConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
+                if (!FilterPolishConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
                 {
                     var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
                     var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);
@@ -83,7 +85,7 @@ namespace FilterEconomyProcessor.Enrichment
 
                     if (lvlSorting > 0)
                     {
-                        confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100) - 0.9f, 0);
+                        confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100)*1.5f - 1.4f, 0);
                     }
                 }
 

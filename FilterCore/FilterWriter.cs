@@ -5,29 +5,22 @@ using System.Threading.Tasks;
 using FilterCore;
 using FilterCore.Commands;
 using FilterCore.Constants;
+using FilterCore.Tests;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
-using FilterPolishWindowUtils;
-using FilterPolishZ.Configuration;
 
 namespace FilterPolishZ.Util
 {
     public static class FilterWriter
     {
-        public static LocalConfiguration Configuration { get; set; } = LocalConfiguration.GetInstance();
-        
-        public static async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
+        public static async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder, string styleSheetFolderPath)
         {
-            LoggingFacade.LogInfo($"STARTING: FILTER GENERATION");
-
             var isStopping = VerifyFilter(baseFilter);
             if (isStopping) return;
             
             new FilterTableOfContentsCreator(baseFilter).Run();
 
             const string filterName = "NeverSink's";
-            if (outputFolder == null) outputFolder = Configuration.AppSettings["Output Folder"];
-            var styleSheetFolderPath = Configuration.AppSettings["StyleSheet Folder"];
             var generationTasks = new List<Task>();
             var seedFilterString = baseFilter.Serialize();
 
@@ -120,13 +113,13 @@ namespace FilterPolishZ.Util
         {
             var errorMsg = new List<string>();
             
-            var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
-            var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
-            if (oldSeedVersion == newVersion)
-            {
-                errorMsg.Add("Version did not change!");
-            }
-            else baseFilter.SetHeaderMetaData("version:", newVersion);
+//            var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
+//            var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
+//            if (oldSeedVersion == newVersion)
+//            {
+//                errorMsg.Add("Version did not change!");
+//            }
+//            else baseFilter.SetHeaderMetaData("version:", newVersion);
 
             // add missing UP command tags // currently unused/unnecessary plus bug: trinkets/amulets/... should not be affected by this!!
 //            foreach (var entry in baseFilter.FilterEntries)
@@ -157,13 +150,13 @@ namespace FilterPolishZ.Util
 //                entry.Header.GenerationTags.Add(new RaresUpEntryCommand(entry as FilterEntry) { Value = "UP", Strictness = -1});
 //            }
             
-//            FilterStyleVerifyer.Run(baseFilter); // todo: re-enable this when the filter doesnt have the tons of errors anymore
+            // FilterStyleVerifyer.Run(baseFilter);
 
-            if (errorMsg.Count > 0)
-            {
-                var isStopping = !InfoPopUpMessageDisplay.DisplayQuestionMessageBox("Error: \n\n" + string.Join("\n", errorMsg) + "\n\nDo you want to continue the filter generation?");
-                return isStopping;
-            }
+//            if (errorMsg.Count > 0)
+//            {
+//                var isStopping = !InfoPopUpMessageDisplay.DisplayQuestionMessageBox("Error: \n\n" + string.Join("\n", errorMsg) + "\n\nDo you want to continue the filter generation?");
+//                return isStopping;
+//            }
 
             return false;
         }

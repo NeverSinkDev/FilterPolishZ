@@ -32,10 +32,6 @@ namespace FilterCore
             LineTypesSort.Add("comment", i);
         }
 
-        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
-        public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
-        public static List<string> IgnoredLowestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect", "BossDropAspect", "LeagueDropAspect" };
-
         public static List<string> TierTagTypes = new List<string>()
         {
             "type",
@@ -59,6 +55,7 @@ namespace FilterCore
             { "FracturedItem",       new BoolLineStrategy() },
             { "SynthesisedItem",     new BoolLineStrategy() },
             { "AnyEnchantment",      new BoolLineStrategy() },
+            { "BlightedMap",   new BoolLineStrategy() },
             { "ShapedMap",     new BoolLineStrategy() },
             { "ElderItem",     new BoolLineStrategy() },
             { "ShaperItem",    new BoolLineStrategy() },
@@ -102,7 +99,9 @@ namespace FilterCore
             { "REMS",   entry => new RemoveHighlightsEntryCommand(entry) },
             { "UP",     entry => new RaresUpEntryCommand(entry) },
             { "RVR",    entry => new RarityVariationRuleEntryCommand(entry) },
-            { "C",      entry => new ConsoleStrictnessCommand(entry) }
+            { "C",      entry => new ConsoleStrictnessCommand(entry) },
+            { "SENDER", entry => new SenderEntryCommand(entry) },
+            { "RECEIVER",entry => new ReceiverEntryCommand(entry) },
         };
 
         public static HashSet<string> StyleIdents = new HashSet<string>
@@ -146,11 +145,6 @@ namespace FilterCore
             "=", ">=", "<=", ">", "<"
         };
 
-        public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
-        {
-            "rings", "amulets", "belts", "jewels", "daggers", "wands", "sceptres"
-        };
-
         public static readonly List<string> FilterStrictnessLevels = new List<string>
         {
             "Soft", "Regular", "Semi-Strict", "Strict", "Very-Strict", "Uber-Strict", "Uber-Plus-Strict"
@@ -162,6 +156,11 @@ namespace FilterCore
         public static readonly HashSet<string> HighlightingIdents = new HashSet<string>
         {
             "PlayEffect", "MinimapIcon", "PlayAlertSound", "CustomAlertSound", "PlayAlertSoundPositional"
+        };
+
+        public static readonly HashSet<string> ValidRarities = new HashSet<string>
+        {
+            "Normal", "Magic", "Rare", "Unique"
         };
     }
 }

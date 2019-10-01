@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("FilterPolishZ")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Path of Exile filter generation and economy analysis tool.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("By NeverSink")]
 [assembly: AssemblyProduct("FilterPolishZ")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ©  2019, by NeverSink, MIT Licensed")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

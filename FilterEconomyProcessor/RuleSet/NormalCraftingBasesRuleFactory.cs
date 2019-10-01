@@ -12,47 +12,20 @@ namespace FilterEconomyProcessor.RuleSet
 
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection(segment)
-                .UseDefaultQuery()
+                .UseCustomQuery(new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => ruleHost.EconomyInformation.EconomyTierlistOverview["generalcrafting"][s]))
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
-            builder.AddRule("ANCHOR", "ANCHOR",
+            builder.AddRule("t1-86-economy", "eco",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
-                }));
-
-            builder.AddRule("unknown", "unknown",
-                new Func<string, bool>((string s) =>
-                {
-                    return !ruleHost.EconomyInformation.EconomyTierlistOverview[segment].ContainsKey(s);
-                }));
-
-            builder.AddRule("t1-86", "t1-1",
-                new Func<string, bool>((string s) =>
-                {
-                    if (builder.RuleSet.DefaultSet.ValueMultiplier < 0.8f)
+                    if (!FilterPolishConfig.SpecialBases.Contains(s))
                     {
                         return false;
                     }
 
-                    var price = Math.Max(GetPrice(86), GetPrice(85)) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T1BaseTypeBreakPoint;
-                }), nextgroup: "t2");
-
-            builder.AddRule("t2-84", "t2-1",
-                new Func<string, bool>((string s) =>
-                {
-                    var price = GetPrice(84) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
-                }), group: "t2");
-
-
-            builder.AddRule("t2-86", "t2-2",
-                new Func<string, bool>((string s) =>
-                {
-                    var price = Math.Max(GetPrice(86), GetPrice(85)) * (1 + ((builder.RuleSet.DefaultSet.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.T2BaseTypeBreakPoint;
+                    var price = Math.Max(GetPrice(86), GetPrice(85));
+                    return price > FilterPolishConfig.BaseTypeT1BreakPoint * 1.5f;
                 }));
 
             builder.AddRule("rest", "rest",

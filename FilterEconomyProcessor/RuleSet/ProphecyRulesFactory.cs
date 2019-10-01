@@ -24,21 +24,21 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice;
-                    return price > FilterPolishConfig.T1DiviBreakPoint;
+                    return price > FilterPolishConfig.DiviT1BreakPoint;
                 }));
 
             builder.AddRule("MultiBase", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.HighestPrice;
-                    return price > FilterPolishConfig.T1DiviBreakPoint;
+                    return price > FilterPolishConfig.DiviT1BreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice;
-                    return price > FilterPolishConfig.T2DiviBreakPoint;
+                    return price > FilterPolishConfig.DiviT2BreakPoint;
                 }));
 
             builder.AddRule("rest", "rest",

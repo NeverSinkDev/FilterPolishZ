@@ -78,28 +78,35 @@ namespace FilterCore.Constants
 
             // transform a basetype:info list to -> class:(basetype:info)
 
-            foreach (var item in BaseTypeData)
+            try
             {
-                var iClass = item.Value["Class"];
-                if (!results.ContainsKey(iClass))
+                foreach (var item in BaseTypeData)
                 {
-                    results.Add(iClass, new List<Dictionary<string, string>>());
+                    var iClass = item.Value["Class"];
+                    if (!results.ContainsKey(iClass))
+                    {
+                        results.Add(iClass, new List<Dictionary<string, string>>());
+                    }
+
+                    results[iClass].Add(item.Value);
                 }
 
-                results[iClass].Add(item.Value);
-            }
+                // Order lists by itemlevel
+                var keys = new List<string>();
+                foreach (var item in results)
+                {
+                    keys.Add(item.Key);
+                }
 
-            // Order lists by itemlevel
-            var keys = new List<string>();
-            foreach (var item in results)
+                EnrichItemsWithLevelSorting(results, keys);
+                EnrichItemsWithApsSorting(results);
+                return results;
+            }
+            catch (Exception e)
             {
-                keys.Add(item.Key);
+                throw e;
             }
 
-            EnrichItemsWithLevelSorting(results, keys);
-            EnrichItemsWithApsSorting(results);
-
-            return results;
         }
 
         private static void EnrichItemsWithApsSorting(Dictionary<string, List<Dictionary<string, string>>> results)

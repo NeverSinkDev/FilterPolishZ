@@ -51,5 +51,10 @@ namespace FilterDomain.LineStrategy
         {
             return StringWork.CombinePieces(string.Empty,this.Value.Select(x => x.Serialize()).ToArray());
         }
+
+        public bool IsValid()
+        {
+            return this.Value.Count > 0;
+        }
     }
 }
