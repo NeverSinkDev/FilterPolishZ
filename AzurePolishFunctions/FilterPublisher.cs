@@ -28,7 +28,7 @@ namespace AzurePolishFunctions
             Repository.Clone("https://github.com/NeverSinkDev/" + repoName + ".git", repoFolder);
 
             // create filter
-            FilterWriter.WriteFilter(this.Filter, false, repoFolder, null);
+            FilterWriter.WriteFilter(this.Filter, true, repoFolder, null);
 
             var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
             var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
