@@ -61,20 +61,20 @@ namespace FilterEconomy.Model
         [JsonProperty("receive")]
         public Receive Receive { get; set; }
 
-        [JsonProperty("paySparkLine")]
-        public PaySparkLine PaySparkLine { get; set; }
+//        [JsonProperty("paySparkLine")]
+//        public PaySparkLine PaySparkLine { get; set; }
 
-        [JsonProperty("receiveSparkLine")]
-        public ReceiveSparkLine ReceiveSparkLine { get; set; }
+//        [JsonProperty("receiveSparkLine")]
+//        public ReceiveSparkLine ReceiveSparkLine { get; set; }
 
         [JsonProperty("chaosEquivalent")]
         public double ChaosEquivalent { get; set; }
 
-        [JsonProperty("lowConfidencePaySparkLine")]
-        public PaySparkLine LowConfidencePaySparkLine { get; set; }
+//        [JsonProperty("lowConfidencePaySparkLine")]
+//        public PaySparkLine LowConfidencePaySparkLine { get; set; }
 
-        [JsonProperty("lowConfidenceReceiveSparkLine")]
-        public ReceiveSparkLine LowConfidenceReceiveSparkLine { get; set; }
+//        [JsonProperty("lowConfidenceReceiveSparkLine")]
+//        public ReceiveSparkLine LowConfidenceReceiveSparkLine { get; set; }
 
         [JsonProperty("detailsId")]
         public string DetailsId { get; set; }
