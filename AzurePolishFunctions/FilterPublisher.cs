@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using FilterCore;
 using FilterPolishZ.Util;
 using LibGit2Sharp;
@@ -28,7 +29,7 @@ namespace AzurePolishFunctions
             Repository.Clone("https://github.com/NeverSinkDev/" + repoName + ".git", repoFolder);
 
             // create filter
-            FilterWriter.WriteFilter(this.Filter, true, repoFolder, null);
+            FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
 
             var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
             var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";

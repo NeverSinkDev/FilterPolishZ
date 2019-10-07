@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FilterCore;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
@@ -14,6 +15,7 @@ namespace AzurePolishFunctions.DataFileRequests
     public class DataFileRequestFacade
     {
         public Dictionary<string, List<string>> FilterStyleSheets { get; set; } = new Dictionary<string, List<string>>();
+        public Dictionary<string, string> FilterStyleFilesPaths { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, List<string>> ItemAspects { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
@@ -82,8 +84,14 @@ namespace AzurePolishFunctions.DataFileRequests
             System.IO.Directory
                 .EnumerateFiles(repoDlPath + styleFolderRepoPath)
                 .ToList()
-                .ForEach(x => this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x).Split(".").First(), System.IO.File.ReadAllLines(x).ToList()));
-            FilterPublisher.DeleteDirectory(repoDlPath);
+                .ForEach(x =>
+                {
+                    this.FilterStyleSheets.Add(System.IO.Path.GetFileName(x).Split(".").First(), System.IO.File.ReadAllLines(x).ToList());
+                    this.FilterStyleFilesPaths.Add(System.IO.Path.GetFileName(x).Split(".").First(), x);
+                });
+//            FilterPublisher.DeleteDirectory(repoDlPath);
+
+            FilterGenerationConfig.FilterStyles = this.FilterStyleSheets.Keys;
             
             // aspects
             var aspectFolder = new GitHubFileDownloader().Download(nsName, "Filter-ItemEconomyAspects");
@@ -91,6 +99,5 @@ namespace AzurePolishFunctions.DataFileRequests
             aspectFiles.ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
             FilterPublisher.DeleteDirectory(aspectFolder);
         }
-
     }
 }

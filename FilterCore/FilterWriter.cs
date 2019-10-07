@@ -26,7 +26,7 @@ namespace FilterPolishZ.Util
 
             if (isGeneratingStylesAndSeed)
             {
-                var seedPath = outputFolder + "ADDITIONAL-FILES\\SeedFilter\\";
+                var seedPath = outputFolder + "\\ADDITIONAL-FILES\\SeedFilter\\";
                 if (!Directory.Exists(seedPath)) Directory.CreateDirectory(seedPath);
                 seedPath += filterName + " filter - SEED (SeedFilter) .filter";
                 generationTasks.Add(FileWork.WriteTextAsync(seedPath, seedFilterString));
