@@ -12,20 +12,22 @@ namespace AzurePolishFunctions
     public class FilterPublisher
     {
         public FilterCore.Filter Filter { get; set; }
+        public string RepoName {get; set;}
         
         public FilterPublisher(FilterCore.Filter filter, string repoName)
         {
+            this.RepoName = repoName;
             this.Filter = filter;
         }
         
         public void Run()
         {
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
-            var repoFolder = filterOutFolder + "\\" + repoName;
+            var repoFolder = filterOutFolder + "\\" + RepoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
             
             if (Directory.Exists(repoFolder)) DeleteDirectory(repoFolder);
-            Repository.Clone("https://github.com/NeverSinkDev/" + repoName + ".git", repoFolder);
+            Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
 
             // create filter
             FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
