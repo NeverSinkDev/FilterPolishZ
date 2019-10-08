@@ -13,14 +13,13 @@ namespace AzurePolishFunctions
     {
         public FilterCore.Filter Filter { get; set; }
         
-        public FilterPublisher(FilterCore.Filter filter)
+        public FilterPublisher(FilterCore.Filter filter, string repoName)
         {
             this.Filter = filter;
         }
         
         public void Run()
         {
-            var repoName = "NeverSink-EconomyUpdated-Filter";
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + repoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
