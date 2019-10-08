@@ -40,7 +40,7 @@ namespace AzurePolishFunctions
 
             try
             {
-                PerformMainRoutine();
+                PerformMainRoutine(req);
                 return new OkObjectResult("successfully generated filters");
             }
             catch (Exception e)
@@ -50,7 +50,7 @@ namespace AzurePolishFunctions
             }
         }
 
-        public static void PerformMainRoutine()
+        public static void PerformMainRoutine(HttpRequest req)
         {
             // 0) Cleanup
             EconomyData?.Clean();
