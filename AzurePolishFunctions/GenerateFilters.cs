@@ -67,7 +67,7 @@ namespace AzurePolishFunctions
             // 1) Acquire Data
             var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process) ?? "tmpstandard";
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
-            var repoName =  Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter"
+            var repoName =  Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter";
 
             if (localMode == "true")
             {
