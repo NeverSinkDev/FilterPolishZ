@@ -67,6 +67,7 @@ namespace AzurePolishFunctions
             // 1) Acquire Data
             var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process) ?? "tmpstandard";
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
+            var repoName =  Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter"
 
             if (localMode == "true")
             {
@@ -109,7 +110,7 @@ namespace AzurePolishFunctions
             // todo
             
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter).Run();
+            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run();
         }
 
         private static void CreateSubEconomyTiers()
