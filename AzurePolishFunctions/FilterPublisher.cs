@@ -124,7 +124,7 @@ namespace AzurePolishFunctions
             using (var repo = new Repository(repoFolder))
             {
                 Commands.Stage(repo, "*");
-                Commit commit = repo.Commit("automated economy update " + DateTime.Today, sig, committer);
+                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString("MM/dd/yyyy") + " " + "ex:c " + FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice, sig, committer);
 
                 PushOptions options = new PushOptions();
                 options.CredentialsProvider = (url, usernameFromUrl, types) =>

@@ -67,9 +67,12 @@ namespace AzurePolishFunctions
             // 1) Acquire Data
             
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
-            
-            var league = GetReqParams(req, "ninjaLeague", "tmpstandard");
-            var repoName = GetReqParams(req, "repoName", "NeverSink-EconomyUpdated-Filter");
+
+            string body = new StreamReader(req.Body).ReadToEnd();
+            dynamic data = JsonConvert.DeserializeObject(body);
+
+            var league = GetReqParams(req, data, "ninjaLeague", "tmpstandard");
+            var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             if (localMode == "true")
             {
@@ -115,7 +118,7 @@ namespace AzurePolishFunctions
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run();
         }
 
-        private static string GetReqParams(HttpRequest req, string name, string defValue)
+        private static string GetReqParams(HttpRequest req, dynamic data, string name, string defValue)
         {
             string result = string.Empty;
 
@@ -126,8 +129,6 @@ namespace AzurePolishFunctions
                 return result;
             }
 
-            string body = new StreamReader(req.Body).ReadToEnd();
-            dynamic data = JsonConvert.DeserializeObject(body);
             result = data?[name];
 
             if (result != null && result != string.Empty)
