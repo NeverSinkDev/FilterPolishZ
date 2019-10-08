@@ -20,10 +20,13 @@ namespace AzurePolishFunctions.DataFileRequests
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
         public List<string> SeedFilter { get; set; }
+        public string League { get; set; }
 
         public void GetAllFiles(string ninjaLeague)
         {
             FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomLoggingAction = x => Console.WriteLine("err: " + x);
+
+            this.League = ninjaLeague;
             
             // Lade Filter Datei -> NS main github -> selective file(s?)
             // Lade Style Dateien -> NS main github -> selective files

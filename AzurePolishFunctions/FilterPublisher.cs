@@ -2,19 +2,19 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using FilterCore;
+using System.Net;
 using FilterPolishZ.Util;
 using LibGit2Sharp;
-using LibGit2Sharp.Handlers;
+using Filter = FilterCore.Filter;
 
 namespace AzurePolishFunctions
 {
     public class FilterPublisher
     {
-        public FilterCore.Filter Filter { get; set; }
+        public Filter Filter { get; set; }
         public string RepoName {get; set;}
         
-        public FilterPublisher(FilterCore.Filter filter, string repoName)
+        public FilterPublisher(Filter filter, string repoName)
         {
             this.RepoName = repoName;
             this.Filter = filter;
@@ -31,7 +31,89 @@ namespace AzurePolishFunctions
 
             // create filter
             FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            
+            PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
+            PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
+            PushToGit(repoFolder);
 
+            // cleanUp
+            DeleteDirectory(repoFolder);
+        }
+
+        private static void PushToFTP(string variant, string localFolder, string filterName)
+        {
+            var ftpHost = "ftp://ftp.cluster023.hosting.ovh.net/" + variant + "/datafiles/filters/" + filterName;
+            
+            using (var client = new WebClient())
+            {
+                client.Credentials = new NetworkCredential(Environment.GetEnvironmentVariable("FbFtpLoginName"), Environment.GetEnvironmentVariable("FbFtpLoginPw"));
+                MakeDir(ftpHost, client.Credentials);
+                
+                foreach (var styleFolder in Directory.EnumerateDirectories(localFolder))
+                {
+                    var styleName = Path.GetFileName(styleFolder).Replace("(STYLE) ", "");
+                    styleName = styleName.Substring(0, 1).ToUpper() + styleName.Substring(1).ToLower();
+                    MakeDir(ftpHost + "/" + styleName, client.Credentials);
+                    
+                    foreach (var file in Directory.EnumerateFiles(styleFolder))
+                    {
+                        var relativePath = Path.GetRelativePath(localFolder, file);
+                        relativePath = relativePath.Replace(Path.GetFileName(styleFolder), styleName);
+                        UploadFile(client, ftpHost + "/" + relativePath, file);
+                    }
+                }
+
+                ftpHost += "/Normal";
+                MakeDir(ftpHost, client.Credentials);
+                
+                foreach (var file in Directory.EnumerateFiles(localFolder))
+                {
+                    var relativePath = Path.GetRelativePath(localFolder, file);
+                    UploadFile(client, ftpHost + "/" + relativePath, file);
+                }
+            }
+
+            void UploadFile(WebClient client, string path, string file)
+            {
+                var request = WebRequest.Create(path);
+                request.Method = WebRequestMethods.Ftp.DeleteFile;
+                request.Credentials = client.Credentials;
+                try
+                {
+                    using (var resp = (FtpWebResponse) request.GetResponse())
+                    {
+                        Console.WriteLine(resp.StatusCode);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("File already deleted");
+                }
+                
+                client.UploadFile(path, WebRequestMethods.Ftp.UploadFile, file);
+            }
+
+            void MakeDir(string dir, ICredentials credential)
+            {
+                var request = WebRequest.Create(dir);
+                request.Method = WebRequestMethods.Ftp.MakeDirectory;
+                request.Credentials = credential;
+                try
+                {
+                    using (var resp = (FtpWebResponse) request.GetResponse())
+                    {
+                        Console.WriteLine(resp.StatusCode);
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Folder already exists");
+                }
+            }
+        }
+
+        private static void PushToGit(string repoFolder)
+        {
             var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
             var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
             var gitToken = Environment.GetEnvironmentVariable("githubPAT", EnvironmentVariableTarget.Process);
@@ -42,23 +124,19 @@ namespace AzurePolishFunctions
             using (var repo = new Repository(repoFolder))
             {
                 Commands.Stage(repo, "*");
-                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString(), sig, committer);
+                Commit commit = repo.Commit("automated economy update " + DateTime.Today, sig, committer);
 
-                LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
-                options.CredentialsProvider = new CredentialsHandler(
-                    (url, usernameFromUrl, types) =>
-                        new UsernamePasswordCredentials()
-                        {
-                            Username = author,
-                            Password = gitToken
-                        });
+                PushOptions options = new PushOptions();
+                options.CredentialsProvider = (url, usernameFromUrl, types) =>
+                    new UsernamePasswordCredentials
+                    {
+                        Username = author,
+                        Password = gitToken
+                    };
                 repo.Network.Push(repo.Branches["master"], options);
             }
-
-            // cleanUp
-            DeleteDirectory(repoFolder);
         }
-        
+
         // this special function is required because the normal delete function does not have enough access rights to delete git files
         public static void DeleteDirectory(string targetDir)
         {
