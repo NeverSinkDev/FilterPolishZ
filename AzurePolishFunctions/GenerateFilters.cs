@@ -65,9 +65,11 @@ namespace AzurePolishFunctions
 
             // 0) Get Current League information etc
             // 1) Acquire Data
-            var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process) ?? "tmpstandard";
+            
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
-            var repoName =  Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter";
+            
+            var league = GetReqParams(req, "ninjaLeague", "tmpstandard");
+            var repoName = GetReqParams(req, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             if (localMode == "true")
             {
@@ -111,6 +113,35 @@ namespace AzurePolishFunctions
             
             // 8) Generate and Upload Filters
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run();
+        }
+
+        private static string GetReqParams(HttpRequest req, string name, string defValue)
+        {
+            string result = string.Empty;
+
+            result = req.Query[name];
+
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            string body = new StreamReader(req.Body).ReadToEnd();
+            dynamic data = JsonConvert.DeserializeObject(body);
+            result = data?[name];
+
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            result = Environment.GetEnvironmentVariable(name);
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            return defValue;
         }
 
         private static void CreateSubEconomyTiers()
