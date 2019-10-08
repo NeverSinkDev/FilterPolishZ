@@ -42,7 +42,7 @@ namespace AzurePolishFunctions
             using (var repo = new Repository(repoFolder))
             {
                 Commands.Stage(repo, "*");
-                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString(), sig, committer);
+                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString("MM/dd/yyyy") + " " + "ex:c " + FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice, sig, committer);
 
                 LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
                 options.CredentialsProvider = new CredentialsHandler(
