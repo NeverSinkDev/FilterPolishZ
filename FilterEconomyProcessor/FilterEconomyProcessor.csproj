@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>NeverSink, Tobnac</Authors>
+    <Company>NeverSinkDev</Company>
+    <Product>https://github.com/NeverSinkDev/FilterPolishZ</Product>
+    <Copyright>By NeverSink, MIT Licenced</Copyright>
+    <PackageProjectUrl>https://github.com/NeverSinkDev/FilterPolishZ</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NeverSinkDev/FilterPolishZ</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
+  </ItemGroup>
+
+</Project>

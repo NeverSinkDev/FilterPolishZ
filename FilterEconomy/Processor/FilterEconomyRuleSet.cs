@@ -1,7 +1,9 @@
-﻿using FilterCore.Constants;
+﻿using FilterCore;
+using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemInformationData;
 using FilterPolishUtil.Collections;
+using FilterPolishUtil.Model;
 using FilterUtilModels.Economy;
 using System;
 using System.Collections.Generic;
@@ -25,13 +27,17 @@ namespace FilterEconomy.Processor
 
         public void GenerateAndAddSuggestions()
         {
+            LoggingFacade.LogDebug($"Generating Suggestions for: {this.GoverningSection}");
+
             if (!Enabled)
             {
+                LoggingFacade.LogWarning($"SKIP Suggestions generation for: {this.GoverningSection}");
                 return;
             }
 
             this.SuggestionTarget.Clear();
             this.SuggestionTarget.AddRange(this.GenerateSuggestions());
+
         }
 
         public IEnumerable<TieringCommand> GenerateSuggestions()
@@ -174,11 +180,14 @@ namespace FilterEconomy.Processor
                     return false;
                 }
 
-                return !FilterConstants.IgnoredSuggestionTiers.Contains(this.OldTier.ToLower()) ||
-                    !FilterConstants.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
+                return !FilterGenerationConfig.IgnoredSuggestionTiers.Contains(this.OldTier.ToLower()) ||
+                    !FilterGenerationConfig.IgnoredSuggestionTiers.Contains(this.NewTier.ToLower());
             }
        }
-       public bool Performed { get; set; }
+
+        public bool LocalIgnore { get; set; } = false;
+
+        public bool Performed { get; set; }
 
     }
 }

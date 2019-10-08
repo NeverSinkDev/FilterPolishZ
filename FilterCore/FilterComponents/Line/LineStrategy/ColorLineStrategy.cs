@@ -1,10 +1,5 @@
 ﻿using FilterCore.Line;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace FilterDomain.LineStrategy
 {
@@ -74,6 +69,13 @@ namespace FilterDomain.LineStrategy
             {
                 return $"{R.ToString()} {G.ToString()} {B.ToString()} {O.ToString()}";
             }
+        }
+
+        public bool IsValid()
+        {
+            return (IsColorValid(this.R) && IsColorValid(this.G) && IsColorValid(this.B));
+
+            bool IsColorValid(int c) => c <= 255 && c >= 0;
         }
     }
 }

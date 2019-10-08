@@ -20,6 +20,14 @@ namespace FilterPolishUtil.Extensions
             }
         }
 
+        public static void AddIfNew<TKey>(this HashSet<TKey> me, TKey key)
+        {
+            if (!me.Contains(key))
+            {
+                me.Add(key);
+            }
+        }
+
         public static void AddIfNew<TKey, TValue>(this Dictionary<TKey, TValue> me, TKey key, TValue value)
         {
             if (!me.ContainsKey(key))

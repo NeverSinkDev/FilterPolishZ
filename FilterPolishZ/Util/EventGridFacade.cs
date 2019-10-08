@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FilterPolishUtil.Interfaces;
+using FilterPolishUtil.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FilterPolishZ.Util
 {
-    public class EventGridFacade
+    public class EventGridFacade : ICleanable
     {
         private static EventGridFacade instance;
 
@@ -15,6 +17,7 @@ namespace FilterPolishZ.Util
         public void Publish()
         {
             FilterChangeEvent?.Invoke(null, EventArgs.Empty);
+            LoggingFacade.LogDebug($"EVENT: Reset event published");
         }
 
         private EventGridFacade()
@@ -29,6 +32,11 @@ namespace FilterPolishZ.Util
                 instance = new EventGridFacade();
             }
             return instance;
+        }
+
+        public void Clean()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,13 +2,8 @@ using FilterEconomy.Facades;
 using FilterPolishUtil;
 using FilterPolishUtil.Reflection;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace FilterEconomy.Model.ItemAspects
 {
@@ -17,7 +12,8 @@ namespace FilterEconomy.Model.ItemAspects
         common,
         uniques,
         divination,
-        maps
+        maps,
+        basetype
     }
 
     public abstract class AbstractItemAspect : IItemAspect
@@ -34,6 +30,11 @@ namespace FilterEconomy.Model.ItemAspects
 
         public static AspectType RetrieveAspectType(string s)
         {
+            if (s.ToLower().Contains("basetype"))
+            {
+                return AspectType.basetype;
+            }
+
             switch (s)
             {
                 case "uniques":
@@ -51,7 +52,6 @@ namespace FilterEconomy.Model.ItemAspects
 
         public string Name => this.ToString().SubStringLast(".");
         public virtual string Group => "Ungrouped";
-        public virtual SolidColorBrush Color => new SolidColorBrush(Colors.DimGray);
         public virtual AspectType Type => AspectType.common;
 
         public virtual bool IsActive()
@@ -64,7 +64,6 @@ namespace FilterEconomy.Model.ItemAspects
     {
         string Group { get; }
         string Name { get; }
-        SolidColorBrush Color { get; }
         AspectType Type { get; }
 
         bool IsActive();
@@ -99,6 +98,12 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.uniques;
     }
 
+    public class NonEventDropAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.uniques;
+    }
+
     public class LeagueDropAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
@@ -120,6 +125,18 @@ namespace FilterEconomy.Model.ItemAspects
     public class EarlyLeagueInterestAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";
+
+        public override bool IsActive()
+        {
+            if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("EarlyLeagueInterestAspect"))
+            {
+                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"] > DateTime.Now)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     public class MetaBiasAspect : AbstractItemAspect
@@ -162,6 +179,18 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.divination;
     }
 
+    public class PoorDiviAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.divination;
+    }
+
+    public class PreventHidingAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.divination;
+    }
+
     public class LargeRandomPoolAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
@@ -196,5 +225,23 @@ namespace FilterEconomy.Model.ItemAspects
     {
         public override string Group => "DropType";
         public override AspectType Type => AspectType.divination;
+    }
+
+    public class AtlasBaseAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.basetype;
+    }
+
+    public class SpecialImplicitAspect : AbstractItemAspect
+    {
+        public override string Group => "ItemProperties";
+        public override AspectType Type => AspectType.basetype;
+    }
+
+    public class ExclusiveBaseAspect : AbstractItemAspect
+    {
+        public override string Group => "DropType";
+        public override AspectType Type => AspectType.basetype;
     }
 }

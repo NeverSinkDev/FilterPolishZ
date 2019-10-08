@@ -51,6 +51,22 @@ namespace FilterPolishUtil.Extensions
             return result;
         }
 
+        public static void ForEachIndexing<T>(this IList<T> collection, Func<T, int, T> func)
+        {
+            for (int i = 0; i < collection.Count; i++)
+            {
+                collection[i] = func(collection[i],i);
+            }
+        }
+
+        public static void ForEachIndexing<T>(this IList<T> collection, Action<T, int> action)
+        {
+            for (int i = 0; i < collection.Count; i++)
+            {
+                action(collection[i], i);
+            }
+        }
+
         public static IEnumerable<T1> PairSelect<T,T1>(this IEnumerable<T> collection, Func<T,T,T1> selector)
         {
             var initialized = false;

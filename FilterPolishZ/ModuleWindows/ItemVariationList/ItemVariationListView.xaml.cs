@@ -99,8 +99,16 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             {
                 return;
             }
-            
-            EconomyRequestFacade.GetInstance().EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
+
+            var requestFacade = EconomyRequestFacade.GetInstance();
+
+            // TODO!
+            //if (this.BranchKey.ToLower().Contains("rare"))
+            //{
+            //    this.branchKey = "basetypes";
+            //}
+
+            requestFacade.EconomyTierlistOverview[this.BranchKey][Key].ForEach(x =>
             {
                 ItemVariationInformation.Add(x);
             });
@@ -110,7 +118,7 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
             this.RefreshAspectColoration();
         }
 
-        internal void ToggleTag(string v)
+        internal void ForceChangeAspect(string v)
         {
             NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
             if (item != null)
@@ -171,10 +179,10 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                 return;
             }
 
-            RefreshAspects(control);
+            ChangeAspectStateFromControl(control);
         }
 
-        private void RefreshAspects(ContentControl control)
+        private void ChangeAspectStateFromControl(ContentControl control)
         {
             NinjaItem item = (ItemVariationTable.SelectedItem as NinjaItem);
             var clickedAspect = (control.DataContext as AbstractItemAspect);

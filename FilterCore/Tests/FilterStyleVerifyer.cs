@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using FilterCore.Constants;
-using FilterCore.Entry;
 using FilterCore.Line;
 using FilterCore.Line.Parsing;
-using FilterDomain.LineStrategy;
-using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 
 namespace FilterCore.Tests
@@ -22,7 +18,7 @@ namespace FilterCore.Tests
     {
         public static void Run(Filter filter)
         {
-            FilterConstants.StyleIdents.ToList().ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
+            FilterGenerationConfig.StyleIdents.ToList().ForEach(ident => new FilterStyleVerifyer_SingleIdent(ident).Run(filter));
         }
         
         private class FilterStyleVerifyer_SingleIdent
@@ -70,15 +66,12 @@ namespace FilterCore.Tests
                             msg += " \n";
                             i++;
                         }
+                        
+                        // TODO: Add: "Do you want to select the name #" + index + " as style name?";
+                        return;
 
-                        msg += "Do you want to select the name #" + index + " as style name?";
-                    
-                        var res = InfoPopUpMessageDisplay.DisplayQuestionMessageBox(msg);
-                        if (res)
-                        {
-                            pair.Value.RemoveAll(x => x.Key != selectedName);
-                            break;
-                        }
+                        pair.Value.RemoveAll(x => x.Key != selectedName);
+                        break;
 
                         index++;
                     }
@@ -108,24 +101,26 @@ namespace FilterCore.Tests
                             i++;
                         }
 
+                        // TODO: Make it conditional
                         msg += "Do you want to select value #" + index + " as style value?";
-                    
-                        var res = InfoPopUpMessageDisplay.DisplayQuestionMessageBox(msg);
-                        if (res)
+                        return;
+
+                        var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
+                        foreach (var keyValuePair in removed)
                         {
-                            var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
-                            foreach (var keyValuePair in removed)
+                            var oldValue = keyValuePair.Key;
+
+                            this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
+
+                            this.valueToNamesDic.Remove(oldValue);
+                            if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
+                            else
                             {
-                                var oldValue = keyValuePair.Key;
-                                
-                                this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
-                                
-                                this.valueToNamesDic.Remove(oldValue);
-                                if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
-                                else throw new Exception("unexpected error in filterStyleVerifyer");
+//                                throw new Exception("unexpected error in filterStyleVerifyer");
+                                this.valueToNamesDic[selectedValue].Add(pair.Key, keyValuePair.Value);
                             }
-                            break;
                         }
+                        break;
 
                         index++;
                     }
@@ -136,7 +131,7 @@ namespace FilterCore.Tests
             {
                 foreach (var entry in baseFilter.FilterEntries)
                 {
-                    if (entry.Header.Type != FilterConstants.FilterEntryType.Content) continue;
+                    if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Content) continue;
                     if (!entry.Content.Content.ContainsKey(ident)) continue;
                     var line = entry.Content.Content[ident].Single();
                     var value = line.Value.Serialize();
@@ -191,36 +186,38 @@ namespace FilterCore.Tests
                 if (this.valueToNamesDic.ContainsKey(value))
                 {
                     var styleNames = this.valueToNamesDic[value];
-                    var newName = styleNames.Keys.Single();
+                    var newName = styleNames.OrderByDescending(x => x.Value).First().Key;
                     if (newName == name) return;
                     line.Comment = newName;
                 }
 
                 else if (this.nameToValuesDic.ContainsKey(name))
                 {
-                    throw new Exception("unexpected care for styleVerifier");
+                    Console.WriteLine("todo");
+//                    throw new Exception("unexpected care for styleVerifier");
                 }
             }
             
             private void VerifyStyleValues(string value, string name, IFilterLine line)
             {
-                if (this.nameToValuesDic.ContainsKey(name))
-                {
-                    var newValue = this.nameToValuesDic[name].Keys.Single();
-                    if (newValue == value) return;
-                    
-                    var newLine = LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(line.Ident + " " + newValue));
-                    line.Value = newLine.Value;
-                }
+//                if (this.nameToValuesDic.ContainsKey(name))
+//                {
+//                    var newValue = this.nameToValuesDic[name].OrderByDescending(x => x.Value).First().Key;
+////                    if (newValue == value) return;
+//
+//                    var newLine = LineParser.GenerateFilterLine(LineParser.TokenizeFilterLineString(line.Ident + " " + newValue));
+//                    line.Value = newLine.Value;
+//                }
 
-                else if (this.valueToNamesDic.ContainsKey(value))
+                if (this.valueToNamesDic.ContainsKey(value))
                 {
                     // style name was removed -> check dic for new name
-                    var newName = this.valueToNamesDic[value].Keys.Single();
+                    var newName = this.valueToNamesDic[value].OrderByDescending(x => x.Value).First().Key;
                     if (newName == name) return;
-                    
+
                     line.Comment = newName;
                 }
+            
             }
         }
     }

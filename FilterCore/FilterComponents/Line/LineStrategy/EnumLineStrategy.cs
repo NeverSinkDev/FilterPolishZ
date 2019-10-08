@@ -1,6 +1,8 @@
 ﻿using FilterCore.Line;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +47,16 @@ namespace FilterDomain.LineStrategy
         public string Serialize()
         {
             return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
+        }
+
+        public bool IsValid()
+        {
+            if (this.Value == null || this.Value.Count == 0)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

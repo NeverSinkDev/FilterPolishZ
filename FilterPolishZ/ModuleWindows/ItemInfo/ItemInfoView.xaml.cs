@@ -1,16 +1,11 @@
 ﻿using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
-using FilterPolishZ.Domain;
-using FilterPolishZ.Domain.DataType;
-using FilterPolishZ.ModuleWindows.ItemVariationList;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,13 +14,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil;
-using FilterPolishZ.Configuration;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using UserControl = System.Windows.Controls.UserControl;
 using FilterPolishZ.Util;
-using FilterPolishUtil.Constants;
-using TextBox = System.Windows.Forms.TextBox;
-using System.Diagnostics;
+using FilterPolishUtil.Extensions;
 
 namespace FilterPolishZ.ModuleWindows.ItemInfo
 {
@@ -53,10 +45,12 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         {
             InitializeComponent();
 
-            var allBranchKeys = FilterPolishConstants.TierableEconomySections;
+            var allBranchKeys = FilterPolishConfig.TierableEconomySections;
             CurrentBranchKey = allBranchKeys.First();
             this.BranchKeyDisplaySelection.ItemsSource = allBranchKeys;
             this.BranchKeyDisplaySelection.SelectedIndex = 0;
+
+//            this.AllAspectList.ItemsSource = Aspects; // todo
             
             this.DataContext = this;
             InnerView.BranchKey = CurrentBranchKey;
@@ -77,7 +71,15 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 InnerView.SelectFirstItem();
 
                 InnerView.BranchKey = CurrentBranchKey;
-                InnerView.ToggleTag("MetaBiasAspect");
+                if (CurrentBranchKey.ToLower().Contains("divination"))
+                {
+                    InnerView.ForceChangeAspect("PoorDiviAspect");
+                }
+                else if (CurrentBranchKey.ToLower().Contains("unique"))
+                {
+                    InnerView.ForceChangeAspect("MetaBiasAspect");
+                }
+                
             }
         }
 
@@ -319,6 +321,24 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 var aspectNames = textBox.Text.Split(',').Select(x => x.Trim()).Where(x => x.Length > 2);
                 this.aspectDisplayFilter = aspectNames;
                 this.OnUpdateUiButtonClick(null, null);
+            }
+        }
+
+        private void RemoveAspectFromAll(object sender, RoutedEventArgs e)
+        {
+            var aspectFilter = this.AllAspectList.ItemsSource as IEnumerable<string>;
+            if (aspectFilter == null) throw new Exception();
+            
+            var allItems = this.GetCurrentDisplayItems();
+            foreach (var items in allItems.Values)
+            {
+                foreach (var item in items)
+                {
+                    foreach (var aspect in aspectFilter)
+                    {
+                        item.Aspects.RemoveAll(x => x.Name == aspect);
+                    }
+                }
             }
         }
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FilterCore.Commands.EntryCommands;
-using static FilterCore.Constants.FilterConstants;
+using static FilterCore.FilterGenerationConfig;
 
 namespace FilterCore.Entry
 {
@@ -60,7 +60,7 @@ namespace FilterCore.Entry
 
             bool firstComment = true;
             StringBuilder builder = new StringBuilder();
-            var strings = line.Comment.ToLower().Split(FilterConstants.WhiteLineChars);
+            var strings = line.Comment.ToLower().Split(FilterGenerationConfig.WhiteLineChars);
 
             foreach (var s in strings)
             {
@@ -78,26 +78,35 @@ namespace FilterCore.Entry
                     short digit = -1;
 
                     // in case the command is something without digit at the end (like %UP, unlike %h3)
-                    if (FilterConstants.EntryCommand.ContainsKey(split))
+                    if (FilterGenerationConfig.EntryCommand.ContainsKey(split))
                     {
                         command = split;
                     }
 
                     // checking if the last char is a digit wont work correctly in cases of e.g. "crafting-83"
                     // which will save the "3" as strictness, so we instead check if the command is in the EntryCommand list
-                    else if (FilterConstants.EntryCommand.ContainsKey(command))
+                    else if (FilterGenerationConfig.EntryCommand.ContainsKey(command))
                     {
                         digit = short.Parse(split.Substring(lastPos));
                     }
+
+                    else if(FilterGenerationConfig.EntryCommand.ContainsKey(split.Split(new[] {"->"}, StringSplitOptions.None).First()))
+                    {
+                        command = split.Split(new[] {"->"}, StringSplitOptions.None).First();
+                    }
+                    
                     else
                     {
                         throw new Exception("unknown entry tag command: " + split);
                     }
                     
-                    var tagType = FilterConstants.EntryCommand[command];
-                    tag = tagType.GetConstructors().Single().Invoke(new object[] {entry}) as GenerationTag;
+                    var tagType = FilterGenerationConfig.EntryCommand[command];
+                    tag = tagType(entry) as GenerationTag;
                     tag.Strictness = digit;
                     tag.Value = command;
+                    
+                    if (tag is ReceiverEntryCommand r) r.TypeValue = split.Replace(command, "");
+                    if (tag is SenderEntryCommand se) se.TypeValue = split.Replace(command, "");
 
                     this.GenerationTags.Add(tag);
                 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore;
 using FilterCore.Constants;
 using FilterCore.Line;
 
@@ -29,7 +30,7 @@ namespace FilterDomain.LineStrategy
         {
             for (int i = 0; i < tokens.Count; i++)
             {
-                if (i == 0 && FilterConstants.FilterOperators.Contains(tokens[0].value))
+                if (i == 0 && FilterGenerationConfig.FilterOperators.Contains(tokens[0].value))
                 {
                     Operator = tokens[0].value;
                 }
@@ -65,6 +66,19 @@ namespace FilterDomain.LineStrategy
             {
                 return $"{Operator?.ToString() ?? string.Empty} {Value.ToString()}";
             }
+        }
+
+        public bool IsValid()
+        {
+            int number = 0;
+            bool success = int.TryParse(this.Value, out number);
+
+            if (success)
+            {
+                return number >= 0;
+            }
+
+            return FilterGenerationConfig.ValidRarities.Contains(this.Value);
         }
     }
 }

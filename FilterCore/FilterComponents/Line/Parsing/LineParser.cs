@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static FilterCore.Constants.FilterConstants;
+using static FilterCore.FilterGenerationConfig;
 
 namespace FilterCore.Line.Parsing
 {
@@ -65,7 +65,7 @@ namespace FilterCore.Line.Parsing
 
             if (ident != string.Empty)
             {
-                result = FilterConstants.LineTypes[ident].Construct(ident, value);
+                result = FilterGenerationConfig.LineTypes[ident].Construct(ident, value);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace FilterCore.Line.Parsing
                     {
                         if (CommentState == LineParsingCommentState.Testing)
                         {
-                            if (FilterConstants.LineTypes.ContainsKey(trimmed))
+                            if (FilterGenerationConfig.LineTypes.ContainsKey(trimmed))
                             {
                                 currentString = trimmed;
                                 currentToken.isIdent = true;
@@ -190,7 +190,7 @@ namespace FilterCore.Line.Parsing
                         }
                         else
                         {
-                            if (FilterConstants.LineTypes.ContainsKey(trimmed))
+                            if (FilterGenerationConfig.LineTypes.ContainsKey(trimmed))
                             {
                                 currentToken.isIdent = true;
                             }

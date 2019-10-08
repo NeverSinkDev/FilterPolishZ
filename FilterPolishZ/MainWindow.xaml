@@ -91,11 +91,11 @@
                                     <Separator/>
 
                                     <Button ToolTip="Perform Suggesting Generation Routine" Click="PerformAutomatedTiering" Foreground="Gold">
-                                        <materialDesign:PackIcon Kind="AutoFix" />
+                                            <materialDesign:PackIcon Kind="AutoStories" />
                                     </Button>
 
                                     <Button ToolTip="Apply All Suggestions" Click="ApplyAllSuggestions" Foreground="Gold">
-                                        <materialDesign:PackIcon Kind="AutoStories" />
+                                            <materialDesign:PackIcon Kind="AutoFix" />
                                     </Button>
                                         <Separator/>
 
@@ -120,8 +120,16 @@
                                     <Button ToolTip="Copy filters from output to filter folder" Click="CopyResultFilesToFilterFolder">
                                         <materialDesign:PackIcon Kind="FolderMove" />
                                     </Button>
+                                    
+                                    <Separator/>
+                                        <Button ToolTip="Create Zip Files" Click="CreateZipFiles">
+                                            <materialDesign:PackIcon Kind="Package" />
+                                        </Button>
+                                    <Button ToolTip="Copy filters from output to project folder" Click="CopyResultsToGitHubFolder">
+                                        <materialDesign:PackIcon Kind="Git" />
+                                    </Button>
 
-                                </ToolBar>
+                                    </ToolBar>
                             </ToolBarTray>
 
                         </DockPanel>

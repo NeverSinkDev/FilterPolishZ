@@ -16,12 +16,22 @@ TODO: Guide users through getting your code up and running on their own system. 
 11. Annotates economy data with "aspects" to increase tiering accuracy.
 
 # Build and Test
-*coming soon*
 
-# Contribute
-*coming soon*
+( section is work in progress )
+
+1) Building a .NET environment with WPF (such as visual studio 2019)
+2) To start you also need a seedfilter and aspectfiles.
+- You can get the seedfilter in my filter-repository under addtional files ( https://github.com/NeverSinkDev/NeverSink-Filter/tree/master/ADDITIONAL-FILES/SeedFilter )
+- The aspect files can be found here ( https://github.com/NeverSinkDev/Filter-ItemEconomyAspects )
+3) You'll have to adjust the folders in the project cofiguration, that links to the seed filter and aspect files.
 
 # This project relies on the following nuget libraries/packages:
 
 - Material Design for XAML
 - Fody
+
+# Special thanks:
+
+Tobnac
+
+Patreon Supporters ( https://www.patreon.com/Neversink )

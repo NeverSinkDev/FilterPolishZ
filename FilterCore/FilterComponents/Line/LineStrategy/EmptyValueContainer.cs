@@ -23,5 +23,10 @@ namespace FilterCore.Line.LineStrategy
         {
             return string.Empty;
         }
+
+        public bool IsValid()
+        {
+            return true;
+        }
     }
 }

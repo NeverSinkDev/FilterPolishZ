@@ -15,11 +15,15 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@0
+
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '4.4.1'
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    restoreSolution: '**/*.sln'
 
 - task: VSBuild@1
   inputs:
@@ -43,6 +47,14 @@ steps:
 - task: CmdLine@2
   inputs:
     script: 'git pull https://$(githubpersonaltoken)@github.com/NeverSinkDev/FilterPolishZ.git master'
+
+- task: DeleteFiles@1
+  displayName: 'Delete folder'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '\.vscode*'
+    RemoveSourceFolder:
+
 
 - task: CmdLine@2
   inputs:

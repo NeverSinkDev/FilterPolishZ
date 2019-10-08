@@ -51,7 +51,7 @@ namespace FilterCore.Entry
 
             if (this.Header.HeaderValue == "Hide")
             {
-                FilterConstants.HighlightingIdents.ToList().ForEach(x => this.Content.Content.Remove(x));
+                FilterGenerationConfig.HighlightingIdents.ToList().ForEach(x => this.Content.Content.Remove(x));
             }
 
             var headerText = this.Header.Serialize();
@@ -64,7 +64,7 @@ namespace FilterCore.Entry
 
             if (contentText != null)
             {
-                if (this.Header.Type == Constants.FilterConstants.FilterEntryType.Content)
+                if (this.Header.Type == FilterGenerationConfig.FilterEntryType.Content)
                 {
                     contentText = contentText.Select(x => $"\t{x}").ToList();
                 }
@@ -90,7 +90,7 @@ namespace FilterCore.Entry
             entry.Header.HeaderValue = line.Ident;
             entry.Header.IsFrozen = line.identCommented;
             entry.Header.IsActive = true;
-            entry.Header.Type = Constants.FilterConstants.FilterEntryType.Content;
+            entry.Header.Type = FilterGenerationConfig.FilterEntryType.Content;
             entry.Header.ExtractTagsFromLine(line, entry);
 
             entry.Content = new FilterEntryDataContent();
@@ -103,7 +103,7 @@ namespace FilterCore.Entry
             var entry = new FilterEntry();
 
             entry.Header = new FilterEntryHeader();
-            entry.Header.Type = Constants.FilterConstants.FilterEntryType.Comment;
+            entry.Header.Type = FilterGenerationConfig.FilterEntryType.Comment;
             entry.Header.IsFrozen = true;
             entry.Header.IsActive = true;
 
@@ -119,7 +119,7 @@ namespace FilterCore.Entry
             var entry = new FilterEntry();
 
             entry.Header = new FilterEntryHeader();
-            entry.Header.Type = Constants.FilterConstants.FilterEntryType.Filler;
+            entry.Header.Type = FilterGenerationConfig.FilterEntryType.Filler;
             entry.Header.IsFrozen = false;
             entry.Header.IsActive = true;
 

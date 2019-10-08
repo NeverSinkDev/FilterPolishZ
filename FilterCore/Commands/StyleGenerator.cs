@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Animation;
 using FilterCore.Constants;
 using FilterCore.Line;
 using FilterDomain.LineStrategy;
@@ -26,7 +24,7 @@ namespace FilterCore.Commands
         {
             foreach (var entry in this.filter.FilterEntries)
             {
-                if (entry.Header.Type != FilterConstants.FilterEntryType.Content)
+                if (entry.Header.Type != FilterGenerationConfig.FilterEntryType.Content)
                 {
                     continue;
                 }

@@ -6,14 +6,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil.Collections;
 using Newtonsoft.Json;
+using FilterPolishUtil.Model;
+using FilterPolishUtil.Interfaces;
 
 namespace FilterEconomy.Facades
 {
-    public class ItemInformationFacade
+    public class ItemInformationFacade : ICleanable
     {
         // singleton
         private ItemInformationFacade() { }
@@ -21,15 +24,18 @@ namespace FilterEconomy.Facades
         public static ItemInformationFacade GetInstance() => instance ?? (instance = new ItemInformationFacade());
 
         public Dictionary<string, Dictionary<string, List<ItemInformationData>>> EconomyTierListOverview { get; set; } = new Dictionary<string, Dictionary<string, List<ItemInformationData>>>();
-        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() } };
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings { Converters = new List<JsonConverter> { new ItemAspectFactory() }, Formatting = Formatting.Indented };
 
         public string LeagueType { get; set; }
         public string BaseStoragePath { get; set; }
+
+        public bool IsAspectFileLeagueSplited { get; set; } = false;
         
         public void LoadFromSaveFile()
         {
             foreach (var branchKey in EconomyRequestFacade.GetInstance().EconomyTierlistOverview.Keys)
             {
+                LoggingFacade.LogDebug($"Loading AspectFile: {branchKey}");
                 this.LoadFromSaveFile(branchKey);
             }
         }
@@ -41,10 +47,10 @@ namespace FilterEconomy.Facades
             if (File.Exists(filePath))
             {
                 var fileText = File.ReadAllText(filePath);
-                if (fileText.Length < 2) InfoPopUpMessageDisplay.ShowError("ItemAspect saveFile empty for: " + branchKey);
+                if (fileText.Length < 2) LoggingFacade.LogWarning("ItemAspect saveFile empty for: " + branchKey);
                 this.Deserialize(branchKey, fileText);
             }
-            else InfoPopUpMessageDisplay.ShowError("no ItemAspect saveFile for: " + branchKey);
+            else LoggingFacade.LogError("no ItemAspect saveFile for: " + branchKey);
 
             var economyData = EconomyRequestFacade.GetInstance();
             this.MigrateAspectDataToEcoData(economyData, branchKey);
@@ -66,22 +72,23 @@ namespace FilterEconomy.Facades
                 
                 var targetItems = targetDic[baseType];
 
-                foreach (var sourceItem in sourceItemList)
+                foreach (var sourceItem in sourceItemList.GroupBy(x => x.Name).Select(x => x.OrderByDescending(y => y.CVal).First()))
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
-                    if (targetItem == null)
+                    var targetItem = targetItems.Where(x => x.Equals(sourceItem)).ToList();
+                    if (targetItem.Count == 0)
                     {
-                        targetItem = new ItemInformationData
+                        var item = new ItemInformationData
                         {
                             Name = sourceItem.Name,
                             BaseType = sourceItem.BaseType,
                             Special = sourceItem.Variant
                         };
                         
-                        targetItems.Add(targetItem);
+                        targetItem.Add(item);
+                        targetItems.Add(item);
                     }
 
-                    targetItem.Aspects = new List<IItemAspect>(sourceItem.Aspects);
+                    targetItem.ForEach(x => x.Aspects = new List<IItemAspect>(sourceItem.Aspects));
                 }
             }
         }
@@ -122,17 +129,17 @@ namespace FilterEconomy.Facades
                 
                 var targetItems = targetDic[baseType];
 
-                foreach (var sourceItem in sourceItemList)
+                foreach (var sourceItem in sourceItemList.GroupBy(x => x.Name).Select(x => x.First()))
                 {
-                    var targetItem = targetItems.FirstOrDefault(x => x.Name == sourceItem.Name);
-                    if (targetItem == null)
+                    var targetItem = targetItems.Where(x => sourceItem.Equals(x)).ToList();
+                    if (targetItem.Count == 0)
                     {
                         var newItem = new NinjaItem { BaseType = baseType, Name = sourceItem.Name, IsVirtual = true };
                         targetItems.Add(newItem);
-                        targetItem = newItem;
+                        targetItem.Add(newItem);
                     }
 
-                    targetItem.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects);
+                    targetItem.ForEach(x => x.Aspects = new ObservableCollection<IItemAspect>(sourceItem.Aspects));
                 }
             }
         }
@@ -145,6 +152,7 @@ namespace FilterEconomy.Facades
 
         public void SaveItemInformation(string filePath, string branchKey)
         {
+            LoggingFacade.LogDebug($"Saving AspectFile: {branchKey}");
             FileWork.WriteTextAsync(filePath, this.Serialize(branchKey));
         }
 
@@ -157,7 +165,36 @@ namespace FilterEconomy.Facades
         {
             var newObj = new Dictionary<string, List<ItemInformationData>>();
             JsonConvert.PopulateObject(input, newObj, JsonSettings);
+//            this.SynchronizeVariantAspects(newObj);
             this.EconomyTierListOverview[branchKey] = newObj;
+        }
+
+        /// <summary>
+        /// in case of items with multiple variations (e.g. Vessel of Vinktar or shelder ilvl bases) we want them all
+        /// to have the same aspects. This function will take the aspects of the first occurence of the item in the list
+        /// and apply these aspects to all other items of the same type (~ different variation)
+        /// </summary>
+        /// <param name="newObj"></param>
+        private void SynchronizeVariantAspects(Dictionary<string, List<ItemInformationData>> newObj)
+        {
+            foreach (var baseType in newObj)
+            {
+                var aspects = new Dictionary<string, List<IItemAspect>>();
+
+                // get all aspects for different types/uniques
+                foreach (var unique in baseType.Value.OrderByDescending(x => x.Aspects.Count))
+                {
+                    if (aspects.ContainsKey(unique.Name)) continue;
+                    aspects.Add(unique.Name, unique.Aspects);
+                }
+                
+                // apply saved aspects to all variations of this type/unique
+                foreach (var unique in baseType.Value)
+                {
+                    if (!aspects.ContainsKey(unique.Name)) continue;
+                    unique.Aspects = aspects[unique.Name];
+                }
+            }
         }
 
         public Dictionary<string, List<ItemInformationData>> LoadItemInformation(string branchKey)
@@ -183,7 +220,13 @@ namespace FilterEconomy.Facades
         private string GetItemInfoSaveFilePath(string branchKey)
         {
             if (branchKey.Contains("->")) branchKey = branchKey.Replace("->", "");
-            var directoryPath = $"{this.BaseStoragePath}/{this.LeagueType}";
+            var directoryPath = $"{this.BaseStoragePath}";
+
+            if (IsAspectFileLeagueSplited)
+            {
+                directoryPath += $"/{ this.LeagueType}";
+            }
+
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
 
@@ -227,6 +270,12 @@ namespace FilterEconomy.Facades
             }
             
             return result;
+        }
+
+        public void Clean()
+        {
+            EconomyTierListOverview.Clear();
+            instance = null;
         }
     }
 }
