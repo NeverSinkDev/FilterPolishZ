@@ -291,7 +291,7 @@ namespace FilterPolishZ
 
         private void GenerateAllFilterFiles(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true));
+            Task.Run(() => WriteFilter(this.FilterAccessFacade.PrimaryFilter, true, Configuration.AppSettings["Output Folder"]));
         }
 
         private void OpenFilterFolder(object sender, RoutedEventArgs e)

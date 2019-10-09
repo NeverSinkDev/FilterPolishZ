@@ -92,17 +92,25 @@ namespace FilterPolishZ.Economy.RuleSet
                     return builder.RuleSet.DefaultSet.HasAspect("FarmableOrbAspect");
                 }));
 
+            builder.AddRule("CurrencySaveT5", "t5c",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
+                    return (price < FilterPolishConfig.DiviT5BreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                }));
+
             builder.AddRule("RandomSave", "rest",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.RuleSet.DefaultSet.HasAspect("LargeRandomPoolAspect");
                 }));
 
-            builder.AddRule("CurrencySaveT5", "t5c",
+
+            builder.AddRule("PoorCard", "t5",
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.RuleSet.DefaultSet.LowestPrice * builder.RuleSet.DefaultSet.ValueMultiplier;
-                    return (price < FilterPolishConfig.DiviT5BreakPoint || builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect")) && builder.RuleSet.DefaultSet.HasAspect("CurrencyTypeAspect");
+                    return (price < (FilterPolishConfig.DiviT5BreakPoint * 2f) && builder.RuleSet.DefaultSet.HasAspect("PoorDiviAspect"));
                 }));
 
             builder.AddRule("T5RedemptionPrevented", "t5",

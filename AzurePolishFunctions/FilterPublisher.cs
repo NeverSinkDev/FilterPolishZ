@@ -85,7 +85,7 @@ namespace AzurePolishFunctions
                         Console.WriteLine(resp.StatusCode);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("File already deleted");
                 }
