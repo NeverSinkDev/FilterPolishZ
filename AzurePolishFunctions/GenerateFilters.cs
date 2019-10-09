@@ -91,6 +91,8 @@ namespace AzurePolishFunctions
 
             // 3) Parse filter
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
+            var newVersion = FilterAccessFacade.PrimaryFilter.GetHeaderMetaData("VERSION") + "." + DateTime.Now.Year + "." + DateTime.Now.DayOfYear + "." + DateTime.Now.Hour;
+            FilterAccessFacade.PrimaryFilter.SetHeaderMetaData("VERSION", newVersion);
 
             // 4) Load ier list information and enrichment procedures
             var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
