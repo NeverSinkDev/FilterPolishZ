@@ -40,7 +40,7 @@ namespace AzurePolishFunctions
 
             try
             {
-                PerformMainRoutine();
+                PerformMainRoutine(req);
                 return new OkObjectResult("successfully generated filters");
             }
             catch (Exception e)
@@ -50,7 +50,7 @@ namespace AzurePolishFunctions
             }
         }
 
-        public static void PerformMainRoutine()
+        public static void PerformMainRoutine(HttpRequest req)
         {
             // 0) Cleanup
             EconomyData?.Clean();
@@ -65,8 +65,14 @@ namespace AzurePolishFunctions
 
             // 0) Get Current League information etc
             // 1) Acquire Data
-            var league = Environment.GetEnvironmentVariable("ninjaLeague", EnvironmentVariableTarget.Process) ?? "tmpstandard";
+            
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
+
+            string body = new StreamReader(req.Body).ReadToEnd();
+            dynamic data = JsonConvert.DeserializeObject(body);
+
+            var league = GetReqParams(req, data, "ninjaLeague", "tmpstandard");
+            var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             if (localMode == "true")
             {
@@ -85,6 +91,8 @@ namespace AzurePolishFunctions
 
             // 3) Parse filter
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
+            var newVersion = FilterAccessFacade.PrimaryFilter.GetHeaderMetaData("VERSION") + "." + DateTime.Now.Year + "." + DateTime.Now.DayOfYear + "." + DateTime.Now.Hour;
+            FilterAccessFacade.PrimaryFilter.SetHeaderMetaData("VERSION", newVersion);
 
             // 4) Load ier list information and enrichment procedures
             var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
@@ -109,7 +117,34 @@ namespace AzurePolishFunctions
             // todo
             
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter).Run();
+            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run();
+        }
+
+        private static string GetReqParams(HttpRequest req, dynamic data, string name, string defValue)
+        {
+            string result = string.Empty;
+
+            result = req.Query[name];
+
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            result = data?[name];
+
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            result = Environment.GetEnvironmentVariable(name);
+            if (result != null && result != string.Empty)
+            {
+                return result;
+            }
+
+            return defValue;
         }
 
         private static void CreateSubEconomyTiers()

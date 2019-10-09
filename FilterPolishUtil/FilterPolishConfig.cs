@@ -79,7 +79,7 @@ namespace FilterPolishUtil
 
         public static void AdjustPricingInformation()
         {
-            SuperTierBreakPoint = 3.5f * ExaltedOrbPrice;
+            SuperTierBreakPoint = 1f * ExaltedOrbPrice;
 
             // Uniques
             UniqueT1BreakPoint = UniqueT1Base + UniqueExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
@@ -125,16 +125,16 @@ namespace FilterPolishUtil
 
         // BaseType Pricing - basetype tiered items can be more expensive due to a plethora of different factors
         // However, to minimize disapointing mistakes, we keep the T1 breakpoint up high
-        public static float BasesExaltedOrbInfluence = 0.1f;
+        public static float BasesExaltedOrbInfluence = 0.12f;
 
         public static float BaseTypeT1Base = 25f;
-        public static float BaseTypeT2Base = 5f;
+        public static float BaseTypeT2Base = 7f;
 
         public static float BaseTypeT1BreakPoint;
         public static float BaseTypeT2BreakPoint;
 
         // Divination cards are tricky. You have to consider their special nature of not being useful until a set is complete and that it takes an extra overhead to purify their value.
-        public static float DivinationExaltedOrbInfluence = 0.1f;
+        public static float DivinationExaltedOrbInfluence = 0.12f;
 
         public static float DiviT1BreakPoint;
         public static float DiviT2BreakPoint;
@@ -147,7 +147,7 @@ namespace FilterPolishUtil
         public static float DiviT5Base = 0.5f;
 
         // Fossils and scarabs are often predictable -drops-. Predictable drops are often best kept at high threshholds. Predictability ruins the surprise/excitement
-        public static float MiscExaltedOrbInfluence = 0.1f;
+        public static float MiscExaltedOrbInfluence = 0.12f;
 
         public static float MiscT1BreakPoint;
         public static float MiscT2BreakPoint;
