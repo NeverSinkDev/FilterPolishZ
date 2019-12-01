@@ -14,6 +14,7 @@ namespace FilterEconomyProcessor.RuleSet
                 .SetSection(segment)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
+                .OverrideMinimalExaltedPriceThreshhold(52)
                 .AddDefaultIntegrationTarget();
 
             builder.AddRule("ANCHOR", "ANCHOR",

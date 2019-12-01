@@ -40,6 +40,12 @@ namespace FilterEconomyProcessor.RuleSet
             return this;
         }
 
+        public RuleSetBuilder OverrideMinimalExaltedPriceThreshhold(float price)
+        {
+            this.RuleSet.MinimalExaltedOrbPrice = price;
+            return this;
+        }
+
         public RuleSetBuilder UseCustomQuery(System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>> customQuery)
         {
             this.RuleSet.DefaultItemQuery = customQuery;

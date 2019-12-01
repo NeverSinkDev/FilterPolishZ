@@ -77,6 +77,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("unique->maps")
+                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -90,6 +91,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->incubators")
+                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -103,6 +105,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("fragments->scarabs")
+                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -116,6 +119,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->fossil")
+                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()

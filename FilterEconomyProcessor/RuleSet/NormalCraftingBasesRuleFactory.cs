@@ -12,8 +12,9 @@ namespace FilterEconomyProcessor.RuleSet
 
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection(segment)
-                .UseCustomQuery(new System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>>((s) => ruleHost.EconomyInformation.EconomyTierlistOverview["generalcrafting"][s]))
+                .UseCustomQuery(((s) => ruleHost.EconomyInformation.EconomyTierlistOverview["generalcrafting"][s]))
                 .AddDefaultPostProcessing()
+                .OverrideMinimalExaltedPriceThreshhold(60)
                 .AddDefaultIntegrationTarget();
 
             builder.AddRule("t1-86-economy", "eco",

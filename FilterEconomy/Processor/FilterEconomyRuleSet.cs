@@ -24,10 +24,17 @@ namespace FilterEconomy.Processor
         public bool Enabled { get; set; } = true;
         public IEconomyProcessorData RuleHost { get; set; }
         public List<TieringCommand> SuggestionTarget {get; set;}
+        public float MinimalExaltedOrbPrice { get; set; } = FilterPolishUtil.FilterPolishConfig.TieringEnablingExaltedOrbPrice;
 
         public void GenerateAndAddSuggestions()
         {
             LoggingFacade.LogDebug($"Generating Suggestions for: {this.GoverningSection}");
+
+            if (FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice <= MinimalExaltedOrbPrice)
+            {
+                LoggingFacade.LogWarning($"[EXALTED PRICE TOO LOW] SKIP Suggestions generation for: {this.GoverningSection}");
+                return;
+            }
 
             if (!Enabled)
             {
@@ -37,7 +44,6 @@ namespace FilterEconomy.Processor
 
             this.SuggestionTarget.Clear();
             this.SuggestionTarget.AddRange(this.GenerateSuggestions());
-
         }
 
         public IEnumerable<TieringCommand> GenerateSuggestions()

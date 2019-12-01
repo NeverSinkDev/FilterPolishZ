@@ -53,7 +53,7 @@ namespace FilterPolishUtil
         };
 
         /// <summary>
-        /// Items that should be excluded from all or specific procedures.
+        /// Aspects that should be ignored during certain enrichments procedures
         /// </summary>
         public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
         public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
@@ -69,8 +69,14 @@ namespace FilterPolishUtil
 
         /// <summary>
         /// Incredibly important. Tells us a lot about the global economy, the freshness of the league and the crafting/gear demands.
+        /// Adjusted during the first steps of enrichments procedures
         /// </summary>
         public static float ExaltedOrbPrice = 30f;
+
+        /// <summary>
+        /// By default no tiering is applied to a section if the exalted orb price is lower than this price, because the economy is usually not stable enough.
+        /// </summary>
+        public static float TieringEnablingExaltedOrbPrice = 35f;
 
         /// <summary>
         /// Useful for easy acquiring the section names above, without redundancy
@@ -123,6 +129,12 @@ namespace FilterPolishUtil
         public static float UniqueT1BreakPoint;
         public static float UniqueT2BreakPoint;
 
+        // Uniques have a bunch of special conditions, that are used as pricing multipliers
+        public static float UncommonAspectMultiplier = 2.5f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
+        public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
+        public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
+        public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
+
         // BaseType Pricing - basetype tiered items can be more expensive due to a plethora of different factors
         // However, to minimize disapointing mistakes, we keep the T1 breakpoint up high
         public static float BasesExaltedOrbInfluence = 0.12f;
@@ -158,11 +170,6 @@ namespace FilterPolishUtil
         public static float MiscT2Base = 7f;
         public static float MiscT3Base = 2.5f;
         public static float MiscT4Base = 1f;
-
-        public static float UncommonAspectMultiplier = 2.5f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
-        public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
-        public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
-        public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
     }
 
     public enum RequestType
