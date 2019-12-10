@@ -84,7 +84,7 @@ namespace AzurePolishFunctions
             }
 
             DataFiles = new DataFileRequestFacade();
-            DataFiles.GetAllFiles(league);
+            var dataRes = DataFiles.GetAllFiles(league);
 
             // 2) Test Data
             // todo
@@ -94,24 +94,28 @@ namespace AzurePolishFunctions
             var newVersion = FilterAccessFacade.PrimaryFilter.GetHeaderMetaData("VERSION") + "." + DateTime.Now.Year + "." + DateTime.Now.DayOfYear + "." + DateTime.Now.Hour;
             FilterAccessFacade.PrimaryFilter.SetHeaderMetaData("VERSION", newVersion);
 
-            // 4) Load tier list information and enrichment procedures
-            var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
-            TierListFacade.TierListData = tiers;
-            CreateSubEconomyTiers();
+            // null check the ecoData in case of disabled/early leagues
+            if (dataRes == FileRequestResult.Success)
+            {
+                // 4) Load tier list information and enrichment procedures
+                var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
+                TierListFacade.TierListData = tiers;
+                CreateSubEconomyTiers();
 
-            ConcreteEnrichmentProcedures.Initialize();
-            EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
-            FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
-            EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+                ConcreteEnrichmentProcedures.Initialize();
+                EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
+                FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
+                EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
 
-            TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
+                TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
-            // 5) Generate Suggestions
-            var economyTieringSystem = new ConcreteEconomyRules();
-            economyTieringSystem.GenerateSuggestions();
+                // 5) Generate Suggestions
+                var economyTieringSystem = new ConcreteEconomyRules();
+                economyTieringSystem.GenerateSuggestions();
 
-            // 6) Apply suggestions
-            TierListFacade.ApplyAllSuggestions();
+                // 6) Apply suggestions
+                TierListFacade.ApplyAllSuggestions();
+            }
 
             // 7) Generate changelogs
             // todo
