@@ -5,6 +5,7 @@ using FilterPolishUtil;
 using FilterPolishUtil.Model;
 using FilterPolishZ.Economy.RuleSet;
 using FilterUtilModels.Economy;
+using System;
 using System.Collections.Generic;
 
 namespace FilterEconomyProcessor
@@ -22,6 +23,7 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
         private FilterEconomyRuleSet oilRules;
+        private FilterEconomyRuleSet fragmentRules;
 
 
         public ItemInformationFacade ItemInformation { get; set; }
@@ -44,6 +46,7 @@ namespace FilterEconomyProcessor
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
             this.oilRules = this.GenerateBlightOilRuleSet();
+            this.fragmentRules = this.GenerateFragmentRules();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
@@ -62,6 +65,7 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.scarabRules);
             this.Rules.Add(this.oilRules);
             this.Rules.Add(this.normalRules);
+            //this.Rules.Add(this.fragmentRules);
         }
 
         /// <summary>
@@ -85,6 +89,20 @@ namespace FilterEconomyProcessor
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
                 .AddRestRule()
                 .Build();       
+        }
+
+        private FilterEconomyRuleSet GenerateFragmentRules()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("fragments")
+                .OverrideMinimalExaltedPriceThreshhold(50)
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddRestRule()
+                .Build();
         }
 
         private FilterEconomyRuleSet GenerateIncubatorTieringRules()

@@ -94,7 +94,7 @@ namespace AzurePolishFunctions
             var newVersion = FilterAccessFacade.PrimaryFilter.GetHeaderMetaData("VERSION") + "." + DateTime.Now.Year + "." + DateTime.Now.DayOfYear + "." + DateTime.Now.Hour;
             FilterAccessFacade.PrimaryFilter.SetHeaderMetaData("VERSION", newVersion);
 
-            // 4) Load ier list information and enrichment procedures
+            // 4) Load tier list information and enrichment procedures
             var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
             TierListFacade.TierListData = tiers;
             CreateSubEconomyTiers();

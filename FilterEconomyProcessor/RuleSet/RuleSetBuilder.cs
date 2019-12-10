@@ -20,6 +20,8 @@ namespace FilterEconomyProcessor.RuleSet
         {
             this.RuleHost = ruleHost;
             RuleSet.RuleHost = ruleHost;
+
+            this.AddSafetyRule();
         }
 
         public RuleSetBuilder SetSection(string s)
@@ -94,6 +96,26 @@ namespace FilterEconomyProcessor.RuleSet
                 {
                     var price = this.RuleSet.DefaultSet.LowestPrice;
                     return price > comparer;
+                }));
+        }
+
+        public RuleSetBuilder AddSafetyRule()
+        {
+            return this.AddRule("No Data Found", "???",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    if (price == 0)
+                    {
+                        return true;
+                    }
+
+                    if (this.RuleSet.DefaultSet?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 }));
         }
 

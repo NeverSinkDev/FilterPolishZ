@@ -236,12 +236,5 @@ namespace FilterCore.Line.Parsing
             Testing,
             Comment,
         }
-
-        public enum LineParsingIdentState
-        {
-            Seeking,
-            True,
-            False
-        }
     }
 }

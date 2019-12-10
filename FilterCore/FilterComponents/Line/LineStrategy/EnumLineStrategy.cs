@@ -11,22 +11,43 @@ namespace FilterDomain.LineStrategy
 {
     public class EnumLineStrategy : ILineStrategy
     {
+        public EnumLineStrategy(bool sortValues)
+        {
+            this.SortValues = sortValues;
+        }
+
+        public bool SortValues = true;
         public bool CanHaveOperator => false;
         public bool CanHaveComment => false;
         public bool CanHaveMultiple => true;
 
         public IFilterLine Construct(string ident, List<LineToken> tokens)
         {
-            return this.Construct<EnumValueContainer>(ident, tokens);
+            var line = this.Construct<EnumValueContainer>(ident, tokens);
+
+            if (SortValues)
+            {
+                (line.Value as EnumValueContainer).PerformSort = false;
+            }
+
+            return line;
         }
     }
 
     public class EnumValueContainer : ILineValueCore
     {
+        public bool PerformSort = true;
         public HashSet<LineToken> Value = new HashSet<LineToken>();
+        public bool ExactSearch = false;
 
         public void Parse(List<LineToken> tokens)
         {
+            if (tokens[0].value == "==")
+            {
+                ExactSearch = true;
+                tokens.RemoveAt(0);
+            }
+
             foreach (var item in tokens)
             {
                 if (!Value.Contains(item))
@@ -46,7 +67,25 @@ namespace FilterDomain.LineStrategy
 
         public string Serialize()
         {
-            return string.Join(" ", this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList());
+            List<string> value;
+
+            // skip sorting for ExplicitModFiltering
+            if (this.PerformSort)
+            {
+                value = this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList();
+            }
+            else
+            {
+                value = this.Value.ToList().Select(z => z.Serialize()).Distinct().ToList();
+            }
+
+            // add exactsearch operator
+            if (this.ExactSearch)
+            {
+                value.Insert(0, "==");
+            }
+
+            return string.Join(" ", value);
         }
 
         public bool IsValid()

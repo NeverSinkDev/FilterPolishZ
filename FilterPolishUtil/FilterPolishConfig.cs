@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "fragments"
         };
 
         /// <summary>
@@ -50,6 +50,7 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string, string>("currency->prophecy", "prophecy", "ItemOverview?type=Prophecy", "&"),
                 new Tuple<string, string, string, string>("fragments->scarabs", "scarabs", "ItemOverview?type=Scarab", "&"),
                 new Tuple<string, string, string, string>("currency->oil", "oil", "ItemOverview?type=Oil", "&")
+                // new Tuple<string, string, string, string>("fragments", "fragments", "ItemOverview?type=Fragment", "&")
         };
 
         /// <summary>
