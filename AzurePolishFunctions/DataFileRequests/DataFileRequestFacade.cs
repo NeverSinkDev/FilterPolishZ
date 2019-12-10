@@ -22,7 +22,7 @@ namespace AzurePolishFunctions.DataFileRequests
         public List<string> SeedFilter { get; set; }
         public string League { get; set; }
 
-        public void GetAllFiles(string ninjaLeague)
+        public FileRequestResult GetAllFiles(string ninjaLeague)
         {
             FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomLoggingAction = x => Console.WriteLine("err: " + x);
 
@@ -37,7 +37,8 @@ namespace AzurePolishFunctions.DataFileRequests
             this.BaseTypeData = FilterCore.Constants.BaseTypeDataProvider.BaseTypeData;
 
             // Lade Economy Dateien -> ninja API
-            this.LoadEcoData(ninjaLeague);
+            var ecoRes = this.LoadEcoData(ninjaLeague);
+            if (ecoRes == FileRequestResult.Fail) return ecoRes;
             
             var itemData = ItemInformationFacade.GetInstance();
             var economyData = EconomyRequestFacade.GetInstance();
@@ -46,9 +47,11 @@ namespace AzurePolishFunctions.DataFileRequests
                 itemData.Deserialize(branchKey, String.Join(Environment.NewLine, this.ItemAspects[branchKey.Replace("->", "")]));
                 itemData.MigrateAspectDataToEcoData(economyData, branchKey);
             }
+
+            return ecoRes;
         }
 
-        private void LoadEcoData(string ninjaLeague)
+        private FileRequestResult LoadEcoData(string ninjaLeague)
         {
             var result = GenerateFilters.EconomyData;
             var ninjaUrl = "http://poe.ninja/api/Data/"; //Configuration.AppSettings["Ninja Request URL"];
@@ -64,11 +67,14 @@ namespace AzurePolishFunctions.DataFileRequests
             tasks.ForEach(x => x.Start());
             Task.WaitAll(tasks.ToArray());
 
+            var ecoData = result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl);
+            if (ecoData == null) return FileRequestResult.Ecoless;
+
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
-                result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl));
+                result.AddToDictionary(dictionaryKey, ecoData);
 
             this.EconomyData = result.EconomyTierlistOverview;
+            return FileRequestResult.Success;
         }
 
         private void LoadGitHubFiles()
@@ -102,5 +108,10 @@ namespace AzurePolishFunctions.DataFileRequests
             aspectFiles.ForEach(x => this.ItemAspects.Add(System.IO.Path.GetFileName(x).Split(".").First().ToLower(), System.IO.File.ReadAllLines(x).ToList()));
             FilterPublisher.DeleteDirectory(aspectFolder);
         }
+    }
+
+    public enum FileRequestResult
+    {
+        Success, Ecoless, Fail
     }
 }
