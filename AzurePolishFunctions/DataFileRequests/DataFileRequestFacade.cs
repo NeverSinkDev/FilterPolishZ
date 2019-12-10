@@ -58,20 +58,23 @@ namespace AzurePolishFunctions.DataFileRequests
             var variation = ninjaLeague; //Configuration.AppSettings["Ninja League"];
             var league = ""; // Configuration.AppSettings["betrayal"];
 
-            var tasks = new List<Task>();
+            // var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {
-//                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
-                tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
+                var reqRes = PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                if (reqRes != FileRequestResult.Success) return reqRes;
+                // tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
             }
-            tasks.ForEach(x => x.Start());
-            Task.WaitAll(tasks.ToArray());
+            // tasks.ForEach(x => x.Start());
+            // Task.WaitAll(tasks.ToArray());
 
-            var ecoData = result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl);
-            if (ecoData == null) return FileRequestResult.Ecoless;
-
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
+            FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix)
+            {
+                var ecoData = result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl);
+                if (ecoData == null) return FileRequestResult.Ecoless;
                 result.AddToDictionary(dictionaryKey, ecoData);
+                return FileRequestResult.Success;
+            }
 
             this.EconomyData = result.EconomyTierlistOverview;
             return FileRequestResult.Success;
