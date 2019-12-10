@@ -63,7 +63,7 @@ namespace FilterEconomy.Facades
                     {
                         responseString = new RestRequest(urlRequest).Execute();
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         LoggingFacade.LogError($"Loading Economy: Requesting From Ninja {urlRequest}");
                         responseString = null;

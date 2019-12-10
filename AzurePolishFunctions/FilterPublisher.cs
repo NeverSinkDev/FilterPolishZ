@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using AzurePolishFunctions.DataFileRequests;
 using FilterPolishZ.Util;
 using LibGit2Sharp;
 using Filter = FilterCore.Filter;
@@ -13,6 +14,8 @@ namespace AzurePolishFunctions
     {
         public Filter Filter { get; set; }
         public string RepoName {get; set;}
+
+        public bool PublishPrice = true;
         
         public FilterPublisher(Filter filter, string repoName)
         {
@@ -20,8 +23,13 @@ namespace AzurePolishFunctions
             this.Filter = filter;
         }
         
-        public void Run()
+        public void Run(FileRequestResult dataRes)
         {
+            if (dataRes != FileRequestResult.Success)
+            {
+                PublishPrice = false;
+            }
+
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
@@ -34,7 +42,7 @@ namespace AzurePolishFunctions
             
             PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
             PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
-            PushToGit(repoFolder);
+            PushToGit(repoFolder, PublishPrice);
 
             // cleanUp
             DeleteDirectory(repoFolder);
@@ -112,7 +120,7 @@ namespace AzurePolishFunctions
             }
         }
 
-        private static void PushToGit(string repoFolder)
+        private static void PushToGit(string repoFolder, bool publishPrice)
         {
             var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
             var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
@@ -124,7 +132,19 @@ namespace AzurePolishFunctions
             using (var repo = new Repository(repoFolder))
             {
                 Commands.Stage(repo, "*");
-                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString("MM/dd/yyyy") + " " + "ex:c " + FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice, sig, committer);
+
+                string priceInformation = "";
+
+                if (publishPrice)
+                {
+                    priceInformation = " ex:c " + FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice;
+                }
+                else
+                {
+                    priceInformation = " no temp league eco data!";
+                }
+
+                Commit commit = repo.Commit("automated economy update " + DateTime.Today.ToString("MM/dd/yyyy") + priceInformation , sig, committer);
 
                 PushOptions options = new PushOptions();
                 options.CredentialsProvider = (url, usernameFromUrl, types) =>

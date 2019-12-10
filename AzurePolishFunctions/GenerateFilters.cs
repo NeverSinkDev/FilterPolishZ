@@ -84,7 +84,7 @@ namespace AzurePolishFunctions
             }
 
             DataFiles = new DataFileRequestFacade();
-            var dataRes = DataFiles.GetAllFiles(league);
+            FileRequestResult dataRes = DataFiles.GetAllFiles(league);
 
             // 2) Test Data
             // todo
@@ -121,7 +121,7 @@ namespace AzurePolishFunctions
             // todo
             
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run();
+            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run(dataRes);
         }
 
         private static string GetReqParams(HttpRequest req, dynamic data, string name, string defValue)
