@@ -112,7 +112,9 @@ namespace FilterEconomy.Facades
             }
             catch (Exception e)
             {
-                throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
+                LoggingFacade.LogError("Failed to load economy file: " + branchKey + ": " + e);
+                // throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
+                return null;
             }
 
             var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString, branchKey).ToList());
