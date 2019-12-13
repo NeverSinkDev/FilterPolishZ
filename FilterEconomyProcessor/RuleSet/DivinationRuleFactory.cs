@@ -65,6 +65,12 @@ namespace FilterPolishZ.Economy.RuleSet
                     return builder.RuleSet.DefaultSet.HasAspect("TimelessResultAspect");
                 }));
 
+            builder.AddRule("EarlyLeagueInterest", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("EarlyLeagueInterestAspect");
+                }));
+
             builder.AddRule("CurrencySaveT4", "t4c",
                 new Func<string, bool>((string s) =>
                 {

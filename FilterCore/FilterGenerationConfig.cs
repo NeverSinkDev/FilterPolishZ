@@ -62,6 +62,7 @@ namespace FilterCore
             { "Corrupted",     new BoolLineStrategy() },
             { "Identified",    new BoolLineStrategy() },
             { "ElderMap",      new BoolLineStrategy() },
+            { "HasInfluence",  new EnumLineStrategy(true) },
             { "LinkedSockets", new NumericLineStrategy() },
             { "Sockets",       new NumericLineStrategy() },
             { "Quality",       new NumericLineStrategy() },

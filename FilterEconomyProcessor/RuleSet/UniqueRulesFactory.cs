@@ -148,7 +148,7 @@ namespace FilterEconomyProcessor.RuleSet
             //        return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
             //    }));
 
-            builder.AddRule("EarlyLeagueInterest", "metainfluenced",
+            builder.AddRule("EarlyLeagueInterest", "earlyleague",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.RuleSet.DefaultSet.HasAspect("EarlyLeagueInterestAspect");
@@ -169,21 +169,6 @@ namespace FilterEconomyProcessor.RuleSet
                     }
                     return false;
                 }));
-
-            //builder.AddRule("???", "???",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        var fit = false;
-            //        if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConstants.T2BreakPoint)
-            //        {
-            //            if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
-            //            {
-            //                return builder.RuleSet.DefaultSet.OfAspect("LeagueDropAspect").OrderByDescending(x => x.CVal).First().CVal > FilterPolishConstants.T2BreakPoint;
-            //            }
-            //        }
-
-            //        return fit;
-            //    }));
 
             builder.AddRule("prophecy", "prophecy",
                 new Func<string, bool>((string s) =>

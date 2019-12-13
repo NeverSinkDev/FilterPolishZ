@@ -23,8 +23,6 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
         private FilterEconomyRuleSet oilRules;
-        private FilterEconomyRuleSet fragmentRules;
-
 
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
@@ -46,7 +44,6 @@ namespace FilterEconomyProcessor
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
             this.oilRules = this.GenerateBlightOilRuleSet();
-            this.fragmentRules = this.GenerateFragmentRules();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
@@ -65,7 +62,6 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.scarabRules);
             this.Rules.Add(this.oilRules);
             this.Rules.Add(this.normalRules);
-            //this.Rules.Add(this.fragmentRules);
         }
 
         /// <summary>
