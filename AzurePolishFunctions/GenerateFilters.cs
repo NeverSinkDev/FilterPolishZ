@@ -154,7 +154,7 @@ namespace AzurePolishFunctions
 
         private static void CreateSubEconomyTiers()
         {
-            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Cursader", "Redeemer", "Hunter" };
+            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Crusader", "Redeemer", "Hunter" };
             var metaDictionary = new Dictionary<string, Dictionary<string, ItemList<NinjaItem>>>();
 
             influenceTypes.ForEach(x => metaDictionary.Add(x, new Dictionary<string, ItemList<NinjaItem>>()));
