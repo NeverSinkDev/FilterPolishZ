@@ -93,27 +93,25 @@ namespace FilterPolishZ
         {
             LoggingFacade.LogInfo($"Generating Sub-Economy Tiers");
 
-            var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
-            var elderbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
-            var otherbases =  new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Crusader", "Redeemer", "Hunter" };
+            var metaDictionary = new Dictionary<string, Dictionary<string, ItemList<NinjaItem>>>();
+            var otherbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+
+            influenceTypes.ForEach(x => metaDictionary.Add(x, new Dictionary<string, ItemList<NinjaItem>>()));
 
             foreach (var items in this.EconomyData.EconomyTierlistOverview["basetypes"])
             {
-                var shapergroup = items.Value.Where(x => x.Variant == "Shaper").ToList();
-                if (shapergroup.Count != 0)
+                foreach (var influence in influenceTypes)
                 {
-                    shaperbases.Add(items.Key, new ItemList<NinjaItem>());
-                    shaperbases[items.Key].AddRange((shapergroup));
+                    var influencedGroup = items.Value.Where(x => x.Variant == influence).ToList();
+                    if (influencedGroup.Count != 0)
+                    {
+                        metaDictionary[influence].Add(items.Key, new ItemList<NinjaItem>());
+                        metaDictionary[influence][items.Key].AddRange((influencedGroup));
+                    }
                 }
 
-                var eldegroup = items.Value.Where(x => x.Variant == "Elder").ToList();
-                if (eldegroup.Count != 0)
-                {
-                    elderbases.Add(items.Key, new ItemList<NinjaItem>());
-                    elderbases[items.Key].AddRange((eldegroup));
-                }
-
-                var othergroup = items.Value.Where(x => x.Variant != "Shaper" && x.Variant != "Elder").ToList();
+                var othergroup = items.Value.Where(x => !influenceTypes.Contains(x.Variant)).ToList();
                 if (othergroup.Count != 0)
                 {
                     otherbases.Add(items.Key, new ItemList<NinjaItem>());
@@ -121,8 +119,12 @@ namespace FilterPolishZ
                 }
             }
 
-            this.EconomyData.AddToDictionary("rare->shaper", shaperbases);
-            this.EconomyData.AddToDictionary("rare->elder", elderbases);
+            this.EconomyData.AddToDictionary("rare->shaper", metaDictionary["Shaper"]);
+            this.EconomyData.AddToDictionary("rare->elder", metaDictionary["Elder"]);
+            this.EconomyData.AddToDictionary("rare->warlord", metaDictionary["Warlord"]);
+            this.EconomyData.AddToDictionary("rare->crusader", metaDictionary["Crusader"]);
+            this.EconomyData.AddToDictionary("rare->redeemer", metaDictionary["Redeemer"]);
+            this.EconomyData.AddToDictionary("rare->hunter", metaDictionary["Hunter"]);
             this.EconomyData.AddToDictionary("generalcrafting", otherbases);
 
             LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
@@ -200,19 +202,18 @@ namespace FilterPolishZ
 
             var result = EconomyRequestFacade.GetInstance();
             var seedFolder = Configuration.AppSettings["EcoFile Folder"];
-            var ninjaUrl = Configuration.AppSettings["Ninja Request URL"];
-            var variation = Configuration.AppSettings["Ninja League"];
-            var league = Configuration.AppSettings["betrayal"];
+            var variation = Configuration.AppSettings["leagueType"];
+            var league = Configuration.AppSettings["currentLeague"];
             
             foreach (var tuple in FilterPolishConfig.FileRequestData)
             {
-                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
                 LoggingFacade.LogInfo($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
             }
 
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix) =>
+            void PerformEcoRequest(string dictionaryKey, string requestKey, string url) =>
                 result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, prefix, seedFolder, ninjaUrl));
+                    result.PerformRequest(league, variation, requestKey, url, seedFolder));
 
             LoggingFacade.LogInfo("Economy Data Loaded...");
 
@@ -226,7 +227,7 @@ namespace FilterPolishZ
 
             LoggingFacade.LogDebug("Economy Item Information Loaded...");
 
-            var leagueType = Configuration.AppSettings["Ninja League"];
+            var leagueType = Configuration.AppSettings["leagueType"];
             var baseStoragePath = Configuration.AppSettings["Aspect Folder"];
 
             result.LeagueType = leagueType;

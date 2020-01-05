@@ -17,12 +17,17 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet uniquemapsRules;
         private FilterEconomyRuleSet fossilrules;
         private FilterEconomyRuleSet incubatorrules;
-        private FilterEconomyRuleSet shaperRules;
-        private FilterEconomyRuleSet elderRules;
         private FilterEconomyRuleSet prophecyRules;
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
         private FilterEconomyRuleSet oilRules;
+
+        private FilterEconomyRuleSet shaperRules;
+        private FilterEconomyRuleSet elderRules;
+        private FilterEconomyRuleSet crusaderRules;
+        private FilterEconomyRuleSet hunterRules;
+        private FilterEconomyRuleSet redeemerRules;
+        private FilterEconomyRuleSet warlordRules;
 
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
@@ -47,6 +52,11 @@ namespace FilterEconomyProcessor
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
+            this.hunterRules = ShaperElderRulesFactory.Generate(this,"rare->hunter");
+            this.warlordRules = ShaperElderRulesFactory.Generate(this,"rare->warlord");
+            this.crusaderRules = ShaperElderRulesFactory.Generate(this,"rare->crusader");
+            this.redeemerRules = ShaperElderRulesFactory.Generate(this,"rare->redeemer");
+
             this.normalRules = NormalCraftingBasesRuleFactory.Generate(this, "generalcrafting");
 
             this.Rules.Clear();
@@ -55,13 +65,20 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.divinationRules);
             this.Rules.Add(this.uniquemapsRules);
             this.Rules.Add(this.fossilrules);
-            this.Rules.Add(this.elderRules);
-            this.Rules.Add(this.shaperRules);
+
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
             this.Rules.Add(this.scarabRules);
             this.Rules.Add(this.oilRules);
             this.Rules.Add(this.normalRules);
+
+            this.Rules.Add(this.elderRules);
+            this.Rules.Add(this.shaperRules);
+
+            //this.Rules.Add(this.hunterRules);
+            //this.Rules.Add(this.redeemerRules);
+            //this.Rules.Add(this.crusaderRules);
+            //this.Rules.Add(this.warlordRules);
         }
 
         /// <summary>
@@ -77,7 +94,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("unique->maps")
-                .OverrideMinimalExaltedPriceThreshhold(45)
+                .OverrideMinimalExaltedPriceThreshhold(50)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -105,7 +122,6 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->incubators")
-                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -119,7 +135,6 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("fragments->scarabs")
-                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -133,7 +148,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->fossil")
-                .OverrideMinimalExaltedPriceThreshhold(45)
+                .OverrideMinimalExaltedPriceThreshhold(50)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -153,7 +168,7 @@ namespace FilterEconomyProcessor
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
-                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.MiscT4BreakPoint * 0.5f) // to prevent from getting most oils into the trash tier.
+                .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.MiscT4BreakPoint)
                 .AddExplicitRest("t3","t3")
                 .Build();
         }

@@ -34,7 +34,7 @@ namespace FilterEconomyProcessor
 
             // Now perform all the 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "uniques", "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil" },
+                new List<string>() { "uniques", "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"  },
                 new List<IDataEnrichment>()
                 {
                     new LowestPriceEnrichment(),
@@ -50,10 +50,11 @@ namespace FilterEconomyProcessor
                 });
 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "rare->shaper", "rare->elder", "generalcrafting" },
+                new List<string>() { "rare->shaper", "rare->elder", "rare->warlord", "rare->hunter", "rare->crusader", "rare->redeemer", "generalcrafting" },
                 new List<IDataEnrichment>()
                 {
                     new ShaperElderEnrichment(),
+                    new LowestPriceEnrichment()
                 });
 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(

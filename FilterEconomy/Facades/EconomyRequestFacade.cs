@@ -16,7 +16,7 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            this.ActiveMetaTags.Add("EarlyLeagueInterestAspect", DateTime.Now.AddDays(7));
+            // this.ActiveMetaTags.Add("EarlyLeagueInterestAspect", DateTime.Now.AddDays(7));
         }
 
         public static EconomyRequestFacade GetInstance()
@@ -38,10 +38,10 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
 
-        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string variation, string branchKey, string url, string prefix, string baseStoragePath, string ninjaUrl)
+        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string leagueType, string branchKey, string url, string baseStoragePath)
         {
             var economySegmentBranch = url;
-            var directoryPath = $"{baseStoragePath}/{variation}/{league}/{StringWork.GetDateString()}";
+            var directoryPath = $"{baseStoragePath}/{leagueType}/{league}/{StringWork.GetDateString()}";
             var fileName = $"{branchKey}.txt";
             var fileFullPath = $"{directoryPath}/{fileName}";
 
@@ -57,7 +57,9 @@ namespace FilterEconomy.Facades
                 }
                 else
                 {   // Request online file
-                    var urlRequest = $"{ninjaUrl}{economySegmentBranch}{prefix}league={variation}";
+                    string variation = this.CreateNinjaLeagueParameter(league, leagueType);
+
+                    var urlRequest = $"{economySegmentBranch}&league={variation}";
 
                     try
                     {
@@ -113,13 +115,38 @@ namespace FilterEconomy.Facades
             catch (Exception e)
             {
                 LoggingFacade.LogError("Failed to load economy file: " + branchKey + ": " + e);
-                // throw new Exception("Failed to load economy file: " + branchKey + ": " + e);
                 return null;
             }
 
             var result = NinjaParser.CreateOverviewDictionary(NinjaParser.ParseNinjaString(responseString, branchKey).ToList());
 
             return result;
+        }
+
+        private string CreateNinjaLeagueParameter(string league, string leagueType)
+        {
+            if (leagueType.ToLower() == "hardcore" && league.ToLower() == "standard")
+            {
+                return "Hardcore";
+            }
+
+            if (leagueType.ToLower() == "standard" || league.ToLower() == "standard")
+            {
+                return "Standard";
+            }
+
+            if (leagueType.ToLower() == "hardcore" || leagueType.ToLower() == "tmphardcore")
+            {
+                return "Hardcore " + league;
+            }
+
+            if (league == string.Empty)
+            {
+                LoggingFacade.LogWarning("League information missing! Using Standard!!!");
+                return "Standard";
+            }
+
+            return league;
         }
 
         public void EnrichAll(Dictionary<string, List<IDataEnrichment>> enrichments)

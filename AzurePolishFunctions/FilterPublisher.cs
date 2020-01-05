@@ -40,8 +40,8 @@ namespace AzurePolishFunctions
             // create filter
             FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
             
-            PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
-            PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.League);
+            PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
             PushToGit(repoFolder, PublishPrice);
 
             // cleanUp

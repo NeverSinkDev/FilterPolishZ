@@ -20,13 +20,13 @@ namespace AzurePolishFunctions.DataFileRequests
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
         public List<string> SeedFilter { get; set; }
-        public string League { get; set; }
+        public string LeagueType { get; set; }
 
-        public FileRequestResult GetAllFiles(string ninjaLeague)
+        public FileRequestResult GetAllFiles(string league, string leagueType)
         {
             FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomLoggingAction = x => Console.WriteLine("err: " + x);
 
-            this.League = ninjaLeague;
+            this.LeagueType = leagueType;
             
             // Lade Filter Datei -> NS main github -> selective file(s?)
             // Lade Style Dateien -> NS main github -> selective files
@@ -37,7 +37,7 @@ namespace AzurePolishFunctions.DataFileRequests
             this.BaseTypeData = FilterCore.Constants.BaseTypeDataProvider.BaseTypeData;
 
             // Lade Economy Dateien -> ninja API
-            var ecoRes = this.LoadEcoData(ninjaLeague);
+            var ecoRes = this.LoadEcoData(league, leagueType);
             if (ecoRes == FileRequestResult.Fail) return ecoRes;
             
             var itemData = ItemInformationFacade.GetInstance();
@@ -51,26 +51,19 @@ namespace AzurePolishFunctions.DataFileRequests
             return ecoRes;
         }
 
-        private FileRequestResult LoadEcoData(string ninjaLeague)
+        private FileRequestResult LoadEcoData(string league, string leagueType)
         {
             var result = GenerateFilters.EconomyData;
-            var ninjaUrl = "http://poe.ninja/api/Data/"; //Configuration.AppSettings["Ninja Request URL"];
-            var variation = ninjaLeague; //Configuration.AppSettings["Ninja League"];
-            var league = ""; // Configuration.AppSettings["betrayal"];
 
-            // var tasks = new List<Task>();
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {
-                var reqRes = PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                var reqRes = PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
                 if (reqRes != FileRequestResult.Success) return reqRes;
-                // tasks.Add(new Task(() => PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4)));
             }
-            // tasks.ForEach(x => x.Start());
-            // Task.WaitAll(tasks.ToArray());
 
-            FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url, string prefix)
+            FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url)
             {
-                var ecoData = result.PerformRequest(league, variation, requestKey, url, prefix, null, ninjaUrl);
+                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, null);
                 if (ecoData == null) return FileRequestResult.Ecoless;
                 result.AddToDictionary(dictionaryKey, ecoData);
                 return FileRequestResult.Success;

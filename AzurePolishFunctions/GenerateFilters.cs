@@ -71,7 +71,8 @@ namespace AzurePolishFunctions
             string body = new StreamReader(req.Body).ReadToEnd();
             dynamic data = JsonConvert.DeserializeObject(body);
 
-            var league = GetReqParams(req, data, "ninjaLeague", "tmpstandard");
+            var leagueType = GetReqParams(req, data, "leagueType", "tmpstandard");
+            var league = GetReqParams(req, data, "currentLeague", "Metamorph");
             var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             if (localMode == "true")
@@ -84,7 +85,7 @@ namespace AzurePolishFunctions
             }
 
             DataFiles = new DataFileRequestFacade();
-            FileRequestResult dataRes = DataFiles.GetAllFiles(league);
+            FileRequestResult dataRes = DataFiles.GetAllFiles(league, leagueType);
 
             // 2) Test Data
             // todo
@@ -153,27 +154,28 @@ namespace AzurePolishFunctions
 
         private static void CreateSubEconomyTiers()
         {
+            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Cursader", "Redeemer", "Hunter" };
+            var metaDictionary = new Dictionary<string, Dictionary<string, ItemList<NinjaItem>>>();
+
+            influenceTypes.ForEach(x => metaDictionary.Add(x, new Dictionary<string, ItemList<NinjaItem>>()));
+
             var shaperbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var elderbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
             var otherbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
 
             foreach (var items in EconomyData.EconomyTierlistOverview["basetypes"])
             {
-                var shapergroup = items.Value.Where(x => x.Variant == "Shaper").ToList();
-                if (shapergroup.Count != 0)
+                foreach (var influence in influenceTypes)
                 {
-                    shaperbases.Add(items.Key, new ItemList<NinjaItem>());
-                    shaperbases[items.Key].AddRange((shapergroup));
+                    var influencedGroup = items.Value.Where(x => x.Variant == influence).ToList();
+                    if (influencedGroup.Count != 0)
+                    {
+                        metaDictionary[influence].Add(items.Key, new ItemList<NinjaItem>());
+                        metaDictionary[influence][items.Key].AddRange((influencedGroup));
+                    }
                 }
 
-                var eldegroup = items.Value.Where(x => x.Variant == "Elder").ToList();
-                if (eldegroup.Count != 0)
-                {
-                    elderbases.Add(items.Key, new ItemList<NinjaItem>());
-                    elderbases[items.Key].AddRange((eldegroup));
-                }
-
-                var othergroup = items.Value.Where(x => x.Variant != "Shaper" && x.Variant != "Elder").ToList();
+                var othergroup = items.Value.Where(x => !influenceTypes.Contains(x.Variant)).ToList();
                 if (othergroup.Count != 0)
                 {
                     otherbases.Add(items.Key, new ItemList<NinjaItem>());
@@ -181,9 +183,15 @@ namespace AzurePolishFunctions
                 }
             }
 
-            EconomyData.AddToDictionary("rare->shaper", shaperbases);
-            EconomyData.AddToDictionary("rare->elder", elderbases);
+            EconomyData.AddToDictionary("rare->shaper", metaDictionary["Shaper"]);
+            EconomyData.AddToDictionary("rare->elder", metaDictionary["Elder"]);
+            EconomyData.AddToDictionary("rare->warlord", metaDictionary["Warlord"]);
+            EconomyData.AddToDictionary("rare->crusader", metaDictionary["Crusader"]);
+            EconomyData.AddToDictionary("rare->redeemer", metaDictionary["Redeemer"]);
+            EconomyData.AddToDictionary("rare->hunter", metaDictionary["Hunter"]);
             EconomyData.AddToDictionary("generalcrafting", otherbases);
+
+            LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
     }
 }

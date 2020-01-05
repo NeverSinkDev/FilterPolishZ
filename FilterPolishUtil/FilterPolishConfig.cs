@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
         };
 
         /// <summary>
@@ -29,27 +29,29 @@ namespace FilterPolishUtil
         /// <summary>
         /// Saves, caches and uses requested files if active.
         /// </summary>
+        /// 
+        /// TODO: CHANGE
         public static RequestType ActiveRequestMode = RequestType.Dynamic;
 
         /// <summary>
         /// Information about the requests and economyoverview sections:
         /// name, filename, requesturl, urlprefix. Probably should've added a class for that.
         /// </summary>
-        public static List<Tuple<string, string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string, string>>
+        public static List<Tuple<string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string>>
         {
-                new Tuple<string, string, string, string>("divination", "divination", "GetDivinationCardsOverview", "?"),
-                new Tuple<string, string, string, string>("currency", "currency", "currencyoverview?type=Currency", "&"),
-                new Tuple<string, string, string, string>("unique->maps", "uniqueMaps", "GetUniqueMapOverview", "?"),
-                new Tuple<string, string, string, string>("currency->fossil", "fossil", "ItemOverview?type=Fossil", "&"),
-                new Tuple<string, string, string, string>("uniques", "uniqueWeapons", "GetUniqueWeaponOverview", "?"),
-                new Tuple<string, string, string, string>("uniques", "uniqueFlasks", "GetUniqueFlaskOverview", "?"),
-                new Tuple<string, string, string, string>("uniques", "uniqueArmours", "GetUniqueArmourOverview", "?"),
-                new Tuple<string, string, string, string>("uniques", "uniqueAccessory", "GetUniqueAccessoryOverview", "?"),
-                new Tuple<string, string, string, string>("basetypes", "basetypes", "ItemOverview?type=BaseType", "&"),
-                new Tuple<string, string, string, string>("currency->incubators", "incubators", "ItemOverview?type=Incubator", "&"),
-                new Tuple<string, string, string, string>("currency->prophecy", "prophecy", "ItemOverview?type=Prophecy", "&"),
-                new Tuple<string, string, string, string>("fragments->scarabs", "scarabs", "ItemOverview?type=Scarab", "&"),
-                new Tuple<string, string, string, string>("currency->oil", "oil", "ItemOverview?type=Oil", "&")
+                new Tuple<string, string, string>("currency", "currency", "https://poe.ninja/api/data/currencyoverview?type=Currency"),
+                new Tuple<string, string, string>("divination", "divination", "https://poe.ninja/api/data/itemoverview?type=DivinationCard"),
+                new Tuple<string, string, string>("unique->maps", "uniqueMaps", "https://poe.ninja/api/data/itemoverview?type=UniqueMap"),
+                new Tuple<string, string, string>("currency->fossil", "fossil", "https://poe.ninja/api/data/itemoverview?type=Fossil"),
+                new Tuple<string, string, string>("uniques", "uniqueWeapons", "https://poe.ninja/api/data/itemoverview?type=UniqueWeapon"),
+                new Tuple<string, string, string>("uniques", "uniqueFlasks", "https://poe.ninja/api/data/itemoverview?type=UniqueFlask"),
+                new Tuple<string, string, string>("uniques", "uniqueArmours", "https://poe.ninja/api/data/itemoverview?type=UniqueArmour"),
+                new Tuple<string, string, string>("uniques", "uniqueAccessory", "https://poe.ninja/api/data/itemoverview?type=UniqueAccessory"),
+                new Tuple<string, string, string>("basetypes", "basetypes", "https://poe.ninja/api/data/itemoverview?type=BaseType"),
+                new Tuple<string, string, string>("currency->incubators", "incubators", "https://poe.ninja/api/data/itemoverview?type=Incubator"),
+                new Tuple<string, string, string>("currency->prophecy", "prophecy", "https://poe.ninja/api/data/itemoverview?type=Prophecy"),
+                new Tuple<string, string, string>("fragments->scarabs", "scarabs", "https://poe.ninja/api/data/itemoverview?type=Scarab"),
+                new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil")
                 // new Tuple<string, string, string, string>("fragments", "fragments", "ItemOverview?type=Fragment", "&")
         };
 
@@ -141,7 +143,7 @@ namespace FilterPolishUtil
         public static float BasesExaltedOrbInfluence = 0.12f;
 
         public static float BaseTypeT1Base = 25f;
-        public static float BaseTypeT2Base = 7f;
+        public static float BaseTypeT2Base = 6.5f;
 
         public static float BaseTypeT1BreakPoint;
         public static float BaseTypeT2BreakPoint;
@@ -154,21 +156,21 @@ namespace FilterPolishUtil
         public static float DiviT3BreakPoint;
         public static float DiviT5BreakPoint;
 
-        public static float DiviT1Base = 24f;
-        public static float DiviT2Base = 7f;
+        public static float DiviT1Base = 25f;
+        public static float DiviT2Base = 6.5f;
         public static float DiviT3Base = 2f;
         public static float DiviT5Base = 0.5f;
 
         // Fossils and scarabs are often predictable -drops-. Predictable drops are often best kept at high threshholds. Predictability ruins the surprise/excitement
-        public static float MiscExaltedOrbInfluence = 0.12f;
+        public static float MiscExaltedOrbInfluence = 0.05f;
 
         public static float MiscT1BreakPoint;
         public static float MiscT2BreakPoint;
         public static float MiscT3BreakPoint;
         public static float MiscT4BreakPoint;
 
-        public static float MiscT1Base = 30f;
-        public static float MiscT2Base = 7f;
+        public static float MiscT1Base = 35f;
+        public static float MiscT2Base = 6.5f;
         public static float MiscT3Base = 2.5f;
         public static float MiscT4Base = 1f;
     }
