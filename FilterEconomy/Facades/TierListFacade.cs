@@ -68,6 +68,12 @@ namespace FilterEconomy.Facades
 
             foreach (var section in this.Suggestions)
             {
+                if (!this.TierListData.ContainsKey(section.Key) || (this.TierListData[section.Key].FilterEntries?.Count == 0))
+                {
+                    LoggingFacade.LogWarning($"Skipping section {section.Key} . No data found for section!");
+                    continue;
+                }
+
                 this.Changelog.Add(section.Key, new List<TieringChange>());
                 this.ApplyAllSuggestionsInSection(section.Key);
             }
