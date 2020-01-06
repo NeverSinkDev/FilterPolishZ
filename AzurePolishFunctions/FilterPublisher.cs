@@ -45,7 +45,9 @@ namespace AzurePolishFunctions
             PushToGit(repoFolder, PublishPrice);
 
             // cleanUp
-            DeleteDirectory(repoFolder);
+            // todo: this cleanUp causes crashes because some git config files are still in use.
+            // we will try to fix these crashes by doing this cleanUp BEFORE starting instead of AFTER finishing 
+            // DeleteDirectory(repoFolder);
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)
