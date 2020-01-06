@@ -33,8 +33,14 @@ namespace AzurePolishFunctions
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
-            
-            if (Directory.Exists(repoFolder)) DeleteDirectory(repoFolder);
+
+            if (Directory.Exists(repoFolder))
+            {
+                // git cleanUp because some "pack" files are still in use by some progress and cause errors when trying to delete
+                RunCommand(filterOutFolder, "git", "gc --prune=now");
+                RunCommand(filterOutFolder, "git", "prune --expire now");
+                DeleteDirectory(repoFolder);
+            }
             Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
 
             // create filter
@@ -45,9 +51,9 @@ namespace AzurePolishFunctions
             PushToGit(repoFolder, PublishPrice);
 
             // cleanUp
-            // todo: this cleanUp causes crashes because some git config files are still in use.
-            // we will try to fix these crashes by doing this cleanUp BEFORE starting instead of AFTER finishing 
-            // DeleteDirectory(repoFolder);
+            RunCommand(filterOutFolder, "git", "gc --prune=now");
+            RunCommand(filterOutFolder, "git", "prune --expire now");
+            DeleteDirectory(repoFolder);
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)
