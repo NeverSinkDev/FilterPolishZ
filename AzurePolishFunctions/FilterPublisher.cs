@@ -33,15 +33,23 @@ namespace AzurePolishFunctions
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
-
+            
+            // clone/pull the repo. after that, we will edit these existing files by generating the new versions
+            // and push the update as the actual small changes.
             if (Directory.Exists(repoFolder))
             {
-                // git cleanUp because some "pack" files are still in use by some progress and cause errors when trying to delete
-                RunCommand(filterOutFolder, "git", "gc --prune=now");
-                RunCommand(filterOutFolder, "git", "prune --expire now");
-                DeleteDirectory(repoFolder);
+                using (var repo = new Repository(repoFolder))
+                {
+                    var options = new PullOptions();
+                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
+                }
             }
-            Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
+            else
+            {
+                Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
+            }
 
             // create filter
             FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
@@ -50,10 +58,7 @@ namespace AzurePolishFunctions
             PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
             PushToGit(repoFolder, PublishPrice);
 
-            // cleanUp
-            RunCommand(filterOutFolder, "git", "gc --prune=now");
-            RunCommand(filterOutFolder, "git", "prune --expire now");
-            DeleteDirectory(repoFolder);
+            // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)
