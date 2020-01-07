@@ -38,6 +38,7 @@ namespace AzurePolishFunctions
             // and push the update as the actual small changes.
             if (Directory.Exists(repoFolder))
             {
+                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
                 using (var repo = new Repository(repoFolder))
                 {
                     var options = new PullOptions();
