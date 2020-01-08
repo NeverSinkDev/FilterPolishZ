@@ -1,0 +1,86 @@
+﻿using FilterEconomy.Processor;
+using FilterPolishUtil;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace FilterEconomyProcessor.RuleSet
+{
+    public class FragmentsRuleFactory
+    {
+        public static FilterEconomyRuleSet Generate(ConcreteEconomyRules ruleHost)
+        {
+            var builder = new RuleSetBuilder(ruleHost)
+                .SetSection("fragments")
+                .UseDefaultQuery()
+                .OverrideMinimalExaltedPriceThreshhold(40)
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget();
+
+            builder.AddRule("ANCHOR", "???",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
+                }));
+
+            builder.AddRule("No Tiering","???",
+                new Func<string, bool>((string s) =>
+                {
+                    var isTierable = builder.RuleSet.DefaultSet.HasAspect("TierableFragmentAspect");
+                    if (isTierable)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }));
+
+            builder.AddRule("t1", "t1",
+                new Func<string, bool>((string s) =>
+                {
+                    var isPredictable = builder.RuleSet.DefaultSet.HasAspect("PredictableDropAspect");
+
+                    if (isPredictable)
+                    {
+                        return false;
+                    }
+
+                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    return price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
+                }));
+
+            builder.AddRule("t1 predictable", "t1p",
+                new Func<string, bool>((string s) =>
+                {
+                    var isPredictable = builder.RuleSet.DefaultSet.HasAspect("PredictableDropAspect");
+                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+
+                    return isPredictable && price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
+                }));
+
+            builder.AddRule("t2", "t2",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    return price > FilterPolishConfig.MiscT2BreakPoint * 1.25f;
+                }));
+
+            builder.AddRule("t3", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    return price > FilterPolishConfig.MiscT3BreakPoint;
+                }));
+
+            builder.AddRule("floor-saved", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("FloorFragmentsAspect");
+                }));
+
+            builder.AddExplicitRest("t4", "t4");
+
+            return builder.Build();
+        }
+    }
+}

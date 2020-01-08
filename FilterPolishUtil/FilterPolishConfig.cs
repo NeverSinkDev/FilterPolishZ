@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "currency", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "currency", "fragments", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
         };
 
         /// <summary>
@@ -40,6 +40,7 @@ namespace FilterPolishUtil
         public static List<Tuple<string, string, string>> FileRequestData { get; set; } = new List<Tuple<string, string, string>>
         {
                 new Tuple<string, string, string>("currency", "currency", "https://poe.ninja/api/data/currencyoverview?type=Currency"),
+                new Tuple<string, string, string>("fragments", "fragments", "https://poe.ninja/api/data/currencyoverview?type=Fragment"),
                 new Tuple<string, string, string>("divination", "divination", "https://poe.ninja/api/data/itemoverview?type=DivinationCard"),
                 new Tuple<string, string, string>("unique->maps", "uniqueMaps", "https://poe.ninja/api/data/itemoverview?type=UniqueMap"),
                 new Tuple<string, string, string>("currency->fossil", "fossil", "https://poe.ninja/api/data/itemoverview?type=Fossil"),

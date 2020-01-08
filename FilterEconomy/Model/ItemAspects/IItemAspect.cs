@@ -13,7 +13,9 @@ namespace FilterEconomy.Model.ItemAspects
         uniques,
         divination,
         maps,
-        basetype
+        basetype,
+        fragments,
+        prophecy
     }
 
     public abstract class AbstractItemAspect : IItemAspect
@@ -35,8 +37,15 @@ namespace FilterEconomy.Model.ItemAspects
                 return AspectType.basetype;
             }
 
+            if (s.ToLower().Contains("prophecy"))
+            {
+                return AspectType.prophecy;
+            }
+
             switch (s)
             {
+                case "fragments":
+                    return AspectType.fragments;
                 case "uniques":
                     return AspectType.uniques;
                 case "divination":
@@ -243,5 +252,63 @@ namespace FilterEconomy.Model.ItemAspects
     {
         public override string Group => "DropType";
         public override AspectType Type => AspectType.basetype;
+    }
+
+    /// FRAGMENT ASPECTS
+
+    public class TierableFragmentAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.fragments;
+    }
+
+    public class PredictableDropAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.fragments;
+    }
+
+    public class FloorFragmentsAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.fragments;
+    }
+
+    // PROPHECY ASPECT
+
+    public class MapUpgradeProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
+    }
+
+    public class LastInChainProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
+    }
+
+    public class ItemUpgradeProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
+    }
+
+    public class ItemDropProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
+    }
+
+    public class TimelessProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
+    }
+
+    public class CheapProphecyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.prophecy;
     }
 }

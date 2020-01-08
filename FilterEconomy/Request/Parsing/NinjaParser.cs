@@ -21,7 +21,7 @@ namespace FilterEconomy.Request.Parsing
                 yield break;
             }
 
-            if (branchKey.ToLower() == "currency")
+            if (branchKey.ToLower() == "currency" || branchKey.ToLower() == "fragments")
             {
                 JObject jo = new JObject(jsonObj);
                 CurrencyNinjaItem nCItem = new CurrencyNinjaItem();

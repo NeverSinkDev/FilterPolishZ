@@ -110,6 +110,11 @@ namespace FilterEconomyProcessor.RuleSet
                         return true;
                     }
 
+                    if (this.RuleSet.GoverningSection.ToLower() == "fragments" || this.RuleSet.GoverningSection.ToLower() == "currency")
+                    {
+                        return false;
+                    }
+
                     if (this.RuleSet.DefaultSet?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0)
                     {
                         return true;
@@ -180,6 +185,12 @@ namespace FilterEconomyProcessor.RuleSet
                 }
             }));
 
+            return this;
+        }
+
+        public RuleSetBuilder AddWhiteListAspect(List<string> aspectNames)
+        {
+            // TODO
             return this;
         }
 

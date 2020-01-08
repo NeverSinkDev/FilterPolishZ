@@ -41,7 +41,49 @@ namespace FilterEconomyProcessor.RuleSet
                     return price > FilterPolishConfig.DiviT2BreakPoint;
                 }));
 
-            builder.AddRule("rest", "rest",
+            builder.AddRule("t3", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    var price = builder.RuleSet.DefaultSet.HighestPrice;
+
+                    if (price <= 1f)
+                    {
+                        return false;
+                    }
+
+                    var isDrop = builder.RuleSet.DefaultSet.HasAspect("ItemDropProphecyAspect") ? 1.2f : 1f;
+                    var isCheap = builder.RuleSet.DefaultSet.HasAspect("CheapProphecyAspect") ? 0.5f : 1f;
+                    var isUpgrade = builder.RuleSet.DefaultSet.HasAspect("ItemUpgradeProphecyAspect") ? 1.2f : 1f;
+
+                    return isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
+                }));
+
+            builder.AddRule("t3timeless", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("TimelessProphecyAspect");
+                }));
+
+            builder.AddRule("t3mapping", "t3mapping",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("MapUpgradeProphecyAspect");
+                }));
+
+
+            builder.AddRule("t4upgrade", "t4upgrade",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("ItemUpgradeProphecyAspect");
+                }));
+
+            builder.AddRule("t4drop", "t4drop",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.RuleSet.DefaultSet.HasAspect("ItemDropProphecyAspect");
+                }));
+
+            builder.AddRule("t4", "t4",
                 new Func<string, bool>((string s) =>
                 {
                     return true;

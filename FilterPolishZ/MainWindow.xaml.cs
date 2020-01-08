@@ -76,7 +76,7 @@ namespace FilterPolishZ
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // add derived tiers (Shaper, Elder)
-            this.CreateSubEconomyTiers();
+            this.EconomyData.CreateSubEconomyTiers();
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
@@ -87,47 +87,6 @@ namespace FilterPolishZ
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             LoggingFacade.LogInfo($"FilterBlade main subroutine loaded succesfully");
-        }
-
-        private void CreateSubEconomyTiers()
-        {
-            LoggingFacade.LogInfo($"Generating Sub-Economy Tiers");
-
-            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Crusader", "Redeemer", "Hunter" };
-            var metaDictionary = new Dictionary<string, Dictionary<string, ItemList<NinjaItem>>>();
-            var otherbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
-
-            influenceTypes.ForEach(x => metaDictionary.Add(x, new Dictionary<string, ItemList<NinjaItem>>()));
-
-            foreach (var items in this.EconomyData.EconomyTierlistOverview["basetypes"])
-            {
-                foreach (var influence in influenceTypes)
-                {
-                    var influencedGroup = items.Value.Where(x => x.Variant == influence).ToList();
-                    if (influencedGroup.Count != 0)
-                    {
-                        metaDictionary[influence].Add(items.Key, new ItemList<NinjaItem>());
-                        metaDictionary[influence][items.Key].AddRange((influencedGroup));
-                    }
-                }
-
-                var othergroup = items.Value.Where(x => !influenceTypes.Contains(x.Variant)).ToList();
-                if (othergroup.Count != 0)
-                {
-                    otherbases.Add(items.Key, new ItemList<NinjaItem>());
-                    otherbases[items.Key].AddRange((othergroup));
-                }
-            }
-
-            this.EconomyData.AddToDictionary("rare->shaper", metaDictionary["Shaper"]);
-            this.EconomyData.AddToDictionary("rare->elder", metaDictionary["Elder"]);
-            this.EconomyData.AddToDictionary("rare->warlord", metaDictionary["Warlord"]);
-            this.EconomyData.AddToDictionary("rare->crusader", metaDictionary["Crusader"]);
-            this.EconomyData.AddToDictionary("rare->redeemer", metaDictionary["Redeemer"]);
-            this.EconomyData.AddToDictionary("rare->hunter", metaDictionary["Hunter"]);
-            this.EconomyData.AddToDictionary("generalcrafting", otherbases);
-
-            LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
 
         private void PerformEconomyTiering()

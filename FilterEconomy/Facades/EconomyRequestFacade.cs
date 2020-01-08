@@ -123,6 +123,47 @@ namespace FilterEconomy.Facades
             return result;
         }
 
+        public void CreateSubEconomyTiers()
+        {
+            LoggingFacade.LogInfo($"Generating Sub-Economy Tiers");
+
+            List<string> influenceTypes = new List<string>() { "Shaper", "Elder", "Warlord", "Crusader", "Redeemer", "Hunter" };
+            var metaDictionary = new Dictionary<string, Dictionary<string, ItemList<NinjaItem>>>();
+            var otherbases = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+
+            influenceTypes.ForEach(x => metaDictionary.Add(x, new Dictionary<string, ItemList<NinjaItem>>()));
+
+            foreach (var items in this.EconomyTierlistOverview["basetypes"])
+            {
+                foreach (var influence in influenceTypes)
+                {
+                    var influencedGroup = items.Value.Where(x => x.Variant == influence).ToList();
+                    if (influencedGroup.Count != 0)
+                    {
+                        metaDictionary[influence].Add(items.Key, new ItemList<NinjaItem>());
+                        metaDictionary[influence][items.Key].AddRange((influencedGroup));
+                    }
+                }
+
+                var othergroup = items.Value.Where(x => !influenceTypes.Contains(x.Variant)).ToList();
+                if (othergroup.Count != 0)
+                {
+                    otherbases.Add(items.Key, new ItemList<NinjaItem>());
+                    otherbases[items.Key].AddRange((othergroup));
+                }
+            }
+
+            this.AddToDictionary("rare->shaper", metaDictionary["Shaper"]);
+            this.AddToDictionary("rare->elder", metaDictionary["Elder"]);
+            this.AddToDictionary("rare->warlord", metaDictionary["Warlord"]);
+            this.AddToDictionary("rare->crusader", metaDictionary["Crusader"]);
+            this.AddToDictionary("rare->redeemer", metaDictionary["Redeemer"]);
+            this.AddToDictionary("rare->hunter", metaDictionary["Hunter"]);
+            this.AddToDictionary("generalcrafting", otherbases);
+
+            LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
+        }
+
         private string CreateNinjaLeagueParameter(string league, string leagueType)
         {
             if (leagueType.ToLower() == "hardcore" && league.ToLower() == "standard")

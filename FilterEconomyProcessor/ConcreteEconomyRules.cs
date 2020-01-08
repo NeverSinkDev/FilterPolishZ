@@ -22,6 +22,8 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet normalRules;
         private FilterEconomyRuleSet oilRules;
 
+        private FilterEconomyRuleSet fragmentRules;
+
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
         private FilterEconomyRuleSet crusaderRules;
@@ -43,6 +45,7 @@ namespace FilterEconomyProcessor
             this.uniqueRules = UniqueRulesFactory.Generate(this);
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.prophecyRules = ProphecyRulesFactory.Generate(this);
+            this.fragmentRules = FragmentsRuleFactory.Generate(this);
 
             this.scarabRules = this.GenerateScarabRuleSet();
             this.uniquemapsRules = this.GenerateUniqueMapRules();
@@ -65,6 +68,7 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.divinationRules);
             this.Rules.Add(this.uniquemapsRules);
             this.Rules.Add(this.fossilrules);
+            this.Rules.Add(this.fragmentRules);
 
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
@@ -75,10 +79,10 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.elderRules);
             this.Rules.Add(this.shaperRules);
 
-            //this.Rules.Add(this.hunterRules);
-            //this.Rules.Add(this.redeemerRules);
-            //this.Rules.Add(this.crusaderRules);
-            //this.Rules.Add(this.warlordRules);
+            this.Rules.Add(this.hunterRules);
+            this.Rules.Add(this.redeemerRules);
+            this.Rules.Add(this.crusaderRules);
+            this.Rules.Add(this.warlordRules);
         }
 
         /// <summary>
@@ -102,20 +106,6 @@ namespace FilterEconomyProcessor
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
                 .AddRestRule()
                 .Build();       
-        }
-
-        private FilterEconomyRuleSet GenerateFragmentRules()
-        {
-            return new RuleSetBuilder(this)
-                .SetSection("fragments")
-                .OverrideMinimalExaltedPriceThreshhold(50)
-                .UseDefaultQuery()
-                .AddDefaultPostProcessing()
-                .AddDefaultIntegrationTarget()
-                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
-                .AddRestRule()
-                .Build();
         }
 
         private FilterEconomyRuleSet GenerateIncubatorTieringRules()
