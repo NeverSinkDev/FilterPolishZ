@@ -17,43 +17,43 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("ANCHOR", "ANCHOR",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
+                    return builder.Item.HasAspect("AnchorAspect");
                 }));
 
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.DiviT1BreakPoint;
                 }));
 
             builder.AddRule("MultiBase", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.HighestPrice;
+                    var price = builder.Item.HighestPrice;
                     return price > FilterPolishConfig.DiviT1BreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.DiviT2BreakPoint;
                 }));
 
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.HighestPrice;
+                    var price = builder.Item.HighestPrice;
 
                     if (price <= 1f)
                     {
                         return false;
                     }
 
-                    var isDrop = builder.RuleSet.DefaultSet.HasAspect("ItemDropProphecyAspect") ? 1.2f : 1f;
-                    var isCheap = builder.RuleSet.DefaultSet.HasAspect("CheapProphecyAspect") ? 0.5f : 1f;
-                    var isUpgrade = builder.RuleSet.DefaultSet.HasAspect("ItemUpgradeProphecyAspect") ? 1.2f : 1f;
+                    var isDrop = builder.Item.HasAspect("ItemDropProphecyAspect") ? 1.2f : 1f;
+                    var isCheap = builder.Item.HasAspect("CheapProphecyAspect") ? 0.5f : 1f;
+                    var isUpgrade = builder.Item.HasAspect("ItemUpgradeProphecyAspect") ? 1.2f : 1f;
 
                     return isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
                 }));
@@ -61,26 +61,26 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t3timeless", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("TimelessProphecyAspect");
+                    return builder.Item.HasAspect("TimelessProphecyAspect");
                 }));
 
             builder.AddRule("t3mapping", "t3mapping",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("MapUpgradeProphecyAspect");
+                    return builder.Item.HasAspect("MapUpgradeProphecyAspect");
                 }));
 
 
             builder.AddRule("t4upgrade", "t4upgrade",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("ItemUpgradeProphecyAspect");
+                    return builder.Item.HasAspect("ItemUpgradeProphecyAspect");
                 }));
 
             builder.AddRule("t4drop", "t4drop",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("ItemDropProphecyAspect");
+                    return builder.Item.HasAspect("ItemDropProphecyAspect");
                 }));
 
             builder.AddRule("t4", "t4",

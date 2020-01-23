@@ -83,11 +83,6 @@ namespace FilterEconomy.Processor
                 };
             }
 
-            //var result = this.EconomyRules.Select(
-            //    x =>
-            //        x.Execute(group, basetype, processorData))
-            //        .FirstOrDefault(z => z != null);
-
             string targetTier = "*";
             TieringCommand finalResult = null;
             TieringCommand currentResult = null;

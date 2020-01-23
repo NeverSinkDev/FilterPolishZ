@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FilterPolishUtil.Extensions;
+using FilterCore.Constants;
 
 namespace FilterEconomy.Facades
 {

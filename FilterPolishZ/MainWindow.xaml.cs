@@ -26,6 +26,7 @@ using System.IO.Compression;
 using FilterPolishWindowUtils;
 using FilterPolishZ.Economy;
 using FilterEconomyProcessor;
+using FilterEconomyProcessor.ClassAbstraction;
 
 namespace FilterPolishZ
 {
@@ -82,6 +83,10 @@ namespace FilterPolishZ
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
             FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+
+            // experimental basetype->class abstraction
+            var abstractions = new InfluencedBasesAbstractions();
+            abstractions.Execute();
 
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());

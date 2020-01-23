@@ -13,5 +13,10 @@
 
             return res;
         }
+
+        public static double ToDouble(this string s, double def = 0)
+        {
+            return string.IsNullOrEmpty(s) ? def : double.Parse(s);
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace FilterEconomyProcessor.RuleSet
     {
         public string Section { get; set; }
         public FilterEconomyRuleSet RuleSet { get; set; } = new FilterEconomyRuleSet();
+        public ItemList<NinjaItem> Item => this.RuleSet.DefaultSet;
         public ConcreteEconomyRules RuleHost { get; set; }
 
         public RuleSetBuilder(ConcreteEconomyRules ruleHost)
@@ -85,7 +86,7 @@ namespace FilterEconomyProcessor.RuleSet
             return this.AddRule(name, tier,
                 new Func<string, bool>((string s) =>
                 {
-                    return this.RuleSet.DefaultSet.HasAspect(aspect);
+                    return Item.HasAspect(aspect);
                 }));
         }
 
@@ -94,7 +95,7 @@ namespace FilterEconomyProcessor.RuleSet
             return this.AddRule(name, tier,
                 new Func<string, bool>((string s) =>
                 {
-                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    var price = Item.LowestPrice;
                     return price > comparer;
                 }));
         }
@@ -104,7 +105,7 @@ namespace FilterEconomyProcessor.RuleSet
             return this.AddRule("No Data Found", "???",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    var price = Item.LowestPrice;
                     if (price == 0)
                     {
                         return true;
@@ -115,7 +116,7 @@ namespace FilterEconomyProcessor.RuleSet
                         return false;
                     }
 
-                    if (this.RuleSet.DefaultSet?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0)
+                    if (this.Item?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0)
                     {
                         return true;
                     }
@@ -129,7 +130,7 @@ namespace FilterEconomyProcessor.RuleSet
             return this.AddRule(name, tier,
                 new Func<string, bool>((string s) =>
                 {
-                    var price = this.RuleSet.DefaultSet.LowestPrice;
+                    var price = Item.LowestPrice;
                     return price < comparer;
                 }));
         }
@@ -188,12 +189,6 @@ namespace FilterEconomyProcessor.RuleSet
             return this;
         }
 
-        public RuleSetBuilder AddWhiteListAspect(List<string> aspectNames)
-        {
-            // TODO
-            return this;
-        }
-
         public string GetTierOfItem(string basetype)
         {
             if (!RuleHost.TierListFacade.ContainsTierInformationForBaseType(this.RuleSet.GoverningSection, basetype))
@@ -204,33 +199,6 @@ namespace FilterEconomyProcessor.RuleSet
             return string.Join(",", 
                 RuleHost.TierListFacade.GetTiersForBasetype(this.RuleSet.GoverningSection, basetype)
                 .Select(x => x.SubStringLast("->")));
-        }
-    }
-
-    public static class RuleTools
-    {
-        public static bool HasAspect(this ItemList<NinjaItem> me, string s)
-        {
-            return me.Any(z => z.Aspects.Where(x => x.IsActive()).Any(j => j.Name == s));
-        }
-
-        public static List<NinjaItem> OfAspect(this ItemList<NinjaItem> me, string s)
-        {
-            return me.Where(z => z.Aspects.Where(x => x.IsActive()).Any(j => j.Name == s && j.IsActive())).ToList();
-        }
-
-        public static List<NinjaItem> AspectCheck(this ItemList<NinjaItem> me, HashSet<string> include, HashSet<string> exclude)
-        {
-            return me.Where(
-                z => z.Aspects.Where(x => x.IsActive()).Any(x => include.Contains(x.Name) || include.Count == 0) &&
-                     z.Aspects.Where(x => x.IsActive()).All(x => !exclude.Contains(x.Name))).ToList();
-        }
-
-        public static bool AllItemsFullFill(this List<NinjaItem> me, HashSet<string> include, HashSet<string> exclude)
-        {
-            return me.All(
-                z => z.Aspects.Where(x => x.IsActive()).Any(x => include.Contains(x.Name) || include.Count == 0) &&
-                     z.Aspects.Where(x => x.IsActive()).All(x => !exclude.Contains(x.Name)));
         }
     }
 }

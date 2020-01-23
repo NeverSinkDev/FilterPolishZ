@@ -107,6 +107,8 @@ namespace AzurePolishFunctions
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
                 FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+                
+                // EconomyData.PerformClassAbstractionProcedures();
 
                 TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 

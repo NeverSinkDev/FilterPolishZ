@@ -8,6 +8,17 @@ namespace FilterPolishUtil.Extensions
 {
     public static class EIEnumerable
     {
+        public static List<T> RemoveFrom<T>(this List<T> lst, int from)
+        {
+            if (lst.Count <= from)
+            {
+                return lst;
+            }
+
+            lst.RemoveRange(lst.Count - from, from);
+            return lst;
+        }
+
         public static void RemoveAll<T>(this ICollection<T> collection, Func<T, bool> predicate)
         {
             T element;

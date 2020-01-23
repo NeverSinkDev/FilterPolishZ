@@ -20,13 +20,13 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("ANCHOR", "???",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
+                    return builder.Item.HasAspect("AnchorAspect");
                 }));
 
             builder.AddRule("No Tiering","???",
                 new Func<string, bool>((string s) =>
                 {
-                    var isTierable = builder.RuleSet.DefaultSet.HasAspect("TierableFragmentAspect");
+                    var isTierable = builder.Item.HasAspect("TierableFragmentAspect");
                     if (isTierable)
                     {
                         return false;
@@ -38,22 +38,22 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {
-                    var isPredictable = builder.RuleSet.DefaultSet.HasAspect("PredictableDropAspect");
+                    var isPredictable = builder.Item.HasAspect("PredictableDropAspect");
 
                     if (isPredictable)
                     {
                         return false;
                     }
 
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
                 }));
 
             builder.AddRule("t1 predictable", "t1p",
                 new Func<string, bool>((string s) =>
                 {
-                    var isPredictable = builder.RuleSet.DefaultSet.HasAspect("PredictableDropAspect");
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var isPredictable = builder.Item.HasAspect("PredictableDropAspect");
+                    var price = builder.Item.LowestPrice;
 
                     return isPredictable && price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
                 }));
@@ -61,21 +61,21 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.MiscT2BreakPoint * 1.25f;
                 }));
 
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.RuleSet.DefaultSet.LowestPrice;
+                    var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.MiscT3BreakPoint;
                 }));
 
             builder.AddRule("floor-saved", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("FloorFragmentsAspect");
+                    return builder.Item.HasAspect("FloorFragmentsAspect");
                 }));
 
             builder.AddExplicitRest("t4", "t4");

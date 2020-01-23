@@ -15,12 +15,12 @@ namespace FilterEconomyProcessor.RuleSet
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
-            //var set = builder.Rulebuilder.RuleSet.DefaultSet.DefaultSet;
+            //var set = builder.Rulebuilder.Item.DefaultSet;
 
             builder.AddRule("ANCHOR", "ANCHOR",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("AnchorAspect");
+                    return builder.Item.HasAspect("AnchorAspect");
                 }));
 
             builder.AddRule("unknown", "unknown",
@@ -32,24 +32,24 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.UniqueT1BreakPoint;
+                    return builder.Item.LowestPrice > FilterPolishConfig.UniqueT1BreakPoint;
                 }));
 
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
+                    return builder.Item.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
             builder.AddRule("uncommon", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
+                    if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
-                        if (builder.RuleSet.DefaultSet.HasAspect("UncommonAspect"))
+                        if (builder.Item.HasAspect("UncommonAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect" });
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -64,7 +64,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("ExpensiveTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
-                    var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
 
                     if (relevantList.Count > 1)
                     {
@@ -81,11 +81,11 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.HighVarietyMultiplier)
+                    if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint * FilterPolishConfig.HighVarietyMultiplier)
                     {
-                        if (builder.RuleSet.DefaultSet.HasAspect("HighVarietyAspect"))
+                        if (builder.Item.HasAspect("HighVarietyAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect"});
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect"});
 
                             if (relevantList.Count > 0)
                             {
@@ -101,11 +101,11 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
+                    if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
-                        if (builder.RuleSet.DefaultSet.HasAspect("LeagueDropAspect"))
+                        if (builder.Item.HasAspect("LeagueDropAspect"))
                         {
-                            var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "NonEventDropAspect" });
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "NonEventDropAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -121,9 +121,9 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
+                    if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
-                        var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
+                        var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
 
                         if (relevantList.Count > 0 && relevantList.AllItemsFullFill(new HashSet<string>() { "BossDropAspect" }, new HashSet<string>()))
                         {
@@ -138,29 +138,29 @@ namespace FilterEconomyProcessor.RuleSet
             //builder.AddRule("Changed?", "metainfluenced",
             //    new Func<string, bool>((string s) =>
             //    {
-            //        return builder.RuleSet.DefaultSet.HasAspect("ChangedAspect");
+            //        return builder.Item.HasAspect("ChangedAspect");
             //    }));
 
             // usually used for new leagues
             //builder.AddRule("MetaSave", "t2",
             //    new Func<string, bool>((string s) =>
             //    {
-            //        return builder.RuleSet.DefaultSet.HasAspect("MetaBiasAspect");
+            //        return builder.Item.HasAspect("MetaBiasAspect");
             //    }));
 
             builder.AddRule("EarlyLeagueInterest", "earlyleague",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.RuleSet.DefaultSet.HasAspect("EarlyLeagueInterestAspect");
+                    return builder.Item.HasAspect("EarlyLeagueInterestAspect");
                 }));
 
             // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events
             builder.AddRule("SuperLeagueUnique", "multileague",
                 new Func<string, bool>((string s) =>
                 {
-                    if (builder.RuleSet.DefaultSet.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
+                    if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
                     {
-                        var relevantList = builder.RuleSet.DefaultSet.AspectCheck(new HashSet<string>() { "BossDropAspect", "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
+                        var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "BossDropAspect", "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
 
                         if (relevantList.Count > 0)
                         {
@@ -179,19 +179,19 @@ namespace FilterEconomyProcessor.RuleSet
                         return false;
                     }
 
-                    return builder.RuleSet.DefaultSet.HasAspect("ProphecyMaterialAspect");
+                    return builder.Item.HasAspect("ProphecyMaterialAspect");
                 }));
 
             builder.AddRule("hideable", "hideable",
                 new Func<string, bool>((string s) =>
                 {
-                    var maxprice = builder.RuleSet.DefaultSet.Max(x => x.CVal);
+                    var maxprice = builder.Item.Max(x => x.CVal);
                     if (maxprice > FilterPolishConfig.UniqueT2BreakPoint * 0.35f)
                     {
                         return false;
                     }
 
-                    if (builder.RuleSet.DefaultSet.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "NonEventDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
+                    if (builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "NonEventDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
                     {
                         return true;
                     }

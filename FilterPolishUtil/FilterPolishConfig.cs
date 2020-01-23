@@ -31,7 +31,7 @@ namespace FilterPolishUtil
         /// </summary>
         /// 
         /// TODO: CHANGE
-        public static RequestType ActiveRequestMode = RequestType.Dynamic;
+        public static RequestType ActiveRequestMode = RequestType.ForceOnline;
 
         /// <summary>
         /// Information about the requests and economyoverview sections:

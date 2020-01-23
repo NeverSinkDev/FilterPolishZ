@@ -159,5 +159,15 @@ namespace FilterCore.Constants
                 return iLvlINT;
             }
         }
+
+        public static Dictionary<string,string> Get(string name)
+        {
+            return BaseTypeDataProvider.BaseTypeData[name];
+        }
+
+        public static bool Has(string name)
+        {
+            return BaseTypeDataProvider.BaseTypeData.ContainsKey(name);
+        }
     }
 }
