@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FilterPolishUtil.Extensions;
 using FilterCore.Constants;
+using Newtonsoft.Json;
 
 namespace FilterEconomy.Facades
 {
@@ -35,8 +36,9 @@ namespace FilterEconomy.Facades
 
         private static EconomyRequestFacade instance;
 
-
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
+
+        public Dictionary<string, PoeLeague> PoeLeagues { get; set; } = new Dictionary<string, PoeLeague>();
 
         public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
 
@@ -232,6 +234,69 @@ namespace FilterEconomy.Facades
             {
                 this.EconomyTierlistOverview[leagueKey].Add(keyvalue.Key, keyvalue.Value);
             }
+        }
+
+        public void RequestPoeLeagueInfo()
+        {
+            this.PoeLeagues.Clear();
+            string responseString;
+
+            // Obtaining League Info
+            try
+            {
+                responseString = new RestRequest("http://api.pathofexile.com/leagues").Execute();
+            }
+            catch (Exception)
+            {
+                LoggingFacade.LogError($"Error obtaining League Information! PoE Api unresponsive?");
+                responseString = null;
+            }
+
+            List<PoeLeague> filteredLeagues;
+
+            try
+            {
+
+                var leagues = JsonConvert.DeserializeObject<IEnumerable<PoeLeague>>(responseString, new JsonSerializerSettings() { CheckAdditionalContent = true });
+
+                filteredLeagues = leagues
+                       .Where(x => !x.Id.Contains("Standard"))
+                       .Where(x => !x.Id.Contains("SSF"))
+                       .Where(x => !x.Id.Contains("Event"))
+                       .Where(x => !x.Id.Contains("Race"))
+                       .Where(x => x.Id != "Hardcore")
+                       .ToList();
+
+                filteredLeagues.ForEach(x => this.PoeLeagues.Add(x.Id, x));
+                filteredLeagues.ForEach(x => LoggingFacade.LogInfo($"League Detected: {x.Id}"));
+            }
+            catch (Exception)
+            {
+                LoggingFacade.LogError($"Error deserializing or filtering league data!");
+                responseString = null;
+            }
+        }
+
+        public bool IsLeagueActive()
+        {
+            PoeLeague activeLeague = this.PoeLeagues?.FirstOrDefault(x => x.Key.Contains("Hardcore")).Value;
+
+            if (activeLeague == null)
+            {
+                LoggingFacade.LogWarning($"No active league data found!");
+            }
+
+            if (activeLeague.StartAt < DateTime.Now && activeLeague.EndAt > DateTime.Now)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public string GetActiveLeagueName()
+        {
+            return this.PoeLeagues?.FirstOrDefault(x => !x.Key.Contains("Hardcore")).Value.Id;
         }
 
         public void Clean()

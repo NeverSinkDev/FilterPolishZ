@@ -64,15 +64,25 @@ namespace AzurePolishFunctions
             ItemInfoData = ItemInformationFacade.GetInstance();
 
             // 0) Get Current League information etc
+
+            EconomyData.RequestPoeLeagueInfo();
+
+            if (!EconomyData.IsLeagueActive())
+            {
+                LoggingFacade.LogWarning("No Active League detected!");
+            }
+
+            var requestedLeagueName = EconomyData.GetActiveLeagueName();
+
             // 1) Acquire Data
-            
+
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
 
             string body = new StreamReader(req.Body).ReadToEnd();
             dynamic data = JsonConvert.DeserializeObject(body);
 
             var leagueType = GetReqParams(req, data, "leagueType", "tmpstandard");
-            var league = GetReqParams(req, data, "currentLeague", "Metamorph");
+            var league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
             var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             if (localMode == "true")
@@ -86,9 +96,6 @@ namespace AzurePolishFunctions
 
             DataFiles = new DataFileRequestFacade();
             FileRequestResult dataRes = DataFiles.GetAllFiles(league, leagueType);
-
-            // 2) Test Data
-            // todo
 
             // 3) Parse filter
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);

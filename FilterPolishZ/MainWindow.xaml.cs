@@ -69,6 +69,12 @@ namespace FilterPolishZ
         {
             // request ninja-economy info
             this.EconomyData = this.LoadEconomyOverviewData();
+            this.EconomyData.RequestPoeLeagueInfo();
+
+            if (!this.EconomyData.IsLeagueActive())
+            {
+                LoggingFacade.LogWarning("No Active League detected!");
+            }
 
             // load aspects
             this.ItemInfoData = this.LoadItemInformationOverview();
