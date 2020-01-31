@@ -38,6 +38,8 @@ namespace AzurePolishFunctions
             Logging?.Clean();
             Logging = LoggingFacade.GetInstance();
 
+            Logging.SetCustomLoggingMessage((s) => log.LogInformation(s));
+
             try
             {
                 PerformMainRoutine(req);
@@ -85,6 +87,11 @@ namespace AzurePolishFunctions
             var league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
             var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
+            LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");
+            LoggingFacade.LogInfo($"[CONFIG] league: {league}");
+            LoggingFacade.LogInfo($"[CONFIG] repoName: {repoName}");
+            LoggingFacade.LogInfo($"[CONFIG] localMode: {localMode}");
+
             if (localMode == "true")
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.Dynamic;
@@ -101,6 +108,10 @@ namespace AzurePolishFunctions
             FilterAccessFacade.PrimaryFilter = new Filter(DataFiles.SeedFilter);
             var newVersion = FilterAccessFacade.PrimaryFilter.GetHeaderMetaData("VERSION") + "." + DateTime.Now.Year + "." + DateTime.Now.DayOfYear + "." + DateTime.Now.Hour;
             FilterAccessFacade.PrimaryFilter.SetHeaderMetaData("VERSION", newVersion);
+
+            LoggingFacade.LogInfo($"[CONFIG] version: {newVersion}");
+            LoggingFacade.LogInfo($"[DEBUG] FileRequestResult: {dataRes.ToString()}");
+            LoggingFacade.LogInfo($"[DEBUG] League Active: {EconomyData.IsLeagueActive().ToString()}");
 
             // null check the ecoData in case of disabled/early leagues
             if (dataRes == FileRequestResult.Success)

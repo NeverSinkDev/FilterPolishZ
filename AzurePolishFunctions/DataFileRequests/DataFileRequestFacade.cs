@@ -24,7 +24,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
         public FileRequestResult GetAllFiles(string league, string leagueType)
         {
-            FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomLoggingAction = x => Console.WriteLine("err: " + x);
+            FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomHighImportanceLoggingMessage = x => Console.WriteLine("err: " + x);
 
             this.LeagueType = leagueType;
             

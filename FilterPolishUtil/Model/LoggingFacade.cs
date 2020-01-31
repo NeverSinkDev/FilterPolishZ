@@ -15,7 +15,8 @@ namespace FilterPolishUtil.Model
 
         public ObservableCollection<LogEntryModel> Logs { get; set; } = new ObservableCollection<LogEntryModel>();
 
-        public Action<string> CustomLoggingAction { get; set; }
+        public Action<string> CustomHighImportanceLoggingMessage { get; set; } = ((s) => { });
+        public Action<string> CustomLoggingMessage { get; set; } = ((s) => { });
 
         private LoggingFacade()
         {
@@ -42,13 +43,15 @@ namespace FilterPolishUtil.Model
 
         public static void LogWarning(string info)
         {
-            GetInstance().CustomLoggingAction(info);
+            GetInstance().CustomHighImportanceLoggingMessage("[WARNING] " + info);
+            GetInstance().CustomLoggingMessage("[WARNING] " + info);
             GetInstance().Log(info, LoggingLevel.Warning);
         }
 
         public static void LogError(string info)
         {
-            GetInstance().CustomLoggingAction(info);
+            GetInstance().CustomHighImportanceLoggingMessage("[ERROR] " + info);
+            GetInstance().CustomLoggingMessage("[ERROR] " + info);
             GetInstance().Log(info, LoggingLevel.Errors);
         }
 
@@ -61,17 +64,27 @@ namespace FilterPolishUtil.Model
         {
             if (showMessage)
             {
-                GetInstance().CustomLoggingAction(info);
+                GetInstance().CustomHighImportanceLoggingMessage(info);
             }
 
+            GetInstance().CustomLoggingMessage(info);
             GetInstance().Log(info, LoggingLevel.Info);
         }
 
-        public static void LogDebug(string info) => GetInstance().Log(info, LoggingLevel.Debug);
-
-        public void SetCustomLoggingAction(Action<string> action)
+        public static void LogDebug(string info)
         {
-            this.CustomLoggingAction = action;
+            GetInstance().CustomLoggingMessage(info);
+            GetInstance().Log(info, LoggingLevel.Debug);
+        }
+
+        public void SetCustomLoggingMessage(Action<string> action)
+        {
+            this.CustomHighImportanceLoggingMessage = action;
+        }
+
+        public void SetCustomHighImportanceLoggingMessage(Action<string> action)
+        {
+            this.CustomHighImportanceLoggingMessage = action;
         }
 
         public void Log(string info, LoggingLevel level)

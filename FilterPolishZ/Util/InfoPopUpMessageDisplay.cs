@@ -10,7 +10,7 @@ namespace FilterPolishWindowUtils
     {
         static InfoPopUpMessageDisplay()
         {
-            LoggingFacade.GetInstance().CustomLoggingAction += ShowInfoMessageBox;
+            LoggingFacade.GetInstance().CustomHighImportanceLoggingMessage += ShowInfoMessageBox;
         }
 
         public static void ShowInfoMessageBox(string messageText)
