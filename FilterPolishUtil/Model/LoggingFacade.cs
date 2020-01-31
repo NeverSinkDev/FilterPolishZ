@@ -79,7 +79,7 @@ namespace FilterPolishUtil.Model
 
         public void SetCustomLoggingMessage(Action<string> action)
         {
-            this.CustomHighImportanceLoggingMessage = action;
+            this.CustomLoggingMessage = action;
         }
 
         public void SetCustomHighImportanceLoggingMessage(Action<string> action)
