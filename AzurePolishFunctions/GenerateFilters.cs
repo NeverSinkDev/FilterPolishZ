@@ -17,6 +17,7 @@ using FilterEconomy.Model;
 using AzurePolishFunctions.DataFileRequests;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace AzurePolishFunctions
 {
@@ -31,7 +32,7 @@ namespace AzurePolishFunctions
         public static LoggingFacade Logging { get; set; }
 
         [FunctionName("GenerateFilters")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
+        public static IActionResult Run([ActivityTrigger] string req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -52,7 +53,7 @@ namespace AzurePolishFunctions
             }
         }
 
-        public static void PerformMainRoutine(HttpRequest req)
+        public static void PerformMainRoutine(string req)
         {
             // 0) Cleanup
             EconomyData?.Clean();
@@ -80,12 +81,16 @@ namespace AzurePolishFunctions
 
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
 
-            string body = new StreamReader(req.Body).ReadToEnd();
-            dynamic data = JsonConvert.DeserializeObject(body);
+            // string body = new StreamReader(req.Body).ReadToEnd();
+            // var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
+            // var leagueType = GetReqParams(req, data.leagueType, "leagueType", "tmpstandard");
 
-            var leagueType = GetReqParams(req, data, "leagueType", "tmpstandard");
+            dynamic data = JsonConvert.DeserializeObject(req);
+
+            var leagueType = data.leagueType ?? "tmpstandard";
+            var repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
+
             var league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
-            var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
 
             LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");
             LoggingFacade.LogInfo($"[CONFIG] league: {league}");
@@ -145,11 +150,11 @@ namespace AzurePolishFunctions
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run(dataRes);
         }
 
-        private static string GetReqParams(HttpRequest req, dynamic data, string name, string defValue)
+        private static string GetReqParams(string req, dynamic data, string name, string defValue)
         {
             string result = string.Empty;
 
-            result = req.Query[name];
+            result = req;
 
             if (result != null && result != string.Empty)
             {

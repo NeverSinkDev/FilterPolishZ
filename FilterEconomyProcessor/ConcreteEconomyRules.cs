@@ -23,6 +23,7 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet oilRules;
 
         private FilterEconomyRuleSet fragmentRules;
+        private FilterEconomyRuleSet currencyRules;
 
         private FilterEconomyRuleSet shaperRules;
         private FilterEconomyRuleSet elderRules;
@@ -46,6 +47,7 @@ namespace FilterEconomyProcessor
             this.divinationRules = DivinationRuleFactory.Generate(this);
             this.prophecyRules = ProphecyRulesFactory.Generate(this);
             this.fragmentRules = FragmentsRuleFactory.Generate(this);
+            this.currencyRules = CurrencyRuleFactory.Generate(this);
 
             this.scarabRules = this.GenerateScarabRuleSet();
             this.uniquemapsRules = this.GenerateUniqueMapRules();
@@ -69,6 +71,7 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.uniquemapsRules);
             this.Rules.Add(this.fossilrules);
             this.Rules.Add(this.fragmentRules);
+            this.Rules.Add(this.currencyRules);
 
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);

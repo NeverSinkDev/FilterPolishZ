@@ -15,7 +15,8 @@ namespace FilterEconomy.Model.ItemAspects
         maps,
         basetype,
         fragments,
-        prophecy
+        prophecy,
+        currency
     }
 
     public abstract class AbstractItemAspect : IItemAspect
@@ -44,6 +45,8 @@ namespace FilterEconomy.Model.ItemAspects
 
             switch (s)
             {
+                case "currency":
+                    return AspectType.currency;
                 case "fragments":
                     return AspectType.fragments;
                 case "uniques":
@@ -272,6 +275,38 @@ namespace FilterEconomy.Model.ItemAspects
     {
         public override string Group => "Meta";
         public override AspectType Type => AspectType.fragments;
+    }
+
+    // CURRENCY ASPECT
+
+    public class TierableCurrencyAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.currency;
+    }
+
+    public class ChaosBottomAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.currency;
+    }
+
+    public class AlchemyButtomAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.currency;
+    }
+
+    public class SilverBottomAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.currency;
+    }
+
+    public class ChanceBottomAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.currency;
     }
 
     // PROPHECY ASPECT

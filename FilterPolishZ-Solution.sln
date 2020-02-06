@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzurePolishFunctions", "Azu
 		{235362D7-83F3-42F4-8DD5-E9C3CFD90A5E} = {235362D7-83F3-42F4-8DD5-E9C3CFD90A5E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterExo", "FilterExo\FilterExo.csproj", "{E0A34C50-8845-479F-B4CE-0EEFB3B4156F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterExo", "FilterExo\FilterExo.csproj", "{E0A34C50-8845-479F-B4CE-0EEFB3B4156F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
