@@ -27,13 +27,6 @@ namespace AzurePolishFunctions
             return outputs;
         }
 
-        [FunctionName("GenerateFiltersOrch_Hello")]
-        public static string SayHello([ActivityTrigger] string name, ILogger log)
-        {
-            log.LogInformation($"Saying hello to {name}.");
-            return $"Hello {name}!";
-        }
-
         [FunctionName("GenerateFiltersOrch_HttpStart")]
         public static async Task<HttpResponseMessage> HttpStart(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post")]HttpRequestMessage req,

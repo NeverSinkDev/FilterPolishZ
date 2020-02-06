@@ -147,9 +147,13 @@ namespace AzurePolishFunctions
 
             // 7) Generate changelogs
             // todo
-            
+
+            LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting publishing...");
+
             // 8) Generate and Upload Filters
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run(dataRes);
+
+            LoggingFacade.LogInfo($"Publishing done!");
         }
 
         private static string GetReqParams(string req, dynamic data, string name, string defValue)

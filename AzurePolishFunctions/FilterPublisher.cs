@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using AzurePolishFunctions.DataFileRequests;
+using FilterPolishUtil.Model;
 using FilterPolishZ.Util;
 using LibGit2Sharp;
 using Filter = FilterCore.Filter;
@@ -32,12 +33,16 @@ namespace AzurePolishFunctions
 
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
+
+            LoggingFacade.LogInfo($"Tempfolder prepared");
+
             if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
             
             // clone/pull the repo. after that, we will edit these existing files by generating the new versions
             // and push the update as the actual small changes.
             if (Directory.Exists(repoFolder))
             {
+                LoggingFacade.LogInfo($"Repo folder existing... pulling");
                 RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
                 using (var repo = new Repository(repoFolder))
                 {
@@ -45,19 +50,31 @@ namespace AzurePolishFunctions
                     var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
                     var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
                     Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
+                    LoggingFacade.LogInfo($"Pulling done");
                 }
             }
             else
             {
+                LoggingFacade.LogInfo($"Repo folder not existing... cloning");
                 Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
+                LoggingFacade.LogInfo($"Cloning done!");
             }
 
             // create filter
+            LoggingFacade.LogInfo($"Performing filter generation operations");
             FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
-            
+            LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
+
+            LoggingFacade.LogInfo($"Starting publishing!");
+
             PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade: done");
+
             PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
+
             PushToGit(repoFolder, PublishPrice);
+            LoggingFacade.LogInfo($"Publishing to GitHub: done");
 
             // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
         }
