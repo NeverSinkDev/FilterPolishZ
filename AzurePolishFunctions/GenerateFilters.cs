@@ -32,7 +32,7 @@ namespace AzurePolishFunctions
         public static LoggingFacade Logging { get; set; }
 
         [FunctionName("GenerateFilters")]
-        public static IActionResult Run([ActivityTrigger] string req, ILogger log)
+        public static string Run([ActivityTrigger] string req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -44,12 +44,12 @@ namespace AzurePolishFunctions
             try
             {
                 PerformMainRoutine(req);
-                return new OkObjectResult("successfully generated filters");
+                return "working";
             }
             catch (Exception e)
             {
                 Logging.Log(e.Message, LoggingLevel.Errors);
-                return new ConflictObjectResult(e);
+                return e.Message;
             }
         }
 
@@ -87,10 +87,10 @@ namespace AzurePolishFunctions
 
             dynamic data = JsonConvert.DeserializeObject(req);
 
-            var leagueType = data.leagueType ?? "tmpstandard";
-            var repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
+            string leagueType = data.leagueType ?? "tmpstandard";
+            string repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
 
-            var league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
+            string league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
 
             LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");
             LoggingFacade.LogInfo($"[CONFIG] league: {league}");
@@ -107,6 +107,8 @@ namespace AzurePolishFunctions
             }
 
             DataFiles = new DataFileRequestFacade();
+            LoggingFacade.LogInfo($"[CONFIG] FileRequestFacade Created!");
+
             FileRequestResult dataRes = DataFiles.GetAllFiles(league, leagueType);
 
             // 3) Parse filter

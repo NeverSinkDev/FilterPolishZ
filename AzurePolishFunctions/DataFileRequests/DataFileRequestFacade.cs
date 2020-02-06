@@ -24,21 +24,30 @@ namespace AzurePolishFunctions.DataFileRequests
 
         public FileRequestResult GetAllFiles(string league, string leagueType)
         {
-            FilterPolishUtil.Model.LoggingFacade.GetInstance().CustomHighImportanceLoggingMessage = x => Console.WriteLine("err: " + x);
-
+            LoggingFacade.LogInfo($"Starting file request");
             this.LeagueType = leagueType;
-            
+
             // Lade Filter Datei -> NS main github -> selective file(s?)
             // Lade Style Dateien -> NS main github -> selective files
             // Lade Aspect Dateien -> https://github.com/NeverSinkDev/Filter-ItemEconomyAspects -> ALL
+
+            LoggingFacade.LogInfo($"GitHub file download... starting");
             this.LoadGitHubFiles();
-            
+            LoggingFacade.LogInfo($"GitHub file download... done");
+
             // Lade BaseType Datei -> FB
+            LoggingFacade.LogInfo($"BaseType Data Request: done");
             this.BaseTypeData = FilterCore.Constants.BaseTypeDataProvider.BaseTypeData;
 
             // Lade Economy Dateien -> ninja API
             var ecoRes = this.LoadEcoData(league, leagueType);
-            if (ecoRes == FileRequestResult.Fail) return ecoRes;
+            LoggingFacade.LogInfo($"Ninja Eco Request Done: done");
+
+            if (ecoRes == FileRequestResult.Fail)
+            {
+                LoggingFacade.LogInfo($"Ninja Eco Request Done: failed");
+                return ecoRes;
+            }
             
             var itemData = ItemInformationFacade.GetInstance();
             var economyData = EconomyRequestFacade.GetInstance();
