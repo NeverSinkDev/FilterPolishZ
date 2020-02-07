@@ -44,7 +44,7 @@ namespace AzurePolishFunctions
             try
             {
                 PerformMainRoutine(req);
-                return "working";
+                return "finished generation succesfully!";
             }
             catch (Exception e)
             {
@@ -152,8 +152,6 @@ namespace AzurePolishFunctions
 
             // 8) Generate and Upload Filters
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName).Run(dataRes);
-
-            LoggingFacade.LogInfo($"Publishing done!");
         }
 
         private static string GetReqParams(string req, dynamic data, string name, string defValue)
