@@ -48,7 +48,7 @@ namespace AzurePolishFunctions
             }
             catch (Exception e)
             {
-                Logging.Log(e.Message, LoggingLevel.Errors);
+                LoggingFacade.LogError("ERRROR: " + e.Message);
                 return e.Message;
             }
         }
