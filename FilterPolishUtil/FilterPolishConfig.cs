@@ -29,9 +29,7 @@ namespace FilterPolishUtil
         /// <summary>
         /// Saves, caches and uses requested files if active.
         /// </summary>
-        /// 
-        /// TODO: CHANGE
-        public static RequestType ActiveRequestMode = RequestType.ForceOnline;
+        public static RequestType ActiveRequestMode = RequestType.Dynamic;
 
         /// <summary>
         /// Information about the requests and economyoverview sections:
@@ -53,7 +51,6 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string>("currency->prophecy", "prophecy", "https://poe.ninja/api/data/itemoverview?type=Prophecy"),
                 new Tuple<string, string, string>("fragments->scarabs", "scarabs", "https://poe.ninja/api/data/itemoverview?type=Scarab"),
                 new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil")
-                // new Tuple<string, string, string, string>("fragments", "fragments", "ItemOverview?type=Fragment", "&")
         };
 
         /// <summary>
