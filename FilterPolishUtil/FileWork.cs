@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterPolishUtil.Model;
 
 namespace FilterPolishUtil
 {
@@ -38,6 +39,7 @@ namespace FilterPolishUtil
             {
                 Console.WriteLine("The file could not be read:");
                 Console.WriteLine(e.Message);
+                LoggingFacade.LogError("File cound not be read. Path: " + adress + ". Error: " + e.Message);
                 return null;
             }
         }
