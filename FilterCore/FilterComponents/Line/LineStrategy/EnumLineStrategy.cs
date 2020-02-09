@@ -24,12 +24,7 @@ namespace FilterDomain.LineStrategy
         public IFilterLine Construct(string ident, List<LineToken> tokens)
         {
             var line = this.Construct<EnumValueContainer>(ident, tokens);
-
-            if (SortValues)
-            {
-                (line.Value as EnumValueContainer).PerformSort = false;
-            }
-
+            (line.Value as EnumValueContainer).PerformSort = SortValues;
             return line;
         }
     }
