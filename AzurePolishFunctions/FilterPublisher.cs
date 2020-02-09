@@ -80,7 +80,10 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
 
             PushToGit(repoFolder, PublishPrice);
+            LoggingFacade.LogInfo($"Publishing to GitHub: done");
+            
             UploadToPoe(repoFolder);
+            LoggingFacade.LogInfo($"PoeUpload: done");
 
             // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
         }
