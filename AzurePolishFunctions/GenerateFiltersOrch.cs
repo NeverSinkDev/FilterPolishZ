@@ -35,6 +35,7 @@ namespace AzurePolishFunctions
         {
             // Function input comes from the request content.
             var jsonInput = await req.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(jsonInput)) jsonInput = "{}";
 
             string instanceId = await starter.StartNewAsync("GenerateFiltersOrch", null, jsonInput);
 

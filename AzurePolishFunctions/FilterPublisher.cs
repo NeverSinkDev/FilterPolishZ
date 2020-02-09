@@ -3,11 +3,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using AzurePolishFunctions.DataFileRequests;
+using FilterCore;
+using FilterPolishUtil;
 using FilterPolishUtil.Model;
 using FilterPolishZ.Util;
 using LibGit2Sharp;
 using Filter = FilterCore.Filter;
+using Path = System.IO.Path;
 
 namespace AzurePolishFunctions
 {
@@ -15,13 +19,15 @@ namespace AzurePolishFunctions
     {
         public Filter Filter { get; set; }
         public string RepoName {get; set;}
+        public string League { get; set; }
 
         public bool PublishPrice = true;
         
-        public FilterPublisher(Filter filter, string repoName)
+        public FilterPublisher(Filter filter, string repoName, string league)
         {
             this.RepoName = repoName;
             this.Filter = filter;
+            this.League = league;
         }
         
         public void Run(FileRequestResult dataRes)
@@ -74,7 +80,7 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
 
             PushToGit(repoFolder, PublishPrice);
-            LoggingFacade.LogInfo($"Publishing to GitHub: done");
+            UploadToPoe(repoFolder);
 
             // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
         }
@@ -233,6 +239,51 @@ namespace AzurePolishFunctions
                 Console.WriteLine(outpu);
                 Console.WriteLine(errors);
             }
+        }
+
+        private void UploadToPoe(string filterFolder)
+        {
+            var token = Environment.GetEnvironmentVariable("PoeApiAccessToken");
+            var descr = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
+
+            for (var i = 0; i < FilterGenerationConfig.FilterStrictnessApiIds[this.League].Count; i++)
+            {
+                var filterId = FilterGenerationConfig.FilterStrictnessApiIds[this.League][i];
+                var filterPath = filterFolder + "\\NeverSink's filter - " + i + "-" + FilterGenerationConfig.FilterStrictnessLevels[i].ToUpper();
+                var filterContent = FileWork.ReadFromFile(filterPath);
+                this.UploadToPoe_Single(filterId, token, descr, filterContent);
+            }
+        }
+
+        private void UploadToPoe_Single(string filterId, string accessToken, string descr, string filterContent)
+        {
+            var url = "https://www.pathofexile.com/api/item-filter/" + filterId + "?access_token=" + accessToken;
+            var client = new HttpClient();
+
+            var body = new
+            {
+                filter = filterContent,
+                filterID = filterId,
+                description = descr
+            };
+            
+            LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
+            
+            var resp = client.PostAsJsonAsync(url, body);
+            resp.Wait();
+            if (resp.Result.StatusCode != HttpStatusCode.OK)
+            {
+                LoggingFacade.LogInfo($"[PoeUpload] Error: " + resp.Result.StatusCode);
+            }
+            else
+            {
+                LoggingFacade.LogInfo($"[PoeUpload] Success");
+            }
+        }
+
+        public static void TestUpload()
+        {
+            new FilterPublisher(null, null, "tmpstandard").UploadToPoe("./");
         }
     }
 }
