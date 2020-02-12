@@ -80,7 +80,10 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
 
             PushToGit(repoFolder, PublishPrice);
+            LoggingFacade.LogInfo($"Publishing to GitHub: done");
+            
             UploadToPoe(repoFolder);
+            LoggingFacade.LogInfo($"PoeUpload: done");
 
             // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
         }
@@ -249,7 +252,7 @@ namespace AzurePolishFunctions
             for (var i = 0; i < FilterGenerationConfig.FilterStrictnessApiIds[this.League].Count; i++)
             {
                 var filterId = FilterGenerationConfig.FilterStrictnessApiIds[this.League][i];
-                var filterPath = filterFolder + "\\NeverSink's filter - " + i + "-" + FilterGenerationConfig.FilterStrictnessLevels[i].ToUpper();
+                var filterPath = filterFolder + "\\NeverSink's filter - " + i + "-" + FilterGenerationConfig.FilterStrictnessLevels[i].ToUpper() + ".filter";
                 var filterContent = FileWork.ReadFromFile(filterPath);
                 this.UploadToPoe_Single(filterId, token, descr, filterContent);
             }

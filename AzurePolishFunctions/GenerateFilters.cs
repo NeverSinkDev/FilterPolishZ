@@ -151,7 +151,7 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting publishing...");
 
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, league).Run(dataRes);
+            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType).Run(dataRes);
         }
 
         private static string GetReqParams(string req, dynamic data, string name, string defValue)
