@@ -62,6 +62,8 @@ namespace FilterCore
             { "Corrupted",     new BoolLineStrategy() },
             { "Identified",    new BoolLineStrategy() },
             { "ElderMap",      new BoolLineStrategy() },
+            { "Mirrored",      new BoolLineStrategy() },
+
             { "HasInfluence",  new EnumLineStrategy(true) },
             { "LinkedSockets", new NumericLineStrategy() },
             { "Sockets",       new NumericLineStrategy() },
@@ -70,9 +72,11 @@ namespace FilterCore
             { "Width",         new NumericLineStrategy() },
             { "Height",        new NumericLineStrategy() },
             { "StackSize",     new NumericLineStrategy() },
+            { "CorruptedMods", new NumericLineStrategy() },
             { "GemLevel",      new NumericLineStrategy() },
             { "ItemLevel",     new NumericLineStrategy() },
             { "DropLevel",     new NumericLineStrategy() },
+            { "AreaLevel",     new NumericLineStrategy() },
             { "Rarity",        new NumericLineStrategy() },
             { "SocketGroup",   new EnumLineStrategy(true) },
             { "Class",         new EnumLineStrategy(true) },
@@ -89,7 +93,9 @@ namespace FilterCore
             { "PlayAlertSoundPositional",new VariableLineStrategy(1,2) },
             { "CustomAlertSound",        new VariableLineStrategy(1,2) },
             { "PlayEffect",              new VariableLineStrategy(2,3) },
-            { "MinimapIcon",             new VariableLineStrategy(3,3) }};
+            { "MinimapIcon",             new VariableLineStrategy(3,3) },
+
+            { "Continue",                new VariableLineStrategy(0,0) }};
 
         public static Dictionary<string, Func<FilterEntry, IEntryCommand>> EntryCommand = new Dictionary<string, Func<FilterEntry, IEntryCommand>>
         {
