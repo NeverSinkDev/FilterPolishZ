@@ -27,11 +27,13 @@
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
                 <Button ToolTip="Reload/Refresh" Click="ReloadClick">
                     <materialDesign:PackIcon Kind="Refresh" Foreground="White"  />
-
                 </Button>
 
                 <ComboBox SelectedIndex="0" x:Name="SelectedBranchComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedBranchComboBox_SelectionChanged"/>
                 <ComboBox SelectedIndex="0" x:Name="SelectedTieringFiltersComboBox" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedFilters_SelectionChanged"/>
+
+                <TextBox x:Name="TierListState">n/a</TextBox>
+                
             </ToolBar>
         </ToolBarTray>
 

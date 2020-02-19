@@ -14,12 +14,6 @@ namespace FilterEconomyProcessor.RuleSet
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
-            builder.AddRule("ANCHOR", "ANCHOR",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("AnchorAspect");
-                }));
-
             builder.AddRule("t1", "t1",
                 new Func<string, bool>((string s) =>
                 {

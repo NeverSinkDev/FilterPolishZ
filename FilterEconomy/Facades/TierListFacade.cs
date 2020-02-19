@@ -20,6 +20,7 @@ namespace FilterEconomy.Facades
         private static TierListFacade Instance { get; set; }
         public Dictionary<string, TierGroup> TierListData { get; set; } = new Dictionary<string, TierGroup>();
         public Dictionary<string, List<TieringCommand>> Suggestions = new Dictionary<string, List<TieringCommand>>();
+        public Dictionary<string, bool> EnabledSuggestions = new Dictionary<string, bool>();
 
         public Dictionary<string, List<TieringChange>> Changelog = new Dictionary<string, List<TieringChange>>();
 
@@ -71,6 +72,12 @@ namespace FilterEconomy.Facades
                 if (!this.TierListData.ContainsKey(section.Key) || (this.TierListData[section.Key].FilterEntries?.Count == 0))
                 {
                     LoggingFacade.LogWarning($"Skipping section {section.Key} . No data found for section!");
+                    continue;
+                }
+
+                if (this.EnabledSuggestions.ContainsKey(section.Key) && !this.EnabledSuggestions[section.Key])
+                {
+                    LoggingFacade.LogInfo($"SKIP Suggestions generation for: {section.Key}");
                     continue;
                 }
 

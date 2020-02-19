@@ -12,16 +12,12 @@ namespace FilterEconomyProcessor.RuleSet
         {
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection("currency")
+                .SkipInEarlyLeague()
+                .LimitExecutionMode(ExecutionMode.Function)
                 .UseDefaultQuery()
                 .OverrideMinimalExaltedPriceThreshhold(40)
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
-
-            builder.AddRule("ANCHOR", "???",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("AnchorAspect");
-                }));
 
             builder.AddRule("No Tiering", "???",
                 new Func<string, bool>((string s) =>

@@ -88,6 +88,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         private void ReloadClick(object sender, RoutedEventArgs e)
         {
             this.Reload();
+            this.RefreshStateLabel();
         }
 
         private void SelectedBranchComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,7 +100,20 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
 
             this.BranchKey = e.AddedItems[0].ToString();
 
+            this.RefreshStateLabel();
             this.RefreshTieringSuggestions();
+        }
+
+        private void RefreshStateLabel()
+        {
+            if (TierListFacade.GetInstance().EnabledSuggestions.ContainsKey(this.BranchKey))
+            {
+                TierListState.Text = TierListFacade.GetInstance().EnabledSuggestions[this.BranchKey] ? "Enabled" : "Disabled";
+            }
+            else
+            {
+                TierListState.Text = "N/A";
+            }
         }
 
         private void SelectedFilters_SelectionChanged(object sender, SelectionChangedEventArgs e)

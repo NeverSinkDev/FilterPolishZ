@@ -15,13 +15,8 @@ namespace FilterEconomyProcessor.RuleSet
                 .UseDefaultQuery()
                 .OverrideMinimalExaltedPriceThreshhold(40)
                 .AddDefaultPostProcessing()
+                .SkipInEarlyLeague()
                 .AddDefaultIntegrationTarget();
-
-            builder.AddRule("ANCHOR", "???",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("AnchorAspect");
-                }));
 
             builder.AddRule("No Tiering","???",
                 new Func<string, bool>((string s) =>

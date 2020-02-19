@@ -14,14 +14,8 @@ namespace FilterEconomyProcessor.RuleSet
                 .SetSection(segment)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
-                .OverrideMinimalExaltedPriceThreshhold(52)
+                .SkipInEarlyLeague()
                 .AddDefaultIntegrationTarget();
-
-            builder.AddRule("ANCHOR", "ANCHOR",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("AnchorAspect");
-                }));
 
             builder.AddRule("unknown", "unknown",
                 new Func<string, bool>((string s) =>

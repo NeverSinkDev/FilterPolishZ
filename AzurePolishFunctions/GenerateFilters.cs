@@ -97,6 +97,8 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"[CONFIG] repoName: {repoName}");
             LoggingFacade.LogInfo($"[CONFIG] localMode: {localMode}");
 
+            FilterPolishConfig.ApplicationExecutionMode = ExecutionMode.Function;
+
             if (localMode == "true")
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.Dynamic;

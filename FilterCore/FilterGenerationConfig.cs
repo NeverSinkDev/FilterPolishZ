@@ -78,7 +78,7 @@ namespace FilterCore
             { "DropLevel",     new NumericLineStrategy() },
             { "AreaLevel",     new NumericLineStrategy() },
             { "Rarity",        new NumericLineStrategy() },
-            { "SocketGroup",   new EnumLineStrategy(true) },
+            { "SocketGroup",   new EnumLineStrategy(false) },
             { "Class",         new EnumLineStrategy(true) },
             { "BaseType",      new EnumLineStrategy(true) },
             { "Prophecy",      new EnumLineStrategy(true) },
@@ -149,7 +149,7 @@ namespace FilterCore
 
         public static HashSet<string> FilterOperators = new HashSet<string>()
         {
-            "=", ">=", "<=", ">", "<"
+            "=", ">=", "<=", ">", "<", "=="
         };
 
         public static readonly List<string> FilterStrictnessLevels = new List<string>

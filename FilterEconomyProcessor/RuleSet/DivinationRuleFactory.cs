@@ -16,14 +16,6 @@ namespace FilterPolishZ.Economy.RuleSet
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
-
-            builder.AddRule("ANCHOR", "ANCHOR",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("AnchorAspect");
-                }));
-
-
             builder.AddRule("unknown", "unknown",
                 new Func<string, bool>((string s) =>
                 {

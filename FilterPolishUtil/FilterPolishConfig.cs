@@ -31,6 +31,8 @@ namespace FilterPolishUtil
         /// </summary>
         public static RequestType ActiveRequestMode = RequestType.Dynamic;
 
+        public static ExecutionMode ApplicationExecutionMode = ExecutionMode.OnPrem;
+
         /// <summary>
         /// Information about the requests and economyoverview sections:
         /// name, filename, requesturl, urlprefix. Probably should've added a class for that.
@@ -177,5 +179,11 @@ namespace FilterPolishUtil
     {
         Dynamic,
         ForceOnline
+    }
+
+    public enum ExecutionMode
+    {
+        Function,
+        OnPrem
     }
 }

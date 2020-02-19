@@ -1,4 +1,5 @@
-﻿using FilterEconomy.Model;
+﻿using FilterEconomy.Facades;
+using FilterEconomy.Model;
 using FilterEconomy.Processor;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
@@ -23,6 +24,12 @@ namespace FilterEconomyProcessor.RuleSet
             RuleSet.RuleHost = ruleHost;
 
             this.AddSafetyRule();
+
+            this.AddRule("ANCHOR", "ANCHOR",
+                new Func<string, bool>((string s) =>
+                {
+                    return this.Item.HasAspect("AnchorAspect");
+                }));
         }
 
         public RuleSetBuilder SetSection(string s)
@@ -72,6 +79,26 @@ namespace FilterEconomyProcessor.RuleSet
         public RuleSetBuilder AddDefaultIntegrationTarget()
         {
             this.RuleSet.SuggestionTarget = this.RuleHost.TierListFacade.Suggestions[this.Section];
+            return this;
+        }
+
+        public RuleSetBuilder SkipInEarlyLeague()
+        {
+            if (EconomyRequestFacade.GetInstance().IsEarlyLeague() == true)
+            {
+                this.RuleSet.Enabled = false;
+            }
+
+            return this;
+        }
+
+        public RuleSetBuilder LimitExecutionMode(ExecutionMode mode)
+        {
+            if (FilterPolishConfig.ApplicationExecutionMode != mode)
+            {
+                this.RuleSet.Enabled = false;
+            }
+
             return this;
         }
 

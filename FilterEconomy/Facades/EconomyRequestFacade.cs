@@ -19,7 +19,19 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            // this.ActiveMetaTags.Add("EarlyLeagueInterestAspect", DateTime.Now.AddDays(7));
+            var leagueStart = new DateTime(2020, 3, 13);
+            this.ActiveMetaTags.Add("EarlyLeagueInterestAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
+            this.ActiveMetaTags.Add("MetaBiasAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
+        }
+
+        public bool IsEarlyLeague()
+        {
+            if (ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static EconomyRequestFacade GetInstance()
@@ -40,7 +52,7 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, PoeLeague> PoeLeagues { get; set; } = new Dictionary<string, PoeLeague>();
 
-        public Dictionary<string, DateTime> ActiveMetaTags { get; set; } = new Dictionary<string, DateTime>();
+        public Dictionary<string, Tuple<DateTime,DateTime>> ActiveMetaTags { get; set; } = new Dictionary<string, Tuple<DateTime, DateTime>>();
 
         public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string leagueType, string branchKey, string url, string baseStoragePath)
         {

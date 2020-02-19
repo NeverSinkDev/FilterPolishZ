@@ -1,5 +1,6 @@
 ﻿using FilterCore;
 using FilterCore.Constants;
+using FilterEconomy.Facades;
 using FilterEconomy.Model;
 using FilterEconomy.Model.ItemInformationData;
 using FilterPolishUtil.Collections;
@@ -30,29 +31,21 @@ namespace FilterEconomy.Processor
         {
             LoggingFacade.LogDebug($"Generating Suggestions for: {this.GoverningSection}");
 
-            if (FilterPolishUtil.FilterPolishConfig.ExaltedOrbPrice <= MinimalExaltedOrbPrice)
-            {
-                LoggingFacade.LogWarning($"[EXALTED PRICE TOO LOW] SKIP Suggestions generation for: {this.GoverningSection}");
-                return;
-            }
-
-            if (!Enabled)
-            {
-                LoggingFacade.LogWarning($"SKIP Suggestions generation for: {this.GoverningSection}");
-                return;
-            }
-
             this.SuggestionTarget.Clear();
             this.SuggestionTarget.AddRange(this.GenerateSuggestions());
+
+            if (!TierListFacade.GetInstance().EnabledSuggestions.ContainsKey(this.GoverningSection))
+            {
+                TierListFacade.GetInstance().EnabledSuggestions.Add(this.GoverningSection,Enabled);
+            }
+            else
+            {
+                TierListFacade.GetInstance().EnabledSuggestions[this.GoverningSection] = Enabled;
+            }
         }
 
         public IEnumerable<TieringCommand> GenerateSuggestions()
         {
-            if (!Enabled)
-            {
-                yield break;
-            }
-
             var result = RuleHost.EconomyInformation.EconomyTierlistOverview[this.GoverningSection]
                 .Select(z => z.Key)
                 .Select(x => this.ProcessItem(this.GoverningSection, x, x, RuleHost));

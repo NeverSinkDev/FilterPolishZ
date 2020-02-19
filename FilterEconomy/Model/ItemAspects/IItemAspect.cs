@@ -142,7 +142,7 @@ namespace FilterEconomy.Model.ItemAspects
         {
             if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("EarlyLeagueInterestAspect"))
             {
-                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"] > DateTime.Now)
+                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now)
                 {
                     return true;
                 }
@@ -158,7 +158,7 @@ namespace FilterEconomy.Model.ItemAspects
         {
             if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("MetaBiasAspect"))
             {
-                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"] > DateTime.Now)
+                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"].Item1 < DateTime.Now && EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"].Item2 > DateTime.Now)
                 {
                     return true;
                 }
