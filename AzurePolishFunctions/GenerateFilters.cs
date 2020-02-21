@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using FilterPolishUtil.Collections;
 using FilterEconomy.Model;
 using AzurePolishFunctions.DataFileRequests;
+using FilterCore.Constants;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -61,6 +62,7 @@ namespace AzurePolishFunctions
             TierListFacade?.Clean();
             FilterAccessFacade?.Clean();
 
+            BaseTypeDataProvider.Initialize();
             EconomyData = EconomyRequestFacade.GetInstance();
             TierListFacade = TierListFacade.GetInstance();
             FilterAccessFacade = FilterAccessFacade.GetInstance();
