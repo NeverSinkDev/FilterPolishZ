@@ -1,4 +1,5 @@
 using FilterPolishUtil.Extensions;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -138,6 +139,7 @@ namespace FilterCore.Constants
                     {
                         if (string.IsNullOrEmpty(basetype["Game:APS"]))
                         {
+                            LoggingFacade.LogWarning($"APS information missing for basetype {basetype["BaseType"]}",true);
                             basetype["Game:APS"] = min.ToString();
                         }
                     }

@@ -105,7 +105,7 @@ namespace FilterPolishZ.Util
                 }
 
                 await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
-                LoggingFacade.LogInfo($"DONE GENERATING: {fileName}");
+                LoggingFacade.LogDebug($"DONE GENERATING: {fileName}");
             }
         }
         

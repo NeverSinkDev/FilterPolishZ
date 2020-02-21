@@ -41,9 +41,13 @@ namespace FilterPolishUtil.Model
             return instance;
         }
 
-        public static void LogWarning(string info)
+        public static void LogWarning(string info, bool silent = false)
         {
-            GetInstance().CustomHighImportanceLoggingMessage("[WARNING] " + info);
+            if (!silent)
+            {
+                GetInstance().CustomHighImportanceLoggingMessage("[WARNING] " + info);
+            }
+
             GetInstance().CustomLoggingMessage("[WARNING] " + info);
             GetInstance().Log(info, LoggingLevel.Warning);
         }
@@ -57,6 +61,7 @@ namespace FilterPolishUtil.Model
 
         public static void LogItem(string info)
         {
+            GetInstance().CustomLoggingMessage("[ITEM] " + info);
             GetInstance().Log(info, LoggingLevel.Item);
         }
 

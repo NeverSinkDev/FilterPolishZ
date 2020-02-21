@@ -149,7 +149,7 @@ namespace FilterPolishZ
         [Time]
         private TierListFacade LoadTierLists(Filter filter)
         {
-            LoggingFacade.LogDebug($"Loading Tierlists...");
+            LoggingFacade.LogInfo($"Loading Tierlists...");
 
             TierListFacade tierList = TierListFacade.GetInstance();
             tierList.WriteFolder = Configuration.AppSettings["EcoFile Folder"];
@@ -181,7 +181,7 @@ namespace FilterPolishZ
             foreach (var tuple in FilterPolishConfig.FileRequestData)
             {
                 PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
-                LoggingFacade.LogInfo($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
+                LoggingFacade.LogDebug($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
             }
 
             void PerformEcoRequest(string dictionaryKey, string requestKey, string url) =>

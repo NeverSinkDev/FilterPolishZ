@@ -276,7 +276,7 @@ namespace AzurePolishFunctions
             resp.Wait();
             if (resp.Result.StatusCode != HttpStatusCode.OK)
             {
-                LoggingFacade.LogInfo($"[PoeUpload] Error: " + resp.Result.StatusCode);
+                LoggingFacade.LogError($"[PoeUpload] Error: " + resp.Result.StatusCode);
             }
             else
             {
