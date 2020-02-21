@@ -33,7 +33,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         public ObservableCollection<ItemTieringData> ItemInformationData { get; set; } = new ObservableCollection<ItemTieringData>();
 
-        public static string CurrentBranchKey { get; set; } // static because other windows need to access this without having this instance
+        public static string CurrentBranchKey { get; set; } = "uniques"; // static because other windows need to access this without having this instance
 
         public string TierListState { get; set; } = string.Empty;
 
@@ -118,7 +118,8 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 LowestPrice = ecoData?.LowestPrice ?? 0,
                 HighestPrice = ecoData?.HighestPrice ?? 0,
                 Multiplier = ecoData?.ValueMultiplier ?? 0,
-                Valid = ecoData?.Valid
+                Valid = ecoData?.Valid,
+                Tier = StringWork.CombinePieces(", ", TierListData.GetTiersForBasetypeSafe(CurrentBranchKey, z.Key))
             };
         }
 

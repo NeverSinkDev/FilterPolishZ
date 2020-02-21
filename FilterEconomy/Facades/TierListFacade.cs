@@ -62,6 +62,16 @@ namespace FilterEconomy.Facades
             return TierListData[group].ItemTiering[basetype];
         }
 
+        public List<string> GetTiersForBasetypeSafe(string group, string basetype)
+        {
+            if (!this.ContainsTierInformationForBaseType(group,basetype))
+            {
+                return new List<string> { "untiered!" };
+            }
+
+            return TierListData[group].ItemTiering[basetype];
+        }
+
         public void ApplyAllSuggestions()
         {
             LoggingFacade.LogInfo("Applying All Suggestions!");

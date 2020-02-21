@@ -76,6 +76,7 @@ namespace FilterEconomyProcessor.Enrichment
                 if (!FilterPolishConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
                 {
                     var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
+
                     var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);
 
                     if (apsSorting > 0)

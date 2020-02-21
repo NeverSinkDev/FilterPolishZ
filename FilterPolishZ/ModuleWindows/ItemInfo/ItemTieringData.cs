@@ -12,5 +12,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         public float Multiplier { get; internal set; }
         public float HighestPrice { get; internal set; }
         public bool? Valid { get; internal set; }
+
+        public string Tier { get; set; }
     }
 }

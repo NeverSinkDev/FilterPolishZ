@@ -15,8 +15,15 @@ namespace FilterCore.Constants
         private static Dictionary<string, Dictionary<string, string>> data;
         private static Dictionary<string, List<Dictionary<string, string>>> classBasedTierList;
 
-        public static Dictionary<string, Dictionary<string, string>> BaseTypeData => data ?? (data = LoadData());
-        public static Dictionary<string, List<Dictionary<string, string>>> ClassBasedTierList = classBasedTierList ?? (classBasedTierList = CreateClassBasedList());
+        public static Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, List<Dictionary<string, string>>> ClassBasedTierList = new Dictionary<string, List<Dictionary<string, string>>>();
+
+        public static void Initialize()
+        {
+            BaseTypeData = LoadData();
+            ClassBasedTierList = CreateClassBasedList();
+
+        }
 
         private static Dictionary<string, Dictionary<string, string>> LoadData()
         {
@@ -127,6 +134,14 @@ namespace FilterCore.Constants
 
                 if (max > 0)
                 {
+                    foreach (var basetype in results[item.Key])
+                    {
+                        if (string.IsNullOrEmpty(basetype["Game:APS"]))
+                        {
+                            basetype["Game:APS"] = min.ToString();
+                        }
+                    }
+
                     results[item.Key]
                         .ForEachIndexing((x, index) =>
                         x.Add("ApsSorting",

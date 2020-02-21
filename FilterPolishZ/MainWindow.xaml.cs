@@ -27,6 +27,7 @@ using FilterPolishWindowUtils;
 using FilterPolishZ.Economy;
 using FilterEconomyProcessor;
 using FilterEconomyProcessor.ClassAbstraction;
+using FilterCore.Constants;
 
 namespace FilterPolishZ
 {
@@ -84,6 +85,8 @@ namespace FilterPolishZ
 
             // add derived tiers (Shaper, Elder)
             this.EconomyData.CreateSubEconomyTiers();
+
+            BaseTypeDataProvider.Initialize();
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
