@@ -19,6 +19,14 @@ namespace FilterPolishUtil.Extensions
             return lst;
         }
 
+        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
+        {
+            foreach (T item in enumeration)
+            {
+                action(item);
+            }
+        }
+
         public static void RemoveAll<T>(this ICollection<T> collection, Func<T, bool> predicate)
         {
             T element;

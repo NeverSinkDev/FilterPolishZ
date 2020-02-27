@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "currency", "fragments", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil"
+            "currency", "fragments", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials"
         };
 
         /// <summary>
@@ -52,7 +52,8 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string>("currency->incubators", "incubators", "https://poe.ninja/api/data/itemoverview?type=Incubator"),
                 new Tuple<string, string, string>("currency->prophecy", "prophecy", "https://poe.ninja/api/data/itemoverview?type=Prophecy"),
                 new Tuple<string, string, string>("fragments->scarabs", "scarabs", "https://poe.ninja/api/data/itemoverview?type=Scarab"),
-                new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil")
+                new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil"),
+                new Tuple<string, string, string>("vials", "vials", "https://poe.ninja/api/data/itemoverview?type=Vial")
         };
 
         /// <summary>

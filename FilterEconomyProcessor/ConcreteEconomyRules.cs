@@ -21,6 +21,7 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
         private FilterEconomyRuleSet oilRules;
+        private FilterEconomyRuleSet vialRules;
 
         private FilterEconomyRuleSet fragmentRules;
         private FilterEconomyRuleSet currencyRules;
@@ -54,6 +55,7 @@ namespace FilterEconomyProcessor
             this.fossilrules = this.GenerateFossilTieringRules();
             this.incubatorrules = this.GenerateIncubatorTieringRules();
             this.oilRules = this.GenerateBlightOilRuleSet();
+            this.vialRules = this.GenerateVialRuleSet();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
@@ -72,6 +74,7 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.fossilrules);
             this.Rules.Add(this.fragmentRules);
             this.Rules.Add(this.currencyRules);
+            // this.Rules.Add(this.vialRules);
 
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
@@ -163,6 +166,20 @@ namespace FilterEconomyProcessor
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
                 .AddSimpleReversedComparisonRule("t4", "t4", FilterPolishConfig.MiscT4BreakPoint)
                 .AddExplicitRest("t3","t3")
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateVialRuleSet()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("vials")
+                .OverrideMinimalExaltedPriceThreshhold(40)
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddExplicitRest("t3", "t3")
                 .Build();
         }
     }
