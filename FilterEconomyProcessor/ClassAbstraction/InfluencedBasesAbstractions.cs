@@ -6,6 +6,7 @@ using FilterPolishUtil.Collections;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -34,16 +35,17 @@ namespace FilterEconomyProcessor.ClassAbstraction
                 }
 
                 var currentSection = abstractionList.AddNewSection(section.Key);
-                for (int ilvl = 80; ilvl <= 86; ilvl++)
-                {
-                    BaseBTA.ItemLevelContext = ilvl;
-                    foreach (var item in section.Value)
-                    {
-                        if (BaseTypeDataProvider.BaseTypeData.ContainsKey(item.Key))
-                        {
-                            var currentBaseType = new BaseBTA();
-                            currentBaseType.Name = item.Key;
 
+                foreach (var item in section.Value)
+                {
+                    if (BaseTypeDataProvider.BaseTypeData.ContainsKey(item.Key))
+                    {
+                        var currentBaseType = new BaseBTA();
+                        currentBaseType.Name = item.Key;
+
+                        for (int ilvl = 80; ilvl <= 86; ilvl++)
+                        {
+                            BaseBTA.ItemLevelContext = ilvl;
                             // Atlas bases falsify the results, so we're skipping them.
                             if (FilterPolishConfig.SpecialBases.Contains(item.Key))
                             {
@@ -68,21 +70,38 @@ namespace FilterEconomyProcessor.ClassAbstraction
                     }
                 }
 
+
                 // Sort each list and omit the outliers
                 var filteredValueList = new Dictionary<string, List<float>>();
                 var filteredFullValueList = new Dictionary<string, List<float>>();
 
-                foreach (var item in currentSection.Classes)
+                for (int ilvl = 80; ilvl <= 86; ilvl++)
                 {
-                    item.Value.CreateList();
-                    var confPrice = item.Value.BaseTypesList
-                        .Where(x => !x.SpecialBase).Average(x => x.ConfValueList.Count == 0 ? 0 : x.ConfValueList[86]);
+                    BaseBTA.ItemLevelContext = ilvl;
+                    foreach (var item in currentSection.Classes)
+                    {
+                        item.Value.CreateList();
+                        var confPrice = item.Value.BaseTypesList
+                            .Where(x => !x.SpecialBase).Average(x => x.ConfValueList.Count == 0 ? 0 : x.ConfValueList[ilvl]);
 
-                    var fullPrice = item.Value.BaseTypesList
-                        .Where(x => !x.SpecialBase).Average(x => x.FullValueList[86]);
+                        var fullPrice = item.Value.BaseTypesList
+                            .Where(x => !x.SpecialBase).Average(x => x.FullValueList[ilvl]);
 
-                    sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{86}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice }"));
+                        var validPrices = item.Value.BaseTypesList.Count(x => x.ConfValueList[ilvl] > 0.5f);
+
+                        item.Value.AvgConfidence = item.Value.BaseTypes.Average(x => x.Value.Confidence);
+                        item.Value.ConfPrices.Add(ilvl, confPrice);
+                        item.Value.FullPrices.Add(ilvl, fullPrice);
+                        item.Value.ValidItems.Add(ilvl, validPrices);
+
+                        if (ilvl == 86)
+                        {
+                            sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{ilvl}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice }"));
+                        }
+                    }
                 }
+
+
             }
 
             var sortedValueList1 = sortedPriceList.OrderBy(x => x.Key).ToList();
@@ -112,6 +131,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
                 InfluenceTypes[influenceName] = value;
             }
         }
+
 
         public ClassListBTA AddNewSection(string name)
         {
@@ -158,8 +178,25 @@ namespace FilterEconomyProcessor.ClassAbstraction
     /// <summary>
     /// Represents abstracted information about one class in the influenced tier economy
     /// </summary>
+    [DebuggerDisplay("{Validity,nq}")]
     public class ClassBTA
     {
+        public Dictionary<string, BaseBTA> BaseTypes = new Dictionary<string, BaseBTA>();
+        public List<BaseBTA> BaseTypesList { get; set; }
+        public Dictionary<int, float> ConfPrices = new Dictionary<int, float>();
+        public Dictionary<int, float> FullPrices = new Dictionary<int, float>();
+        public Dictionary<int, int> ValidItems = new Dictionary<int, int>();
+
+        public string Validity
+        {
+            get
+            {
+                return $"{ValidItems[80]},{ValidItems[81]},{ValidItems[82]},{ValidItems[83]},{ValidItems[84]},{ValidItems[85]},{ValidItems[86]}";
+            }
+        }
+
+        public float AvgConfidence;
+
         public BaseBTA this[string baseTypeName]
         {
             get
@@ -186,9 +223,6 @@ namespace FilterEconomyProcessor.ClassAbstraction
         {
             this.BaseTypesList = BaseTypes.Values.OrderBy(x => x).ToList();
         }
-
-        public Dictionary<string, BaseBTA> BaseTypes = new Dictionary<string, BaseBTA>();
-        public List<BaseBTA> BaseTypesList { get; set; }
     }
 
     /// <summary>
@@ -232,7 +266,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
             this.EnrichmentValidity = ecoData.Valid;
             this.EcoData = ecoData;
 
-            if (ecoData.ValueMultiplier > 0.4f)
+            if (ecoData.ValueMultiplier > 0.5f)
             {
                 this.ConfValueList.Add(itemLevel, conf * price);
             }
