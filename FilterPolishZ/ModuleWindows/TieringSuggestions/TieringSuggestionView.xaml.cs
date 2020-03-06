@@ -40,7 +40,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             this.EventGridFacade.FilterChangeEvent += EventGridFacade_FilterChangeEvent;
 
             this.TieringFilters.Add("none", new TieringSuggestionFilter("none", x => true));
-            this.TieringFilters.Add("Only Changed", new TieringSuggestionFilter("OnlyChangedFilter", x => x.IsChange));
+            this.TieringFilters.Add("Only Changed", new TieringSuggestionFilter("OnlyChangedFilter", x => x.IsChange || x.Performed));
 
             this.SelectedTieringFiltersComboBox.ItemsSource = this.TieringFilters.Keys;
             this.SelectedBranchComboBox.SelectedIndex = 0;

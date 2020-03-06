@@ -97,7 +97,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     return (price < FilterPolishConfig.DiviT5BreakPoint || builder.Item.HasAspect("PoorDiviAspect")) && builder.Item.HasAspect("CurrencyTypeAspect");
                 }));
 
-            builder.AddRule("RandomSave", "rest",
+            builder.AddRule("RandomSave", "t4",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.Item.HasAspect("LargeRandomPoolAspect");
@@ -135,11 +135,13 @@ namespace FilterPolishZ.Economy.RuleSet
                     return price < FilterPolishConfig.DiviT5BreakPoint;
                 }));
 
-            builder.AddRule("rest", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            builder.AddExplicitRest("t4", "t4");
+
+            //builder.AddRule("rest", "rest",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return true;
+            //    }));
 
             return builder.Build();
         }

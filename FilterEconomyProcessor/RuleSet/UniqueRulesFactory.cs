@@ -91,7 +91,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return fit;
                 }));
 
-            builder.AddRule("leagueDropAspect", "multileague",
+            builder.AddRule("leagueDropAspect", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
@@ -128,20 +128,6 @@ namespace FilterEconomyProcessor.RuleSet
                     return fit;
                 }));
 
-            // uniques that have changed in the latest league
-            //builder.AddRule("Changed?", "metainfluenced",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return builder.Item.HasAspect("ChangedAspect");
-            //    }));
-
-            // usually used for new leagues
-            //builder.AddRule("MetaSave", "t2",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return builder.Item.HasAspect("MetaBiasAspect");
-            //    }));
-
             builder.AddRule("EarlyLeagueInterest", "earlyleague",
                 new Func<string, bool>((string s) =>
                 {
@@ -149,7 +135,7 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
 
             // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events
-            builder.AddRule("SuperLeagueUnique", "multileague",
+            builder.AddRule("SuperLeagueUnique", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
@@ -193,11 +179,13 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }));
 
-            builder.AddRule("rest", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            builder.AddExplicitRest("t3", "t3");
+
+            //builder.AddRule("rest", "rest",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return true;
+            //    }));
 
             return builder.Build();
         }

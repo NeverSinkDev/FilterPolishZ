@@ -13,9 +13,11 @@ namespace FilterEconomyProcessor.ClassAbstraction
 {
     public class InfluencedBasesAbstractions
     {
+        public static InfluenceBTA InfluencedItemInformation { get; set; }
+
         public void Execute()
         {
-
+            InfluencedItemInformation = null;
             LoggingFacade.LogInfo($"Performing Influenced Class Abstractions");
 
             List<KeyValuePair<float, string>> sortedConfList = new List<KeyValuePair<float, string>>();
@@ -23,9 +25,6 @@ namespace FilterEconomyProcessor.ClassAbstraction
             List<KeyValuePair<float, string>> sortedFullPriceList = new List<KeyValuePair<float, string>>();
 
             var abstractionList = new InfluenceBTA();
-
-            var itemLevel = 85;
-            BaseBTA.ItemLevelContext = itemLevel;
 
             foreach (var section in EconomyRequestFacade.GetInstance().EconomyTierlistOverview)
             {
@@ -35,34 +34,37 @@ namespace FilterEconomyProcessor.ClassAbstraction
                 }
 
                 var currentSection = abstractionList.AddNewSection(section.Key);
-
-                foreach (var item in section.Value)
+                for (int ilvl = 80; ilvl <= 86; ilvl++)
                 {
-                    if (BaseTypeDataProvider.BaseTypeData.ContainsKey(item.Key))
+                    BaseBTA.ItemLevelContext = ilvl;
+                    foreach (var item in section.Value)
                     {
-                        var currentBaseType = new BaseBTA();
-                        currentBaseType.Name = item.Key;
-
-                        // Atlas bases falsify the results, so we're skipping them.
-                        if (FilterPolishConfig.SpecialBases.Contains(item.Key))
+                        if (BaseTypeDataProvider.BaseTypeData.ContainsKey(item.Key))
                         {
-                            currentBaseType.SpecialBase = true;
+                            var currentBaseType = new BaseBTA();
+                            currentBaseType.Name = item.Key;
+
+                            // Atlas bases falsify the results, so we're skipping them.
+                            if (FilterPolishConfig.SpecialBases.Contains(item.Key))
+                            {
+                                currentBaseType.SpecialBase = true;
+                            }
+
+                            // We need to access the facade to augment eco information with basetypedata
+                            var itemInfo = BaseTypeDataProvider.BaseTypeData[item.Key];
+
+                            var dropLevel = int.Parse(itemInfo["DropLevel"]);
+                            var itemClass = itemInfo["Class"].ToLower();
+
+                            // New section treatment
+                            if (!currentSection.Classes.ContainsKey(itemClass))
+                            {
+                                currentSection.AddNewClass(itemClass);
+                            }
+
+                            currentSection[itemClass][item.Key] = currentBaseType;
+                            currentBaseType.enterPrice(ilvl, item.Value, itemClass);
                         }
-
-                        // We need to access the facade to augment eco information with basetypedata
-                        var itemInfo = BaseTypeDataProvider.BaseTypeData[item.Key];
-
-                        var dropLevel = int.Parse(itemInfo["DropLevel"]);
-                        var itemClass = itemInfo["Class"].ToLower();
-
-                        // New section treatment
-                        if (!currentSection.Classes.ContainsKey(itemClass))
-                        {
-                            currentSection.AddNewClass(itemClass);
-                        }
-
-                        currentSection[itemClass].BaseTypes.Add(item.Key, currentBaseType);
-                        currentBaseType.enterPrice(itemLevel, item.Value, itemClass);
                     }
                 }
 
@@ -73,27 +75,30 @@ namespace FilterEconomyProcessor.ClassAbstraction
                 foreach (var item in currentSection.Classes)
                 {
                     item.Value.CreateList();
-                    var confPrice = item.Value.BaseTypesList.Average(x => x.ConfValueList.Count == 0 ? 0 : x.ConfValueList[itemLevel]);
-                    var fullPrice = item.Value.BaseTypesList.Average(x => x.FullValueList[itemLevel]);
-                    sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{itemLevel}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice }"));
+                    var confPrice = item.Value.BaseTypesList
+                        .Where(x => !x.SpecialBase).Average(x => x.ConfValueList.Count == 0 ? 0 : x.ConfValueList[86]);
+
+                    var fullPrice = item.Value.BaseTypesList
+                        .Where(x => !x.SpecialBase).Average(x => x.FullValueList[86]);
+
+                    sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{86}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice }"));
                 }
             }
 
             var sortedValueList1 = sortedPriceList.OrderBy(x => x.Key).ToList();
-            var sortedFullValueList1 = sortedFullPriceList.OrderBy(x => x.Key).ToList();
 
             foreach (var item in sortedValueList1)
             {
                 LoggingFacade.LogDebug(item.Value);
             }
 
-            foreach (var item in sortedFullValueList1)
-            {
-                LoggingFacade.LogDebug(item.Value);
-            }
+            InfluencedItemInformation = abstractionList;
         }
     }
 
+    /// <summary>
+    /// Represents information about all influences in the current economy
+    /// </summary>
     public class InfluenceBTA
     {
         public ClassListBTA this[string influenceName]
@@ -118,6 +123,9 @@ namespace FilterEconomyProcessor.ClassAbstraction
         Dictionary<string, ClassListBTA> InfluenceTypes = new Dictionary<string, ClassListBTA>();
     }
 
+    /// <summary>
+    /// Represents information about a whole influence in the economy.
+    /// </summary>
     public class ClassListBTA
     {
         public ClassBTA this[string className]
@@ -147,6 +155,9 @@ namespace FilterEconomyProcessor.ClassAbstraction
         }
     }
 
+    /// <summary>
+    /// Represents abstracted information about one class in the influenced tier economy
+    /// </summary>
     public class ClassBTA
     {
         public BaseBTA this[string baseTypeName]
@@ -180,13 +191,18 @@ namespace FilterEconomyProcessor.ClassAbstraction
         public List<BaseBTA> BaseTypesList { get; set; }
     }
 
+    /// <summary>
+    /// Represents information about a single basetype in the influenced tier economy
+    /// </summary>
     public class BaseBTA : IComparable
     {
         public static int ItemLevelContext;
         public Dictionary<int, float> ConfValueList = new Dictionary<int, float>();
         public Dictionary<int, float> FullValueList = new Dictionary<int, float>();
+        public float Confidence = 0;
+        public bool EnrichmentValidity = true;
+        public ItemList<NinjaItem> EcoData { get; private set; }
         public bool SpecialBase = false;
-
         public string Name { get; internal set; }
 
         public int CompareTo(object obj)
@@ -212,12 +228,16 @@ namespace FilterEconomyProcessor.ClassAbstraction
             var conf = ecoData.ValueMultiplier;
             var price = ecoData.GetPrice(itemLevel);
 
+            this.Confidence = ecoData.ValueMultiplier;
+            this.EnrichmentValidity = ecoData.Valid;
+            this.EcoData = ecoData;
+
             if (ecoData.ValueMultiplier > 0.4f)
             {
-                ConfValueList.Add(itemLevel, conf * price);
+                this.ConfValueList.Add(itemLevel, conf * price);
             }
 
-            FullValueList.Add(itemLevel, conf * price);
+            this.FullValueList.Add(itemLevel, conf * price);
         }
     }
 }
