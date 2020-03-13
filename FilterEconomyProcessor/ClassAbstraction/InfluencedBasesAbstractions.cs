@@ -94,9 +94,9 @@ namespace FilterEconomyProcessor.ClassAbstraction
                         item.Value.FullPrices.Add(ilvl, fullPrice);
                         item.Value.ValidItems.Add(ilvl, validPrices);
 
-                        if (ilvl == 86)
+                        if (ilvl == 80)
                         {
-                            sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{ilvl}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice }"));
+                            sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{ilvl}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice } VALID: { validPrices }/{ item.Value.BaseTypes.Count }"));
                         }
                     }
                 }
@@ -265,10 +265,14 @@ namespace FilterEconomyProcessor.ClassAbstraction
             this.Confidence = ecoData.ValueMultiplier;
             this.EnrichmentValidity = ecoData.Valid;
             this.EcoData = ecoData;
-
+            
             if (ecoData.ValueMultiplier > 0.5f)
             {
                 this.ConfValueList.Add(itemLevel, conf * price);
+            }
+            else
+            {
+                this.ConfValueList.Add(itemLevel, 0);
             }
 
             this.FullValueList.Add(itemLevel, conf * price);

@@ -162,6 +162,19 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.HasAspect("ProphecyMaterialAspect");
                 }));
 
+            builder.AddRule("HasExpensiveVersion", "t3boss",
+                new Func<string, bool>((string s) =>
+                {
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
+
+                    if (relevantList.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    return builder.Item.LowestPrice < FilterPolishConfig.UniqueT2Base && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2Base;
+                }));
+
             builder.AddRule("hideable", "hideable",
                 new Func<string, bool>((string s) =>
                 {

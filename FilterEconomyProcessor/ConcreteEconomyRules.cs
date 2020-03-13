@@ -109,7 +109,7 @@ namespace FilterEconomyProcessor
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.UniqueT1BreakPoint)
-                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
+                .AddAverageComparison("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
                 .AddExplicitRest("t3","t3")
                 .Build();       
         }
@@ -134,6 +134,7 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
+                .SkipInEarlyLeague()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
                 .AddExplicitRest("t3", "t3")
