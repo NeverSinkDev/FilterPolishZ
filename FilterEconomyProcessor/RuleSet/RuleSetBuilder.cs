@@ -127,6 +127,16 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
         }
 
+        public RuleSetBuilder AddAverageComparison(string name, string tier, float comparer)
+        {
+            return this.AddRule(name, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    var price = (Item.LowestPrice + Item.HighestPrice) / 2;
+                    return price > comparer;
+                }));
+        }
+
         public RuleSetBuilder AddSafetyRule()
         {
             return this.AddRule("No Data Found", "???",

@@ -91,7 +91,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return fit;
                 }));
 
-            builder.AddRule("leagueDropAspect", "multileague",
+            builder.AddRule("leagueDropAspect", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     var fit = false;
@@ -128,20 +128,6 @@ namespace FilterEconomyProcessor.RuleSet
                     return fit;
                 }));
 
-            // uniques that have changed in the latest league
-            //builder.AddRule("Changed?", "metainfluenced",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return builder.Item.HasAspect("ChangedAspect");
-            //    }));
-
-            // usually used for new leagues
-            //builder.AddRule("MetaSave", "t2",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return builder.Item.HasAspect("MetaBiasAspect");
-            //    }));
-
             builder.AddRule("EarlyLeagueInterest", "earlyleague",
                 new Func<string, bool>((string s) =>
                 {
@@ -149,7 +135,7 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
 
             // extremely high value multibases that usually drop from boss encounters, but can also drop from special league events
-            builder.AddRule("SuperLeagueUnique", "multileague",
+            builder.AddRule("SuperLeagueUnique", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
                     if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
@@ -176,6 +162,19 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.HasAspect("ProphecyMaterialAspect");
                 }));
 
+            builder.AddRule("HasExpensiveVersion", "t3boss",
+                new Func<string, bool>((string s) =>
+                {
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
+
+                    if (relevantList.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    return builder.Item.LowestPrice < FilterPolishConfig.UniqueT2Base && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2Base;
+                }));
+
             builder.AddRule("hideable", "hideable",
                 new Func<string, bool>((string s) =>
                 {
@@ -193,11 +192,13 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }));
 
-            builder.AddRule("rest", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            builder.AddExplicitRest("t3", "t3");
+
+            //builder.AddRule("rest", "rest",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        return true;
+            //    }));
 
             return builder.Build();
         }

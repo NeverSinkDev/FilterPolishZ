@@ -296,6 +296,7 @@ namespace FilterEconomy.Facades
             if (activeLeague == null)
             {
                 LoggingFacade.LogWarning($"No active league data found!");
+                return false;
             }
 
             if (activeLeague.StartAt < DateTime.Now && activeLeague.EndAt > DateTime.Now)
