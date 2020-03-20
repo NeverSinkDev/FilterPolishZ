@@ -194,12 +194,6 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddExplicitRest("t3", "t3");
 
-            //builder.AddRule("rest", "rest",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return true;
-            //    }));
-
             return builder.Build();
         }
     }

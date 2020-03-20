@@ -134,8 +134,8 @@ namespace FilterPolishUtil
         public static float UniqueT2BreakPoint;
 
         // Uniques have a bunch of special conditions, that are used as pricing multipliers
-        public static float UncommonAspectMultiplier = 2.5f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
-        public static float CommonTwinAspectMultiplier = 1.5f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
+        public static float UncommonAspectMultiplier = 2f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
+        public static float CommonTwinAspectMultiplier = 1.25f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
         public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
         public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
 
@@ -170,10 +170,10 @@ namespace FilterPolishUtil
         public static float MiscT3BreakPoint;
         public static float MiscT4BreakPoint;
 
-        public static float MiscT1Base = 35f;
-        public static float MiscT2Base = 6.5f;
+        public static float MiscT1Base = 40f;
+        public static float MiscT2Base = 8f;
         public static float MiscT3Base = 2.5f;
-        public static float MiscT4Base = 1f;
+        public static float MiscT4Base = 0.75f;
     }
 
     public enum RequestType
