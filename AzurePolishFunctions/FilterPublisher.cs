@@ -101,6 +101,7 @@ namespace AzurePolishFunctions
                 {
                     var styleName = Path.GetFileName(styleFolder).Replace("(STYLE) ", "");
                     styleName = styleName.Substring(0, 1).ToUpper() + styleName.Substring(1).ToLower();
+                    if (styleName == "Customsounds") styleName = "CustomSounds";
                     MakeDir(ftpHost + "/" + styleName, client.Credentials);
                     
                     foreach (var file in Directory.EnumerateFiles(styleFolder))
