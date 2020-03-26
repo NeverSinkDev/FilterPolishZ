@@ -12,7 +12,7 @@ using System.Text;
 
 namespace FilterEconomyProcessor.ClassAbstraction
 {
-    public class InfluencedBasesAbstractions
+    public class InfluencedBasesAbstractionOverview
     {
         public static InfluenceBTA InfluencedItemInformation { get; set; }
 
@@ -65,7 +65,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
                             }
 
                             currentSection[itemClass][item.Key] = currentBaseType;
-                            currentBaseType.enterPrice(ilvl, item.Value, itemClass);
+                            currentBaseType.EnterPrice(ilvl, item.Value, itemClass);
                         }
                     }
                 }
@@ -140,7 +140,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
             return bta;
         }
 
-        Dictionary<string, ClassListBTA> InfluenceTypes = new Dictionary<string, ClassListBTA>();
+        public Dictionary<string, ClassListBTA> InfluenceTypes = new Dictionary<string, ClassListBTA>();
     }
 
     /// <summary>
@@ -169,9 +169,20 @@ namespace FilterEconomyProcessor.ClassAbstraction
 
         internal ClassBTA AddNewClass(string itemClass)
         {
-            var bta = new ClassBTA();
+            var bta = new ClassBTA(itemClass);
             this.Classes.Add(itemClass, bta);
             return bta;
+        }
+
+        public IEnumerable<ClassBTA> GetBreakPointClasses(AbstractClassAbstractionComparisonObject comparisonType)
+        {
+            foreach (var itemclass in this.Classes)
+            {
+                if (itemclass.Value.IsBreakPointClass(comparisonType))
+                {
+                    yield return itemclass.Value;
+                }
+            }
         }
     }
 
@@ -181,6 +192,13 @@ namespace FilterEconomyProcessor.ClassAbstraction
     [DebuggerDisplay("{Validity,nq}")]
     public class ClassBTA
     {
+        public ClassBTA(string className)
+        {
+            this.ClassName = className;
+        }
+
+        public string ClassName;
+
         public Dictionary<string, BaseBTA> BaseTypes = new Dictionary<string, BaseBTA>();
         public List<BaseBTA> BaseTypesList { get; set; }
         public Dictionary<int, float> ConfPrices = new Dictionary<int, float>();
@@ -223,6 +241,11 @@ namespace FilterEconomyProcessor.ClassAbstraction
         {
             this.BaseTypesList = BaseTypes.Values.OrderBy(x => x).ToList();
         }
+
+        public bool IsBreakPointClass(AbstractClassAbstractionComparisonObject comparisonType)
+        {
+            return comparisonType.Execute(this);
+        }
     }
 
     /// <summary>
@@ -257,7 +280,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
             return this.ConfValueList[ItemLevelContext].CompareTo(secondbase.ConfValueList[ItemLevelContext]);
         }
 
-        internal void enterPrice(int itemLevel, ItemList<NinjaItem> ecoData, string itemClass)
+        internal void EnterPrice(int itemLevel, ItemList<NinjaItem> ecoData, string itemClass)
         {
             var conf = ecoData.ValueMultiplier;
             var price = ecoData.GetPrice(itemLevel);

@@ -111,6 +111,10 @@ namespace FilterPolishUtil
             MiscT3BreakPoint = MiscT3Base + MiscExaltedOrbInfluence * T3ExaltedInfluence * ExaltedOrbPrice;
             MiscT4BreakPoint = MiscT4Base + MiscExaltedOrbInfluence * T4ExaltedInfluence * ExaltedOrbPrice;
 
+            // InfluenceGroups
+            InfluenceGroupT1BreakPoint = InfluenceGroupT1Base + InfluenceGroupExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
+            InfluenceGroupT2BreakPoint = InfluenceGroupT2Base + InfluenceGroupExaltedOrbInfluence * T2ExaltedInfluence * ExaltedOrbPrice;
+
             LoggingFacade.LogInfo($"Prices Adjusted based on exalted orb price!");
         }
 
@@ -174,6 +178,15 @@ namespace FilterPolishUtil
         public static float MiscT2Base = 8f;
         public static float MiscT3Base = 2.5f;
         public static float MiscT4Base = 0.75f;
+
+        // ClassAbstractionConstants
+        public static float InfluenceGroupExaltedOrbInfluence = 0.1f;
+
+        public static float InfluenceGroupT1BreakPoint;
+        public static float InfluenceGroupT2BreakPoint;
+
+        public static float InfluenceGroupT1Base = 35f;
+        public static float InfluenceGroupT2Base = 5f;
     }
 
     public enum RequestType

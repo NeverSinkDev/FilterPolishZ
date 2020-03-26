@@ -14,6 +14,7 @@ namespace FilterCore.Commands.EntryCommands
         public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
             var newEntry = this.Target.Clone();
+            newEntry.Header.TierTags.AppendUpSuffixToTierTag();
 
             var textLine = newEntry.Content.Content["SetTextColor"].Single();
             var levelLine = newEntry.Content.Content["ItemLevel"].Single();

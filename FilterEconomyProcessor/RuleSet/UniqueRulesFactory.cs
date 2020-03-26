@@ -166,13 +166,14 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
+                    var bossDrop = builder.Item.HasAspect("BossDropAspect");
 
                     if (relevantList.Count == 0)
                     {
                         return false;
                     }
 
-                    return builder.Item.LowestPrice < FilterPolishConfig.UniqueT2Base && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2Base;
+                    return bossDrop || builder.Item.LowestPrice < FilterPolishConfig.UniqueT2Base && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2Base;
                 }));
 
             builder.AddRule("hideable", "hideable",
@@ -184,7 +185,7 @@ namespace FilterEconomyProcessor.RuleSet
                         return false;
                     }
 
-                    if (builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "NonEventDropAspect", "BossDropAspect", "EarlyLeagueInterestAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
+                    if (builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>(){ "HighVarietyAspect", "LeagueDropAspect", "NonEventDropAspect", "BossDropAspect", "IgnoreAspect", "UncommonAspect", "MetaBiasAspect", "AnchorAspect" }))
                     {
                         return true;
                     }

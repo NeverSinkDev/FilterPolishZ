@@ -1,4 +1,5 @@
 ﻿using FilterPolishUtil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +12,11 @@ namespace FilterCore.FilterComponents.Tags
 
         public List<string> Tags { get; set; } = new List<string>();
         public string PrimaryTag => Tags.FirstOrDefault();
+
+        public void AppendToLastPart(string append)
+        {
+            this.Tags[this.Tags.Count - 1] += append;
+        }
 
         public string CombinedTagValue =>
             StringWork.CombinePieces("->", Tags.Skip(1).ToList());
@@ -49,6 +55,12 @@ namespace FilterCore.FilterComponents.Tags
         public string Serialize()
         {
             return $"${StringWork.CombinePieces("->", this.Tags)}";
+        }
+
+        public TierTag Clone()
+        {
+            
+            return new TierTag() {  Tags = this.Tags.Select(x => x).ToList() };
         }
     }
 }
