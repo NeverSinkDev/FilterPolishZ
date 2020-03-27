@@ -17,6 +17,7 @@ namespace FilterEconomyProcessor
         private FilterEconomyRuleSet uniquemapsRules;
         private FilterEconomyRuleSet fossilrules;
         private FilterEconomyRuleSet incubatorrules;
+        private FilterEconomyRuleSet deliriumorbsrules;
         private FilterEconomyRuleSet prophecyRules;
         private FilterEconomyRuleSet scarabRules;
         private FilterEconomyRuleSet normalRules;
@@ -56,6 +57,7 @@ namespace FilterEconomyProcessor
             this.incubatorrules = this.GenerateIncubatorTieringRules();
             this.oilRules = this.GenerateBlightOilRuleSet();
             this.vialRules = this.GenerateVialRuleSet();
+            this.deliriumorbsrules = this.GenerateDeliriumorbsRuleSet();
 
             this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
             this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
@@ -74,13 +76,14 @@ namespace FilterEconomyProcessor
             this.Rules.Add(this.fossilrules);
             this.Rules.Add(this.fragmentRules);
             this.Rules.Add(this.currencyRules);
-            // this.Rules.Add(this.vialRules);
+            this.Rules.Add(this.vialRules);
 
             this.Rules.Add(this.incubatorrules);
             this.Rules.Add(this.prophecyRules);
             this.Rules.Add(this.scarabRules);
             this.Rules.Add(this.oilRules);
             this.Rules.Add(this.normalRules);
+            this.Rules.Add(this.deliriumorbsrules);
 
             this.Rules.Add(this.elderRules);
             this.Rules.Add(this.shaperRules);
@@ -131,6 +134,20 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("fragments->scarabs")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                .AddDefaultIntegrationTarget()
+                .SkipInEarlyLeague()
+                .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
+                .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddExplicitRest("t3", "t3")
+                .Build();
+        }
+
+        private FilterEconomyRuleSet GenerateDeliriumorbsRuleSet()
+        {
+            return new RuleSetBuilder(this)
+                .SetSection("currency->deliriumorbs")
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()

@@ -34,7 +34,7 @@ namespace FilterEconomyProcessor
 
             // Now perform all the 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "uniques", "fragments" , "unique->maps", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials" },
+                new List<string>() { "uniques", "fragments" , "unique->maps", "currency->fossil", "currency->incubators", "currency->deliriumorbs", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials" },
                 new List<IDataEnrichment>()
                 {
                     new LowestPriceEnrichment(),
