@@ -236,6 +236,11 @@ namespace FilterPolishZ
         [Time]
         private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
+            if (File.Exists(outputFolder + "RESULTS.zip"))
+            {
+                File.Delete(outputFolder + "RESULTS.zip");
+            }
+
             var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
             var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
             if (oldSeedVersion == newVersion)

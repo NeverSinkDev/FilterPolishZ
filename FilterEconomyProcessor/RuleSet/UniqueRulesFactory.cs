@@ -71,6 +71,22 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }));
 
+            builder.AddRule("Expensive-Single-NonLeagueTwin", "multispecial",
+                new Func<string, bool>((string s) =>
+                {
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
+
+                    if (relevantList.Count == 1)
+                    {
+                        if (relevantList.Max(x => x.CVal) > FilterPolishConfig.UniqueT2BreakPoint)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }));
+
             builder.AddRule("highVariety", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
@@ -162,7 +178,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.HasAspect("ProphecyMaterialAspect");
                 }));
 
-            builder.AddRule("HasExpensiveVersion", "t3boss",
+            builder.AddRule("ExpensiveOrBoss", "t3boss",
                 new Func<string, bool>((string s) =>
                 {
                     var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });

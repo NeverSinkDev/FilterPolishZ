@@ -94,7 +94,7 @@ namespace FilterEconomyProcessor.ClassAbstraction
                         item.Value.FullPrices.Add(ilvl, fullPrice);
                         item.Value.ValidItems.Add(ilvl, validPrices);
 
-                        if (ilvl == 80)
+                        if (ilvl == 86)
                         {
                             sortedPriceList.Add(new KeyValuePair<float, string>(confPrice, $"[{ilvl}]{section.Key} >> {item.Key} >> { confPrice } { fullPrice } VALID: { validPrices }/{ item.Value.BaseTypes.Count }"));
                         }

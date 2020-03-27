@@ -1,6 +1,8 @@
 ﻿using FilterPolishUtil;
+using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FilterEconomyProcessor.ClassAbstraction
@@ -11,24 +13,67 @@ namespace FilterEconomyProcessor.ClassAbstraction
         {
             ComparisonObjects.Add(new AbstractClassAbstractionComparisonObject()
             {
-                MinItemLevel = 85,
-                MaxItemLevel = 85,
-                MinimumValidityRating = 1,
-                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint,
-                MinimumConfPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint,
+                MinItemLevel = 86,
+                MaxItemLevel = 86,
+                MinimumValidityRating = 0.55f,
+                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint * 1f,
+                MinimumConfPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint * 2.5f,
                 Strategy = new BasicClassAbstractionComparisonStrategy(),
-                RuleName = "ILVL 85, Full Validity, T2"
+                RuleName = "ILVL 86, High Threshhold",
+                PriceTreatment = Treatment.highest,
+                ValidityTreatment = Treatment.lowest
+            });
+
+            ComparisonObjects.Add(new AbstractClassAbstractionComparisonObject()
+            {
+                MinItemLevel = 85,
+                MaxItemLevel = 86,
+                MinimumValidityRating = 0.75f,
+                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT1BreakPoint * 0.7f,
+                MinimumConfPrice = FilterPolishConfig.InfluenceGroupT1BreakPoint * 0.8f,
+                Strategy = new BasicClassAbstractionComparisonStrategy(),
+                RuleName = "ILVL 85-86, High Confidence, T1",
+                PriceTreatment = Treatment.lowest,
+                ValidityTreatment = Treatment.highest
             });
 
             ComparisonObjects.Add(new AbstractClassAbstractionComparisonObject()
             {
                 MinItemLevel = 82,
-                MaxItemLevel = 82,
-                MinimumValidityRating = 1,
-                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint,
+                MaxItemLevel = 83,
+                MinimumValidityRating = 0.75f,
+                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT1BreakPoint * 0.7f,
+                MinimumConfPrice = FilterPolishConfig.InfluenceGroupT1BreakPoint * 0.8f,
+                Strategy = new BasicClassAbstractionComparisonStrategy(),
+                RuleName = "ILVL 82-83, High Confidence, T1",
+                PriceTreatment = Treatment.lowest,
+                ValidityTreatment = Treatment.highest
+            });
+
+            ComparisonObjects.Add(new AbstractClassAbstractionComparisonObject()
+            {
+                MinItemLevel = 85,
+                MaxItemLevel = 86,
+                MinimumValidityRating = 0.66f,
+                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint * 0.66f,
                 MinimumConfPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint,
                 Strategy = new BasicClassAbstractionComparisonStrategy(),
-                RuleName = "ILVL 82, Full Validity, T2"
+                RuleName = "ILVL 85-86, High Confidence, T2",
+                PriceTreatment = Treatment.lowest,
+                ValidityTreatment = Treatment.highest
+            });
+
+            ComparisonObjects.Add(new AbstractClassAbstractionComparisonObject()
+            {
+                MinItemLevel = 82,
+                MaxItemLevel = 83,
+                MinimumValidityRating = 0.66f,
+                MinimumFullPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint * 0.66f,
+                MinimumConfPrice = FilterPolishConfig.InfluenceGroupT2BreakPoint,
+                Strategy = new BasicClassAbstractionComparisonStrategy(),
+                RuleName = "ILVL 82-83, High Confidence, T2",
+                PriceTreatment = Treatment.lowest,
+                ValidityTreatment = Treatment.highest
             });
         }
 
@@ -49,6 +94,8 @@ namespace FilterEconomyProcessor.ClassAbstraction
         public float MinimumFullPrice { get; set; }
         public string ResultingTier { get; set; }
         public string RuleName { get; set; }
+        public Treatment PriceTreatment { get; set; }
+        public Treatment ValidityTreatment { get; set; }
         public IClassAbstractionComparisonStrategy Strategy { get; set; }
 
         /// <summary>
@@ -74,22 +121,69 @@ namespace FilterEconomyProcessor.ClassAbstraction
     {
         public bool TestItemClass(ClassBTA itemClass, AbstractClassAbstractionComparisonObject comparisonData)
         {
-            if (itemClass.ConfPrices[comparisonData.MaxItemLevel] < comparisonData.MinimumConfPrice)
+            var confPrice = LevelAction(x => itemClass.ConfPrices[x], comparisonData, comparisonData.PriceTreatment);
+            var fullPrice = LevelAction(x => itemClass.FullPrices[x], comparisonData, comparisonData.PriceTreatment);
+            var validCount = LevelAction(x => itemClass.ValidItems[x], comparisonData, comparisonData.ValidityTreatment);
+
+            if (confPrice.Item2 == false || fullPrice.Item2 == false || validCount.Item2 == false)
+            {
+                LoggingFacade.LogDebug($"No results found for:{ itemClass.ClassName }");
+                return false;
+            }
+
+            if (confPrice.Item1 < comparisonData.MinimumConfPrice)
             {
                 return false;
             }
 
-            if (itemClass.FullPrices[comparisonData.MaxItemLevel] < comparisonData.MinimumFullPrice)
+            if (fullPrice.Item1 < comparisonData.MinimumFullPrice)
             {
                 return false;
             }
 
-            if ((itemClass.ValidItems[comparisonData.MaxItemLevel]) / itemClass.BaseTypes.Count < comparisonData.MinimumValidityRating)
+            if ((float)(validCount.Item1) / (float)itemClass.BaseTypes.Count < comparisonData.MinimumValidityRating)
             {
                 return false;
             }
 
             return true;
         }
+
+        public Tuple<T, bool?> LevelAction<T>(Func<int,T> action, AbstractClassAbstractionComparisonObject strategy, Treatment treatment)
+        {
+            if (strategy.MaxItemLevel == strategy.MinItemLevel)
+            {
+                return new Tuple<T,bool?>(action(strategy.MaxItemLevel), null);
+            }
+
+            List<T> results = new List<T>();
+            for (int lvl = strategy.MinItemLevel; lvl <= strategy.MaxItemLevel; lvl++)
+            {
+                results.Add(action(lvl));
+            }
+
+            if (results.Count == 0)
+            {
+                return new Tuple<T, bool?>(default(T), false);
+            }
+
+            if (treatment == Treatment.highest)
+            {
+                return new Tuple<T, bool?>(results.Max(x => x), true);
+            }
+
+            if (treatment == Treatment.lowest)
+            {
+                return new Tuple<T, bool?>(results.Min(x => x), true);
+            }
+
+            return new Tuple<T, bool?>(results.First(x => x != null), true);
+        }
+    }
+
+    public enum Treatment
+    {
+        highest,
+        lowest
     }
 }
