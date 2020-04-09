@@ -12,28 +12,6 @@ namespace FilterEconomyProcessor
 {
     public class ConcreteEconomyRules : IEconomyProcessorData
     {
-        private FilterEconomyRuleSet uniqueRules;
-        private FilterEconomyRuleSet divinationRules;
-        private FilterEconomyRuleSet uniquemapsRules;
-        private FilterEconomyRuleSet fossilrules;
-        private FilterEconomyRuleSet incubatorrules;
-        private FilterEconomyRuleSet deliriumorbsrules;
-        private FilterEconomyRuleSet prophecyRules;
-        private FilterEconomyRuleSet scarabRules;
-        private FilterEconomyRuleSet normalRules;
-        private FilterEconomyRuleSet oilRules;
-        private FilterEconomyRuleSet vialRules;
-
-        private FilterEconomyRuleSet fragmentRules;
-        private FilterEconomyRuleSet currencyRules;
-
-        private FilterEconomyRuleSet shaperRules;
-        private FilterEconomyRuleSet elderRules;
-        private FilterEconomyRuleSet crusaderRules;
-        private FilterEconomyRuleSet hunterRules;
-        private FilterEconomyRuleSet redeemerRules;
-        private FilterEconomyRuleSet warlordRules;
-
         public ItemInformationFacade ItemInformation { get; set; }
         public EconomyRequestFacade EconomyInformation { get; set; }
         public TierListFacade TierListFacade { get; set; }
@@ -44,54 +22,31 @@ namespace FilterEconomyProcessor
             this.ItemInformation = ItemInformationFacade.GetInstance();
             this.TierListFacade = TierListFacade.GetInstance();
 
-            // The list of the suggestion-generating rulesets
-            this.uniqueRules = UniqueRulesFactory.Generate(this);
-            this.divinationRules = DivinationRuleFactory.Generate(this);
-            this.prophecyRules = ProphecyRulesFactory.Generate(this);
-            this.fragmentRules = FragmentsRuleFactory.Generate(this);
-            this.currencyRules = CurrencyRuleFactory.Generate(this);
-
-            this.scarabRules = this.GenerateScarabRuleSet();
-            this.uniquemapsRules = this.GenerateUniqueMapRules();
-            this.fossilrules = this.GenerateFossilTieringRules();
-            this.incubatorrules = this.GenerateIncubatorTieringRules();
-            this.oilRules = this.GenerateBlightOilRuleSet();
-            this.vialRules = this.GenerateVialRuleSet();
-            this.deliriumorbsrules = this.GenerateDeliriumorbsRuleSet();
-
-            this.shaperRules = ShaperElderRulesFactory.Generate(this,"rare->shaper");
-            this.elderRules = ShaperElderRulesFactory.Generate(this,"rare->elder");
-            this.hunterRules = ShaperElderRulesFactory.Generate(this,"rare->hunter");
-            this.warlordRules = ShaperElderRulesFactory.Generate(this,"rare->warlord");
-            this.crusaderRules = ShaperElderRulesFactory.Generate(this,"rare->crusader");
-            this.redeemerRules = ShaperElderRulesFactory.Generate(this,"rare->redeemer");
-
-            this.normalRules = NormalCraftingBasesRuleFactory.Generate(this, "generalcrafting");
-
             this.Rules.Clear();
 
-            this.Rules.Add(this.uniqueRules);
-            this.Rules.Add(this.divinationRules);
-            this.Rules.Add(this.uniquemapsRules);
-            this.Rules.Add(this.fossilrules);
-            this.Rules.Add(this.fragmentRules);
-            this.Rules.Add(this.currencyRules);
-            this.Rules.Add(this.vialRules);
+            // The list of the suggestion-generating rulesets
+            this.Rules.Add(UniqueRulesFactory.Generate(this));
+            this.Rules.Add(DivinationRuleFactory.Generate(this));
+            this.Rules.Add(ProphecyRulesFactory.Generate(this));
+            this.Rules.Add(FragmentsRuleFactory.Generate(this));
+            this.Rules.Add(CurrencyRuleFactory.Generate(this));
 
-            this.Rules.Add(this.incubatorrules);
-            this.Rules.Add(this.prophecyRules);
-            this.Rules.Add(this.scarabRules);
-            this.Rules.Add(this.oilRules);
-            this.Rules.Add(this.normalRules);
-            this.Rules.Add(this.deliriumorbsrules);
+            this.Rules.Add(this.GenerateScarabRuleSet());
+            this.Rules.Add(this.GenerateUniqueMapRules());
+            this.Rules.Add(this.GenerateFossilTieringRules());
+            this.Rules.Add(this.GenerateIncubatorTieringRules());
+            this.Rules.Add(this.GenerateBlightOilRuleSet());
+            this.Rules.Add(this.GenerateVialRuleSet());
+            this.Rules.Add(this.GenerateDeliriumorbsRuleSet());
 
-            this.Rules.Add(this.elderRules);
-            this.Rules.Add(this.shaperRules);
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->shaper"));
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->elder"));
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->hunter"));
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->warlord"));
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->crusader"));
+            this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->redeemer"));
 
-            this.Rules.Add(this.hunterRules);
-            this.Rules.Add(this.redeemerRules);
-            this.Rules.Add(this.crusaderRules);
-            this.Rules.Add(this.warlordRules);
+            this.Rules.Add(NormalCraftingBasesRuleFactory.Generate(this, "generalcrafting"));
         }
 
         /// <summary>
@@ -126,6 +81,7 @@ namespace FilterEconomyProcessor
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.DiviT1BreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.DiviT2BreakPoint)
+                .AddPoorDropRoutine("t4", FilterPolishConfig.DiviT5BreakPoint, 3.5f)
                 .AddExplicitRest("t3", "t3")
                 .Build();
         }
@@ -140,6 +96,7 @@ namespace FilterEconomyProcessor
                 .SkipInEarlyLeague()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
+                .AddPoorDropRoutine("t4", FilterPolishConfig.MiscT4BreakPoint)
                 .AddExplicitRest("t3", "t3")
                 .Build();
         }
@@ -162,7 +119,7 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->fossil")
-                .OverrideMinimalExaltedPriceThreshhold(50)
+                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()

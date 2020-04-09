@@ -52,18 +52,17 @@ namespace FilterEconomyProcessor.RuleSet
                     return isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
                 }));
 
-            builder.AddRule("t3timeless", "t3",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("TimelessProphecyAspect");
-                }));
-
             builder.AddRule("t3mapping", "t3mapping",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.Item.HasAspect("MapUpgradeProphecyAspect");
                 }));
 
+            builder.AddRule("t3timeless", "t3",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.Item.HasAspect("TimelessProphecyAspect") || builder.Item.HasAspect("PreventHidingAspect");
+                }));
 
             builder.AddRule("t4upgrade", "t4upgrade",
                 new Func<string, bool>((string s) =>

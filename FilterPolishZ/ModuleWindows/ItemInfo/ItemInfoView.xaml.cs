@@ -39,6 +39,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
 
         private string currentDisplayFiltering;
         private IEnumerable<string> aspectDisplayFilter = new string[] {};
+        private string searchFilter = string.Empty;
         private bool isOnlyDisplayingMultiBases;
         private HashSet<string> visitedBranches = new HashSet<string>(); // to track which branches have already had their saved data loaded
 
@@ -80,7 +81,7 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 }
                 else if (CurrentBranchKey.ToLower().Contains("unique"))
                 {
-                    InnerView.ForceChangeAspect("MetaBiasAspect");
+                    // InnerView.ForceChangeAspect("MetaBiasAspect");
                 }
                 
             }
@@ -157,18 +158,37 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
                 ecoData = ecoData.Where(x => x.Value.Count > 1).ToDictionary(x => x.Key, x => x.Value);
             }
 
-            // only show items/bases that have the specified aspects
-            ecoData = ecoData
-                .Where(baseType => aspectDisplayFilter
-                    .All(aspect => baseType.Value
-                        .Any(itemName => itemName.Aspects
-                            .Any(asp => asp.Name.ToLower().Contains(aspect.ToLower()))
+            if (aspectDisplayFilter.Any())
+            {
+                // only show items/bases that have the specified aspects
+                ecoData = ecoData
+                    .Where(baseType => aspectDisplayFilter
+                        .All(aspect => baseType.Value
+                            .Any(itemName => itemName.Aspects
+                                .Any(asp => asp.Name.ToLower().Contains(aspect.ToLower()))
+                            )
                         )
                     )
-                )
-                .ToDictionary(x => x.Key, x => x.Value);
+                    .ToDictionary(x => x.Key, x => x.Value);
+
+                return ecoData;
+            }
+
+            // only show items/bases matching search
+            if (searchFilter.Any())
+            {
+                ecoData = ecoData
+                    .Where(x => 
+                    (x.Value.All(y => y.BaseType != null) && x.Value.Any(y => y.BaseType.Contains(searchFilter))) ||
+                    (x.Value.All(y => y.Class != null) && x.Value.Any(y => y.Class.Contains(searchFilter))) ||
+                    (x.Value.All(y => y.Name != null) && x.Value.Any(y => y.Name.Contains(searchFilter))))
+                    .ToDictionary(x => x.Key, x => x.Value);
+
+                return ecoData;
+            }
 
             return ecoData;
+
         }
 
         private void ItemInfoGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -322,8 +342,21 @@ namespace FilterPolishZ.ModuleWindows.ItemInfo
         {
             if (sender is System.Windows.Controls.TextBox textBox)
             {
-                var aspectNames = textBox.Text.Split(',').Select(x => x.Trim()).Where(x => x.Length > 2);
-                this.aspectDisplayFilter = aspectNames;
+                string searchstring = "";
+                if (textBox.Text.StartsWith("a:"))
+                {
+                    searchstring = textBox.Text.Substring(2);
+                    var aspectNames = searchstring.Split(',').Select(x => x.Trim()).Where(x => x.Length > 2);
+                    var search = string.Empty;
+                    this.aspectDisplayFilter = aspectNames;
+                }
+                else
+                {
+                    this.aspectDisplayFilter = new List<string>();
+                    this.searchFilter = textBox.Text;
+                }
+
+
                 this.OnUpdateUiButtonClick(null, null);
             }
         }
