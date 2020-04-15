@@ -87,8 +87,11 @@ namespace AzurePolishFunctions.DataFileRequests
             var nsRepo = "NeverSink-Filter";
             var nsName = "NeverSinkDev";
             var seedFilterRepoPath = "/ADDITIONAL-FILES/SeedFilter/NeverSink's filter - SEED (SeedFilter) .filter";
+            var descrPath = "/ADDITIONAL-FILES/Meta/OnlineDescription.txt";
             var styleFolderRepoPath = "/ADDITIONAL-FILES/StyleSheets/";
             var repoDlPath = new GitHubFileDownloader().Download(nsName, nsRepo);
+            
+            FilterPublisher.FilterDescription = System.IO.File.ReadAllText(repoDlPath + descrPath);
             
             // seed filter
             var seedFilterContent = System.IO.File.ReadAllLines(repoDlPath + seedFilterRepoPath);
