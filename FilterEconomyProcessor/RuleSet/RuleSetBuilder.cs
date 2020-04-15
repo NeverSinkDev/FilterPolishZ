@@ -172,6 +172,58 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
         }
 
+        public RuleSetBuilder AddEarlyLeagueHandling(string tier)
+        {
+            return this.AddRule("EarlyLeagueInterest", tier,
+                new Func<string, bool>((string s) =>
+                {
+                    return Item.HasAspect("EarlyLeagueInterestAspect");
+                }));
+        }
+
+        public RuleSetBuilder AddPoorDropRoutine(string tier, float comparer, float weight = 2.0f, bool redemptionLag = true, float redemptionWeight = 1.5f)
+        {
+            // Low value drops tend to have a high noise amplitude on Poe.ninja/the actual economy.
+            // Items marked as a "PoorItem", need to climb a certain threshold to leave the low item tier
+            this.AddRule($"{tier} (PoorItem)", tier,
+                new Func<string, bool>((string s) =>
+                {
+                    var price = this.Item.LowestPrice;
+                    return (price < (comparer * weight) && this.Item.HasAspect("PoorDropAspect") && !this.Item.HasAspect("EarlyLeagueInterestAspect") && !this.Item.HasAspect("PreventHidingAspect"));
+                }));
+
+            this.AddRule($"{tier} (FailedRedemption)", tier,
+                new Func<string, bool>((string s) =>
+                {
+                    if (this.Item.HasAspect("EarlyLeagueInterestAspect") || this.Item.HasAspect("PreventHidingAspect"))
+                    {
+                        return false;
+                    }
+
+                    if (this.GetTierOfItem(s).Contains(tier))
+                    {
+                        var price = this.Item.LowestPrice;
+                        return price < comparer * redemptionWeight;
+                    }
+
+                    return false;
+                }));
+
+            this.AddRule(tier, tier,
+                new Func<string, bool>((string s) =>
+                {
+                    if (this.Item.HasAspect("EarlyLeagueInterestAspect") || this.Item.HasAspect("PreventHidingAspect"))
+                    {
+                        return false;
+                    }
+
+                    var price = this.Item.LowestPrice;
+                    return (price < comparer);
+                }));
+
+            return this;
+        }
+
         public RuleSetBuilder AddRestRule()
         {
             return this.AddRule("rest", "rest",

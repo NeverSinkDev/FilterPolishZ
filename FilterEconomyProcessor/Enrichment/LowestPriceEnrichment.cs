@@ -51,11 +51,11 @@ namespace FilterEconomyProcessor.Enrichment
                     }
                 }
 
-                var filteredData = data.Where(x => x.Aspects.All(z => !FilterPolishConfig.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterPolishConfig.GlobalIgnoreAspects.Contains(z.Name))).ToList();
-                if (filteredData.Count >= 1)
-                {
-                    target = filteredData;
-                }
+                //var filteredData = data.Where(x => x.Aspects.All(z => !FilterPolishConfig.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterPolishConfig.GlobalIgnoreAspects.Contains(z.Name))).ToList();
+                //if (filteredData.Count >= 1)
+                //{
+                //    target = filteredData;
+                //}
             }
 
             var price = target.Min(x => x.CVal);

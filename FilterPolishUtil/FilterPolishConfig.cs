@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "currency", "fragments", "uniques", "divination", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "rare->hunter", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials"
+            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials"
         };
 
         /// <summary>
@@ -53,7 +53,8 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string>("currency->prophecy", "prophecy", "https://poe.ninja/api/data/itemoverview?type=Prophecy"),
                 new Tuple<string, string, string>("fragments->scarabs", "scarabs", "https://poe.ninja/api/data/itemoverview?type=Scarab"),
                 new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil"),
-                new Tuple<string, string, string>("vials", "vials", "https://poe.ninja/api/data/itemoverview?type=Vial")
+                new Tuple<string, string, string>("vials", "vials", "https://poe.ninja/api/data/itemoverview?type=Vial"),
+                new Tuple<string, string, string>("currency->deliriumorbs", "deliriumorbs", "https://poe.ninja/api/data/itemoverview?type=DeliriumOrb")
         };
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace FilterPolishUtil
 
         public static void AdjustPricingInformation()
         {
-            SuperTierBreakPoint = 1f * ExaltedOrbPrice;
+            SuperTierBreakPoint = Math.Max(1f * ExaltedOrbPrice, 75);
 
             // Uniques
             UniqueT1BreakPoint = UniqueT1Base + UniqueExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
@@ -111,69 +112,82 @@ namespace FilterPolishUtil
             MiscT3BreakPoint = MiscT3Base + MiscExaltedOrbInfluence * T3ExaltedInfluence * ExaltedOrbPrice;
             MiscT4BreakPoint = MiscT4Base + MiscExaltedOrbInfluence * T4ExaltedInfluence * ExaltedOrbPrice;
 
+            // InfluenceGroups
+            InfluenceGroupT1BreakPoint = InfluenceGroupT1Base + InfluenceGroupExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
+            InfluenceGroupT2BreakPoint = InfluenceGroupT2Base + InfluenceGroupExaltedOrbInfluence * T2ExaltedInfluence * ExaltedOrbPrice;
+
             LoggingFacade.LogInfo($"Prices Adjusted based on exalted orb price!");
         }
 
         // Prices scale based on the exalted orb price. This mostly affects T1 prices
-        public static float T1ExaltedInfluence = 0.70f;
-        public static float T2ExaltedInfluence = 0.2f;
-        public static float T3ExaltedInfluence = 0.05f;
-        public static float T4ExaltedInfluence = 0.02f;
-        public static float T5ExaltedInfluence = 0.008f;
+        private static float T1ExaltedInfluence = 0.70f;
+        private static float T2ExaltedInfluence = 0.2f;
+        private static float T3ExaltedInfluence = 0.05f;
+        private static float T4ExaltedInfluence = 0.02f;
+        private static float T5ExaltedInfluence = 0.008f;
 
         // Exception for league only, uncommon, special uniques. Currently set at 3.5ex, but could be higher easily.
-        public static float SuperTierBreakPoint; 
+        public static float SuperTierBreakPoint;
 
         // Unique Breakpoints - uniques have a lower breakpoints, due to item stat variations
-        public static float UniqueExaltedOrbInfluence = 0.1f;
-
-        public static float UniqueT1Base = 20f;
-        public static float UniqueT2Base = 5f;
+        private static float UniqueExaltedOrbInfluence = 0.1f;
 
         public static float UniqueT1BreakPoint;
         public static float UniqueT2BreakPoint;
 
+        private static float UniqueT1Base = 20f;
+        private static float UniqueT2Base = 5f;
+
         // Uniques have a bunch of special conditions, that are used as pricing multipliers
-        public static float UncommonAspectMultiplier = 2f;    // Items with several versions and one uncommon version need to reach X the T2 breakpoint
-        public static float CommonTwinAspectMultiplier = 1.25f;  // Items with several versions. The rare version needs to reach X the T2 breakpoint
+        public static float UncommonAspectMultiplier = 2f;      // Items with several versions and one uncommon version need to reach X the T2 breakpoint
+        public static float CommonTwinAspectMultiplier = 1.25f; // Items with several versions. The rare version needs to reach X the T2 breakpoint
         public static float LeagueDropAspectMultiplier = 6f;    // League Drop Items, that are NOT boss drops need to reach X the T2 breakpoint
         public static float HighVarietyMultiplier = 0.5f;       // Items like ventor that have crazy roll ranges need to reach a way lower min price
 
         // BaseType Pricing - basetype tiered items can be more expensive due to a plethora of different factors
-        // However, to minimize disapointing mistakes, we keep the T1 breakpoint up high
-        public static float BasesExaltedOrbInfluence = 0.12f;
-
-        public static float BaseTypeT1Base = 25f;
-        public static float BaseTypeT2Base = 6.5f;
+        // However, to minimize disapointing mistakes, we keep the T1 breakpoint up high.
+        private static float BasesExaltedOrbInfluence = 0.15f;
 
         public static float BaseTypeT1BreakPoint;
         public static float BaseTypeT2BreakPoint;
 
+        private static float BaseTypeT1Base = 25f;
+        private static float BaseTypeT2Base = 6.5f;
+
         // Divination cards are tricky. You have to consider their special nature of not being useful until a set is complete and that it takes an extra overhead to purify their value.
-        public static float DivinationExaltedOrbInfluence = 0.12f;
+        private static float DivinationExaltedOrbInfluence = 0.12f;
 
         public static float DiviT1BreakPoint;
         public static float DiviT2BreakPoint;
         public static float DiviT3BreakPoint;
         public static float DiviT5BreakPoint;
 
-        public static float DiviT1Base = 25f;
-        public static float DiviT2Base = 6.5f;
-        public static float DiviT3Base = 2f;
-        public static float DiviT5Base = 0.5f;
+        private static float DiviT1Base = 25f;
+        private static float DiviT2Base = 6.5f;
+        private static float DiviT3Base = 2f;
+        private static float DiviT5Base = 0.5f;
 
         // Fossils and scarabs are often predictable -drops-. Predictable drops are often best kept at high threshholds. Predictability ruins the surprise/excitement
-        public static float MiscExaltedOrbInfluence = 0.05f;
+        private static float MiscExaltedOrbInfluence = 0.05f;
 
         public static float MiscT1BreakPoint;
         public static float MiscT2BreakPoint;
         public static float MiscT3BreakPoint;
         public static float MiscT4BreakPoint;
 
-        public static float MiscT1Base = 40f;
-        public static float MiscT2Base = 8f;
-        public static float MiscT3Base = 2.5f;
-        public static float MiscT4Base = 0.75f;
+        private static float MiscT1Base = 35f;
+        private static float MiscT2Base = 8f;
+        private static float MiscT3Base = 2.5f;
+        private static float MiscT4Base = 0.75f;
+
+        // ClassAbstractionConstants
+        private static float InfluenceGroupExaltedOrbInfluence = 0.1f;
+
+        public static float InfluenceGroupT1BreakPoint;
+        public static float InfluenceGroupT2BreakPoint;
+
+        private static float InfluenceGroupT1Base = 35f;
+        private static float InfluenceGroupT2Base = 5f;
     }
 
     public enum RequestType

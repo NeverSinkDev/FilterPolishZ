@@ -40,6 +40,14 @@ namespace FilterCore.FilterComponents.Tags
             return this.TierTags[comparison.PrimaryTag].IsPartOf(comparison);
         }
 
+        public void AppendUpSuffixToTierTag()
+        {
+            if (this.TierTags.ContainsKey("tier"))
+            {
+                this.TierTags["tier"].AppendToLastPart("-up");
+            }
+        }
+
         public bool IsPartOf(List<string> comparison)
         {
             if (!this.TierTags.ContainsKey(comparison[0]))
@@ -75,9 +83,16 @@ namespace FilterCore.FilterComponents.Tags
 
         public TierTagSet Clone()
         {
+            var newSet = new Dictionary<string, TierTag>();
+
+            foreach (var item in this.TierTags)
+            {
+                newSet.Add(item.Key, item.Value.Clone());
+            }
+
             return new TierTagSet
             {
-                TierTags = new Dictionary<string, TierTag>(this.TierTags)
+                TierTags = newSet
             };
         }
     }

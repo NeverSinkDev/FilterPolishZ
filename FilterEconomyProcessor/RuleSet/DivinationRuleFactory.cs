@@ -57,11 +57,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     return builder.Item.HasAspect("TimelessResultAspect");
                 }));
 
-            builder.AddRule("EarlyLeagueInterest", "t3",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("EarlyLeagueInterestAspect");
-                }));
+            builder.AddEarlyLeagueHandling("t3");
 
             builder.AddRule("CurrencySaveT4", "t4c",
                 new Func<string, bool>((string s) =>
@@ -70,7 +66,7 @@ namespace FilterPolishZ.Economy.RuleSet
 
                     if (builder.Item.HasAspect("CurrencyTypeAspect"))
                     {
-                        if (builder.Item.HasAspect("PoorDiviAspect"))
+                        if (builder.Item.HasAspect("PoorDropAspect"))
                         {
                             return (price > FilterPolishConfig.DiviT5BreakPoint * 2);
                         }
@@ -94,7 +90,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                    return (price < FilterPolishConfig.DiviT5BreakPoint || builder.Item.HasAspect("PoorDiviAspect")) && builder.Item.HasAspect("CurrencyTypeAspect");
+                    return (price < FilterPolishConfig.DiviT5BreakPoint || builder.Item.HasAspect("PoorDropAspect")) && builder.Item.HasAspect("CurrencyTypeAspect");
                 }));
 
             builder.AddRule("RandomSave", "t4",
@@ -108,7 +104,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                    return (price < (FilterPolishConfig.DiviT5BreakPoint * 2f) && builder.Item.HasAspect("PoorDiviAspect"));
+                    return (price < (FilterPolishConfig.DiviT5BreakPoint * 2f) && builder.Item.HasAspect("PoorDropAspect"));
                 }));
 
             builder.AddRule("T5RedemptionPrevented", "t5",

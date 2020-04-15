@@ -8,6 +8,15 @@ namespace FilterEconomy.Model.ItemAspects
 {
     public class ItemAspectFactory : JsonConverter
     {
+
+        public Dictionary<string, string> MigrationList = new Dictionary<string, string>
+        {
+           { "IgnoreAspect", "AnchorAspect" },
+           { "PoorDiviAspect", "PoorDropAspect" },
+           { "FloorFragmentsAspect", "PreventHidingAspect" },
+           { "MetaBiasAspect", "REMOVE"}
+        };
+
         private static IItemAspect CreateAspectFromString(string className)
         {
             var asm = System.Reflection.Assembly.GetAssembly(typeof(IItemAspect));
@@ -34,8 +43,25 @@ namespace FilterEconomy.Model.ItemAspects
         {
             var json = reader.Value.ToString();
             var jsonObj = JsonConvert.DeserializeObject<EmptyAspect>(json, new JsonSerializerSettings() { CheckAdditionalContent = true });
-            var targetObj = ItemAspectFactory.CreateAspectFromString(jsonObj.Name);
-            JsonConvert.PopulateObject(json, targetObj);
+
+            IItemAspect targetObj;
+            if (!MigrationList.ContainsKey(jsonObj.Name))
+            {
+                targetObj = ItemAspectFactory.CreateAspectFromString(jsonObj.Name);
+                JsonConvert.PopulateObject(json, targetObj);
+            }
+            else
+            {
+                if (MigrationList[jsonObj.Name] == "REMOVE")
+                {
+                    return null;
+                }
+                else
+                {
+                    targetObj = ItemAspectFactory.CreateAspectFromString(MigrationList[jsonObj.Name]);
+                }
+            }
+
             return targetObj;
         }
 

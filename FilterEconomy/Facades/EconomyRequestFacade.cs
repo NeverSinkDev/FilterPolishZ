@@ -21,7 +21,6 @@ namespace FilterEconomy.Facades
         {
             var leagueStart = new DateTime(2020, 3, 13);
             this.ActiveMetaTags.Add("EarlyLeagueInterestAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
-            this.ActiveMetaTags.Add("MetaBiasAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
         }
 
         public bool IsEarlyLeague()

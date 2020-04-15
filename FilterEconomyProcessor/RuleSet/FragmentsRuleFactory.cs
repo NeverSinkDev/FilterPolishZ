@@ -67,10 +67,10 @@ namespace FilterEconomyProcessor.RuleSet
                     return price > FilterPolishConfig.MiscT3BreakPoint;
                 }));
 
-            builder.AddRule("floor-saved", "t3",
+            builder.AddRule("HidingPrevented", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    return builder.Item.HasAspect("FloorFragmentsAspect");
+                    return builder.Item.HasAspect("PreventHidingAspect");
                 }));
 
             builder.AddExplicitRest("t4", "t4");

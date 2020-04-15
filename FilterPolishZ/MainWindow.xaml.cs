@@ -28,6 +28,7 @@ using FilterPolishZ.Economy;
 using FilterEconomyProcessor;
 using FilterEconomyProcessor.ClassAbstraction;
 using FilterCore.Constants;
+using Application = System.Windows.Application;
 
 namespace FilterPolishZ
 {
@@ -59,11 +60,12 @@ namespace FilterPolishZ
             // Initialize Settings
             this.InitializeComponent();
             this.DataContext = new MainWindowViewModel();
-            Closing += this.OnWindowClose;
         }
 
-        private void OnWindowClose(object sender, CancelEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
+            base.OnClosed(e);
+            Application.Current.Shutdown();
         }
 
         private void LoadAllComponents()
@@ -94,8 +96,10 @@ namespace FilterPolishZ
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
 
             // experimental basetype->class abstraction
-            var abstractions = new InfluencedBasesAbstractions();
+            var abstractions = new InfluencedBasesAbstractionOverview();
             abstractions.Execute();
+            var abstractionConclusons = new InfluencedBasesAbstractionConclusions();
+            abstractionConclusons.Execute();
 
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
@@ -232,6 +236,11 @@ namespace FilterPolishZ
         [Time]
         private async Task WriteFilter(Filter baseFilter, bool isGeneratingStylesAndSeed, string outputFolder = null)
         {
+            if (File.Exists(outputFolder + "RESULTS.zip"))
+            {
+                File.Delete(outputFolder + "RESULTS.zip");
+            }
+
             var oldSeedVersion = baseFilter.GetHeaderMetaData("version:");
             var newVersion = LocalConfiguration.GetInstance().YieldConfiguration().First(x => x.Key == "Version Number").Value;
             if (oldSeedVersion == newVersion)

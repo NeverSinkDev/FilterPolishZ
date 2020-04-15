@@ -88,12 +88,22 @@ namespace FilterEconomy.Model.ItemAspects
         public float HanadlingPrice { get; set; }
     }
 
-    public class IgnoreAspect : AbstractItemAspect
+    //public class IgnoreAspect : AbstractItemAspect
+    //{
+    //    public override string Group => "Meta";
+    //}
+
+    public class AnchorAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
     }
 
-    public class AnchorAspect : AbstractItemAspect
+    public class PoorDropAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+    }
+
+    public class PreventHidingAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
     }
@@ -151,22 +161,6 @@ namespace FilterEconomy.Model.ItemAspects
         }
     }
 
-    public class MetaBiasAspect : AbstractItemAspect
-    {
-        public override string Group => "TemporalAspect";
-        public override bool IsActive()
-        {
-            if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("MetaBiasAspect"))
-            {
-                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"].Item1 < DateTime.Now && EconomyRequestFacade.GetInstance().ActiveMetaTags["MetaBiasAspect"].Item2 > DateTime.Now)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
     public class ProphecyMaterialAspect : AbstractItemAspect
     {
         public override string Group => "Intent";
@@ -188,18 +182,6 @@ namespace FilterEconomy.Model.ItemAspects
     public class CurrencyTypeAspect : AbstractItemAspect
     {
         public override string Group => "DropType";
-        public override AspectType Type => AspectType.divination;
-    }
-
-    public class PoorDiviAspect : AbstractItemAspect
-    {
-        public override string Group => "DropType";
-        public override AspectType Type => AspectType.divination;
-    }
-
-    public class PreventHidingAspect : AbstractItemAspect
-    {
-        public override string Group => "Meta";
         public override AspectType Type => AspectType.divination;
     }
 
@@ -266,12 +248,6 @@ namespace FilterEconomy.Model.ItemAspects
     }
 
     public class PredictableDropAspect : AbstractItemAspect
-    {
-        public override string Group => "Meta";
-        public override AspectType Type => AspectType.fragments;
-    }
-
-    public class FloorFragmentsAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
         public override AspectType Type => AspectType.fragments;
