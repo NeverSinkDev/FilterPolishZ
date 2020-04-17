@@ -67,6 +67,8 @@ namespace FilterEconomyProcessor.RuleSet
                     return price > FilterPolishConfig.MiscT3BreakPoint;
                 }));
 
+            builder.AddEarlyLeagueHandling("t3");
+
             builder.AddRule("HidingPrevented", "t3",
                 new Func<string, bool>((string s) =>
                 {

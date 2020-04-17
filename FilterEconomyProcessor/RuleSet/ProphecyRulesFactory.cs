@@ -49,7 +49,10 @@ namespace FilterEconomyProcessor.RuleSet
                     var isCheap = builder.Item.HasAspect("CheapProphecyAspect") ? 0.5f : 1f;
                     var isUpgrade = builder.Item.HasAspect("ItemUpgradeProphecyAspect") ? 1.2f : 1f;
 
-                    return isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
+                    // MapUpgrade Prophecies should be weighted towards the t3mapping tier
+                    var mapUpgrade = builder.Item.HasAspect("MapUpgradeProphecyAspect") && !builder.Item.HasAspect("TimelessProphecyAspect") ? 0.5f : 1f;
+
+                    return mapUpgrade * isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
                 }));
 
             builder.AddRule("t3mapping", "t3mapping",

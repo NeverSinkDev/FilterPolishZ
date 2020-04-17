@@ -47,7 +47,9 @@ namespace FilterPolishZ.Economy.RuleSet
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
+                    // We reduce the tiering of CurrencyType items here. They should be more weighted towards t4c, since poe.ninja seems to price them higher than they are.
+                    var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier * (builder.Item.HasAspect("CurrencyTypeAspect") ? 0.8f : 1f);
+
                     return price > FilterPolishConfig.DiviT3BreakPoint;
                 }));
 
@@ -68,11 +70,11 @@ namespace FilterPolishZ.Economy.RuleSet
                     {
                         if (builder.Item.HasAspect("PoorDropAspect"))
                         {
-                            return (price > FilterPolishConfig.DiviT5BreakPoint * 2);
+                            return (price > FilterPolishConfig.DiviT5BreakPoint * 3);
                         }
                         else
                         {
-                            return (price > FilterPolishConfig.DiviT5BreakPoint);
+                            return (price > FilterPolishConfig.DiviT5BreakPoint * 1.5);
                         }
                     }
 
@@ -83,14 +85,19 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                    return builder.Item.HasAspect("FarmableOrbAspect");
+
+                    if (builder.Item.HasAspect("CurrencyTypeAspect"))
+                    {
+                        return builder.Item.HasAspect("FarmableOrbAspect") || builder.Item.HasAspect("PreventHidingAspect");
+                    }
+
+                    return false;
                 }));
 
             builder.AddRule("CurrencySaveT5", "t5c",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                    return (price < FilterPolishConfig.DiviT5BreakPoint || builder.Item.HasAspect("PoorDropAspect")) && builder.Item.HasAspect("CurrencyTypeAspect");
+                    return builder.Item.HasAspect("CurrencyTypeAspect");
                 }));
 
             builder.AddRule("RandomSave", "t4",
@@ -104,7 +111,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                    return (price < (FilterPolishConfig.DiviT5BreakPoint * 2f) && builder.Item.HasAspect("PoorDropAspect"));
+                    return (price < (FilterPolishConfig.DiviT5BreakPoint * 2.5f) && builder.Item.HasAspect("PoorDropAspect"));
                 }));
 
             builder.AddRule("T5RedemptionPrevented", "t5",
@@ -113,7 +120,7 @@ namespace FilterPolishZ.Economy.RuleSet
                     if (builder.GetTierOfItem(s).Contains("t5"))
                     {
                         var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
-                        return price < FilterPolishConfig.DiviT5BreakPoint * 1.5;
+                        return price < FilterPolishConfig.DiviT5BreakPoint * 2;
                     }
 
                     return false;

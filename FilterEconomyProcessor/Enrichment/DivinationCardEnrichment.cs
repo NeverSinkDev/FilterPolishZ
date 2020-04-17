@@ -23,14 +23,12 @@ namespace FilterEconomyProcessor.Enrichment
                 data.LowestPrice = target.CVal;
 
                 float multiplier = 1;
-                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize <= 1), 0.2f);
-                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize <= 2), 0.1f);
+                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize <= 1), 0.1f);
                 multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize <= 3), 0.1f);
-                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 6), -0.05f);
+                // multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 6), -0.05f);
+                // multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 8), -0.1f);
                 multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 8), -0.1f);
-                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 10), -0.1f);
                 multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.StackSize >= 12), -0.1f);
-                multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.HasAspect("LargeRandomPoolAspect")), 0.1f);
                 multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.HasAspect("CurrencyTypeAspect")), 0.1f);
                 multiplier += this.AdjustPriceBasedOn(target, new Func<NinjaItem, bool>((NinjaItem s) => s.HasAspect("PoorDiviAspect")), -0.4f);
                 data.ValueMultiplier = multiplier;

@@ -35,6 +35,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
+            // items with one expensive rare version and one common, less rare verison are handled by this rule.
             builder.AddRule("uncommon", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
@@ -55,6 +56,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return fit;
                 }));
 
+            // items with expensive and non-expensive commonly droppable versions.
             builder.AddRule("ExpensiveTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
@@ -71,6 +73,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }));
 
+            // items with expensive and non-expensive commonly droppable versions.
             builder.AddRule("Expensive-Single-NonLeagueTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
@@ -184,9 +187,24 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("hideable-nondrop", "hideable2",
             new Func<string, bool>((string s) =>
             {
-                var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "NonDropAspect" }, new HashSet<string>() { "PreventHidingAspect" });
-                if (relevantList.Count > 0)
+                var aspectTest = builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>() { "HighVarietyAspect", "NonEventDropAspect", "PreventHidingAspect" });
+
+                if (!aspectTest)
                 {
+                    return false;
+                }
+
+
+                var relevantListNonDrop = builder.Item.AspectCheck(new HashSet<string>() { "NonDropAspect" }, new HashSet<string>() { });
+                var relevantListRest = builder.Item.AspectCheck(new HashSet<string>() {  }, new HashSet<string>() { "NonDropAspect" });
+
+                if (relevantListNonDrop.Count > 0)
+                {
+                    if (relevantListRest.Count > 0 && relevantListRest.Max(x => x.CVal > FilterPolishConfig.UniqueT2BreakPoint * 0.5f))
+                    {
+                        return false;
+                    }
+
                     return true;
                 }
 
@@ -197,7 +215,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
 
-                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { }, new HashSet<string>() { "NonDropAspect" });
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { }, new HashSet<string>() { "NonDropAspect", "PreventHidingAspect" });
 
                     if (relevantList.Count == 0)
                     {

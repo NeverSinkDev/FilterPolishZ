@@ -40,7 +40,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyButtomAspect");
             // builder.AddSimpleComparisonRule("SilverTier", "t31", 0.15f);
             // builder.AddSimpleAspectContainerRule("SilverBottom", "t31", "SilverBottomAspect");
-            builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.04f);
+            builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.06f);
             builder.AddSimpleAspectContainerRule("ChanceBottom", "t32", "ChanceBottomAspect");
 
             builder.AddExplicitRest("TransmuteTier", "t33");
