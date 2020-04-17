@@ -22,6 +22,8 @@ namespace AzurePolishFunctions
         public string League { get; set; }
 
         public bool PublishPrice = true;
+
+        public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
         
         public FilterPublisher(Filter filter, string repoName, string league)
         {
@@ -248,14 +250,13 @@ namespace AzurePolishFunctions
         private void UploadToPoe(string filterFolder)
         {
             var token = Environment.GetEnvironmentVariable("PoeApiAccessToken");
-            var descr = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
 
             for (var i = 0; i < FilterGenerationConfig.FilterStrictnessApiIds[this.League].Count; i++)
             {
                 var filterId = FilterGenerationConfig.FilterStrictnessApiIds[this.League][i];
                 var filterPath = filterFolder + "\\NeverSink's filter - " + i + "-" + FilterGenerationConfig.FilterStrictnessLevels[i].ToUpper() + ".filter";
                 var filterContent = FileWork.ReadFromFile(filterPath);
-                this.UploadToPoe_Single(filterId, token, descr, filterContent);
+                this.UploadToPoe_Single(filterId, token, FilterDescription, filterContent);
             }
         }
 
@@ -268,7 +269,8 @@ namespace AzurePolishFunctions
             {
                 filter = filterContent,
                 filterID = filterId,
-                description = descr
+                description = descr,
+                version = FilterAccessFacade.GetInstance().PrimaryFilter.GetHeaderMetaData("VERSION")
             };
             
             LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
