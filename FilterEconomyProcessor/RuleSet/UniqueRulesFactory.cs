@@ -165,6 +165,13 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }));
 
+            builder.AddRule("ExpensiveOrBoss", "t3boss",
+                new Func<string, bool>((string s) =>
+                {
+                    var bossDrop = builder.Item.HasAspect("BossDropAspect");
+                    return bossDrop || builder.Item.LowestPrice < FilterPolishConfig.UniqueT2BreakPoint && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint;
+                }));
+
             builder.AddRule("prophecy", "prophecy",
                 new Func<string, bool>((string s) =>
                 {
@@ -175,13 +182,6 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     return builder.Item.HasAspect("ProphecyMaterialAspect");
-                }));
-
-            builder.AddRule("ExpensiveOrBoss", "t3boss",
-                new Func<string, bool>((string s) =>
-                {
-                    var bossDrop = builder.Item.HasAspect("BossDropAspect");
-                    return bossDrop || builder.Item.LowestPrice < FilterPolishConfig.UniqueT2BreakPoint && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
             builder.AddRule("hideable-nondrop", "hideable2",

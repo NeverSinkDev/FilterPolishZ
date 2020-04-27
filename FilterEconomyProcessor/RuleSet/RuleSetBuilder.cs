@@ -127,12 +127,12 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
         }
 
-        public RuleSetBuilder AddAverageComparison(string name, string tier, float comparer)
+        public RuleSetBuilder AddRawAverageComparison(string name, string tier, float comparer)
         {
             return this.AddRule(name, tier,
                 new Func<string, bool>((string s) =>
                 {
-                    var price = (Item.LowestPrice + Item.HighestPrice) / 2;
+                    var price = Item.RawAveragePrice;
                     return price > comparer;
                 }));
         }
@@ -181,14 +181,14 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
         }
 
-        public RuleSetBuilder AddPoorDropRoutine(string tier, float comparer, float weight = 2.0f, bool redemptionLag = true, float redemptionWeight = 1.5f)
+        public RuleSetBuilder AddPoorDropRoutine(string tier, float comparer, float weight = 2.0f, bool redemptionLag = true, float redemptionWeight = 1.5f, PricingMode pricingMode = PricingMode.lowest)
         {
             // Low value drops tend to have a high noise amplitude on Poe.ninja/the actual economy.
             // Items marked as a "PoorItem", need to climb a certain threshold to leave the low item tier
             this.AddRule($"{tier} (PoorItem)", tier,
                 new Func<string, bool>((string s) =>
                 {
-                    var price = this.Item.LowestPrice;
+                    var price = this.Item.GetPriceMod(pricingMode);
                     return (price < (comparer * weight) && this.Item.HasAspect("PoorDropAspect") && !this.Item.HasAspect("EarlyLeagueInterestAspect") && !this.Item.HasAspect("PreventHidingAspect"));
                 }));
 
@@ -202,7 +202,7 @@ namespace FilterEconomyProcessor.RuleSet
 
                     if (this.GetTierOfItem(s).Contains(tier))
                     {
-                        var price = this.Item.LowestPrice;
+                        var price = this.Item.GetPriceMod(pricingMode);
                         return price < comparer * redemptionWeight;
                     }
 
@@ -217,7 +217,7 @@ namespace FilterEconomyProcessor.RuleSet
                         return false;
                     }
 
-                    var price = this.Item.LowestPrice;
+                    var price = this.Item.GetPriceMod(pricingMode);
                     return (price < comparer);
                 }));
 

@@ -18,12 +18,22 @@ namespace FilterPolishUtil
             "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials"
         };
 
+        public static HashSet<string> TopBases { get; set; } = new HashSet<string>();
+
         /// <summary>
         /// These bases get special treatment, because of their special drop location and properties.
         /// </summary>
         public static HashSet<string> SpecialBases { get; set; } = new HashSet<string>()
         {
             "Opal Ring", "Steel Ring", "Vermillion Ring", "Blue Pearl Amulet", "Bone Helmet", "Cerulean Ring", "Convoking Wand", "Crystal Belt", "Fingerless Silk Gloves", "Gripped Gloves", "Marble Amulet", "Sacrificial Garb", "Spiked Gloves", "Stygian Vise", "Two-Toned Boots", "Vanguard Belt"
+        };
+
+        /// <summary>
+        /// Extra bases for top base tiering, usually implicit based stuff.
+        /// </summary>
+        public static HashSet<string> ExtraBases { get; set; } = new HashSet<string>()
+        {
+            "Astral Plate", "Thicket Bow", "Royal Burgonet"
         };
 
         /// <summary>
@@ -64,12 +74,22 @@ namespace FilterPolishUtil
         public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
         public static List<string> IgnoredLowestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect", "BossDropAspect", "LeagueDropAspect" };
 
+        public static HashSet<string> GearClasses = new HashSet<string>()
+        {
+            "Amulets", "Belts", "Body Armours", "Boots", "Bows", "Claws", "Daggers", "Gloves", "Helmets", "One Hand Axes", "One Hand Maces", "One Hand Swords", "Thrusting One Hand Swords", "Quivers", "Rings", "Rune Daggers", "Sceptres", "Shields", "Staves", "Two Hand Swords", "Two Hand Maces", "Two Hand Axes", "Wands", "Warstaves"
+        };
+
         /// <summary>
         /// Usually higher droplevel = better (to a degree), these bases are the exception, since they follow different distributions.
         /// </summary>
         public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
         {
             "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres"
+        };
+
+        public static HashSet<string> BestBaseCheckIgnore = new HashSet<string>()
+        {
+            "rings", "amulets", "belts", "jewels"
         };
 
         /// <summary>
@@ -126,7 +146,7 @@ namespace FilterPolishUtil
         private static float T4ExaltedInfluence = 0.02f;
         private static float T5ExaltedInfluence = 0.008f;
 
-        // Exception for league only, uncommon, special uniques. Currently set at 3.5ex, but could be higher easily.
+        // Exception for league only, uncommon, special uniques. Currently set at 1ex, but could be higher
         public static float SuperTierBreakPoint;
 
         // Unique Breakpoints - uniques have a lower breakpoints, due to item stat variations
@@ -200,5 +220,12 @@ namespace FilterPolishUtil
     {
         Function,
         OnPrem
+    }
+
+    public enum PricingMode
+    {
+        lowest,
+        highest,
+        rawavg
     }
 }

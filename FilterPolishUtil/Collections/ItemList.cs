@@ -9,7 +9,11 @@ namespace FilterPolishUtil.Collections
     public class ItemList<T> : List<T>
     {
         public float HighestPrice { get; set; }
+
+        public float RawAveragePrice { get; set; }
+
         public float LowestPrice { get; set; }
+        
         public float ValueMultiplier { get; set; } = 1;
 
         public bool Valid { get; set; } = true;
@@ -31,6 +35,21 @@ namespace FilterPolishUtil.Collections
             else
             {
                 return GetPrice(level + 1);
+            }
+        }
+
+        public float GetPriceMod(PricingMode pricingMode)
+        {
+            switch(pricingMode)
+            {
+                case PricingMode.lowest:
+                    return this.LowestPrice;
+                case PricingMode.highest:
+                    return this.HighestPrice;
+                case PricingMode.rawavg:
+                    return this.RawAveragePrice;
+                default:
+                    return this.LowestPrice;
             }
         }
     }

@@ -19,6 +19,17 @@ namespace FilterEconomyProcessor.Enrichment
         public void Enrich(string baseType, ItemList<NinjaItem> data)
         {
             List<NinjaItem> target = data;
+            
+            // calculate raw average values, before performing the lowest value calculation (mostly for unique maps)
+            var validItems = target.Where(x => x != null && x.CVal > 0).ToList();
+            if (validItems.Count > 0)
+            {
+                data.RawAveragePrice = validItems.Average(x => x.CVal);
+            }
+            else
+            {
+                data.RawAveragePrice = 0;
+            }
 
             if (data.Count == 1)
             {
@@ -50,12 +61,6 @@ namespace FilterEconomyProcessor.Enrichment
                         return;
                     }
                 }
-
-                //var filteredData = data.Where(x => x.Aspects.All(z => !FilterPolishConfig.IgnoredLowestPriceAspects.Contains(z.Name) && !FilterPolishConfig.GlobalIgnoreAspects.Contains(z.Name))).ToList();
-                //if (filteredData.Count >= 1)
-                //{
-                //    target = filteredData;
-                //}
             }
 
             var price = target.Min(x => x.CVal);

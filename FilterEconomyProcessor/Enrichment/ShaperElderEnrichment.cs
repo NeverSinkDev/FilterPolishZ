@@ -54,16 +54,16 @@ namespace FilterEconomyProcessor.Enrichment
 
             // outlier rules
             confidence += AdjustConfidenceBasedOn(data, (s => minPrice < averagePriceMinimum && maxPrice > FilterPolishConfig.BaseTypeT1BreakPoint), -0.1f, 0);
-
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice >= unhealthyPriceRange), -0.1f, 0);
-
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 100), -0.1f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 75), -0.1f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 50), -0.1f, 0);
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 25), -0.1f, 0);
 
             // item info based rules
-            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.SpecialBases.Contains(baseType)), 0.2f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.TopBases.Contains(baseType)), 0.15f, 0);
+
+            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.SpecialBases.Contains(baseType)), 0.15f, 0);
 
             Dictionary<string, string> itemInfo = null;
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(baseType))

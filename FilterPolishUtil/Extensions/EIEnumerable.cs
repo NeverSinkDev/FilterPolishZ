@@ -86,6 +86,52 @@ namespace FilterPolishUtil.Extensions
             }
         }
 
+        public static IEnumerable<T> MaxBy<T>(this IEnumerable<T> me, Func<T, IComparable> comparison, float percentage = default(float))
+        {
+            var analyzedList = me.Select(x => new { val = x, com = comparison(x) });
+            IComparable max = analyzedList.Max(x => x.com);
+            return analyzedList.Where(x => IComparable.Equals(x.com,max)).Select(x => x.val);
+        }
+
+        public static Dictionary<string, List<T>> Subdivide<T>(this IEnumerable<T> me, List<Tuple<string, Func<T, bool>>> rules, bool hasDefault = false)
+        {
+            var result = new Dictionary<string, List<T>>();
+
+            foreach (var rule in rules)
+            {
+                if (!result.ContainsKey(rule.Item1))
+                {
+                    result.Add(rule.Item1, new List<T>());
+                }
+            }
+
+            if (hasDefault)
+            {
+                result.Add("default", new List<T>());
+            }
+
+            foreach (var item in me)
+            {
+                var success = false;
+                foreach (var rule in rules)
+                {
+                    if (rule.Item2(item))
+                    {
+                        result[rule.Item1].Add(item);
+                        success = true;
+                        break;
+                    }
+                }
+
+                if (hasDefault && !success)
+                {
+                    result["default"].Add(item);
+                }
+            }
+
+            return result;
+        }
+
         public static IEnumerable<T1> PairSelect<T,T1>(this IEnumerable<T> collection, Func<T,T,T1> selector)
         {
             var initialized = false;

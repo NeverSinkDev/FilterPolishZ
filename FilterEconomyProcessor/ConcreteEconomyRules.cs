@@ -67,7 +67,9 @@ namespace FilterEconomyProcessor
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.UniqueT1BreakPoint)
-                .AddAverageComparison("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
+                .AddRawAverageComparison("t2", "t2", FilterPolishConfig.UniqueT2BreakPoint)
+                .AddRawAverageComparison("t3safe", "t3", FilterPolishConfig.UniqueT2BreakPoint / 2)
+                .AddPoorDropRoutine("t4", FilterPolishConfig.MiscT4BreakPoint * 2, 3f, pricingMode: PricingMode.lowest)
                 .AddExplicitRest("t3","t3")
                 .Build();       
         }

@@ -23,7 +23,6 @@ namespace FilterCore.Constants
         {
             BaseTypeData = LoadData();
             ClassBasedTierList = CreateClassBasedList();
-
         }
 
         private static Dictionary<string, Dictionary<string, string>> LoadData()
@@ -108,6 +107,9 @@ namespace FilterCore.Constants
 
                 EnrichItemsWithLevelSorting(results, keys);
                 EnrichItemsWithApsSorting(results);
+
+                EnrichItemsWithBestBaseTypeInformation(results, keys);
+
                 return results;
             }
             catch (Exception e)
@@ -115,6 +117,95 @@ namespace FilterCore.Constants
                 throw e;
             }
 
+        }
+
+        private static void EnrichItemsWithBestBaseTypeInformation(Dictionary<string, List<Dictionary<string, string>>> results, List<string> keys)
+        {
+            HashSet<string> resultingBases = new HashSet<string>();
+            bool apsRelevant = false;
+
+            foreach (var itemtype in results)
+            {
+                if (!FilterPolishUtil.FilterPolishConfig.GearClasses.Contains(itemtype.Key))
+                {
+                    continue;
+                }
+
+                if (FilterPolishUtil.FilterPolishConfig.BestBaseCheckIgnore.Contains(itemtype.Key.ToLower()))
+                {
+                    // rings, amulets and belts don't need any indication about the best base
+                    continue;
+                }
+
+                if (!itemtype.Value.FirstOrDefault().ContainsKey("LevelSorting"))
+                {
+                    continue;
+                }
+
+                var itemgroups = new Dictionary<string, List<Dictionary<string, string>>>();
+
+                if (itemtype.Key == "Boots" || itemtype.Key == "Body Armours" || itemtype.Key == "Helmets" || itemtype.Key == "Shields" || itemtype.Key == "Gloves")
+                {
+                    
+                    itemgroups = itemtype.Value.Subdivide(new List<Tuple<string, Func<Dictionary<string, string>, bool>>>()
+                    {
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ar", x => x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] == ""),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ev", x => x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == ""),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("es", x => x["Game:Armour"] == "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != ""),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("arev", x => x["Game:Armour"] != "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == ""),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ares", x => x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != ""),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("eves", x => x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] != "")
+                    });
+                }
+                else
+                {
+                    itemgroups.Add("all", itemtype.Value);
+                }
+
+                foreach (var itemgroup in itemgroups)
+                {
+                    if (itemgroup.Value.FirstOrDefault().ContainsKey("ApsSorting"))
+                    {
+                        apsRelevant = true;
+                    }
+
+                    var rawingridients = itemgroup.Value
+                        .Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]))
+                        .Select(x => new { value = x, lvlSort = float.Parse(x["LevelSorting"]), apsSort = float.Parse(x["ApsSorting"]) });
+
+                    var rawresults = rawingridients
+                        .MaxBy(x => x.lvlSort).ToList();
+
+                    foreach (var item in rawresults)
+                    {
+                        resultingBases.AddIfNew(item.value["BaseType"]);
+                    }
+
+                    // get the best high speed weapons
+                    if (itemtype.Key != "Rune Daggers" && itemtype.Key != "Staves")
+                    {
+                        var rawApsResults = rawingridients.Where(x => x.apsSort > 0.5f)
+                            .MaxBy(x => (x.apsSort * x.apsSort * x.apsSort) * x.lvlSort).ToList();
+
+                        foreach (var item in rawApsResults)
+                        {
+                            resultingBases.AddIfNew(item.value["BaseType"]);
+                        }
+                    }
+                }
+            }
+
+            foreach (var item in FilterPolishUtil.FilterPolishConfig.SpecialBases)
+            {
+                resultingBases.AddIfNew(item);
+            }
+
+            foreach (var item in FilterPolishUtil.FilterPolishConfig.ExtraBases)
+            {
+                resultingBases.AddIfNew(item);
+            }
+
+            FilterPolishUtil.FilterPolishConfig.TopBases = resultingBases;
         }
 
         private static void EnrichItemsWithApsSorting(Dictionary<string, List<Dictionary<string, string>>> results)
