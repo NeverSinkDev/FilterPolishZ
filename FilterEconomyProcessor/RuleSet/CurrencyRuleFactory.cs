@@ -12,8 +12,8 @@ namespace FilterEconomyProcessor.RuleSet
         {
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection("currency")
-                .SkipInEarlyLeague()
-                .LimitExecutionMode(ExecutionMode.Function)
+                // .SkipInEarlyLeague()
+                // .LimitExecutionMode(ExecutionMode.Function)
                 .UseDefaultQuery()
                 .OverrideMinimalExaltedPriceThreshhold(40)
                 .AddDefaultPostProcessing()
@@ -33,13 +33,17 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddSimpleComparisonRule("ExTier", "t11", FilterPolishConfig.ExaltedOrbPrice / 2);
             builder.AddSimpleComparisonRule("DivineTier", "t12", FilterPolishConfig.ExaltedOrbPrice / 5);
-            builder.AddSimpleComparisonRule("SextantTier", "t21", 2f);
-            builder.AddSimpleComparisonRule("ChaosTier", "t22", 0.75f);
+            builder.AddSimpleComparisonRule("SextantTier", "t21", 1.5f);
+
+            // chaos level rules
+            builder.AddSimpleComparisonRule("ChaosTier", "t22", 0.50f);
             builder.AddSimpleAspectContainerRule("ChaosBottom", "t22", "ChaosBottomAspect");
+
+            // alchemy level rules
             builder.AddSimpleComparisonRule("AlchemyTier", "t23", 0.20f);
             builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyButtomAspect");
-            // builder.AddSimpleComparisonRule("SilverTier", "t31", 0.15f);
-            // builder.AddSimpleAspectContainerRule("SilverBottom", "t31", "SilverBottomAspect");
+            builder.AddEarlyLeagueHandling("t23");
+
             builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.06f);
             builder.AddSimpleAspectContainerRule("ChanceBottom", "t32", "ChanceBottomAspect");
 

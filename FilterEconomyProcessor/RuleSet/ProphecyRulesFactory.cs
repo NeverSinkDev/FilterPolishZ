@@ -35,6 +35,12 @@ namespace FilterEconomyProcessor.RuleSet
                     return price > FilterPolishConfig.DiviT2BreakPoint;
                 }));
 
+            builder.AddRule("t3mapping", "t3mapping",
+                new Func<string, bool>((string s) =>
+                {
+                    return builder.Item.HasAspect("MapUpgradeProphecyAspect");
+                }));
+
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
                 {
@@ -50,15 +56,10 @@ namespace FilterEconomyProcessor.RuleSet
                     var isUpgrade = builder.Item.HasAspect("ItemUpgradeProphecyAspect") ? 1.2f : 1f;
 
                     // MapUpgrade Prophecies should be weighted towards the t3mapping tier
+                    // Doesn't matter right now since, mapping prophecies have priority over t3
                     var mapUpgrade = builder.Item.HasAspect("MapUpgradeProphecyAspect") && !builder.Item.HasAspect("TimelessProphecyAspect") ? 0.5f : 1f;
 
                     return mapUpgrade * isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
-                }));
-
-            builder.AddRule("t3mapping", "t3mapping",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("MapUpgradeProphecyAspect");
                 }));
 
             builder.AddRule("t3timeless", "t3",
