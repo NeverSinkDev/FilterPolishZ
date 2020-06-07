@@ -29,6 +29,7 @@ using FilterEconomyProcessor;
 using FilterEconomyProcessor.ClassAbstraction;
 using FilterCore.Constants;
 using Application = System.Windows.Application;
+using FilterExo;
 
 namespace FilterPolishZ
 {
@@ -46,12 +47,16 @@ namespace FilterPolishZ
         public TierListFacade TierListFacade { get; set; }
         public FilterAccessFacade FilterAccessFacade { get; set; } = FilterAccessFacade.GetInstance();
 
+        public FilterExoFacade FilterExoFacade { get; set; } = FilterExoFacade.GetInstance();
+
         public List<string> FilterRawString { get; set; }
 
         public MainWindow()
         {
             InfoPopUpMessageDisplay.InitExceptionHandling();
             ConcreteEnrichmentProcedures.Initialize();
+
+            // LoadMetaFilter();
 
             // Loads and Parses filter, then loads economy, tierlists, aspects, suggestions
             this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
@@ -412,6 +417,21 @@ namespace FilterPolishZ
 
             Process.Start(Configuration.AppSettings["Output Folder"]);
             LoggingFacade.LogInfo("Succesfully Archived Files!");
+        }
+
+        private void LoadMetaFilter(object sender, RoutedEventArgs e)
+        {
+            var outputFolder = Configuration.AppSettings["Meta Filter Path"];
+
+            LoggingFacade.LogInfo($"Loading Meta Filter: {outputFolder}");
+
+            this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
+            this.FilterExoFacade.Execute();
+
+            if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
+            {
+                LoggingFacade.LogWarning($"Loading Filter: Meta-Filter Content Suspiciously Short");
+            }
         }
     }
 }

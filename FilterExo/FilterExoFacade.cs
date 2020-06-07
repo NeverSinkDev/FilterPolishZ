@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FilterExo.Core.Parsing;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,8 @@ namespace FilterExo
 
         }
 
+        public List<string> RawMetaFilterText = new List<string>();
+
         private static FilterExoFacade instance;
 
         public static FilterExoFacade GetInstance()
@@ -21,6 +24,17 @@ namespace FilterExo
             }
 
             return instance;
+        }
+
+        public void Execute()
+        {
+            // tokenize
+            var tokenizer = new ExoTokenizer();
+            tokenizer.Execute(this.RawMetaFilterText);
+
+            // build structure - detect expression, build tree
+            // load style information
+            // evaluate expressions.
         }
     }
 }

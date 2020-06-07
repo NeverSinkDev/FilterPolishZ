@@ -155,7 +155,7 @@ namespace FilterEconomyProcessor.RuleSet
                 {
                     if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
                     {
-                        var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "BossDropAspect", "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
+                        var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
 
                         if (relevantList.Count > 0)
                         {

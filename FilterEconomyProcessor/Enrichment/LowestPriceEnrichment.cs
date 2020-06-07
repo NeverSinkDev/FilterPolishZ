@@ -51,18 +51,6 @@ namespace FilterEconomyProcessor.Enrichment
                 target = data;
             }
 
-            if (target.Count > 1)
-            {
-                if (target.All(x => x.Aspects.Any(z => !FilterPolishConfig.GlobalIgnoreAspects.Contains(z.Name))))
-                {
-                    if (target.All(x => x.Aspects.Any(z => FilterPolishConfig.IgnoredLowestPriceAspects.Contains(z.Name))))
-                    {
-                        data.LowestPrice = target.Min(x => x.CVal);
-                        return;
-                    }
-                }
-            }
-
             var price = target.Min(x => x.CVal);
             data.LowestPrice = price;
         }
