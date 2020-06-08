@@ -1,4 +1,5 @@
 ﻿using FilterExo.Core.Parsing;
+using FilterExo.Core.Structure;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,15 +27,29 @@ namespace FilterExo
             return instance;
         }
 
-        public void Execute()
+        public string Execute()
         {
             // tokenize
             var tokenizer = new ExoTokenizer();
             tokenizer.Execute(this.RawMetaFilterText);
 
-            // build structure - detect expression, build tree
             // load style information
-            // evaluate expressions.
+            var structurizer = new Structurizer();
+            var expressionTree = structurizer.Execute(tokenizer.Results);
+
+            var structureDebugger = new StructurizerDebugger();
+            return structureDebugger.Execute(expressionTree);
+
+            
+
+            // build structure - detect expression, build tree
+            // 1) BUILD STRUCTURE FROM TOKENIZED EXPRESSION
+            // 1.5) BUILD -LOGICAL- CONCREtE STRUCTURE
+            // 2) RESOLVE DEPEDENCIES
+
+
+
+            // 3) COMPILE INTO SEEDFILTER
         }
     }
 }

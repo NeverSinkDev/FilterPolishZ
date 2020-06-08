@@ -10,6 +10,8 @@ namespace FilterExo.Core.Parsing
 {
     public class ExoTokenizer
     {
+        public List<List<ExoToken>> Results = new List<List<ExoToken>>();
+
         public void Execute(List<string> input)
         {
             var mode = TokenizerMode.normal;
@@ -17,7 +19,7 @@ namespace FilterExo.Core.Parsing
             int lineNumber = 0;
             int charNumber = 0;
 
-            var results = new List<List<ExoToken>>();
+            Results = new List<List<ExoToken>>();
             var tokenLine = new List<ExoToken>();
             var isLastWordOperator = false;
 
@@ -46,7 +48,7 @@ namespace FilterExo.Core.Parsing
                 FinishLastWord();
                 mode = TokenizerMode.normal;
                 isLastWordOperator = false;
-                results.Add(tokenLine);
+                Results.Add(tokenLine);
             }
             
             // Character handling logic, abstracted to keep internal loop clean
@@ -94,6 +96,7 @@ namespace FilterExo.Core.Parsing
             {
                 if (SimpleOperators.Contains(c))
                 {
+                    // expand existing operators
                     if (isLastWordOperator)
                     {
                         if (tokenLine.Last().TryExpandOperator(c))
@@ -103,12 +106,12 @@ namespace FilterExo.Core.Parsing
                         }
                     }
 
+                    // split and identify new operators
                     FinishLastWord();
                     currentWord += c;
                     FinishLastWord();
-
+                    tokenLine.Last().IsOperator = true;
                     isLastWordOperator = true;
-
                     return;
                 }
 
@@ -143,6 +146,8 @@ namespace FilterExo.Core.Parsing
         public string value;
         public int line;
         public TokenizerMode type;
+
+        public bool IsOperator = false;
 
         public bool TryExpandOperator(char c)
         {

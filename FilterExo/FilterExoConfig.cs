@@ -19,12 +19,29 @@ namespace FilterExo
             quoted
         }
 
+        public enum StructurizerMode
+        {
+            root,
+            expr,
+            desc,
+            atom,
+            scop,
+            comm
+        }
+
+        public enum StructurizerScopeType
+        {
+            none,
+            impl,
+            expl
+        }
+
         public static char QuoteCharacter = '\"';
         public static char CommentCharacter = '#';
 
         public static HashSet<char> SimpleOperators = new HashSet<char>()
         {
-            '=', '>', '<', '(', ')', '{', '}', '[', ']'
+            '=', '>', '<', '(', ')', '{', '}', '[', ']', ';'
         };
 
         public static HashSet<string> CombinedOperators = new HashSet<string>()

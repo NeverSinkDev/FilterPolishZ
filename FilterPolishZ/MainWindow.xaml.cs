@@ -30,6 +30,7 @@ using FilterEconomyProcessor.ClassAbstraction;
 using FilterCore.Constants;
 using Application = System.Windows.Application;
 using FilterExo;
+using FilterPolishZ.ModuleWindows.GenerationOptions;
 
 namespace FilterPolishZ
 {
@@ -426,7 +427,10 @@ namespace FilterPolishZ
             LoggingFacade.LogInfo($"Loading Meta Filter: {outputFolder}");
 
             this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
-            this.FilterExoFacade.Execute();
+            var output = this.FilterExoFacade.Execute();
+
+            GenerationOptions.DebugText = output;
+            EventGrid.Publish();
 
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
             {
