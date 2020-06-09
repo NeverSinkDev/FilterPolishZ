@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using static FilterExo.FilterExoConfig;
 
 namespace FilterExo.Core.Structure
 {
@@ -17,8 +18,9 @@ namespace FilterExo.Core.Structure
             StructureExpr cursor = new StructureExpr();
             
             cursor.Mode = FilterExoConfig.StructurizerMode.root;
+            cursor.ScopeType = FilterExoConfig.StructurizerScopeType.none;
 
-            cursor = cursor.AddAndScopeOnChild(StructureExpr.CreateScope(FilterExoConfig.StructurizerScopeType.impl));
+            // cursor = cursor.AddAndScopeOnChild(StructureExpr.CreateScope(FilterExoConfig.StructurizerScopeType.expl));
 
             // ---
             for (tokenLine = 0; tokenLine < tokens.Count; tokenLine++)
@@ -41,6 +43,17 @@ namespace FilterExo.Core.Structure
                     if (SpecialCharacterTreatment(token)) return;
                 }
 
+                if (cursor.Mode == StructurizerMode.root || cursor.ScopeType != StructurizerScopeType.impl)
+                {
+                    var child = StructureExpr.CreateScope(StructurizerScopeType.impl);
+                    cursor = cursor.AddAndScopeOnChild(child);
+                }
+                else if (cursor.Children.Count > 0 && !cursor.Children.All(x => x.Mode == StructurizerMode.atom))
+                {
+                    cursor = cursor.PackageAtomicChildren();
+                    cursor = cursor.ScopeOnLastChild();
+                }
+
                 // add token as atomic piece to the current cursor.
                 cursor.AddChild(new StructureExpr(token));
             }
@@ -55,12 +68,14 @@ namespace FilterExo.Core.Structure
 
                 if (token.value == "{")
                 {
+                    cursor= cursor.ScopeOnLastImplicit();
+
                     // Detach children from parent
                     var children = cursor.Children.ToList();
                     cursor.Children = new List<StructureExpr>();
 
                     // Create new scope
-                    var scope = StructureExpr.CreateScope(FilterExoConfig.StructurizerScopeType.expl, token);
+                    var scope = StructureExpr.CreateScope(StructurizerScopeType.expl, token);
                     scope.Parent = cursor;
                     cursor.Children.Add(scope);
 
@@ -69,20 +84,14 @@ namespace FilterExo.Core.Structure
                     cursor = scope;
 
                     // Add an implicit listing
-                    var child = StructureExpr.CreateScope(FilterExoConfig.StructurizerScopeType.impl);
-                    cursor = cursor.AddAndScopeOnChild(child);
-                    
+                    //var child = StructureExpr.CreateScope(StructurizerScopeType.impl);
+                    //cursor = cursor.AddAndScopeOnChild(child);
+
                     return true;
                 }
 
                 if (token.value == "}")
                 {
-                    var target = cursor.GetParent();
-                    if (target.Children.Count > 0 && target.Children.Last().ScopeType == FilterExoConfig.StructurizerScopeType.impl && target.Children.Last().Children.Count == 0)
-                    {
-                        target.DestroyLastChild();
-                    }
-
                     cursor = cursor.GetExplParent();
                     cursor = cursor.GetParent();
                     return true;
@@ -93,15 +102,8 @@ namespace FilterExo.Core.Structure
 
             void TreatLineEnd(string trigger)
             {
-                if (cursor.Children.Count == 0)
-                {
-                    return;
-                }
-
                 cursor = cursor.GetExplParent();
-                var child = StructureExpr.CreateScope(FilterExoConfig.StructurizerScopeType.impl);
-                child.Value = trigger;
-                cursor = cursor.AddAndScopeOnChild(child);
+                // cursor = cursor.ScopeOnLastChild();
             }
 
             // TODO: go to root.

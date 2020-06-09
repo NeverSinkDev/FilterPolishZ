@@ -1,6 +1,7 @@
 ﻿using FilterExo.Core.Parsing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using static FilterExo.FilterExoConfig;
 
@@ -35,19 +36,19 @@ namespace FilterExo.Core.Structure
 
         public StructureExpr GetParent()
         {
+            if (this.Parent == null)
+            {
+                return this;
+            }
+
             return this.Parent;
         }
 
         public StructureExpr GetExplParent()
         {
-            if (this.Parent.Mode == StructurizerMode.root)
+            if (this.Mode == StructurizerMode.root || this.ScopeType == StructurizerScopeType.expl)
             {
                 return this;
-            }
-
-            if (this.Parent.ScopeType != StructurizerScopeType.impl)
-            {
-                return this.Parent;
             }
 
             return this.Parent.GetExplParent();
@@ -57,6 +58,37 @@ namespace FilterExo.Core.Structure
         {
             child.Parent = this;
             this.Children.Add(child);
+            return this;
+        }
+
+        public StructureExpr PackageAtomicChildren()
+        {
+            var adoptableChildren = new List<StructureExpr>();
+            var count = this.Children.Count;
+
+            for (int t = count - 1; t >= 0; t--)
+            {
+                if (this.Children[t].Mode == StructurizerMode.atom)
+                {
+                    adoptableChildren.Add(this.Children[t]);
+                    this.Children.RemoveAt(t);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (adoptableChildren.Count == 0)
+            {
+                return this;
+            }
+
+            var scope = StructureExpr.CreateScope(StructurizerScopeType.impl);
+            adoptableChildren.ForEach(x => x.Parent = scope);
+            scope.Children.AddRange(adoptableChildren);
+            scope.Parent = this;
+            this.Children.Add(scope);
             return this;
         }
 
@@ -76,6 +108,29 @@ namespace FilterExo.Core.Structure
             return child;
         }
 
+        public StructureExpr ScopeOnLastChild()
+        {
+            if (this.Children.Count > 0)
+            {
+                return this.Children.Last();
+            }
+
+            return this;
+        }
+
+
+        public StructureExpr ScopeOnLastImplicit()
+        {
+            if (this.Children.Count > 0 && this.Children.Last().ScopeType == StructurizerScopeType.impl)
+            {
+                return this.Children.Last().ScopeOnLastImplicit();
+            }
+            else
+            {
+                return this;
+            }
+        }
+
         public void DestroyLastChild()
         {
             this.Children.RemoveAt(this.Children.Count - 1);
@@ -83,12 +138,12 @@ namespace FilterExo.Core.Structure
 
         public StructureExpr GoToRoot()
         {
-            while (this.Parent.Mode != StructurizerMode.root)
+            while (this.Mode != StructurizerMode.root)
             {
                 return Parent.GoToRoot();
             }
 
-            return Parent;
+            return this;
         }
 
         public static StructureExpr CreateScope(StructurizerScopeType scopeType, ExoToken token = null)

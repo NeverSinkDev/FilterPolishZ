@@ -46,15 +46,10 @@ namespace FilterExo
 
             return structureDebugger.CreateTreeString(expressionTree) + System.Environment.NewLine + treeDictString;
 
-            
-
             // build structure - detect expression, build tree
             // 1) BUILD STRUCTURE FROM TOKENIZED EXPRESSION
-            // 1.5) BUILD -LOGICAL- CONCREtE STRUCTURE
+            // 1.5) BUILD -LOGICAL- CONCRETE STRUCTURE
             // 2) RESOLVE DEPEDENCIES
-
-
-
             // 3) COMPILE INTO SEEDFILTER
         }
     }

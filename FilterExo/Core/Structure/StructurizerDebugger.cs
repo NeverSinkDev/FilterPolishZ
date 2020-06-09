@@ -63,7 +63,7 @@ namespace FilterExo.Core.Structure
                 string props = " ";
                 if (level.Properties.ContainsKey("descriptor"))
                 {
-                    props += string.Join(" ", level.Properties["descriptor"].Select(x => x.PrimitiveValue.value));
+                    props += string.Join(" ", level.Properties["descriptor"].Select(x => x.PrimitiveValue?.value ?? "NO PRIM VALUE"));
                 }
 
                 result.Add(lvlstr + meta + " " + level?.PrimitiveValue?.value + props);
