@@ -24,7 +24,9 @@ namespace AzurePolishFunctions
         public bool PublishPrice = true;
 
         public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
-        
+
+        public static HttpClient StaticHttpClient = new HttpClient();
+
         public FilterPublisher(Filter filter, string repoName, string league)
         {
             this.RepoName = repoName;
@@ -263,7 +265,6 @@ namespace AzurePolishFunctions
         private void UploadToPoe_Single(string filterId, string accessToken, string descr, string filterContent)
         {
             var url = "https://www.pathofexile.com/api/item-filter/" + filterId + "?access_token=" + accessToken;
-            var client = new HttpClient();
 
             var body = new
             {
@@ -275,7 +276,7 @@ namespace AzurePolishFunctions
             
             LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
             
-            var resp = client.PostAsJsonAsync(url, body);
+            var resp = StaticHttpClient.PostAsJsonAsync(url, body);
             resp.Wait();
             if (resp.Result.StatusCode != HttpStatusCode.OK)
             {

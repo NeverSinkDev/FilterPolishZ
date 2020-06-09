@@ -11,9 +11,9 @@
     <Configurations>Debug;Release;MetaDebug</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.12.0" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />

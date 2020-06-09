@@ -22,6 +22,7 @@ namespace FilterExo.Core.Parsing
             Results = new List<List<ExoToken>>();
             var tokenLine = new List<ExoToken>();
             var isLastWordOperator = false;
+            var exitMode = false;
 
             string currentWord = string.Empty;
 
@@ -48,6 +49,7 @@ namespace FilterExo.Core.Parsing
                 FinishLastWord();
                 mode = TokenizerMode.normal;
                 isLastWordOperator = false;
+                exitMode = false;
                 Results.Add(tokenLine);
             }
             
@@ -75,17 +77,20 @@ namespace FilterExo.Core.Parsing
 
                 if (c == CommentCharacter && mode != TokenizerMode.quoted)
                 {
+                    FinishLastWord();
                     mode = TokenizerMode.comment;
+                    return;
                 }
 
                 if (c == QuoteCharacter)
                 {
                     if (mode == TokenizerMode.quoted)
                     {
-                        mode = TokenizerMode.normal;
+                        exitMode = true;
                         return;
                     }
 
+                    FinishLastWord();
                     mode = TokenizerMode.quoted;
                     return;
                 }
@@ -94,7 +99,7 @@ namespace FilterExo.Core.Parsing
             // handling spaces and tabulators
             void HandleNormalCharacters(char c)
             {
-                if (SimpleOperators.Contains(c))
+                if (SimpleOperators.Contains(c) && mode == TokenizerMode.normal)
                 {
                     // expand existing operators
                     if (isLastWordOperator)
@@ -117,6 +122,13 @@ namespace FilterExo.Core.Parsing
 
                 isLastWordOperator = false;
                 currentWord += c;
+
+                if (exitMode)
+                {
+                    exitMode = false;
+                    FinishLastWord();
+                    mode = TokenizerMode.normal;
+                }
             }
 
             // finish the current word and add it to the CURRENT token handling list

@@ -2,6 +2,8 @@
 using FilterExo.Core.Structure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace FilterExo
@@ -38,7 +40,11 @@ namespace FilterExo
             var expressionTree = structurizer.Execute(tokenizer.Results);
 
             var structureDebugger = new StructurizerDebugger();
-            return structureDebugger.Execute(expressionTree);
+            var treeDict = structureDebugger.SelectOnTree(expressionTree, x => x.Mode);
+
+            var treeDictString = string.Join(System.Environment.NewLine, treeDict.Select(x => $"{x.Key}, {x.Value}"));
+
+            return structureDebugger.CreateTreeString(expressionTree) + System.Environment.NewLine + treeDictString;
 
             
 

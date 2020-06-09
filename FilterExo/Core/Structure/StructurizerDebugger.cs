@@ -2,13 +2,46 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace FilterExo.Core.Structure
 {
     public class StructurizerDebugger
     {
-        public string Execute(StructureExpr tree)
+        public Dictionary<string,T> SelectOnTree<T>(StructureExpr tree, Func<StructureExpr, T> transform)
+        {
+            Dictionary<string, T> dict = new Dictionary<string, T>();
+            // propagation function
+
+            RecurseInto(tree, string.Empty);
+
+            void RecurseInto(StructureExpr branch, string loc)
+            {
+                // get location identification function
+                if (branch.Mode == FilterExoConfig.StructurizerMode.root)
+                {
+                    loc = "r";
+                }
+                else
+                {
+                    loc += "." + branch.Parent.Children.IndexOf(branch);
+                }
+
+                var res = transform(branch);
+                dict.Add(loc, res);
+
+                // recurse into children
+                foreach (var leaf in branch.Children)
+                {
+                    RecurseInto(leaf, loc);
+                }
+            }
+
+            return dict;
+        }
+
+        public string CreateTreeString(StructureExpr tree)
         {
             var result = new List<string>();
 

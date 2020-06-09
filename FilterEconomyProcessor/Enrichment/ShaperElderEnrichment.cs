@@ -61,9 +61,9 @@ namespace FilterEconomyProcessor.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => maxPrice / minPrice > 25), -0.1f, 0);
 
             // item info based rules
-            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.TopBases.Contains(baseType)), 0.15f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.TopBases.Contains(baseType)), 0.25f, 0);
 
-            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.SpecialBases.Contains(baseType)), 0.15f, 0);
+            confidence += AdjustConfidenceBasedOn(data, (s => FilterPolishConfig.SpecialBases.Contains(baseType)), 0.25f, 0);
 
             Dictionary<string, string> itemInfo = null;
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(baseType))
@@ -73,26 +73,29 @@ namespace FilterEconomyProcessor.Enrichment
 
                 string itemClass = itemInfo["Class"].ToLower();
 
-                if (!FilterPolishConfig.DropLevelIgnoredClasses.Contains(itemClass) && dropLevel != 0)
+                if (!FilterPolishConfig.DropLevelIgnoredClasses.Contains(itemClass))
                 {
-                    var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
-
-                    var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);
-
-                    if (apsSorting > 0)
+                    if (dropLevel != 0)
                     {
-                        confidence += AdjustConfidenceBasedOn(data, s => apsSorting > 50,((float)apsSorting / 100) - 0.9f, 0);
+                        var apsSorting = double.Parse(itemInfo["ApsSorting"], CultureInfo.InvariantCulture);
+
+                        var lvlSorting = double.Parse(itemInfo["LevelSorting"], CultureInfo.InvariantCulture);
+
+                        if (apsSorting > 0)
+                        {
+                            confidence += AdjustConfidenceBasedOn(data, s => apsSorting > 50, ((float)apsSorting / 100) - 0.9f, 0);
+                        }
+
+                        if (lvlSorting > 0)
+                        {
+                            confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100) * 1.5f - 1.4f, 0);
+                        }
                     }
 
-                    if (lvlSorting > 0)
+                    else
                     {
-                        confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100)*1.5f - 1.4f, 0);
+                        Debug.WriteLine($"Missing BaseType DropLevel: {baseType}");
                     }
-                }
-
-                else
-                {
-                    Debug.WriteLine($"Missing BaseType: {baseType}");
                 }
 
                 confidence = (float)Math.Round((decimal)confidence, 2, MidpointRounding.AwayFromZero);

@@ -88,7 +88,7 @@ namespace FilterExo.Core.Structure
                 return Parent.GoToRoot();
             }
 
-            return this;
+            return Parent;
         }
 
         public static StructureExpr CreateScope(StructurizerScopeType scopeType, ExoToken token = null)

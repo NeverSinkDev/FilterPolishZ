@@ -2,7 +2,6 @@ using System.Linq;
 using FilterCore.Constants;
 using FilterCore.Entry;
 using FilterCore.FilterComponents.Tags;
-using NUnit.Framework.Constraints;
 
 namespace FilterCore.Commands.EntryCommands
 {

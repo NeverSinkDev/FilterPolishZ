@@ -15,7 +15,6 @@ namespace FilterExo.Core.Structure
             int tokenCol = 0;
 
             StructureExpr cursor = new StructureExpr();
-            StructureExpr expr = new StructureExpr();
             
             cursor.Mode = FilterExoConfig.StructurizerMode.root;
 
@@ -50,7 +49,6 @@ namespace FilterExo.Core.Structure
             {
                 if (token.value == ";")
                 {
-                    // !!!
                     TreatLineEnd(";");
                     return true;
                 }
@@ -80,7 +78,10 @@ namespace FilterExo.Core.Structure
                 if (token.value == "}")
                 {
                     var target = cursor.GetParent();
-                    target.DestroyLastChild();
+                    if (target.Children.Count > 0 && target.Children.Last().ScopeType == FilterExoConfig.StructurizerScopeType.impl && target.Children.Last().Children.Count == 0)
+                    {
+                        target.DestroyLastChild();
+                    }
 
                     cursor = cursor.GetExplParent();
                     cursor = cursor.GetParent();
