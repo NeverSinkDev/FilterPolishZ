@@ -241,6 +241,10 @@
       <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
       <Name>FilterEconomy</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FilterExo\FilterExo.csproj">
+      <Project>{E0A34C50-8845-479F-B4CE-0EEFB3B4156F}</Project>
+      <Name>FilterExo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
       <Project>{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}</Project>
       <Name>FilterPolishUtil</Name>
