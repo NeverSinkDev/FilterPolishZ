@@ -21,6 +21,8 @@ namespace AzurePolishFunctions
         public string RepoName {get; set;}
         public string League { get; set; }
 
+        public string RepoFolder { get; set; } = string.Empty;
+
         public bool PublishPrice = true;
 
         public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
@@ -32,7 +34,7 @@ namespace AzurePolishFunctions
             this.League = league;
         }
         
-        public void Run(FileRequestResult dataRes)
+        public void Init(FileRequestResult dataRes)
         {
             if (dataRes != FileRequestResult.Success)
             {
@@ -70,27 +72,42 @@ namespace AzurePolishFunctions
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
-
-            var task = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
-            task.Wait();
+            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            filterWriter.Wait();
 
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
 
-            LoggingFacade.LogInfo($"Starting publishing!");
+            this.RepoFolder = repoFolder;
 
-            PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade: done");
+            LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
+        }
 
-            PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
-
-            PushToGit(repoFolder, PublishPrice);
-            LoggingFacade.LogInfo($"Publishing to GitHub: done");
-            
-            UploadToPoe(repoFolder);
+        public void PublishToLadder()
+        {
+            LoggingFacade.LogInfo($"PoeUpload: starting");
+            UploadToPoe(RepoFolder);
             LoggingFacade.LogInfo($"PoeUpload: done");
+        }
 
-            // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
+        public void PublishToGitHub()
+        {
+            LoggingFacade.LogInfo($"GitUpdate: starting");
+            PushToGit(this.RepoFolder, PublishPrice);
+            LoggingFacade.LogInfo($"GitUpdate: done");
+        }
+
+        public void PublishToFilterBlade()
+        {
+            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
+            PushToFTP("www", RepoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade: done");
+        }
+
+        public void PublishToFilterBladeBETA()
+        {
+            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
+            PushToFTP("beta", RepoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade: done");
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)

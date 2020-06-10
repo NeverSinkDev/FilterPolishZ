@@ -29,6 +29,7 @@ namespace AzurePolishFunctions
         public static TierListFacade TierListFacade { get; set; }
         public static FilterAccessFacade FilterAccessFacade { get; set; }
         public static DataFileRequestFacade DataFiles { get; set; }
+        public static FilterPublisher Publisher { get; set; }
 
         public static LoggingFacade Logging { get; set; }
 
@@ -151,7 +152,22 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting publishing...");
 
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType).Run(dataRes);
+            Publisher = new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType);
+
+            LoggingFacade.LogInfo($"[DEBUG] Initializing Publisher...");
+            Publisher.Init(dataRes);
+
+            LoggingFacade.LogInfo($"[DEBUG] LadderPublishing:");
+            Publisher.PublishToLadder();
+
+            LoggingFacade.LogInfo($"[DEBUG] GitHub:");
+            Publisher.PublishToGitHub();
+
+            LoggingFacade.LogInfo($"[DEBUG] FilterBlade:");
+            Publisher.PublishToFilterBlade();
+
+            LoggingFacade.LogInfo($"[DEBUG] FilterBlade Beta:");
+            Publisher.PublishToFilterBladeBETA();
         }
     }
 }
