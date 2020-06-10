@@ -61,17 +61,6 @@
   <PropertyGroup>
     <ApplicationIcon>2942999_SwB_icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MetaDebug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\MetaDebug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
@@ -251,10 +240,6 @@
     <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj">
       <Project>{C0372637-8FD2-450A-B084-FEF2512FEF1F}</Project>
       <Name>FilterEconomy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FilterExo\FilterExo.csproj">
-      <Project>{E0A34C50-8845-479F-B4CE-0EEFB3B4156F}</Project>
-      <Name>FilterExo</Name>
     </ProjectReference>
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj">
       <Project>{FB9B4F87-458E-4FEA-9A55-32C56DD02B7C}</Project>
