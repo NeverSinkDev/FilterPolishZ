@@ -43,6 +43,7 @@ namespace AzurePolishFunctions
 
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
+            this.RepoFolder = repoFolder;
 
             LoggingFacade.LogInfo($"Tempfolder prepared");
 
@@ -77,8 +78,6 @@ namespace AzurePolishFunctions
             filterWriter.Wait();
 
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
-
-            this.RepoFolder = repoFolder;
 
             LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
         }
