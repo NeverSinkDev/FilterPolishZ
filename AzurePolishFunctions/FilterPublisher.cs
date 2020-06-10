@@ -54,7 +54,7 @@ namespace AzurePolishFunctions
             if (Directory.Exists(repoFolder))
             {
                 LoggingFacade.LogInfo($"Repo folder existing... renewing");
-                Directory.Delete(repoFolder);
+                DeleteDirectory(repoFolder);
 //                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
 //                using (var repo = new Repository(repoFolder))
 //                {
@@ -81,6 +81,8 @@ namespace AzurePolishFunctions
 
             LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
         }
+
+
 
         public void PublishToLadder()
         {
