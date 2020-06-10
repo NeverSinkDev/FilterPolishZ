@@ -18,12 +18,12 @@ steps:
 
 - task: NuGetToolInstaller@1
   inputs:
-    versionSpec: '4.4.1'
+    versionSpec: '4.x'
 
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
+    restoreSolution: '**/FilterPolishZ-Solution.sln'
 
 - task: VSBuild@1
   inputs:
