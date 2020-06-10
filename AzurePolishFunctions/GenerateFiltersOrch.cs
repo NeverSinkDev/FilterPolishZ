@@ -22,7 +22,7 @@ namespace AzurePolishFunctions
             var outputs = new List<string>();
 
             // calls filters
-            outputs.Add(await context.CallActivityAsync<string>("GenerateFilters", data));
+            outputs.Add(await context.CallActivityAsync<string>("GenerateFiltersDurr", data));
 
             return outputs;
         }

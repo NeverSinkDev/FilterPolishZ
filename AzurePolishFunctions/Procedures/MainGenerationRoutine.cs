@@ -1,30 +1,22 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using FilterEconomy.Facades;
+﻿using AzurePolishFunctions.DataFileRequests;
 using FilterCore;
-using FilterEconomyProcessor;
-using System.Linq;
-using System.Collections.Generic;
-using FilterPolishUtil.Collections;
-using FilterEconomy.Model;
-using AzurePolishFunctions.DataFileRequests;
 using FilterCore.Constants;
+using FilterEconomy.Facades;
+using FilterEconomyProcessor;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace AzurePolishFunctions
+namespace AzurePolishFunctions.Procedures
 {
-    public static class GenerateFilters
+    public class MainGenerationRoutine
     {
-        public static EconomyRequestFacade EconomyData { get; set; } 
+        public static EconomyRequestFacade EconomyData { get; set; }
         public static ItemInformationFacade ItemInfoData { get; set; }
         public static TierListFacade TierListFacade { get; set; }
         public static FilterAccessFacade FilterAccessFacade { get; set; }
@@ -33,31 +25,12 @@ namespace AzurePolishFunctions
 
         public static LoggingFacade Logging { get; set; }
 
-        [FunctionName("GenerateFilters")]
-        public static string Run([ActivityTrigger] string req, ILogger log)
+        public void Execute(string req, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            Logging?.Clean();
+            // Logging?.Clean();
             Logging = LoggingFacade.GetInstance();
-
             Logging.SetCustomLoggingMessage((s) => log.LogInformation(s));
 
-            try
-            {
-                PerformMainRoutine(req);
-                return "finished generation succesfully!";
-            }
-            catch (Exception e)
-            {
-                LoggingFacade.LogError("ERRROR: " + e.Message);
-                return e.Message;
-            }
-        }
-
-        public static void PerformMainRoutine(string req)
-        {
-            // 0) Cleanup
             EconomyData?.Clean();
             ItemInfoData?.Clean();
             TierListFacade?.Clean();
@@ -133,7 +106,7 @@ namespace AzurePolishFunctions
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
                 FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
-                
+
                 // EconomyData.PerformClassAbstractionProcedures();
 
                 TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());

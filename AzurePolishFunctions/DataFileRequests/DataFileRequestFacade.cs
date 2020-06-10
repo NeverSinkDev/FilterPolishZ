@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AzurePolishFunctions.Procedures;
 using FilterCore;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
@@ -62,7 +63,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
         private FileRequestResult LoadEcoData(string league, string leagueType)
         {
-            var result = GenerateFilters.EconomyData;
+            var result = MainGenerationRoutine.EconomyData;
 
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {

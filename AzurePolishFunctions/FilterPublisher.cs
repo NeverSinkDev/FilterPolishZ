@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using AzurePolishFunctions.DataFileRequests;
+using AzurePolishFunctions.Procedures;
 using FilterCore;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
@@ -74,7 +75,7 @@ namespace AzurePolishFunctions
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
-            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(MainGenerationRoutine.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
             filterWriter.Wait();
 
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
@@ -101,14 +102,14 @@ namespace AzurePolishFunctions
         public void PublishToFilterBlade()
         {
             LoggingFacade.LogInfo($"Publishing to filterblade: starting");
-            PushToFTP("www", RepoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            PushToFTP("www", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
             LoggingFacade.LogInfo($"Publishing to filterblade: done");
         }
 
         public void PublishToFilterBladeBETA()
         {
             LoggingFacade.LogInfo($"Publishing to filterblade: starting");
-            PushToFTP("beta", RepoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
+            PushToFTP("beta", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
             LoggingFacade.LogInfo($"Publishing to filterblade: done");
         }
 
