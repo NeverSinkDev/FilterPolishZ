@@ -25,8 +25,6 @@ namespace AzurePolishFunctions
 
         public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
 
-        public static HttpClient StaticHttpClient = new HttpClient();
-
         public FilterPublisher(Filter filter, string repoName, string league)
         {
             this.RepoName = repoName;
@@ -276,7 +274,7 @@ namespace AzurePolishFunctions
             
             LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
             
-            var resp = StaticHttpClient.PostAsJsonAsync(url, body);
+            var resp = FileDownloader.StaticHttpClient.PostAsJsonAsync(url, body);
             resp.Wait();
             if (resp.Result.StatusCode != HttpStatusCode.OK)
             {

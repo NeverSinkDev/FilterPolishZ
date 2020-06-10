@@ -46,7 +46,7 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
-        public void StructurizerDictRootLevelTests()
+        public void StructurizerCorrectTreeGenTest()
         {
             var input = new List<string>()
             {
@@ -62,10 +62,13 @@ namespace FilterPolishTestRunner
             };
 
             var result = Structurize(input);
-            var treeDict = StructurizerDebugger.SelectOnTree(result, x => x.Mode);
+            var treeDict = StructurizerDebugger.SelectOnTree(result, x => x.Mode.ToString() + x.ScopeType.ToString());
 
             Assert.IsNotNull(treeDict);
-            Assert.IsTrue(treeDict["r"] == FilterExo.FilterExoConfig.StructurizerMode.root);
+            Assert.IsTrue(treeDict["r"] == "rootnone");
+            Assert.IsTrue(treeDict["r.0.0"] == "scopexpl");
+            Assert.IsTrue(treeDict["r.0.0.4.0"] == "scopexpl");
+            Assert.IsTrue(treeDict.Count > 30);
         }
 
         private StructureExpr Structurize(List<string> input)
