@@ -8,11 +8,12 @@
     <Copyright>By NeverSink, MIT Licenced</Copyright>
     <PackageProjectUrl>https://github.com/NeverSinkDev/FilterPolishZ</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NeverSinkDev/FilterPolishZ</RepositoryUrl>
+    <Configurations>Debug;Release;MetaDebug</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.12.0" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />

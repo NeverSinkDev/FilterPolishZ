@@ -71,7 +71,7 @@
                                     <Button Content="Open seed file" Click="SelectSeedFilterFile"/>
                                     <Button Content="Save current as unnamed" Click="SaveSeedFileAsUnnamed"/>
                                     <Button Content="Save current as..." Click="SaveSeedFilterAs"/>
-                                </StackPanel>
+                                    </StackPanel>
                                 
                             </materialDesign:PopupBox>
 
@@ -128,7 +128,10 @@
                                     <Button ToolTip="Copy filters from output to project folder" Click="CopyResultsToGitHubFolder">
                                         <materialDesign:PackIcon Kind="Git" />
                                     </Button>
-
+                                    <Separator/>
+                                        <Button ToolTip="Load Metafilter DebugMode" Click="LoadMetaFilter">
+                                            <materialDesign:PackIcon Kind="Gavel" />
+                                        </Button>
                                     </ToolBar>
                             </ToolBarTray>
 

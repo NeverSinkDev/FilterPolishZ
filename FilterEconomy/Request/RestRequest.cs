@@ -1,8 +1,10 @@
-﻿using System;
+﻿using FilterPolishUtil;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,12 +26,21 @@ namespace FilterEconomy.Request
 
         public string Execute()
         {
-            return PerformRequest(this.Path);
+            return PerformRequestHTTPREQ(this.Path);
         }
 
         private static string PerformRequest(string url)
         {  
             return new WebClient() { Encoding = Encoding.UTF8 }.DownloadString(url);
+        }
+
+        private static string PerformRequestHTTPREQ(string url)
+        {
+            var client = FileDownloader.StaticHttpClient;
+
+            var dlTask = client.GetStringAsync(url);
+            dlTask.Wait();
+            return dlTask.Result;
         }
 
         private async Task<string> PerformAsyncRequest(string url)

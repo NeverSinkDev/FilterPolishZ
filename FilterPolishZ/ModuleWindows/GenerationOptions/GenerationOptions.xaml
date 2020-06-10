@@ -13,7 +13,7 @@
              Background="{DynamicResource MaterialDesignPaper}">
     
     <Grid>
-        <Label>hallo test label</Label>
+        <RichTextBox x:Name="StructureText"></RichTextBox>
     </Grid>
     
 </UserControl>

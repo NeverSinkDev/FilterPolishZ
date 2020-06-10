@@ -8,7 +8,7 @@ namespace FilterEconomyProcessor.RuleSet
     {
         public static FilterEconomyRuleSet Generate(ConcreteEconomyRules ruleHost, string segment)
         {
-            float valueMultiplierEffectiveness = 0.4f;
+            float valueMultiplierEffectiveness = 0.2f;
 
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection(segment)
@@ -64,14 +64,14 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     var price = GetPrice(82) * (1 + ((builder.Item.ValueMultiplier - 1) * valueMultiplierEffectiveness));
-                    return price > FilterPolishConfig.BaseTypeT2BreakPoint;
+                    return price > FilterPolishConfig.BaseTypeT2BreakPoint * 1.2;
                 }), group: "t2");
 
 
             builder.AddRule("t2-85", "t2-2",
                 new Func<string, bool>((string s) =>
                 {
-                    var price = Math.Max(GetPrice(86),GetPrice(85)) * (1 + ((builder.Item.ValueMultiplier - 1) * valueMultiplierEffectiveness));
+                    var price = (GetPrice(85) + GetPrice(86) / 2) * (1 + ((builder.Item.ValueMultiplier - 1) * valueMultiplierEffectiveness));
                     return price > FilterPolishConfig.BaseTypeT2BreakPoint;
                 }), group: "t2");
 

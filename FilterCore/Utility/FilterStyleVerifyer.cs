@@ -6,7 +6,7 @@ using FilterCore.Line;
 using FilterCore.Line.Parsing;
 using FilterPolishUtil.Extensions;
 
-namespace FilterCore.Tests
+namespace FilterCore.Utility
 {
     /// <summary>
     /// This class scans and verifies the different styles of the filter.

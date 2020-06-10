@@ -1,11 +1,10 @@
-﻿using FilterCore.Line;
+﻿using FilterCore;
+using FilterCore.Line;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace FilterCore.Tests
+namespace FilterPolishTestRunner.Util
 {
     public static class TestUtils
     {
