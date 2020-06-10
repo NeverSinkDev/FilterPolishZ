@@ -26,7 +26,7 @@ namespace FilterEconomy.Request
 
         public string Execute()
         {
-            return PerformRequest(this.Path);
+            return PerformRequestHTTPREQ(this.Path);
         }
 
         private static string PerformRequest(string url)
