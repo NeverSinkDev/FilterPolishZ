@@ -83,10 +83,6 @@ namespace AzurePolishFunctions
 
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
 
-            // string body = new StreamReader(req.Body).ReadToEnd();
-            // var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
-            // var leagueType = GetReqParams(req, data.leagueType, "leagueType", "tmpstandard");
-
             dynamic data = JsonConvert.DeserializeObject(req);
 
             string leagueType = data.leagueType ?? "tmpstandard";
@@ -156,33 +152,6 @@ namespace AzurePolishFunctions
 
             // 8) Generate and Upload Filters
             new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType).Run(dataRes);
-        }
-
-        private static string GetReqParams(string req, dynamic data, string name, string defValue)
-        {
-            string result = string.Empty;
-
-            result = req;
-
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
-
-            result = data?[name];
-
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
-
-            result = Environment.GetEnvironmentVariable(name);
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
-
-            return defValue;
         }
     }
 }

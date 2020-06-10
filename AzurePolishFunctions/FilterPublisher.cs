@@ -70,7 +70,10 @@ namespace AzurePolishFunctions
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
-            FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+
+            var task = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            task.Wait();
+
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
 
             LoggingFacade.LogInfo($"Starting publishing!");

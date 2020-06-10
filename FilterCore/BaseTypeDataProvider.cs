@@ -122,7 +122,6 @@ namespace FilterCore.Constants
         private static void EnrichItemsWithBestBaseTypeInformation(Dictionary<string, List<Dictionary<string, string>>> results, List<string> keys)
         {
             HashSet<string> resultingBases = new HashSet<string>();
-            bool apsRelevant = false;
 
             foreach (var itemtype in results)
             {
@@ -164,11 +163,6 @@ namespace FilterCore.Constants
 
                 foreach (var itemgroup in itemgroups)
                 {
-                    if (itemgroup.Value.FirstOrDefault().ContainsKey("ApsSorting"))
-                    {
-                        apsRelevant = true;
-                    }
-
                     var rawingridients = itemgroup.Value
                         .Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]))
                         .Select(x => new { value = x, lvlSort = float.Parse(x["LevelSorting"]), apsSort = float.Parse(x["ApsSorting"]) });

@@ -37,7 +37,7 @@ namespace AzurePolishFunctions
             var jsonInput = await req.Content.ReadAsStringAsync();
             if (string.IsNullOrEmpty(jsonInput)) jsonInput = "{}";
 
-            string instanceId = await starter.StartNewAsync("GenerateFiltersOrch", null, jsonInput);
+            string instanceId = await starter.StartNewAsync("GenerateFiltersOrch", "filterBuilder", jsonInput);
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
