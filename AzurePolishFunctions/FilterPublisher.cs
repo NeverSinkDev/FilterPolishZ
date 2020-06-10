@@ -52,18 +52,19 @@ namespace AzurePolishFunctions
             // and push the update as the actual small changes.
             if (Directory.Exists(repoFolder))
             {
-                LoggingFacade.LogInfo($"Repo folder existing... pulling");
-                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
-                using (var repo = new Repository(repoFolder))
-                {
-                    var options = new PullOptions();
-                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
-                    LoggingFacade.LogInfo($"Pulling done");
-                }
+                LoggingFacade.LogInfo($"Repo folder existing... renewing");
+                Directory.Delete(repoFolder);
+//                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
+//                using (var repo = new Repository(repoFolder))
+//                {
+//                    var options = new PullOptions();
+//                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+//                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+//                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
+//                    LoggingFacade.LogInfo($"Pulling done");
+//                }
             }
-            else
+            
             {
                 LoggingFacade.LogInfo($"Repo folder not existing... cloning");
                 Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
