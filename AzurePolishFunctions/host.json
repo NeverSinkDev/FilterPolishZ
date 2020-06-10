@@ -1,4 +1,7 @@
 {
-    "version": "2.0",
-    "functionTimeout": "00:30:00"
+  "version": "2.0",
+  "functionTimeout": "00:30:00",
+  "durableTask": {
+    "logReplayEvents": true
+  }
 }
