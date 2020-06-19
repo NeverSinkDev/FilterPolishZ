@@ -39,7 +39,7 @@ namespace AzurePolishFunctions
             catch (Exception e)
             {
                 LoggingFacade.LogError("ERROR: " + e.Message);
-                return e.Message;
+                return e.ToString();
             }
         }
     }
