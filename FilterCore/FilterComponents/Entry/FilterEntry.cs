@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FilterCore.Constants;
 using FilterDomain.LineStrategy;
+using System.Runtime.CompilerServices;
 
 namespace FilterCore.Entry
 {
@@ -96,6 +97,11 @@ namespace FilterCore.Entry
             entry.Content = new FilterEntryDataContent();
             entry.Content.Content = new Dictionary<string, List<IFilterLine>>();
             return entry;
+        }
+
+        public static FilterEntry CreateDataEntry(string initialLineText)
+        {
+            return CreateDataEntry(initialLineText.ToFilterLine());
         }
 
         public static FilterEntry CreateCommentEntry(IFilterLine line)

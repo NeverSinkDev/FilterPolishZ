@@ -56,12 +56,10 @@ namespace AzurePolishFunctions.Procedures
             // 1) Acquire Data
 
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
-
             dynamic data = JsonConvert.DeserializeObject(req);
 
             string leagueType = data.leagueType ?? "tmpstandard";
             string repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
-
             string league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
 
             LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");
@@ -71,16 +69,19 @@ namespace AzurePolishFunctions.Procedures
 
             FilterPolishConfig.ApplicationExecutionMode = ExecutionMode.Function;
 
+            DataFiles = new DataFileRequestFacade();
+
             if (localMode == "true")
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.Dynamic;
+                DataFiles.BaseStoragePath = @"C:\FilterOutput\EcoData";
             }
             else
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
             }
 
-            DataFiles = new DataFileRequestFacade();
+            
             LoggingFacade.LogInfo($"[CONFIG] FileRequestFacade Created!");
 
             FileRequestResult dataRes = DataFiles.GetAllFiles(league, leagueType);

@@ -429,7 +429,7 @@ namespace FilterPolishZ
             this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
             var output = this.FilterExoFacade.Execute();
 
-            GenerationOptions.DebugText = output;
+            GenerationOptions.TextSources = output;
             EventGrid.Publish();
 
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)

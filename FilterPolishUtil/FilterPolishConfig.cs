@@ -102,6 +102,12 @@ namespace FilterPolishUtil
         /// </summary>
         public static float TieringEnablingExaltedOrbPrice = 35f;
 
+
+        /// <summary>
+        /// Checks if we're using early League Mode
+        /// </summary>
+        public static bool IsEarlyLeague = false;
+
         /// <summary>
         /// Useful for easy acquiring the section names above, without redundancy
         /// </summary>

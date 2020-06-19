@@ -11,9 +11,30 @@
              TextOptions.TextFormattingMode="Ideal" 
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
-    
-    <Grid>
-        <RichTextBox x:Name="StructureText"></RichTextBox>
-    </Grid>
-    
+
+    <DockPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ToolBarTray Grid.Row="0">
+                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                    <Button ToolTip="Re-Open File Info" Click="Refresh">
+                        <materialDesign:PackIcon Kind="FolderOpen" Foreground="Aqua" />
+                    </Button>
+
+                    <Separator />
+
+                    <ComboBox SelectedIndex="0" SelectionChanged="Refresh" x:Name="SelectionKeys">
+                    </ComboBox>
+                </ToolBar>
+            </ToolBarTray>
+        <Grid Grid.Row="1">
+            <RichTextBox x:Name="StructureText"></RichTextBox>
+        </Grid>
+        </Grid>
+    </DockPanel>
+
 </UserControl>

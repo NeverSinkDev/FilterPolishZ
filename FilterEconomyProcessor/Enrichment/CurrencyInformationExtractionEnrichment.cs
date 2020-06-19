@@ -18,9 +18,9 @@ namespace FilterEconomyProcessor.Enrichment
             {
                 var cPrice = data.Where(x => x.Name == "Exalted Orb")?.FirstOrDefault()?.CVal;
 
-                if (EconomyRequestFacade.GetInstance().IsEarlyLeague() && cPrice > 75)
+                if (EconomyRequestFacade.GetInstance().IsEarlyLeague() && cPrice > 60)
                 {
-                    cPrice = 75;
+                    cPrice = 60;
                 }
 
                 if (cPrice != null && cPrice > 30)

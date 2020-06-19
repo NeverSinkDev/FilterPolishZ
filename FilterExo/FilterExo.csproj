@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\" />
+    <ProjectReference Include="..\FilterCore\FilterCore.csproj" />
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />
   </ItemGroup>
 
 </Project>

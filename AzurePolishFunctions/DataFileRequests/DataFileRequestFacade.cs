@@ -20,6 +20,9 @@ namespace AzurePolishFunctions.DataFileRequests
         public Dictionary<string, List<string>> ItemAspects { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
+
+        public string BaseStoragePath = string.Empty;
+
         public List<string> SeedFilter { get; set; }
         public string LeagueType { get; set; }
 
@@ -73,7 +76,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
             FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url)
             {
-                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, null);
+                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, BaseStoragePath);
                 if (ecoData == null) return FileRequestResult.Ecoless;
                 result.AddToDictionary(dictionaryKey, ecoData);
                 return FileRequestResult.Success;

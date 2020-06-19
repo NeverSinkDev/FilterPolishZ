@@ -3,6 +3,7 @@ using FilterEconomyProcessor;
 using FilterEconomyProcessor.RuleSet;
 using FilterPolishUtil;
 using System;
+using System.Collections.Generic;
 
 namespace FilterPolishZ.Economy.RuleSet
 {
@@ -30,7 +31,6 @@ namespace FilterPolishZ.Economy.RuleSet
                     return price > FilterPolishConfig.DiviT1BreakPoint;
                 }));
 
-
             builder.AddRule("t2", "t2",
                 new Func<string, bool>((string s) =>
                 {
@@ -43,6 +43,8 @@ namespace FilterPolishZ.Economy.RuleSet
                 {
                     return builder.Item.HasAspect("SingleCardAspect");
                 }));
+
+            builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
 
             builder.AddRule("t3", "t3",
                 new Func<string, bool>((string s) =>
@@ -60,6 +62,7 @@ namespace FilterPolishZ.Economy.RuleSet
                 }));
 
             builder.AddEarlyLeagueHandling("t3");
+            builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string>() { "t1", "t2" }, "earlyProtHIGH");
 
             builder.AddRule("CurrencySaveT4", "t4c",
                 new Func<string, bool>((string s) =>
@@ -94,11 +97,15 @@ namespace FilterPolishZ.Economy.RuleSet
                     return false;
                 }));
 
+            builder.AddEarlyLeagueProtectionBlock("t4", new HashSet<string>() { "t3" }, "earlyProtLOW");
+
             builder.AddRule("CurrencySaveT5", "t5c",
                 new Func<string, bool>((string s) =>
                 {
                     return builder.Item.HasAspect("CurrencyTypeAspect");
                 }));
+
+            builder.AddSimpleAspectContainerRule("EARLYNerfAspect", "t2", "NerfAspect");
 
             builder.AddRule("RandomSave", "t4",
                 new Func<string, bool>((string s) =>
