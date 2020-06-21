@@ -14,6 +14,7 @@ namespace FilterEconomyProcessor.RuleSet
                 .SetSection(segment)
                 .UseCustomQuery(((s) => ruleHost.EconomyInformation.EconomyTierlistOverview["generalcrafting"][s]))
                 .AddDefaultPostProcessing()
+                .SkipInEarlyLeague()
                 .OverrideMinimalExaltedPriceThreshhold(60)
                 .AddDefaultIntegrationTarget();
 

@@ -58,8 +58,8 @@ namespace AzurePolishFunctions.Procedures
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
             dynamic data = JsonConvert.DeserializeObject(req);
 
-            string leagueType = data.leagueType ?? "tmpstandard";
-            string repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
+            string leagueType = data.leagueType ?? Environment.GetEnvironmentVariable("leagueType", EnvironmentVariableTarget.Process) ?? "tmpstandard";
+            string repoName = data.repoName ?? Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter";
             string league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
 
             LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");

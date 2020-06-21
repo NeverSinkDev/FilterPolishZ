@@ -59,6 +59,11 @@ namespace FilterEconomy.Facades
 
         public List<string> GetTiersForBasetype(string group, string basetype)
         {
+            if (!TierListData[group].ItemTiering.ContainsKey(basetype))
+            {
+                return new List<string>();
+            }
+
             return TierListData[group].ItemTiering[basetype];
         }
 
