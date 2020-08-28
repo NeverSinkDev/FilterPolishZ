@@ -52,10 +52,17 @@ namespace FilterExo.Core.PreProcess
             {
                 var success = builder.Execute();
 
+                if (cursor.IsSection())
+                {
+                    WriteCursor = WriteCursor.GetParent();
+                }
+
                 if (success)
                 {
                     builder = new ExpressionBuilder(this);
                 }
+
+
             }
 
             // LOCAL: Perform work on write branch, by reading current step
@@ -76,7 +83,7 @@ namespace FilterExo.Core.PreProcess
                 // explicit scope handling
                 if (readChild.ScopeType == FilterExoConfig.StructurizerScopeType.expl)
                 {
-                    if (readChild.Value == "Section")
+                    if (readChild.IsSection())
                     {
                         var child = new ExoBlock();
                         child.Parent = this.WriteCursor;

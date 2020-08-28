@@ -3,6 +3,7 @@ using FilterCore.Entry;
 using FilterCore.Line;
 using FilterExo.Core.PreProcess.Commands;
 using FilterExo.Core.Structure;
+using FilterPolishUtil;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using static FilterExo.FilterExoConfig;
+using static FilterPolishUtil.TraceUtility;
 
 namespace FilterExo.Model
 {
@@ -60,7 +62,15 @@ namespace FilterExo.Model
             return entry;
         }
 
+        public void StoreVariable(string name, List<string> variableContent)
+        {
+            Check(FilterCore.FilterGenerationConfig.TierTagSort.ContainsKey(name), "variable uses reserved name!");
+            Check(FilterCore.FilterGenerationConfig.LineTypesSort.ContainsKey(name), "variable uses reserved name!");
+            Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(name), "variable uses reserved name!");
+            Check(name.ContainsSpecialCharacters(), "variable uses invalid characters!");
 
+            this.Variables.Add(name, new SimpleExoVariable(variableContent));
+        }
 
         public IExoVariable GetVariable(string key)
         {
@@ -112,8 +122,8 @@ namespace FilterExo.Model
         public List<string> Debug_GetSummary()
         {
             var results = new List<string>();
-
-            results.Add($"TYPE: {this.Type.ToString()}");
+            results.Add($"TYPE: {this.Type.ToString()} // CHILDREN: {this.Scopes.Count}");
+            results.Add($"VARIABLES: {string.Join(" ", this.Variables.Keys)}");
             results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
             return results;
         }

@@ -1,12 +1,14 @@
 ﻿using FilterCore.Entry;
 using FilterExo.Core.Parsing;
 using FilterExo.Core.PreProcess;
+using FilterExo.Core.PreProcess.Commands;
 using FilterExo.Core.Process;
 using FilterExo.Core.Structure;
 using FilterExo.Model;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 
@@ -53,23 +55,26 @@ namespace FilterPolishTestRunner
             {
                 "Section Incubators : IncubatorBase",
                 "{",
-                "Rule leveledex { ItemLevel >= 81; BaseType<>; };",
+                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
                 "Rule T1 { BaseType<>; };",
                 "Rule T2 { BaseType<>; };",
                 "Rule T3 { BaseType<>; };",
-                "Rule T4 { BaseType<>; };",
+                "Rule T4 { BaseType \"Exalted Orb\"; };",
                 "# Rule error;",
-                "}"
+                "}",
+                "Rule T1 { BaseType \"Scroll of Wisdom\"; };"
             };
 
             var res = this.StringToExoFilter(input);
 
             Assert.IsNotNull(res);
-            Assert.AreEqual(res.RootEntry.Scopes.Count, 5);
-            // Assert.AreEqual(res.RootEntry.Scopes[0].Commands.Count, 2);
-            // Assert.AreEqual(res.RootEntry.Scopes[0].Commands["ItemLevel"].Command, "ItemLevel");
-            // Assert.AreEqual(res.RootEntry.Scopes[0].Commands["ItemLevel"].Value[0][0], ">=");
-            // Assert.AreEqual(res.RootEntry.Scopes[0].Commands["ItemLevel"].Value[0][1], "81");
+            Assert.AreEqual(2, res.RootEntry.Scopes.Count);
+            Assert.AreEqual(5, res.RootEntry.Scopes[0].Scopes.Count);
+            Assert.AreEqual( res.RootEntry.Scopes[0].Scopes[0].Commands[0].Name, "ItemLevel");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[0].SerializeDebug(), "ItemLevel >= 81");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[1].SerializeDebug(), "BaseType \"Exalted Orb\"");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[4].Commands[0].SerializeDebug(), "BaseType \"Exalted Orb\"");
+            Assert.AreEqual(res.RootEntry.Scopes[1].Commands[0].SerializeDebug(), "BaseType \"Scroll of Wisdom\"");
         }
 
         [Test]
@@ -88,32 +93,48 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
-        public void ExoPreProcessor_TestVar()
+        public void ExoPreProcessor_SimpleVariableTests()
         {
-            var input = new List<string>()
-            {
-               @"var t1inc = ""Geomancer's Incubator"" ""Thaumaturge's Incubator"" ""Time-Lost Incubator"" ",
-                "Section Incubators : IncubatorBase",
-                "{",
-                "Rule T1 { ItemLevel >= 81; BaseType $t1inc; };",
-                "Rule T2 { BaseType $t1inc; };",
-                "# Rule error;",
-                "}",
-                "Rule T3 { BaseType $t1inc; };",
-            };
+            var input = @"# [4112] Incubator
 
-            var res = this.StringToFilterEntries(input);
+                var t1inc = ""ALPHA"" ""BETA"";
+                # var t1inc = ""Geomancer's Incubator"" ""Thaumaturge's Incubator"" ""Time-Lost Incubator"" 
+
+                Rule ONE { BaseType t1inc; };
+
+                Section Incubators : IncubatorBase
+                {
+	                var t1inc = ""GAMMA"";
+	                Rule TWO { BaseType t1inc; };
+
+	                Rule THREE { ItemLevel >= 81; BaseType t1inc; };
+	                # Rule error;
+
+	                Rule FOUR { BaseType t1inc; };
+                }";
+
+            // var res = this.StringToFilterEntries(input.Split(System.Environment.NewLine).ToList());
+
+            var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
             Assert.IsNotNull(res);
+            Assert.AreEqual(2, res.RootEntry.Scopes.Count);
 
-            //Assert.IsNotNull(res);
-            //Assert.AreEqual(res.RootEntry.Scopes.Count,5);
-            //Assert.AreEqual(res.RootEntry.Scopes[0].FormattedValue.Content.Content.Count,2);
-            //Assert.AreEqual(res.RootEntry.Scopes[1].FormattedValue.Content.Content.Count,1);
-            //Assert.IsTrue(res.RootEntry.Scopes[0].FormattedValue.Content.Content.ContainsKey("ItemLevel"));
-            //Assert.IsTrue(res.RootEntry.Scopes[0].FormattedValue.Content.Content.ContainsKey("BaseType"));
-            //Assert.IsTrue(res.RootEntry.Scopes[0].FormattedValue.Content.Content["ItemLevel"][0].Serialize() == "ItemLevel >= 81");
-            //Assert.AreEqual(res.RootEntry.Scopes[1].FormattedValue.Content.Content.Count,1);
+            // OUTER SCOPE
+            Assert.AreEqual(new List<string>() { "\"ALPHA\"", "\"BETA\"" }, res.RootEntry.Variables["t1inc"].GetValue());
+
+            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].Name, "BaseType");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].SerializeDebug(), "BaseType \"ALPHA\" \"BETA\"");
+
+            // INNER SCOPE
+            Assert.AreEqual(new List<string>() { "\"GAMMA\"" }, res.RootEntry.Scopes[1].Variables["t1inc"].GetValue());
+
+            Assert.AreEqual(3, res.RootEntry.Scopes[1].Scopes.Count);
+            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
+            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
+            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[1].Commands[0].SerializeDebug(), "ItemLevel >= 81");
+            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[1].Commands[1].SerializeDebug(), "BaseType \"GAMMA\"");
+            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[2].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
         }
     }
 }

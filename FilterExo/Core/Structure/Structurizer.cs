@@ -89,7 +89,7 @@ namespace FilterExo.Core.Structure
                     cursor.Children.Add(scope);
 
                     // Add children as descriptors
-                    scope.Properties.Add("descriptor", children);
+                    scope.PropertyExpression.AddRange(children);
                     cursor = scope;
 
                     return true;

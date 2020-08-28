@@ -10,21 +10,22 @@ namespace FilterExo.Core.PreProcess
         public List<string> Execute(ExoFilter exo)
         {
             var results = new List<string>();
-            ProcessChildren(exo.RootEntry);
+            ProcessBranch(exo.RootEntry);
             return results;
 
-            void ProcessChildren(ExoBlock entry)
+            void ProcessBranch(ExoBlock entry)
             {
+                ProcessBlock(entry);
                 foreach (var item in entry.Scopes)
                 {
-                    ProcessSingleChild(item);
-                    ProcessChildren(item);
+                    ProcessBranch(item);
                 }
             }
 
-            void ProcessSingleChild(ExoBlock entry)
+            void ProcessBlock(ExoBlock entry)
             {
                 results.AddRange(entry.Debug_GetSummary());
+                results.AddRange(new List<string>());
             }
         }
     }

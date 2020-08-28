@@ -22,19 +22,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             var variableInfo = this.HandleBefore(split.before);
             var variableContent = this.HandleAfter(split.after);
 
-            StoreVariable(builder, variableInfo, variableContent);
-        }
-
-        private static void StoreVariable(ExpressionBuilder builder, (string name, string type) variableInfo, List<string> variableContent)
-        {
-            Check(FilterCore.FilterGenerationConfig.TierTagSort.ContainsKey(variableInfo.name), "variable uses reserved name!");
-            Check(FilterCore.FilterGenerationConfig.LineTypesSort.ContainsKey(variableInfo.name), "variable uses reserved name!");
-            Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(variableInfo.name), "variable uses reserved name!");
-            Check(variableInfo.name.ContainsSpecialCharacters(), "variable uses invalid characters!");
-
-            builder.Owner.WriteCursor.Variables.Add(
-                variableInfo.name, 
-                new SimpleExoVariable(variableContent));
+            builder.Owner.WriteCursor.StoreVariable(variableInfo.name, variableContent);
         }
 
         private List<string> HandleAfter(List<StructureExpr> after)

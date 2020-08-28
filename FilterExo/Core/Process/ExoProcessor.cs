@@ -20,7 +20,10 @@ namespace FilterExo.Core.Process
             {
                 foreach (var readChild in cursor.Scopes)
                 {
-                    DoWorkOnReadChild(readChild);
+                    if (readChild.Commands.Count > 0)
+                    {
+                        DoWorkOnReadChild(readChild);
+                    }
 
                     if (readChild.Scopes.Count > 0)
                     {
