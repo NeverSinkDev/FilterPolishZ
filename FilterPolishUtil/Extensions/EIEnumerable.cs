@@ -42,6 +42,18 @@ namespace FilterPolishUtil.Extensions
             }
         }
 
+        public static (List<T> before, List<T> after) SplitBy<T>(this List<T> me, Predicate<T> search)
+        {
+            var index = me.FindIndex(search);
+            if (index == -1)
+            {
+                return (null, null);
+            }
+
+            return (me.Take(index).ToList(), me.Skip(index + 1).ToList());
+
+        }
+
         public static T Not<T,T1>(this T collection, T1 except) where T : ICollection<T1>, new() where T1 : IComparable
         {
             T result = new T();

@@ -60,21 +60,23 @@ namespace FilterExo
             }
 
             // 1.5) BUILD -LOGICAL- CONCRETE STRUCTURE
+
             // 2) RESOLVE DEPEDENCIES
 
             var exoPreProc = new ExoPreProcessor();
             var exoFilter = exoPreProc.Execute(expressionTree);
 
+            results.Add("ExoPreProcessor", string.Join(System.Environment.NewLine, new ExoPreProcessorDebugger().Execute(exoFilter)));
+
             // 3) COMPILE INTO SEEDFILTER
 
             var exoProcessor = new ExoProcessor();
             var seedFilter = exoProcessor.Execute(exoFilter);
+            var serializedSeedFilter = seedFilter.SelectMany(x => x.Serialize()).ToList();
 
-            results.Add("ExoOutput", string.Join(System.Environment.NewLine, seedFilter));
+            results.Add("ExoOutput", string.Join(System.Environment.NewLine, serializedSeedFilter));
 
             return results;
-
-
         }
     }
 }

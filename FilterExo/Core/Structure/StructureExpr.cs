@@ -14,9 +14,9 @@ namespace FilterExo.Core.Structure
 
         }
 
-        public StructureExpr(ExoToken token)
+        public StructureExpr(ExoToken token, StructurizerMode mode = StructurizerMode.atom)
         {
-            Mode = StructurizerMode.atom;
+            Mode = mode;
             Value = token.value;
             this.PrimitiveValue = token;
         }
@@ -59,6 +59,18 @@ namespace FilterExo.Core.Structure
             child.Parent = this;
             this.Children.Add(child);
             return this;
+        }
+
+        public string GetFirstPropertyDescriptor()
+        {
+            if (!this.Properties.ContainsKey("descriptor"))
+            {
+                return string.Empty;
+            }
+
+            var properties = this.Properties["descriptor"];
+            var rule = properties.FirstOrDefault();
+            return rule.PrimitiveValue.value;
         }
 
         public StructureExpr PackageAtomicChildren()

@@ -1,5 +1,4 @@
-﻿using FilterExo.Core.Process.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,10 +7,6 @@ namespace FilterExo
     public static class FilterExoConfig
     {
         // PROCESSOR
-        public static Dictionary<string, IEXC> ExoCommandDict = new Dictionary<string, IEXC>()
-        {
-            { "Rule", new RuleIEXC() }
-        };
 
         public enum ExoFilterType
         {
