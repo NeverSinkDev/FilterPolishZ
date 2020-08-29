@@ -33,9 +33,6 @@ namespace FilterExo.Model
         {
             var entry = FilterEntry.CreateDataEntry("Show");
 
-            ResolveVariables();
-            ResolveStyleFile();
-
             foreach (var comm in this.Commands)
             {
                 switch (comm.Type)
@@ -50,16 +47,6 @@ namespace FilterExo.Model
                     default:
                         break;
                 }
-            }
-
-            void ResolveVariables()
-            {
-
-            }
-
-            void ResolveStyleFile()
-            {
-
             }
 
             return entry;
@@ -78,6 +65,26 @@ namespace FilterExo.Model
         public IExoVariable GetVariable(string key)
         {
             return GetInternalVariable(key);
+        }
+
+        public ExoFunction GetFunction(string key)
+        {
+            return GetInternalFunction(key);
+        }
+
+        internal bool IsFunction(string key)
+        {
+            if (this.Functions.ContainsKey(key))
+            {
+                return true;
+            }
+
+            if (this.Type == ExoFilterType.root)
+            {
+                return false;
+            }
+
+            return this.GetParent().IsFunction(key);
         }
 
         public bool IsVariable(string key)
@@ -103,6 +110,16 @@ namespace FilterExo.Model
             }
 
             return this.GetParent().GetVariable(key);
+        }
+
+        private ExoFunction GetInternalFunction(string key)
+        {
+            if (this.Functions.ContainsKey(key))
+            {
+                return this.Functions[key];
+            }
+
+            return this.GetParent().GetFunction(key);
         }
 
         public ExoBlock GetParent()

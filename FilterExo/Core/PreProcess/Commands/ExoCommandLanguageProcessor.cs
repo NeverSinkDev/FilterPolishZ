@@ -23,9 +23,11 @@ namespace FilterExo.Core.PreProcess.Commands
          * After no changes are performed in every simplification step, we return the results.
          * Every bracket needs to be resolved.
          */
-        public void Execute()
+        public static void Addition()
         {
 
         }
+
+        public static void Substraction();
     }
 }

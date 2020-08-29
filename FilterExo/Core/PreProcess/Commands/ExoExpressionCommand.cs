@@ -1,5 +1,6 @@
 ﻿using FilterCore.Line;
 using FilterExo.Model;
+using FilterPolishUtil.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 // here we attempt to resolve every value using the parents variables.
                 // if no values will be found, we just return the basic value.
-                results.Add(item.ResolveValue(this.Parent));
+                results.Add(item.ResolveVariable(this.Parent));
             }
 
             return results.ToFilterLine();
@@ -40,7 +41,34 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public void PerformResolution()
         {
+            var tree = this.CreateIndentationTree(this.Values);
+            var cursor = tree.Tree;
 
+            void ResolveBranch(Branch<ExoAtom> branch)
+            {
+                foreach (var item in branch.Leaves)
+                {
+                    ResolveBranch(item);
+                }
+
+                ResolveSelf(branch);
+            }
+
+            void ResolveSelf(Branch<ExoAtom> branch)
+            {
+                branch.RawValue.Value = branch.RawValue.ResolveVariable(this.Parent);
+
+                if (branch.RawValue.CanBeVariable && branch.Leaves.Count > 0)
+                {
+                    ResolveChildrenExpression(branch);
+                    var func = branch.RawValue.GetFunction(this.Parent);
+                }
+            }
+
+            void ResolveChildrenExpression(Branch<ExoAtom> branch)
+            {
+                var children = branch.Leaves;
+            }
         }
 
         // Time to get serious/serial
