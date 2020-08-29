@@ -36,7 +36,7 @@ namespace FilterExo
 
         public static HashSet<char> SimpleOperators = new HashSet<char>()
         {
-            '=', '>', '<', '(', ')', '{', '}', '[', ']', ';'
+            '=', '>', '<', '(', ')', '{', '}', '[', ']', ';', ',', '+', '-'
         };
 
         public static HashSet<string> CombinedOperators = new HashSet<string>()

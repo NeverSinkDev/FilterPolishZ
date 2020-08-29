@@ -27,7 +27,8 @@ namespace FilterExo.Core.PreProcess.Strategies
         public static List<IExpressionEvaluationStrategy> Strategies = new List<IExpressionEvaluationStrategy>()
         {
             new RuleEvaluationStrategy(),
-            new VarEvaluationStrategy()
+            new VarEvaluationStrategy(),
+            new FuncEvaluationStrategy()
         };
 
         public string Mode;

@@ -18,12 +18,15 @@ namespace FilterExo.Model
     public class ExoBlock
     {
         public ExoFilterType Type;
+        public string Name;
 
         // Hierarchical elements
         public ExoBlock Parent;
         public List<ExoBlock> Scopes = new List<ExoBlock>();
 
         public Dictionary<string, IExoVariable> Variables { get; set; } = new Dictionary<string, IExoVariable>();
+        public Dictionary<string, ExoFunction> Functions { get; set; } = new Dictionary<string, ExoFunction>();
+        
         public List<IExoCommand> Commands { get; set; } = new List<IExoCommand>();
 
         public FilterEntry ResolveAndSerialize()
@@ -42,7 +45,7 @@ namespace FilterExo.Model
                     case IExoCommandType.execution:
                         break;
                     case IExoCommandType.filter:
-                        entry.Content.Add((comm as ExoFilterLineCommand).Serialize());
+                        entry.Content.Add((comm as ExoExpressionCommand).Serialize());
                         break;
                     default:
                         break;

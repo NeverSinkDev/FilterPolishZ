@@ -11,7 +11,6 @@ namespace FilterExo.Core.PreProcess.Commands
         ExoBlock Parent { get; set; }
         string Name { get; }
         IExoCommandType Type { get; }
-        void IsResolvable();
         string SerializeDebug();
     }
 

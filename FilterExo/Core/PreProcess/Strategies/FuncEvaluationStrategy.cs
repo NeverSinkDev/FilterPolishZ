@@ -9,16 +9,16 @@ using System.Text;
 
 namespace FilterExo.Core.PreProcess.Strategies
 {
-    public class RuleEvaluationStrategy : IExpressionEvaluationStrategy
+    public class FuncEvaluationStrategy : IExpressionEvaluationStrategy
     {
-        public bool Match(ExpressionBuilder builder)
-        {
-            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
-            return descriptor == "Rule";
-        }
-
         public void Execute(ExpressionBuilder builder)
         {
+            var functionName = builder.Owner.ReadCursor.PropertyExpression[1];
+
+            //var split = exprRoot.SplitBy(x => x.Value == "=");
+            //var variableInfo = this.HandleBefore(split.before);
+            //var variableContent = this.HandleAfter(split.after);
+
             var result = new List<IExoCommand>();
 
             // treat a whole entry
@@ -53,22 +53,34 @@ namespace FilterExo.Core.PreProcess.Strategies
                     rawtokens.Add(current.Value);
                 }
 
-                //var command = rawtokens.First();
-                //rawtokens.RemoveAt(0);
-
                 var filterCommand = new ExoExpressionCommand(rawtokens);
                 result.Add(filterCommand);
             }
 
-            // Resolve rule into a "Show" filter entry.
             var newEntry = new ExoBlock();
-            newEntry.Parent = builder.Owner.WriteCursor;
-            builder.Owner.WriteCursor.Scopes.Add(newEntry);
+            // newEntry.Parent = builder.Owner.WriteCursor;
+            //builder.Owner.WriteCursor.Scopes.Add(newEntry);
 
             foreach (var item in result)
             {
                 newEntry.AddCommand(item);
             }
+
+            // Resolve rule into a "Show" filter entry.
+            var function = new ExoFunction
+            {
+                Name = functionName.Value,
+                Content = newEntry,
+                Variables = new Dictionary<string, IExoVariable>()
+            };
+
+            builder.Owner.WriteCursor.Functions.Add(functionName.Value, function);
+        }
+
+        public bool Match(ExpressionBuilder builder)
+        {
+            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
+            return descriptor == "Func";
         }
     }
 }
