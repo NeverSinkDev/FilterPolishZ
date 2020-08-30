@@ -17,6 +17,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
         {
+            new DictPassiveMergeStrategy(),
             new DictAddUpStrategy(),
             new DictRemoveMergeStrategy()
         };
@@ -140,6 +141,27 @@ namespace FilterExo.Core.PreProcess.Commands
             var match = input.ConfirmPattern(
                     x => x.IdentifiedType == ExoAtomType.dict,
                     x => x.GetRawValue() == "-",
+                    x => x.IdentifiedType == ExoAtomType.dict
+                );
+
+            return match;
+        }
+    }
+
+    public class DictPassiveMergeStrategy : IExoAtomMergeStrategy
+    {
+        public List<ExoAtom> Execute(List<ExoAtom> input)
+        {
+            var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+            hs1.UnionWith((input[1].ValueCore as HashSetValueCore).Values);
+            var merge = new ExoAtom(hs1);
+            return new List<ExoAtom>() { merge };
+        }
+
+        public bool Match(List<ExoAtom> input)
+        {
+            var match = input.ConfirmPattern(
+                    x => x.IdentifiedType == ExoAtomType.dict,
                     x => x.IdentifiedType == ExoAtomType.dict
                 );
 

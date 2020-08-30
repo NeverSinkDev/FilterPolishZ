@@ -27,11 +27,17 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public List<ExoAtom> Values = new List<ExoAtom>();
 
+        public List<ExoAtom> Simplify()
+        {
+            var resultingExpression = ResolveExpression();
+            return resultingExpression;
+        }
+
         public IFilterLine Serialize()
         {
-            var results = new List<string>();
+            var resultingExpression = this.Simplify();
 
-            var resultingExpression = ResolveExpression();
+            var results = new List<string>();
             foreach (var item in resultingExpression)
             {
                 // here we attempt to resolve every value using the parents variables.
@@ -59,10 +65,20 @@ namespace FilterExo.Core.PreProcess.Commands
                 {
                     if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
                     {
-                        var resolved = item.Content.ValueCore.Resolve(this.Parent);
-                        if (resolved!=null)
+                        var resolved = item.Content.Resolve(this.Parent);
+
+                        if (resolved.Any())
                         {
-                            item.Content = resolved;
+                            var resolvedList = resolved.ToList();
+                            if (resolvedList.Count == 1)
+                            {
+                                item.Content = resolvedList[0];
+                            }
+                            else
+                            {
+                                item.Content = null;
+                                resolvedList.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
+                            }
                         }
                     }
 

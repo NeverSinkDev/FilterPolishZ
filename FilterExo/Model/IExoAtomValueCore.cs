@@ -10,7 +10,7 @@ namespace FilterExo.Model
     {
         string Serialize(ExoBlock parent);
         string GetRawValue();
-        ExoAtom Resolve(ExoBlock parent);
+        IEnumerable<ExoAtom> Resolve(ExoBlock parent);
     }
 
     public class HashSetValueCore : IExoAtomValueCore
@@ -22,9 +22,9 @@ namespace FilterExo.Model
             return string.Empty;
         }
 
-        public ExoAtom Resolve(ExoBlock parent)
+        public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
         {
-            return null;
+            yield break;
         }
 
         public string Serialize(ExoBlock parent)
@@ -37,9 +37,12 @@ namespace FilterExo.Model
     {
         public List<ExoAtom> Values;
 
-        public ExoAtom Resolve(ExoBlock parent)
+        public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
         {
-            return null;
+            foreach (var item in Values)
+            {
+                yield return item;
+            }
         }
 
         public string GetRawValue()
@@ -83,14 +86,12 @@ namespace FilterExo.Model
             return this.Value;
         }
 
-        public ExoAtom Resolve(ExoBlock parent)
+        public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
         {
             if (CanBeVariable && parent.IsVariable(Value))
             {
-                return parent.GetVariable(this.Value);
+                yield return parent.GetVariable(this.Value);
             }
-
-            return null;
         }
     }
 }

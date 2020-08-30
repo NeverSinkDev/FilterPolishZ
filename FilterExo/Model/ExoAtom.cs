@@ -13,7 +13,7 @@ namespace FilterExo.Model
     {
         dict,   // converted into a dictionary type representation. Their combined order doesn't matter
         prim,   // not combinable, instead primitive values that have to keep their order
-        util,   // "," usually
+        pack,
         oper    // + - 
     }
 
@@ -34,6 +34,15 @@ namespace FilterExo.Model
 
             this.IdentifiedType = ExoAtomType.dict;
             this.ValueCore = new HashSetValueCore() { Values = value };
+        }
+
+        public ExoAtom(List<ExoAtom> packedValues)
+        {
+            this.IdentifiedType = ExoAtomType.pack;
+            this.ValueCore = new WildValueValueCore()
+            {
+                Values = packedValues
+            };
         }
 
         public ExoAtom(List<string> value)
@@ -72,6 +81,30 @@ namespace FilterExo.Model
             {
                 this.IdentifiedType = ExoAtomType.prim;
                 this.ValueCore = new SimpleAtomValueCore() { Value = value, CanBeVariable = true };
+            }
+        }
+
+        public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
+        {
+            var items = this.ValueCore.Resolve(parent);
+
+            if (items != null && items.Any())
+            {
+                if (items.Count() == 1 && items.First().IdentifiedType == ExoAtomType.pack)
+                {
+                    var citems = items.First().Resolve(parent);
+                    foreach (var item in citems)
+                    {
+                        yield return item;
+                    }
+                }
+                else if (items.Count() >= 1)
+                {
+                    foreach (var item in items)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
