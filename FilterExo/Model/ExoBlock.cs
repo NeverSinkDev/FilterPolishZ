@@ -28,16 +28,12 @@ namespace FilterExo.Model
         public Dictionary<string, ExoFunction> Functions { get; set; } = new Dictionary<string, ExoFunction>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
-        public FilterEntry ResolveAndSerialize()
+        public IEnumerable<List<string>> ResolveAndSerialize()
         {
-            var entry = FilterEntry.CreateDataEntry("Show");
-
             foreach (var comm in this.Commands)
             {
-                entry.Content.Add(comm.Serialize());
+                yield return comm.Serialize();
             }
-
-            return entry;
         }
 
         public void StoreVariable(string name, List<string> variableContent)

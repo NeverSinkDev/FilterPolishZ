@@ -33,7 +33,7 @@ namespace FilterExo.Core.PreProcess.Commands
             return resultingExpression;
         }
 
-        public IFilterLine Serialize()
+        public List<string> Serialize()
         {
             var resultingExpression = this.Simplify();
 
@@ -45,7 +45,7 @@ namespace FilterExo.Core.PreProcess.Commands
                 results.Add(item.Serialize(this.Parent));
             }
 
-            return results.ToFilterLine();
+            return results;
         }
 
         public List<ExoAtom> ResolveExpression()
@@ -65,6 +65,8 @@ namespace FilterExo.Core.PreProcess.Commands
                 {
                     if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
                     {
+                        // when dealing with variables, we resolve them and if resolvement was succesfull
+                        // we put resolved single varibales into content and a list of values into leaves
                         var resolved = item.Content.Resolve(this.Parent);
 
                         if (resolved.Any())
@@ -82,21 +84,18 @@ namespace FilterExo.Core.PreProcess.Commands
                         }
                     }
 
+                    // recurse
                     ResolveBranch(item);
                 }
 
                 if (branch.Leaves.Count != 0)
                 {
-                    ResolveChildrenExpression(branch);
+                    // expression evaluation happens here
+                    branch.Leaves = ResolveBranchExpression(branch.Leaves);
                 }
             }
 
-            // resolve child expression
-            void ResolveChildrenExpression(Branch<ExoAtom> branch)
-            {
-                branch.Leaves = ResolveBranchExpression(branch.Leaves);
-            }
-
+            // top down gather results
             void CombineResults(Branch<ExoAtom> branch)
             {
                 TraceUtility.Check(branch.Content != null && branch.Leaves.Count > 0, "Branch has both content and leaves!");
@@ -109,6 +108,7 @@ namespace FilterExo.Core.PreProcess.Commands
                 {
                     foreach (var item in branch.Leaves)
                     {
+                        // recurse
                         CombineResults(item);
                     }
                 }
@@ -120,7 +120,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
         {
-            // Split by komma
+            // Split by ,
             var splitChildren = children.SplitDivide(x => x.Content?.GetRawValue() == ",");
             var results = new List<Branch<ExoAtom>>();
 
@@ -147,7 +147,8 @@ namespace FilterExo.Core.PreProcess.Commands
                     }
                 }
 
-                // resolve expression as long as possible
+                // resolve expression. cancel and restart every time we resolved something
+                // this way we handle the results of the expressions as a new variable
                 bool success = true;
                 while(success)
                 {
@@ -187,7 +188,9 @@ namespace FilterExo.Core.PreProcess.Commands
         // Time to get serious/serial
         public string SerializeDebug()
         {
-            return this.Serialize().Serialize();
+            var serializedCommand = this.Serialize();
+            var line = serializedCommand.ToFilterLine();
+            return line.Serialize();
         }
 
         public void SetParent(ExoBlock parent)

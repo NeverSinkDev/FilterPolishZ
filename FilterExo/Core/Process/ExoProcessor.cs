@@ -1,4 +1,5 @@
 ﻿using FilterCore.Entry;
+using FilterCore.Line;
 using FilterExo.Model;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,15 @@ namespace FilterExo.Core.Process
 
             void DoWorkOnReadChild(ExoBlock readChild)
             {
-                results.Add(readChild.ResolveAndSerialize());
+                var entry = FilterEntry.CreateDataEntry("Show");
+
+                foreach (var comm in readChild.ResolveAndSerialize())
+                {
+                    var line = comm.ToFilterLine();
+                    entry.Content.Add(line);
+                }
+
+                results.Add(entry);
             }
 
             return results;
