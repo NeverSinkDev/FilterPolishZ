@@ -19,7 +19,7 @@ namespace FilterExo.Core.PreProcess.Strategies
 
         public void Execute(ExpressionBuilder builder)
         {
-            var result = new List<IExoCommand>();
+            var result = new List<ExoExpressionCommand>();
 
             // treat a whole entry
             for (int j = 0; j < builder.expressions.Count; j++)

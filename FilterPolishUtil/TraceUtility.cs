@@ -12,8 +12,14 @@ namespace FilterPolishUtil
             if (condition)
             {
                 LoggingFacade.LogError(message);
-                throw new Exception(message);
+                Throw(message);
             }
+        }
+
+        public static void Throw(string message)
+        {
+            LoggingFacade.LogError(message);
+            throw new Exception(message);
         }
     }
 }

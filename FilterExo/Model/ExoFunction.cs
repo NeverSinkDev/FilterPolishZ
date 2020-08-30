@@ -8,6 +8,6 @@ namespace FilterExo.Model
     {
         public string Name;
         public ExoBlock Content;
-        public Dictionary<string, IExoVariable> Variables = new Dictionary<string, IExoVariable>();
+        public Dictionary<string, ExoAtom> Variables = new Dictionary<string, ExoAtom>();
     }
 }

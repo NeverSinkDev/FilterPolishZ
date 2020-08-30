@@ -24,10 +24,10 @@ namespace FilterExo.Model
         public ExoBlock Parent;
         public List<ExoBlock> Scopes = new List<ExoBlock>();
 
-        public Dictionary<string, IExoVariable> Variables { get; set; } = new Dictionary<string, IExoVariable>();
+        public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoFunction> Functions { get; set; } = new Dictionary<string, ExoFunction>();
         
-        public List<IExoCommand> Commands { get; set; } = new List<IExoCommand>();
+        public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
         public FilterEntry ResolveAndSerialize()
         {
@@ -35,18 +35,7 @@ namespace FilterExo.Model
 
             foreach (var comm in this.Commands)
             {
-                switch (comm.Type)
-                {
-                    case IExoCommandType.scope:
-                        break;
-                    case IExoCommandType.execution:
-                        break;
-                    case IExoCommandType.filter:
-                        entry.Content.Add((comm as ExoExpressionCommand).Serialize());
-                        break;
-                    default:
-                        break;
-                }
+                comm.Serialize();
             }
 
             return entry;
@@ -59,10 +48,10 @@ namespace FilterExo.Model
             Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(name), "variable uses reserved name!");
             Check(name.ContainsSpecialCharacters(), "variable uses invalid characters!");
 
-            this.Variables.Add(name, new SimpleExoVariable(variableContent));
+            this.Variables.Add(name, new ExoAtom(variableContent));
         }
 
-        public IExoVariable GetVariable(string key)
+        public ExoAtom GetVariable(string key)
         {
             return GetInternalVariable(key);
         }
@@ -102,7 +91,7 @@ namespace FilterExo.Model
             return this.GetParent().IsVariable(key);
         }
 
-        private IExoVariable GetInternalVariable(string key)
+        private ExoAtom GetInternalVariable(string key)
         {
             if (this.Variables.ContainsKey(key))
             {
@@ -133,7 +122,7 @@ namespace FilterExo.Model
             return this.Parent;
         }
 
-        public void AddCommand(IExoCommand command)
+        public void AddCommand(ExoExpressionCommand command)
         {
             this.Commands.Add(command);
             command.SetParent(this);

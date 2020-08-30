@@ -19,7 +19,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             //var variableInfo = this.HandleBefore(split.before);
             //var variableContent = this.HandleAfter(split.after);
 
-            var result = new List<IExoCommand>();
+            var result = new List<ExoExpressionCommand>();
 
             // treat a whole entry
             for (int j = 0; j < builder.expressions.Count; j++)
@@ -71,7 +71,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             {
                 Name = functionName.Value,
                 Content = newEntry,
-                Variables = new Dictionary<string, IExoVariable>()
+                Variables = new Dictionary<string, ExoAtom>()
             };
 
             builder.Owner.WriteCursor.Functions.Add(functionName.Value, function);

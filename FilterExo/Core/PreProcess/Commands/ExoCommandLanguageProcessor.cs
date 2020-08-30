@@ -1,5 +1,9 @@
-﻿using System;
+﻿using FilterExo.Model;
+using FilterPolishUtil.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace FilterExo.Core.PreProcess.Commands
@@ -23,11 +27,71 @@ namespace FilterExo.Core.PreProcess.Commands
          * After no changes are performed in every simplification step, we return the results.
          * Every bracket needs to be resolved.
          */
-        public static void Addition()
-        {
+    }
 
+    public class ExoExpressionCombineBuilder
+    {
+        public List<ExoAtom> Results = new List<ExoAtom>();
+        public List<ExoAtom> Stack = new List<ExoAtom>();
+
+        public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
+        {
+            new DictAddUpStrategy()
+        };
+
+        public void Add(ExoAtom input)
+        {
+            if (input.IdentifiedType == ExoAtomType.prim)
+            {
+                Results.Add(input);
+                ResolveStack();
+
+                return;
+            }
+            else
+            {
+                Stack.Add(input);
+
+            }
         }
 
-        public static void Substraction();
+        public List<ExoAtom> Finish()
+        {
+            ResolveStack();
+            return Results;
+        }
+
+        private void ResolveStack()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public interface IExoAtomMergeStrategy
+    {
+        bool Match(List<ExoAtom> input);
+        List<ExoAtom> Execute(List<ExoAtom> input);
+    }
+
+    public class DictAddUpStrategy : IExoAtomMergeStrategy
+    {
+        public List<ExoAtom> Execute(List<ExoAtom> input)
+        {
+            var hs1 = (input[0].ValueCore as CollectionAtomValueCore).Values;
+            hs1.UnionWith((input[2].ValueCore as CollectionAtomValueCore).Values);
+            var merge = new ExoAtom(hs1);
+            return new List<ExoAtom>() { merge };
+        }
+
+        public bool Match(List<ExoAtom> input)
+        {
+            var match = input.ConfirmPattern(
+                    x => x.IdentifiedType == ExoAtomType.dict,
+                    x => x.GetRawValue() == "+",
+                    x => x.IdentifiedType == ExoAtomType.dict
+                );
+
+            return match;
+        }
     }
 }

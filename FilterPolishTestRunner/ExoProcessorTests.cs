@@ -70,7 +70,7 @@ namespace FilterPolishTestRunner
             Assert.IsNotNull(res);
             Assert.AreEqual(2, res.RootEntry.Scopes.Count);
             Assert.AreEqual(5, res.RootEntry.Scopes[0].Scopes.Count);
-            Assert.AreEqual( res.RootEntry.Scopes[0].Scopes[0].Commands[0].Name, "ItemLevel");
+            Assert.AreEqual( res.RootEntry.Scopes[0].Scopes[0].Commands[0].Values[0].GetRawValue(), "ItemLevel");
             Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[0].SerializeDebug(), "ItemLevel >= 81");
             Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[1].SerializeDebug(), "BaseType \"Exalted Orb\"");
             Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[4].Commands[0].SerializeDebug(), "BaseType \"Exalted Orb\"");
@@ -121,13 +121,13 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(2, res.RootEntry.Scopes.Count);
 
             // OUTER SCOPE
-            Assert.AreEqual(new List<string>() { "\"ALPHA\"", "\"BETA\"" }, res.RootEntry.Variables["t1inc"].GetValue());
+            Assert.AreEqual(new List<string>() { "\"ALPHA\"", "\"BETA\"" }, res.RootEntry.Variables["t1inc"].Serialize(res.RootEntry));
 
-            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].Name, "BaseType");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].Values[0].GetRawValue(), "BaseType");
             Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].SerializeDebug(), "BaseType \"ALPHA\" \"BETA\"");
 
             // INNER SCOPE
-            Assert.AreEqual(new List<string>() { "\"GAMMA\"" }, res.RootEntry.Scopes[1].Variables["t1inc"].GetValue());
+            Assert.AreEqual(new List<string>() { "\"GAMMA\"" }, res.RootEntry.Scopes[1].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
 
             Assert.AreEqual(3, res.RootEntry.Scopes[1].Scopes.Count);
             Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");

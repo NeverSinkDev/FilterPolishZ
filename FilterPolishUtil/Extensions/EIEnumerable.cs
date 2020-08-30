@@ -51,6 +51,46 @@ namespace FilterPolishUtil.Extensions
             }
 
             return (me.Take(index).ToList(), me.Skip(index + 1).ToList());
+        }
+
+        public static List<List<T>> SplitDivide<T>(this List<T> me, Predicate<T> splitter)
+        {
+            var result = new List<List<T>>();
+            var current = new List<T>();
+            foreach (var item in me)
+            {
+                if (splitter(item))
+                {
+                    result.Add(current);
+                    current = new List<T>();
+                }
+                else
+                {
+                    current.Add(item);
+                }
+            }
+
+            result.Add(current);
+
+            return result;
+        }
+
+        public static bool ConfirmPattern<T>(this List<T> me, params Predicate<T>[] pattern)
+        {
+            if (me.Count != pattern.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                if(!pattern[i](me[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
 
         }
 

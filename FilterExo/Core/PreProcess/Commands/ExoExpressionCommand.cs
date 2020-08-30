@@ -9,7 +9,7 @@ using System.Text;
 
 namespace FilterExo.Core.PreProcess.Commands
 {
-    public class ExoExpressionCommand : IExoCommand
+    public class ExoExpressionCommand
     {
         public ExoExpressionCommand(List<string> values)
         {
@@ -19,10 +19,7 @@ namespace FilterExo.Core.PreProcess.Commands
             }
         }
 
-        public string Name { get; set; }
         public ExoBlock Parent { get; set; }
-
-        public IExoCommandType Type => IExoCommandType.filter;
 
         public List<ExoAtom> Values = new List<ExoAtom>();
 
@@ -33,17 +30,21 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 // here we attempt to resolve every value using the parents variables.
                 // if no values will be found, we just return the basic value.
-                results.Add(item.ResolveVariable(this.Parent));
+                results.Add(item.Serialize(this.Parent));
             }
 
             return results.ToFilterLine();
         }
 
-        public void PerformResolution()
+        public void ResolveExpression()
         {
+            // create bracket tree
             var tree = this.CreateIndentationTree(this.Values);
             var cursor = tree.Tree;
 
+            ResolveBranch(tree.Tree);
+
+            // perform actions starting with deepest child
             void ResolveBranch(Branch<ExoAtom> branch)
             {
                 foreach (var item in branch.Leaves)
@@ -54,27 +55,63 @@ namespace FilterExo.Core.PreProcess.Commands
                 ResolveSelf(branch);
             }
 
+            // attempt to resolve variables and expressions of children
             void ResolveSelf(Branch<ExoAtom> branch)
             {
-                branch.RawValue.Value = branch.RawValue.ResolveVariable(this.Parent);
+                // branch.RawValue.Value = branch.RawValue.ResolveVariable(this.Parent);
 
-                if (branch.RawValue.CanBeVariable && branch.Leaves.Count > 0)
+                if (branch.Content.CanBeVariable && branch.Leaves.Count > 0)
                 {
                     ResolveChildrenExpression(branch);
-                    var func = branch.RawValue.GetFunction(this.Parent);
                 }
             }
 
+            // resolve child expression
             void ResolveChildrenExpression(Branch<ExoAtom> branch)
             {
-                var children = branch.Leaves;
+                branch.Leaves = ResolveBranchExpression(branch.Leaves);
             }
+        }
+
+        public List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
+        {
+            // Split by komma
+
+            var splitChildren = children.SplitDivide(x => x.Content.GetRawValue() == ",");
+            // Foreach values
+
+            foreach (var subexpression in splitChildren)
+            {
+                foreach (var atom in subexpression)
+                {
+                    // Execute functions
+                    var func = atom.Content.GetFunction(this.Parent);
+                    // TODO: execute here
+                }
+
+                foreach (var atom in subexpression)
+                {
+                    // Combine if possible
+                    if (atom.Content.IdentifiedType == ExoAtomType.dict)
+                    {
+                        // TODO MERGE OPERATORS HERE
+                    }
+                }
+            }
+
+
+            return null;
         }
 
         // Time to get serious/serial
         public string SerializeDebug()
         {
             return this.Serialize().Serialize();
+        }
+
+        public void SetParent(ExoBlock parent)
+        {
+            this.Parent = parent;
         }
 
         public BracesTree<ExoAtom> CreateIndentationTree(List<ExoAtom> list)
@@ -85,19 +122,19 @@ namespace FilterExo.Core.PreProcess.Commands
 
             foreach (var item in list)
             {
-                if (item.Value == "(")
+                if (item.IdentifiedType == ExoAtomType.oper && item.GetRawValue() == "(")
                 {
                     tree.Stack.Push(parent);
                     parent = child;
                 }
-                else if (item.Value == ")")
+                else if (item.IdentifiedType == ExoAtomType.oper && item.GetRawValue() == ")")
                 {
                     child = parent;
                     parent = tree.Stack.Pop();
                 }
                 else
                 {
-                    child = new Branch<ExoAtom>() { RawValue = item };
+                    child = new Branch<ExoAtom>() { Content = item };
                     parent.Leaves.Add(child);
                 }
             }
@@ -118,6 +155,6 @@ namespace FilterExo.Core.PreProcess.Commands
     {
         public Branch<T> Parent;
         public List<Branch<T>> Leaves = new List<Branch<T>>();
-        public T RawValue;
+        public T Content;
     }
 }
