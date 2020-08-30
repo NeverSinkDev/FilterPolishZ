@@ -8,62 +8,82 @@ using System.Text;
 
 namespace FilterExo.Core.PreProcess.Commands
 {
-    public class ExoCommandLanguageProcessor
-    {
-        /*
-         * we have a list of objects, these objects represent our commands or the important syntax for the language
-         * 1) we parse through every command
-         * 2) we try simplify/resolve variables/commands
-         * 3) we execute functions
-         * 4) we honor the order
-         * 5) if actions were performed, we try again, until we can't simplify anything
-         * 6) we serialize in the end
-         * 7) we respect patterns
-         * Pattern examples. 
-         * We build a "bracket tree". Things inside brackets get executed first, then the surrounding bracket action
-         * Brackets mean functions and commas represent parameter splitting
-         * We try to resolve every function
-         * We rely on operators and prefixes, such as + -
-         * After no changes are performed in every simplification step, we return the results.
-         * Every bracket needs to be resolved.
-         */
-    }
-
     public class ExoExpressionCombineBuilder
     {
         public List<ExoAtom> Results = new List<ExoAtom>();
         public List<ExoAtom> Stack = new List<ExoAtom>();
+
+        public ExoBlock ResolutionParent;
 
         public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
         {
             new DictAddUpStrategy()
         };
 
-        public void Add(ExoAtom input)
+        public ExoExpressionCombineBuilder(ExoBlock parent)
+        {
+            this.ResolutionParent = parent;
+        }
+
+        public bool Add(ExoAtom input)
         {
             if (input.IdentifiedType == ExoAtomType.prim)
             {
+                var result = ResolveStack();
                 Results.Add(input);
-                ResolveStack();
-
-                return;
+                return result;
             }
             else
             {
                 Stack.Add(input);
 
+                if (CanResolve())
+                {
+                    return ResolveStack();
+                }
+
+                return false;
             }
         }
 
-        public List<ExoAtom> Finish()
+        public bool Finish()
         {
-            ResolveStack();
-            return Results;
+            return ResolveStack();
         }
 
-        private void ResolveStack()
+        private bool CanResolve()
         {
-            throw new NotImplementedException();
+            foreach (var pattern in Patterns)
+            {
+                if (pattern.Match(Stack))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ResolveStack()
+        {
+            if (Stack.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var pattern in Patterns)
+            {
+                if (pattern.Match(Stack))
+                {
+                    Results.AddRange(pattern.Execute(Stack));
+                    Stack.Clear();
+                    return true;
+                }
+            }
+
+            Results.AddRange(Stack);
+            Stack.Clear();
+            return false;
         }
     }
 

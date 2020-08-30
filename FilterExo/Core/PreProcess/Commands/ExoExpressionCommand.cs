@@ -1,10 +1,14 @@
 ﻿using FilterCore.Line;
 using FilterExo.Model;
+using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace FilterExo.Core.PreProcess.Commands
@@ -26,7 +30,9 @@ namespace FilterExo.Core.PreProcess.Commands
         public IFilterLine Serialize()
         {
             var results = new List<string>();
-            foreach (var item in this.Values)
+
+            var resultingExpression = ResolveExpression();
+            foreach (var item in resultingExpression)
             {
                 // here we attempt to resolve every value using the parents variables.
                 // if no values will be found, we just return the basic value.
@@ -36,31 +42,34 @@ namespace FilterExo.Core.PreProcess.Commands
             return results.ToFilterLine();
         }
 
-        public void ResolveExpression()
+        public List<ExoAtom> ResolveExpression()
         {
+            var results = new List<ExoAtom>();
+
             // create bracket tree
             var tree = this.CreateIndentationTree(this.Values);
-            var cursor = tree.Tree;
 
             ResolveBranch(tree.Tree);
+            CombineResults(tree.Tree);
 
             // perform actions starting with deepest child
             void ResolveBranch(Branch<ExoAtom> branch)
             {
                 foreach (var item in branch.Leaves)
                 {
+                    if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
+                    {
+                        var resolved = item.Content.ValueCore.Resolve(this.Parent);
+                        if (resolved!=null)
+                        {
+                            item.Content = resolved;
+                        }
+                    }
+
                     ResolveBranch(item);
                 }
 
-                ResolveSelf(branch);
-            }
-
-            // attempt to resolve variables and expressions of children
-            void ResolveSelf(Branch<ExoAtom> branch)
-            {
-                // branch.RawValue.Value = branch.RawValue.ResolveVariable(this.Parent);
-
-                if (branch.Leaves.Count > 0)
+                if (branch.Leaves.Count != 0)
                 {
                     ResolveChildrenExpression(branch);
                 }
@@ -71,36 +80,94 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 branch.Leaves = ResolveBranchExpression(branch.Leaves);
             }
+
+            void CombineResults(Branch<ExoAtom> branch)
+            {
+                TraceUtility.Check(branch.Content != null && branch.Leaves.Count > 0, "Branch has both content and leaves!");
+
+                if (branch.Content != null)
+                {
+                    results.Add(branch.Content);
+                }
+                else
+                {
+                    foreach (var item in branch.Leaves)
+                    {
+                        CombineResults(item);
+                    }
+                }
+
+            }
+
+            return results;
         }
 
         public List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
         {
             // Split by komma
-
-            var splitChildren = children.SplitDivide(x => x.Content.GetRawValue() == ",");
-            // Foreach values
+            var splitChildren = children.SplitDivide(x => x.Content?.GetRawValue() == ",");
+            var results = new List<Branch<ExoAtom>>();
 
             foreach (var subexpression in splitChildren)
             {
                 foreach (var atom in subexpression)
                 {
                     // Execute functions
-                    var func = atom.Content.GetFunction(this.Parent);
+                    // var func = atom.Content.GetFunction(this.Parent);
                     // TODO: execute here
                 }
 
-                foreach (var atom in subexpression)
+                // get all children on the level we're working on
+                var wipBranch = new List<ExoAtom>();
+                foreach (var leaf in subexpression)
                 {
-                    // Combine if possible
-                    if (atom.Content.IdentifiedType == ExoAtomType.dict)
+                    if (leaf.Content == null)
                     {
-                        // TODO MERGE OPERATORS HERE
+                        leaf.YieldAllContentBranches().ForEach(x => wipBranch.Add(x));
+                    }
+                    else
+                    {
+                        wipBranch.Add(leaf.Content);
                     }
                 }
+
+                // resolve expression as long as possible
+                bool success = true;
+                while(success)
+                {
+                    var combiner = new ExoExpressionCombineBuilder(this.Parent);
+                    success = false;
+
+                    for (int i = 0; i < wipBranch.Count; i++)
+                    {
+                        success = combiner.Add(wipBranch[i]);
+
+                        if (success)
+                        {
+                            combiner.Results.AddRange(wipBranch.Skip(i + 1));
+                            wipBranch = combiner.Results;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        break;
+                    }
+
+                    success = combiner.Finish();
+                    wipBranch = combiner.Results;
+                }
+
+                if (results.Count > 0)
+                {
+                    results.Add(new Branch<ExoAtom>() { Content = new ExoAtom(",") });
+                }
+
+                results.AddRange(wipBranch.Select(x => new Branch<ExoAtom>() { Content = x }).ToList());
             }
 
-
-            return null;
+            return results;
         }
 
         // Time to get serious/serial
@@ -124,6 +191,9 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 if (item.IdentifiedType == ExoAtomType.oper && item.GetRawValue() == "(")
                 {
+                    child = new Branch<ExoAtom>() { };
+                    parent.Leaves.Add(child);
+                    
                     tree.Stack.Push(parent);
                     parent = child;
                 }
@@ -156,5 +226,23 @@ namespace FilterExo.Core.PreProcess.Commands
         public Branch<T> Parent;
         public List<Branch<T>> Leaves = new List<Branch<T>>();
         public T Content;
+
+        public IEnumerable<T> YieldAllContentBranches()
+        {
+            foreach (var item in this.Leaves)
+            {
+                if (item.Content != null)
+                {
+                    yield return item.Content;
+                }
+
+                var nextLevel = item.YieldAllContentBranches();
+
+                foreach (var citem in nextLevel)
+                {
+                    yield return citem;
+                }
+            }
+        }
     }
 }

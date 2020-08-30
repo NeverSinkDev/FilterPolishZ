@@ -26,7 +26,6 @@ namespace FilterExo.Model
 
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoFunction> Functions { get; set; } = new Dictionary<string, ExoFunction>();
-        
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
         public FilterEntry ResolveAndSerialize()

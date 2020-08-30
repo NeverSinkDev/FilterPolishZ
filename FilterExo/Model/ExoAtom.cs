@@ -17,8 +17,11 @@ namespace FilterExo.Model
         oper    // + - 
     }
 
+    [DebuggerDisplay("{debugView}")]
     public class ExoAtom
     {
+        private string debugView => $"{this.GetRawValue()} ({IdentifiedType})";
+
         public IExoAtomValueCore ValueCore;
         public ExoAtomType IdentifiedType;
 

@@ -78,6 +78,33 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_BasicExpressionMerging()
+        {
+            var input = new List<string>()
+            {
+                "Rule T1 { BaseType ( \"Mirror\" + \"Wisdom\" ); };"
+            };
+
+            var res = this.StringToExoFilter(input);
+
+            Assert.AreEqual("BaseType \"Mirror\" \"Wisdom\"", res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
+        }
+
+        [Test]
+        public void ExoProcessor_VariableExpressionMerging()
+        {
+            var input = @"var a = ""wisdom"" ""fishing rod"" ""portal"";
+                var b = ""mirror"" ""ex"";
+                var c = ""zero"";
+                Rule T1 { BaseType ( a + b + c ); };";
+
+            var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
+
+            Assert.AreEqual(@"BaseType ""ex"" ""fishing rod"" ""mirror"" ""portal"" ""wisdom"" ""zero""", 
+                res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
+        }
+
+        [Test]
         public void ExoProcessor_SingleRuleSerialization()
         {
             var input = new List<string>()
@@ -130,11 +157,11 @@ namespace FilterPolishTestRunner
             Assert.AreEqual("\"GAMMA\"", res.RootEntry.Scopes[1].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
 
             Assert.AreEqual(3, res.RootEntry.Scopes[1].Scopes.Count);
-            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
-            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
-            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[1].Commands[0].SerializeDebug(), "ItemLevel >= 81");
-            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[1].Commands[1].SerializeDebug(), "BaseType \"GAMMA\"");
-            Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[2].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");
+            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug());
+            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug());
+            Assert.AreEqual("ItemLevel >= 81", res.RootEntry.Scopes[1].Scopes[1].Commands[0].SerializeDebug());
+            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[1].Commands[1].SerializeDebug());
+            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[2].Commands[0].SerializeDebug());
         }
     }
 }
