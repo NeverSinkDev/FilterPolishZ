@@ -22,8 +22,6 @@ namespace FilterExo.Model
         public IExoAtomValueCore ValueCore;
         public ExoAtomType IdentifiedType;
 
-        public bool CanBeVariable = true;
-
         public ExoAtom(HashSet<string> value)
         {
             if (!value.All(x => IsStringType(x)))
@@ -32,7 +30,7 @@ namespace FilterExo.Model
             }
 
             this.IdentifiedType = ExoAtomType.dict;
-            this.ValueCore = new CollectionAtomValueCore() { Values = value };
+            this.ValueCore = new HashSetValueCore() { Values = value };
         }
 
         public ExoAtom(List<string> value)
@@ -43,7 +41,7 @@ namespace FilterExo.Model
             }
 
             this.IdentifiedType = ExoAtomType.dict;
-            this.ValueCore = new CollectionAtomValueCore() { Values = new HashSet<string>(value) };
+            this.ValueCore = new HashSetValueCore() { Values = new HashSet<string>(value) };
         }
 
         public ExoAtom(string value)
@@ -56,7 +54,7 @@ namespace FilterExo.Model
             else if (IsStringType(value))
             {
                 this.IdentifiedType = ExoAtomType.dict;
-                this.ValueCore = new CollectionAtomValueCore() { Values = new HashSet<string>() { value } }; // ??
+                this.ValueCore = new HashSetValueCore() { Values = new HashSet<string>() { value } }; // ??
             }
             else if (value.Length <= 2 && FilterExoConfig.SimpleOperators.Contains(value[0]) || FilterExoConfig.CombinedOperators.Contains(value))
             {

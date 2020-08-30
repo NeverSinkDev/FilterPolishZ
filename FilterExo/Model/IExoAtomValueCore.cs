@@ -12,7 +12,7 @@ namespace FilterExo.Model
         string GetRawValue();
     }
 
-    public class CollectionAtomValueCore : IExoAtomValueCore
+    public class HashSetValueCore : IExoAtomValueCore
     {
         public HashSet<string> Values;
 
@@ -24,6 +24,21 @@ namespace FilterExo.Model
         public string Serialize(ExoBlock parent)
         {
             return string.Join(" ",this.Values.ToList());
+        }
+    }
+
+    public class WildValueValueCore : IExoAtomValueCore
+    {
+        public List<ExoAtom> Values;
+
+        public string GetRawValue()
+        {
+            return string.Empty;
+        }
+
+        public string Serialize(ExoBlock parent)
+        {
+            return string.Join(" ", this.Values.Select(x => x.Serialize(parent)));
         }
     }
 

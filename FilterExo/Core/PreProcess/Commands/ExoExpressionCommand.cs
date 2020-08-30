@@ -60,7 +60,7 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 // branch.RawValue.Value = branch.RawValue.ResolveVariable(this.Parent);
 
-                if (branch.Content.CanBeVariable && branch.Leaves.Count > 0)
+                if (branch.Leaves.Count > 0)
                 {
                     ResolveChildrenExpression(branch);
                 }

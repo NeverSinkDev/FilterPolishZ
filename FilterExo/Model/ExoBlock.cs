@@ -35,7 +35,7 @@ namespace FilterExo.Model
 
             foreach (var comm in this.Commands)
             {
-                comm.Serialize();
+                entry.Content.Add(comm.Serialize());
             }
 
             return entry;

@@ -121,13 +121,13 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(2, res.RootEntry.Scopes.Count);
 
             // OUTER SCOPE
-            Assert.AreEqual(new List<string>() { "\"ALPHA\"", "\"BETA\"" }, res.RootEntry.Variables["t1inc"].Serialize(res.RootEntry));
+            Assert.AreEqual("\"ALPHA\" \"BETA\"", res.RootEntry.Variables["t1inc"].Serialize(res.RootEntry));
 
             Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].Values[0].GetRawValue(), "BaseType");
             Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].SerializeDebug(), "BaseType \"ALPHA\" \"BETA\"");
 
             // INNER SCOPE
-            Assert.AreEqual(new List<string>() { "\"GAMMA\"" }, res.RootEntry.Scopes[1].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
+            Assert.AreEqual("\"GAMMA\"", res.RootEntry.Scopes[1].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
 
             Assert.AreEqual(3, res.RootEntry.Scopes[1].Scopes.Count);
             Assert.AreEqual(res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug(), "BaseType \"GAMMA\"");

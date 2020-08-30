@@ -77,8 +77,8 @@ namespace FilterExo.Core.PreProcess.Commands
     {
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
-            var hs1 = (input[0].ValueCore as CollectionAtomValueCore).Values;
-            hs1.UnionWith((input[2].ValueCore as CollectionAtomValueCore).Values);
+            var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+            hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
             var merge = new ExoAtom(hs1);
             return new List<ExoAtom>() { merge };
         }
