@@ -43,10 +43,12 @@ namespace FilterExo.Model
             Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(name), "variable uses reserved name!");
             Check(name.ContainsSpecialCharacters(), "variable uses invalid characters!");
 
+            // we treat the variable as a command/expression to allow internal simplifications
             var command = new ExoExpressionCommand(variableContent);
             command.SetParent(this);
-            var content = command.Simplify();
-            // var serializedVar = string.Join(" ", content.Select(x => x.Serialize(this)));
+            var content = command.ResolveExpression();
+
+            // since we don't know if there's 1 or many variables after the simplifications, we store result as a "pack"
             this.Variables.Add(name, new ExoAtom(content));
         }
 

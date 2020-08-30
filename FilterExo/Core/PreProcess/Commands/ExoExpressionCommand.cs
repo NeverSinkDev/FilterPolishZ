@@ -27,15 +27,9 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public List<ExoAtom> Values = new List<ExoAtom>();
 
-        public List<ExoAtom> Simplify()
-        {
-            var resultingExpression = ResolveExpression();
-            return resultingExpression;
-        }
-
         public List<string> Serialize()
         {
-            var resultingExpression = this.Simplify();
+            var resultingExpression = this.ResolveExpression();
 
             var results = new List<string>();
             foreach (var item in resultingExpression)
@@ -118,7 +112,7 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
-        public List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
+        private List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
         {
             // Split by ,
             var splitChildren = children.SplitDivide(x => x.Content?.GetRawValue() == ",");
