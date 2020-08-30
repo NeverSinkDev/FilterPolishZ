@@ -150,13 +150,11 @@ namespace FilterExo.Core.PreProcess.Commands
                         }
                     }
 
-                    if (success)
+                    if (!success)
                     {
-                        break;
+                        success = combiner.Finish();
+                        wipBranch = combiner.Results;
                     }
-
-                    success = combiner.Finish();
-                    wipBranch = combiner.Results;
                 }
 
                 if (results.Count > 0)

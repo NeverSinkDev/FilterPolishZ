@@ -96,11 +96,12 @@ namespace FilterPolishTestRunner
             var input = @"var a = ""wisdom"" ""fishing rod"" ""portal"";
                 var b = ""mirror"" ""ex"";
                 var c = ""zero"";
-                Rule T1 { BaseType ( a + b + c ); };";
+                var d = ""wisdom"";
+                Rule T1 { BaseType ( a + b + c - d ); };";
 
             var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
-            Assert.AreEqual(@"BaseType ""ex"" ""fishing rod"" ""mirror"" ""portal"" ""wisdom"" ""zero""", 
+            Assert.AreEqual(@"BaseType ""ex"" ""fishing rod"" ""mirror"" ""portal"" ""zero""", 
                 res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
         }
 
