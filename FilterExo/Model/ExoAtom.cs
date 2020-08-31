@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using static FilterExo.Model.SimpleAtomValueCore;
 
 namespace FilterExo.Model
 {
@@ -14,7 +15,8 @@ namespace FilterExo.Model
         dict,   // converted into a dictionary type representation. Their combined order doesn't matter
         prim,   // not combinable, instead primitive values that have to keep their order
         pack,
-        oper    // + - 
+        oper,    // + - 
+        func
     }
 
     [DebuggerDisplay("{debugView}")]
@@ -36,10 +38,19 @@ namespace FilterExo.Model
             this.ValueCore = new HashSetValueCore() { Values = value };
         }
 
+        public ExoAtom(ExoFunction function)
+        {
+            this.IdentifiedType = ExoAtomType.func;
+            this.ValueCore = new FuncValueCore()
+            {
+                Value = function
+            };
+        }
+
         public ExoAtom(List<ExoAtom> packedValues)
         {
             this.IdentifiedType = ExoAtomType.pack;
-            this.ValueCore = new WildValueValueCore()
+            this.ValueCore = new PackedValueCore()
             {
                 Values = packedValues
             };
@@ -98,7 +109,7 @@ namespace FilterExo.Model
                         yield return item;
                     }
                 }
-                else if (items.Count() >= 1)
+                else
                 {
                     foreach (var item in items)
                     {
@@ -120,8 +131,8 @@ namespace FilterExo.Model
 
         public ExoFunction GetFunction(ExoBlock parent)
         {
-            // TODO
-            return parent.GetFunction(this.Serialize(parent));
+            TraceUtility.Check(this.IdentifiedType != ExoAtomType.func, "Attempting to get the function from a non-func atom!");
+            return ((FuncValueCore)this.ValueCore).Value;
         }
 
         public static bool IsStringType(string value)

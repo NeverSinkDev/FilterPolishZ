@@ -78,6 +78,29 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_BasicFunctions()
+        {
+            var input = new List<string>()
+            {
+                "Func test { SetBorderColor 255 0 0 255; SetTextColor 255 0 0 255; };",
+                "Section Incubators : IncubatorBase",
+                "{",
+                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(); };",
+                "Rule T1 { test(); };",
+                "# Rule error;",
+                "}"
+            };
+
+            var res = this.StringToExoFilter(input);
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(1, res.RootEntry.Scopes.Count);
+            Assert.AreEqual(2, res.RootEntry.Scopes[0].Scopes.Count);
+            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[2].SerializeDebug(), "SetBorderColor 255 0 0 255");
+            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[1].Commands[0].SerializeDebug(), "SetBorderColor 255 0 0 255");
+        }
+
+        [Test]
         public void ExoProcessor_BasicExpressionMerging()
         {
             var input = new List<string>()
@@ -95,13 +118,13 @@ namespace FilterPolishTestRunner
         {
             var input = @"var a = ""wisdom"" ""fishing rod"" ""portal"";
                 var b = ""mirror"" ""ex"" - ""ex"";
-                var c = ""zero"";
+                var c = ""zero"" ""sword"";
                 var d = ""wisdom"";
                 Rule T1 { BaseType ( a + b + c - d ); };";
 
             var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
-            Assert.AreEqual(@"BaseType ""fishing rod"" ""mirror"" ""portal"" ""zero""", 
+            Assert.AreEqual(@"BaseType ""fishing rod"" ""mirror"" ""portal"" ""sword"" ""zero""", 
                 res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
         }
 

@@ -33,7 +33,7 @@ namespace FilterExo.Model
         }
     }
 
-    public class WildValueValueCore : IExoAtomValueCore
+    public class PackedValueCore : IExoAtomValueCore
     {
         public List<ExoAtom> Values;
 
@@ -88,9 +88,36 @@ namespace FilterExo.Model
 
         public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
         {
-            if (CanBeVariable && parent.IsVariable(Value))
+            if (CanBeVariable)
             {
-                yield return parent.GetVariable(this.Value);
+                if (parent.IsVariable(Value))
+                {
+                    yield return parent.GetVariable(this.Value);
+                }
+                else if (parent.IsFunction(Value))
+                {
+                    yield return parent.GetFunction(this.Value);
+                }
+            }
+        }
+
+        public class FuncValueCore : IExoAtomValueCore
+        {
+            public ExoFunction Value;
+
+            public string GetRawValue()
+            {
+                return string.Empty;
+            }
+
+            public IEnumerable<ExoAtom> Resolve(ExoBlock parent)
+            {
+                yield break;
+            }
+
+            public string Serialize(ExoBlock parent)
+            {
+                return Value.Name;
             }
         }
     }

@@ -15,10 +15,6 @@ namespace FilterExo.Core.PreProcess.Strategies
         {
             var functionName = builder.Owner.ReadCursor.PropertyExpression[1];
 
-            //var split = exprRoot.SplitBy(x => x.Value == "=");
-            //var variableInfo = this.HandleBefore(split.before);
-            //var variableContent = this.HandleAfter(split.after);
-
             var result = new List<ExoExpressionCommand>();
 
             // treat a whole entry
@@ -74,7 +70,7 @@ namespace FilterExo.Core.PreProcess.Strategies
                 Variables = new Dictionary<string, ExoAtom>()
             };
 
-            builder.Owner.WriteCursor.Functions.Add(functionName.Value, function);
+            builder.Owner.WriteCursor.Functions.Add(functionName.Value, new ExoAtom(function));
         }
 
         public bool Match(ExpressionBuilder builder)

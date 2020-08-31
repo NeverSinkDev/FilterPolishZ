@@ -42,6 +42,8 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
+        
+
         public List<ExoAtom> ResolveExpression()
         {
             var results = new List<ExoAtom>();
@@ -120,11 +122,25 @@ namespace FilterExo.Core.PreProcess.Commands
 
             foreach (var subexpression in splitChildren)
             {
-                foreach (var atom in subexpression)
+                bool funcMode = false;
+                ExoAtom funcLink = null;
+                foreach (var branch in subexpression)
                 {
-                    // Execute functions
-                    // var func = atom.Content.GetFunction(this.Parent);
-                    // TODO: execute here
+                    if (funcMode)
+                    {
+                        var function = funcLink.GetFunction(this.Parent);
+                        function.Execute(branch);
+                    }
+
+                    if (branch.Content?.IdentifiedType == ExoAtomType.func)
+                    {
+                        funcLink = branch.Content;
+                        funcMode = true;
+                    }
+                    else
+                    {
+                        funcMode = false;
+                    }
                 }
 
                 // get all children on the level we're working on
@@ -179,7 +195,7 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
-        // Time to get serious/serial
+        // Time to get cerial
         public string SerializeDebug()
         {
             var serializedCommand = this.Serialize();

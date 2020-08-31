@@ -25,7 +25,7 @@ namespace FilterExo.Model
         public List<ExoBlock> Scopes = new List<ExoBlock>();
 
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
-        public Dictionary<string, ExoFunction> Functions { get; set; } = new Dictionary<string, ExoFunction>();
+        public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
         public IEnumerable<List<string>> ResolveAndSerialize()
@@ -57,7 +57,7 @@ namespace FilterExo.Model
             return GetInternalVariable(key);
         }
 
-        public ExoFunction GetFunction(string key)
+        public ExoAtom GetFunction(string key)
         {
             return GetInternalFunction(key);
         }
@@ -102,7 +102,7 @@ namespace FilterExo.Model
             return this.GetParent().GetVariable(key);
         }
 
-        private ExoFunction GetInternalFunction(string key)
+        private ExoAtom GetInternalFunction(string key)
         {
             if (this.Functions.ContainsKey(key))
             {
