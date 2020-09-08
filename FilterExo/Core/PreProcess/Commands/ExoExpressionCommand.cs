@@ -23,6 +23,11 @@ namespace FilterExo.Core.PreProcess.Commands
             }
         }
 
+        public ExoExpressionCommand(List<ExoAtom> values)
+        {
+            this.Values.AddRange(values);
+        }
+
         public ExoBlock Parent { get; set; }
 
         public List<ExoAtom> Values = new List<ExoAtom>();
@@ -42,7 +47,7 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
-        
+
 
         public List<ExoAtom> ResolveExpression()
         {
@@ -59,29 +64,8 @@ namespace FilterExo.Core.PreProcess.Commands
             {
                 foreach (var item in branch.Leaves)
                 {
-                    if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
-                    {
-                        // when dealing with variables, we resolve them and if resolvement was succesfull
-                        // we put resolved single varibales into content and a list of values into leaves
-                        var resolved = item.Content.Resolve(this.Parent);
-
-                        if (resolved.Any())
-                        {
-                            var resolvedList = resolved.ToList();
-                            if (resolvedList.Count == 1)
-                            {
-                                item.Content = resolvedList[0];
-                            }
-                            else
-                            {
-                                item.Content = null;
-                                resolvedList.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
-                            }
-                        }
-                    }
-
-                    // recurse
-                    ResolveBranch(item);
+                    ResolveVariables(item);
+                    ResolveBranch(item); // Recurse
                 }
 
                 if (branch.Leaves.Count != 0)
@@ -114,6 +98,30 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
+        private void ResolveVariables(Branch<ExoAtom> item)
+        {
+            if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
+            {
+                // when dealing with variables, we resolve them and if resolvement was succesfull
+                // we put resolved single varibales into content and a list of values into leaves
+                var resolved = item.Content.Resolve(this.Parent);
+
+                if (resolved.Any())
+                {
+                    var resolvedList = resolved.ToList();
+                    if (resolvedList.Count == 1)
+                    {
+                        item.Content = resolvedList[0];
+                    }
+                    else
+                    {
+                        item.Content = null;
+                        resolvedList.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
+                    }
+                }
+            }
+        }
+
         private List<Branch<ExoAtom>> ResolveBranchExpression(List<Branch<ExoAtom>> children)
         {
             // Split by ,
@@ -122,67 +130,15 @@ namespace FilterExo.Core.PreProcess.Commands
 
             foreach (var subexpression in splitChildren)
             {
-                bool funcMode = false;
-                ExoAtom funcLink = null;
-                foreach (var branch in subexpression)
-                {
-                    if (funcMode)
-                    {
-                        var function = funcLink.GetFunction(this.Parent);
-                        function.Execute(branch);
-                    }
-
-                    if (branch.Content?.IdentifiedType == ExoAtomType.func)
-                    {
-                        funcLink = branch.Content;
-                        funcMode = true;
-                    }
-                    else
-                    {
-                        funcMode = false;
-                    }
-                }
+                // Detects potential functions and their parameters and then executes them, by replacing the 
+                // Atoms with the resolved results
+                ExecuteFunctions(subexpression);
 
                 // get all children on the level we're working on
-                var wipBranch = new List<ExoAtom>();
-                foreach (var leaf in subexpression)
-                {
-                    if (leaf.Content == null)
-                    {
-                        leaf.YieldAllContentBranches().ForEach(x => wipBranch.Add(x));
-                    }
-                    else
-                    {
-                        wipBranch.Add(leaf.Content);
-                    }
-                }
+                var wipBranch = FlattenBranch(subexpression);
 
-                // resolve expression. cancel and restart every time we resolved something
-                // this way we handle the results of the expressions as a new variable
-                bool success = true;
-                while(success)
-                {
-                    var combiner = new ExoExpressionCombineBuilder(this.Parent);
-                    success = false;
-
-                    for (int i = 0; i < wipBranch.Count; i++)
-                    {
-                        success = combiner.Add(wipBranch[i]);
-
-                        if (success)
-                        {
-                            combiner.Results.AddRange(wipBranch.Skip(i + 1));
-                            wipBranch = combiner.Results;
-                            break;
-                        }
-                    }
-
-                    if (!success)
-                    {
-                        success = combiner.Finish();
-                        wipBranch = combiner.Results;
-                    }
-                }
+                // check the expressions for combinable patterns. Restart every time we find one.
+                wipBranch = CombinePatterns(wipBranch);
 
                 if (results.Count > 0)
                 {
@@ -190,6 +146,106 @@ namespace FilterExo.Core.PreProcess.Commands
                 }
 
                 results.AddRange(wipBranch.Select(x => new Branch<ExoAtom>() { Content = x }).ToList());
+            }
+
+            return results;
+        }
+
+        private void ExecuteFunctions(List<Branch<ExoAtom>> subexpression)
+        {
+            bool funcMode = false;
+            ExoAtom funcLink = null;
+            var totalCount = subexpression.Count;
+            for (int i = 0; i < totalCount; i++)
+            {
+                Branch<ExoAtom> branch = subexpression[i];
+                if (funcMode)
+                {
+                    var function = funcLink.GetFunction(this.Parent);
+                    var funcRes = function.Execute(branch, this).ToList();
+
+                    if (funcRes.Count > 1)
+                    {
+                        if (subexpression.Count == 2)
+                        {
+                            subexpression.RemoveAt(i);
+                            subexpression.RemoveAt(i - 1);
+
+                            i = totalCount;
+
+                            foreach (var item in funcRes)
+                            {
+                                this.Parent.AddCommand(new ExoExpressionCommand(item));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        subexpression.RemoveAt(i);
+                        subexpression.RemoveAt(i - 1);
+                        subexpression.Add(funcRes[0].ToBranch());
+                        totalCount = subexpression.Count;
+                        i--;
+                    }
+                }
+
+                if (branch.Content?.IdentifiedType == ExoAtomType.func)
+                {
+                    funcLink = branch.Content;
+                    funcMode = true;
+                }
+                else
+                {
+                    funcMode = false;
+                }
+            }
+        }
+
+        // resolve expression. cancel and restart every time we resolved something
+        // this way we handle the results of the expressions as a new variable
+        private List<ExoAtom> CombinePatterns(List<ExoAtom> wipBranch)
+        {
+            bool success = true;
+            while (success)
+            {
+                var combiner = new ExoExpressionCombineBuilder(this.Parent);
+                success = false;
+
+                for (int i = 0; i < wipBranch.Count; i++)
+                {
+                    success = combiner.Add(wipBranch[i]);
+
+                    if (success)
+                    {
+                        combiner.Results.AddRange(wipBranch.Skip(i + 1));
+                        wipBranch = combiner.Results;
+                        break;
+                    }
+                }
+
+                if (!success)
+                {
+                    success = combiner.Finish();
+                    wipBranch = combiner.Results;
+                }
+            }
+
+            return wipBranch;
+        }
+
+        public static List<ExoAtom> FlattenBranch(List<Branch<ExoAtom>> subexpression)
+        {
+            var results = new List<ExoAtom>();
+            foreach (var leaf in subexpression)
+            {
+                if (leaf.Content == null)
+                {
+                    leaf.YieldAllContentBranches().ForEach(x => results.Add(x));
+                }
+                else
+                {
+                    results.Add(leaf.Content);
+                }
             }
 
             return results;
@@ -220,7 +276,7 @@ namespace FilterExo.Core.PreProcess.Commands
                 {
                     child = new Branch<ExoAtom>() { };
                     parent.Leaves.Add(child);
-                    
+
                     tree.Stack.Push(parent);
                     parent = child;
                 }
@@ -270,6 +326,20 @@ namespace FilterExo.Core.PreProcess.Commands
                     yield return citem;
                 }
             }
+        }
+    }
+
+    public static class EBranch
+    {
+        public static Branch<T> ToBranch<T>(this IEnumerable<T> content)
+        {
+            var contentBranch = new Branch<T>();
+            foreach (var item in content)
+            {
+                contentBranch.Leaves.Add(new Branch<T>() { Content = item });
+            }
+
+            return contentBranch;
         }
     }
 }

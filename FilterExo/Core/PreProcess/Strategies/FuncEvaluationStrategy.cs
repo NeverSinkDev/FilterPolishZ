@@ -1,6 +1,7 @@
 ﻿using FilterExo.Core.PreProcess.Commands;
 using FilterExo.Core.Structure;
 using FilterExo.Model;
+using FilterPolishUtil.Extensions;
 using FilterPolishUtil.Model;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,24 @@ namespace FilterExo.Core.PreProcess.Strategies
     {
         public void Execute(ExpressionBuilder builder)
         {
-            var functionName = builder.Owner.ReadCursor.PropertyExpression[1];
+
+            var properties = builder.Owner.ReadCursor.PropertyExpression;
+            var functionName = properties[1];
+
+            var split = properties.SelectInnerContents(
+                x => x.Value == "(",
+                x => x.Value == ")");
+
+            List<string> varNames = new List<string>();
+            if (split != null)
+            {
+                var vars = split.SplitDivide(x => x.Value == ",");
+
+                if (vars != null && vars.Count >= 1)
+                {
+                    varNames = vars.Select(x => x.FirstOrDefault().Value).ToList();
+                }
+            }
 
             var result = new List<ExoExpressionCommand>();
 
@@ -62,12 +80,14 @@ namespace FilterExo.Core.PreProcess.Strategies
                 newEntry.AddCommand(item);
             }
 
+
+
             // Resolve rule into a "Show" filter entry.
             var function = new ExoFunction
             {
                 Name = functionName.Value,
                 Content = newEntry,
-                Variables = new Dictionary<string, ExoAtom>()
+                Variables = varNames
             };
 
             builder.Owner.WriteCursor.Functions.Add(functionName.Value, new ExoAtom(function));

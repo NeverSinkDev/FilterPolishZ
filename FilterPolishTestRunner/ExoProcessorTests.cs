@@ -82,7 +82,7 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "Func test { SetBorderColor 255 0 0 255; SetTextColor 255 0 0 255; };",
+                "Func test (a,b) { SetBorderColor 255 0 0 255; SetTextColor 255 0 0 255; };",
                 "Section Incubators : IncubatorBase",
                 "{",
                 "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(); };",
@@ -98,6 +98,27 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(2, res.RootEntry.Scopes[0].Scopes.Count);
             Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[2].SerializeDebug(), "SetBorderColor 255 0 0 255");
             Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[1].Commands[0].SerializeDebug(), "SetBorderColor 255 0 0 255");
+        }
+
+        [Test]
+        public void ExoProcessor_BasicFunctions2()
+        {
+            var input = new List<string>()
+            {
+                "Func test (a,b) { SetBorderColor a 0 0 b; SetTextColor a 0 0 b; };",
+                "Section Incubators : IncubatorBase",
+                "{",
+                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(100,200); };",
+                "Rule T1 { test(100,200); };",
+                "# Rule error;",
+                "}"
+            };
+
+            var res = this.StringToFilterEntries(input).Select(x => x.Serialize()).ToList();
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(2, res.Count);
+            Assert.AreEqual("\tSetTextColor 100 0 0 200", res[0][3]);
         }
 
         [Test]

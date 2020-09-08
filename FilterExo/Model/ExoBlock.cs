@@ -30,9 +30,16 @@ namespace FilterExo.Model
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {
-            foreach (var comm in this.Commands)
+            for (int i = 0; i < Commands.Count; i++)
             {
-                yield return comm.Serialize();
+                ExoExpressionCommand comm = this.Commands[i];
+                var result = comm.Serialize();
+                if (result.Count == 0)
+                {
+                    continue;
+                }
+
+                yield return result;
             }
         }
 

@@ -204,5 +204,40 @@ namespace FilterPolishUtil.Extensions
                 yield return selector(previous, current);
             }
         }
+
+        public static List<T> SelectInnerContents<T>(this IEnumerable<T> collection, Predicate<T> first, Predicate<T> second)
+        {
+            int state = 0;
+            List<T> results = new List<T>();
+
+            foreach (var item in collection)
+            {
+                if (state == 0)
+                {
+                    if (first(item))
+                    {
+                        state++;
+                    }
+                }
+                else if (state == 1)
+                {
+                    if (second(item))
+                    {
+                        state++;
+                    }
+                    else
+                    {
+                        results.Add(item);
+                    }
+                }
+
+                if (state == 2)
+                {
+                    return results;
+                }
+            }
+
+            return null;
+        }
     }
 }
