@@ -24,6 +24,8 @@ namespace FilterExo.Model
 
             var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
 
+            TraceUtility.Check(splitChildren.Count != Variables.Count, "function call has unequal children definition");
+
             for (int i = 0; i < splitChildren.Count; i++)
             {
                 var vari = splitChildren[i];

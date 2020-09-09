@@ -72,6 +72,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             }
 
             var newEntry = new ExoBlock();
+            newEntry.Parent = builder.Owner.WriteCursor;
             // newEntry.Parent = builder.Owner.WriteCursor;
             //builder.Owner.WriteCursor.Scopes.Add(newEntry);
 

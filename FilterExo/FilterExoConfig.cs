@@ -62,5 +62,14 @@ namespace FilterExo
             impl,
             expl
         }
+
+        public static Dictionary<string, string> Abbreviations = new Dictionary<string, string>()
+        {
+            { "BG", "SetBackgroundColor" },
+            { "BC", "SetBorderColor" },
+            { "TX", "SetTextColor" },
+            { "BT", "BaseType" },
+            { "Mod", "HasExplicitMod" }
+        };
     }
 }
