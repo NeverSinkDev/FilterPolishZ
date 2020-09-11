@@ -47,8 +47,6 @@ namespace FilterExo.Core.PreProcess.Commands
             return results;
         }
 
-
-
         public List<ExoAtom> ResolveExpression()
         {
             var results = new List<ExoAtom>();

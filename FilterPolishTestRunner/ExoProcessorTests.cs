@@ -78,7 +78,7 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
-        public void ExoProcessor_BasicFunctions2()
+        public void ExoProcessor_BasicFunctions()
         {
             var input = new List<string>()
             {
