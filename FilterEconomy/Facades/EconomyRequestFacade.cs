@@ -19,7 +19,7 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            var leagueStart = new DateTime(2020, 6, 19);
+            var leagueStart = new DateTime(2020, 9, 18);
             this.ActiveMetaTags.Add("EarlyLeagueInterestAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
 
             FilterPolishConfig.IsEarlyLeague = ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now;

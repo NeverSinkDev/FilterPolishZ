@@ -29,7 +29,20 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
         public TieringSuggestionView()
         {
             InitializeComponent();
-            this.SelectedBranchComboBox.ItemsSource = FilterPolishConfig.FilterTierLists;
+
+            var keyList = new HashSet<string>();
+            
+            foreach (var item in FilterPolishConfig.FilterTierLists)
+            {
+                if (FilterPolishConfig.AutoTieringIgnoredTiers.Contains(item))
+                {
+                    continue;
+                }
+
+                keyList.Add(item);
+            }
+
+            this.SelectedBranchComboBox.ItemsSource = keyList;
             this.SelectedBranchComboBox.SelectedIndex = 0;
 
             this.TierListFacade = TierListFacade.GetInstance();
