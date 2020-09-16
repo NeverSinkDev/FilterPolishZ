@@ -20,24 +20,6 @@ steps:
   inputs:
     versionSpec: '4.x'
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    restoreNugetPackages: true
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
 - task: CmdLine@2
   inputs:
     script: 'git config user.name "NeverSinkDev"'
@@ -56,7 +38,6 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: '\.vscode*'
     RemoveSourceFolder:
-
 
 - task: CmdLine@2
   inputs:
