@@ -7,7 +7,6 @@ namespace FilterExo.Model
 {
     public class ExoFilter
     {
-        public ExoFilterEntry RootEntry;
-        public StructureExpr StructureExpressionRoot;
+        public ExoBlock RootEntry;
     }
 }

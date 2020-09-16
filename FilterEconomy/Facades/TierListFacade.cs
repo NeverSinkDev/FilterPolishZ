@@ -54,6 +54,11 @@ namespace FilterEconomy.Facades
 
         public bool ContainsTierInformationForBaseType(string group, string basetype)
         {
+            if (group == "basetypes")
+            {
+                group = "generalcrafting";
+            }
+
             return TierListData[group].ItemTiering.ContainsKey(basetype);
         }
 
@@ -86,6 +91,11 @@ namespace FilterEconomy.Facades
             {
                 if (!this.TierListData.ContainsKey(section.Key) || (this.TierListData[section.Key].FilterEntries?.Count == 0))
                 {
+                    if (FilterPolishConfig.AutoTieringIgnoredTiers.Contains(section.Key))
+                    {
+                        continue;
+                    }
+
                     LoggingFacade.LogWarning($"Skipping section {section.Key} . No data found for section!");
                     continue;
                 }

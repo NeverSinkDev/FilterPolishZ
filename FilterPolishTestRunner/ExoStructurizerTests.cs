@@ -71,6 +71,23 @@ namespace FilterPolishTestRunner
             Assert.IsTrue(treeDict.Count > 30);
         }
 
+        [Test]
+        public void StructurizerCommentTest()
+        {
+            var input = new List<string>()
+            {
+                "# [4112] Incubator",
+                "",
+                "Section Incubators : IncubatorBase"
+            };
+
+            var result = Structurize(input);
+            var treeDict = StructurizerDebugger.SelectOnTree(result, x => x.Mode.ToString() + x.ScopeType.ToString());
+
+            Assert.IsNotNull(treeDict);
+            Assert.IsTrue(treeDict["r.0"] == "commnone");
+        }
+
         private StructureExpr Structurize(List<string> input)
         {
             Tokenizer.Execute(input);

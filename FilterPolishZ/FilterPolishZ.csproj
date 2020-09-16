@@ -119,6 +119,9 @@
     <Compile Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml.cs">
       <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModuleWindows\BaseTypeTiering\BaseTypeTieringView.xaml.cs">
+      <DependentUpon>BaseTypeTieringView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
     <Compile Include="ModuleWindows\ItemInfo\ItemTieringData.cs" />
     <Compile Include="ModuleWindows\Logging\LoggingScreenView.xaml.cs">
@@ -136,6 +139,10 @@
     <Compile Include="Util\InfoPopUpMessageDisplay.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModuleWindows\BaseTypeTiering\BaseTypeTieringView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

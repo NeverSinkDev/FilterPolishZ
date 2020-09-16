@@ -1,45 +1,49 @@
-﻿using FilterExo.Model;
+﻿using FilterCore.Entry;
+using FilterCore.Line;
+using FilterExo.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace FilterExo.Core.Process
 {
     public class ExoProcessor
     {
-        public List<string> Execute(ExoFilter exoFilter)
+        public List<FilterEntry> Execute(ExoFilter exoFilter)
         {
-            List<string> results = new List<string>();
+            List<FilterEntry> results = new List<FilterEntry>();
 
             ProcessTreeStep(exoFilter.RootEntry);
 
             // DO WORK;
-            void ProcessTreeStep(ExoFilterEntry cursor)
+            void ProcessTreeStep(ExoBlock cursor)
             {
-                foreach (var readChild in cursor.Entries)
+                foreach (var readChild in cursor.Scopes)
                 {
-                    DoWorkOnReadChild(readChild);
+                    if (readChild.Commands.Count > 0)
+                    {
+                        DoWorkOnReadChild(readChild);
+                    }
 
-                    if (readChild.Entries.Count > 0)
+                    if (readChild.Scopes.Count > 0)
                     {
                         ProcessTreeStep(readChild);
                     }
                 }
             }
 
-            void DoWorkOnReadChild(ExoFilterEntry readChild)
+            void DoWorkOnReadChild(ExoBlock readChild)
             {
-                results.AddRange(readChild.FormattedValue.Serialize());
-                // FIND RULES. EXECUTE THEM
-                if  (false) // NOT RULE
+                var entry = FilterEntry.CreateDataEntry("Show");
+
+                foreach (var comm in readChild.ResolveAndSerialize())
                 {
-                    return;
+                    var line = comm.ToFilterLine();
+                    entry.Content.Add(line);
                 }
 
-                // var localResults = rule.command.execute();
-                // results.AddRange(localResults);
+                results.Add(entry);
             }
 
             return results;

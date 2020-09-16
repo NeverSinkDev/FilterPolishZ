@@ -1,7 +1,8 @@
 ﻿using FilterCore;
-using FilterExo.Core.PreProcess.FilterExtractedCommands;
+using FilterExo.Core.PreProcess.Strategies;
 using FilterExo.Core.Structure;
 using FilterExo.Model;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,23 @@ namespace FilterExo.Core.PreProcess
 {
     public class ExoPreProcessor
     {
+        public StructureExpr ReadCursor { get; set; }
+        public ExoBlock WriteCursor { get; set; }
+
         public ExoFilter Execute(StructureExpr tree)
         {
             var result = new ExoFilter();
 
             // transformation process definition
-            StructureExpr readCursor = tree.GoToRoot();
-            ExoFilterEntry writeCursor = new ExoFilterEntry();
+            ReadCursor = tree.GoToRoot();
+            WriteCursor = new ExoBlock() { Type = FilterExoConfig.ExoFilterType.root };
+
+            // builder information
+            var builder = new ExpressionBuilder(this);
 
             // call
-            ProcessTreeStep(readCursor);
-
-            result.RootEntry = writeCursor;
+            ProcessTreeStep(ReadCursor);
+            result.RootEntry = WriteCursor;
 
             // LOCAL: process the tree
             void ProcessTreeStep(StructureExpr cursor)
@@ -37,6 +43,26 @@ namespace FilterExo.Core.PreProcess
                         ProcessTreeStep(readChild);
                     }
                 }
+
+                this.ReadCursor = cursor;
+                PerformClosingScopeResolution(cursor);
+            }
+
+            void PerformClosingScopeResolution(StructureExpr cursor)
+            {
+                var success = builder.Execute();
+
+                if (cursor.IsSection())
+                {
+                    WriteCursor = WriteCursor.GetParent();
+                }
+
+                if (success)
+                {
+                    builder = new ExpressionBuilder(this);
+                }
+
+
             }
 
             // LOCAL: Perform work on write branch, by reading current step
@@ -57,46 +83,30 @@ namespace FilterExo.Core.PreProcess
                 // explicit scope handling
                 if (readChild.ScopeType == FilterExoConfig.StructurizerScopeType.expl)
                 {
-                    // handle scope based on properties
+                    if (readChild.IsSection())
+                    {
+                        var child = new ExoBlock();
+                        child.Parent = this.WriteCursor;
+                        WriteCursor.Scopes.Add(child);
+                        WriteCursor = child;
+                    }
+
                     return;
                 }
 
                 // implicit scope handling
                 if (readChild.ScopeType == FilterExoConfig.StructurizerScopeType.impl)
                 {
-                    var builder = new CommandExtractionBuilder();
+                    builder.AddNewPage();
+
                     foreach (var item in readChild.Children)
                     {
-                        builder.AddKeyWord(item);
+                        if (item.Mode == FilterExoConfig.StructurizerMode.atom)
+                        {
+                            builder.AddKeyWord(item);
+                        }
                     }
-
-                    var filterentry = builder.Execute();
-
-                    if (filterentry.Content.Content.Keys.Count == 0)
-                    {
-                        return;
-                    }
-
-                    // perform writecursor work
-                    var writeentry = new ExoFilterEntry();
-                    writeentry.Parent = writeCursor;
-
-                    writeCursor.Entries.Add(writeentry);
-
-
-                    writeentry.FormattedValue = filterentry;
-
-                    // writeCursor = writeentry.GetParent();
                 }
-            }
-
-            void EvaluateExplicitScopeCommands(StructureExpr readExpr)
-            {
-                var properties = readExpr.Properties["descriptor"];
-                var rule = properties.FirstOrDefault();
-                // Func
-                // Section
-                // Rule
             }
 
             return result;

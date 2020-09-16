@@ -96,7 +96,7 @@ namespace AzurePolishFunctions.Procedures
             LoggingFacade.LogInfo($"[DEBUG] League Active: {EconomyData.IsLeagueActive().ToString()}");
 
             // null check the ecoData in case of disabled/early leagues
-            if (dataRes == FileRequestResult.Success)
+            if (dataRes == FileRequestResult.Success && EconomyData.IsLeagueActive())
             {
                 // 4) Load tier list information and enrichment procedures
                 var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
