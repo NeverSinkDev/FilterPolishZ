@@ -23,7 +23,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
-    restoreSolution: 'FilterPolishZ/packages.config'
+    restoreSolution: 'FilterPolishZ/'
     feedsToUse: 'select'
 
 - task: VSBuild@1
