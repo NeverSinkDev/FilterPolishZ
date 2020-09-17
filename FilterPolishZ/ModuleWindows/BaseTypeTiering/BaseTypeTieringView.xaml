@@ -16,6 +16,12 @@
              TextOptions.TextFormattingMode="Ideal" 
              TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <wpfUtil:BindingProxy x:Key="proxy" Data="{Binding}" />
+            <converter:BaseTypeToMatrixTierColorConverter x:Key="MatrixConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -24,7 +30,19 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                <Button ToolTip="Reload/Refresh" Click="Button_Click">
+                <Button ToolTip="1" Click="curs1click">
+                    <materialDesign:PackIcon Kind="Numeric1Box" Foreground="DeepSkyBlue"  />
+                </Button>
+                <Button ToolTip="2" Click="curs2click">
+                    <materialDesign:PackIcon Kind="Numeric2Box" Foreground="YellowGreen"  />
+                </Button>
+                <Button ToolTip="3" Click="curs3click">
+                    <materialDesign:PackIcon Kind="Numeric3Box" Foreground="Orange"  />
+                </Button>
+                <Button ToolTip="4" Click="curs4click">
+                    <materialDesign:PackIcon Kind="LetterRBox" Foreground="Crimson"  />
+                </Button>
+                <Button ToolTip="Reload/Refresh" Click="Refresh_Click">
                     <materialDesign:PackIcon Kind="Refresh" Foreground="White"  />
                 </Button>
 
@@ -36,12 +54,19 @@
         <Grid Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="4*" />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
                 <DockPanel Grid.Column="0">
-                    <DataGrid x:Name="TieringSuggestionsGrid" ItemsSource="{Binding BaseTypeMatrixTable}" Margin="0 8 0 0" SelectionMode="Single" CanUserAddRows="false" CanUserDeleteRows="False">
+                    <DataGrid x:Name="TieringMatrixGrid" ItemsSource="{Binding BaseTypeMatrixTable}" Margin="0 8 0 0" SelectionMode="Single" IsReadOnly="False" CanUserAddRows="false" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" MouseLeftButtonUp="TieringMatrixGrid_MouseLeftButtonUp">
+                        <DataGrid.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="Background" Value="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource MatrixConverter}}"/>
+                                <Setter Property="FontSize" Value="22"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Style>
+                        </DataGrid.CellStyle>
                     </DataGrid>
                 </DockPanel>
 

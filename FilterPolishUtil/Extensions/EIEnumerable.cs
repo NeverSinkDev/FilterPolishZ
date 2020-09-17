@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace FilterPolishUtil.Extensions
 {
+    public static class KeyValuePairExtensions
+    {
+        public static bool IsNull<T, TU>(this KeyValuePair<T, TU> pair)
+        {
+            return pair.Equals(new KeyValuePair<T, TU>());
+        }
+    }
+
     public static class EIEnumerable
     {
         public static List<T> RemoveFrom<T>(this List<T> lst, int from)
