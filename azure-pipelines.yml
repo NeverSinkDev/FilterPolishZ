@@ -3,8 +3,12 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
-trigger:
-- master
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
 
 pool:
   vmImage: 'VS2017-Win2016'
@@ -19,24 +23,6 @@ steps:
 - task: NuGetToolInstaller@1
   inputs:
     versionSpec: '4.x'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/packages.config'
-    feedsToUse: 'select'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    restoreNugetPackages: true
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
 
 - task: CmdLine@2
   inputs:
@@ -56,7 +42,6 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: '\.vscode*'
     RemoveSourceFolder:
-
 
 - task: CmdLine@2
   inputs:
