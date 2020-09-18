@@ -151,6 +151,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
         }
 
+        // Gets the appropriate tier from the filter, using itemdata
         private string GetAppropriateTier(string itemName, string tierlevel)
         {
             var itemStats = BaseTypeDataProvider.BaseTypeData[itemName];
