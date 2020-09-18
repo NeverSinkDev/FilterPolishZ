@@ -89,7 +89,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
 
 
-            var tier = LookUpTier(itemName);
+            var tier = LookUpTier(itemName, true);
             var entry = tier.Value.Entry[0];
             
             if (entry.GetLines("BaseType").Any())
@@ -124,6 +124,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
                 {
                     var entry = tier.Value.Entry[0];
                     var values = entry.GetLines("BaseType").First().Value as EnumValueContainer;
+
                     values.Value.Add(new FilterCore.Line.LineToken()
                     {
                         isQuoted = true,
@@ -152,9 +153,28 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
 
         private string GetAppropriateTier(string itemName, string tierlevel)
         {
+            var itemStats = BaseTypeDataProvider.BaseTypeData[itemName];
+            var itemClass = itemStats["Class"];
+            var height = int.Parse(itemStats["Height"]);
+            var width = int.Parse(itemStats["Width"]);
+
+            var itemType = "w";
+            if (itemClass.Contains("Body") || itemClass.Contains("Glove") || itemClass.Contains("Shield") || itemClass.Contains("Boots") || itemClass.Contains("Helmet"))
+            {
+                itemType = "a";
+            }
+
+            var itemSize = "s";
+            if (width > 1 && height >2)
+            {
+                itemSize = "l";
+            }
+
+            var suffix = "t" + tierlevel + itemType + itemSize;
+
             foreach (var item in this.FilterTiers.FilterEntries)
             {
-                 if (item.Key.Contains(tierlevel))
+                if (item.Key.Contains(suffix))
                 {
                     return item.Key;
                 }
@@ -163,7 +183,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             return null;
         }
 
-        public KeyValuePair<string,SingleTier> LookUpTier(string itemName)
+        public KeyValuePair<string,SingleTier> LookUpTier(string itemName, bool skipLevelCheck = false)
         {
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(itemName))
             {
@@ -198,7 +218,14 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
                             {
                                 var filterDropLevel = (int.Parse((dropLine.Value as NumericValueContainer).Value));
 
-                                if (int.Parse(dropLevel) >= filterDropLevel)
+                                if (!skipLevelCheck)
+                                {
+                                    if (int.Parse(dropLevel) >= filterDropLevel)
+                                    {
+                                        return item;
+                                    }
+                                }
+                                else
                                 {
                                     return item;
                                 }

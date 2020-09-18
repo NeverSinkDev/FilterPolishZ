@@ -51,7 +51,8 @@ namespace FilterCore
         public static Dictionary<string, ILineStrategy> LineTypes = new Dictionary<string, ILineStrategy>(){
             { "Show",          new VariableLineStrategy(0,0) },
             { "Hide",          new VariableLineStrategy(0,0) },
-             
+            { "Replica",       new BoolLineStrategy() },
+            { "AlternateQuality",       new BoolLineStrategy() },
             { "FracturedItem",       new BoolLineStrategy() },
             { "SynthesisedItem",     new BoolLineStrategy() },
             { "AnyEnchantment",      new BoolLineStrategy() },
