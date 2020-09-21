@@ -90,6 +90,13 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
 
 
             var tier = LookUpTier(itemName, true);
+
+            if (tier.IsNull())
+            {
+                LoggingFacade.LogWarning("No tier found for item!? Fix it future me");
+                return;
+            }
+
             var entry = tier.Value.Entry[0];
             
             if (entry.GetLines("BaseType").Any())

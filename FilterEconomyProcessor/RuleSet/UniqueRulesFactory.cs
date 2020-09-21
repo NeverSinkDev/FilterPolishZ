@@ -35,7 +35,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
-            builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
+            // builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
 
             // items with one expensive rare version and one common, less rare verison are handled by this rule.
             builder.AddRule("uncommon", "multispecial",

@@ -75,7 +75,7 @@ namespace FilterPolishUtil
         /// <summary>
         /// Aspects that should be ignored during certain enrichments procedures
         /// </summary>
-        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
+        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect", "ReplicaAspect" };
         public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
 
         public static HashSet<string> GearClasses = new HashSet<string>()

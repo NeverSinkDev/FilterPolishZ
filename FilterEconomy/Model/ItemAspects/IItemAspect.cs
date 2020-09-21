@@ -93,6 +93,12 @@ namespace FilterEconomy.Model.ItemAspects
     //    public override string Group => "Meta";
     //}
 
+    public class ReplicaAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.uniques;
+    }
+
     public class AnchorAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
