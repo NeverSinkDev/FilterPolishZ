@@ -33,7 +33,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
         }
 
         private FilterAccessFacade filterAccessFacade;
-        public TierGroup FilterTiers {get; set;}
+        public TierListFacade FilterTiers { get; set; }
         public Dictionary<string, Dictionary<string, List<Dictionary<string, string>>>> SortedBaseTypeMatrix { get; private set; }
 
         public void Initialize(FilterAccessFacade filterAccessFacade)
@@ -42,35 +42,63 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             var filter = this.filterAccessFacade.PrimaryFilter;
 
             // access to all the relevant data in the filter
-            this.FilterTiers = TierListFacade.GetInstance().TierListData["rr"];
+            this.FilterTiers = TierListFacade.GetInstance();
 
             // dataMatrix Access
             this.SortedBaseTypeMatrix = BaseTypeDataProvider.BaseTypeTieringMatrixData;
         }
 
-        public void ChangeTier(string itemName, int tierChange)
+        public void ChangeTier(string section, string itemName, int tierChange)
+        {
+            var strategy = FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies[section];
+
+            switch (strategy)
+            {
+                case FilterPolishUtil.MatrixTieringMode.singleTier:
+                    ChangeTier_SingleStrategy(section, itemName, tierChange);
+                    break;
+                case FilterPolishUtil.MatrixTieringMode.rareTiering:
+                    ChangeTier_RareStrategy(section, itemName, tierChange);
+                    break;
+            }
+        }
+
+        public void ChangeTier_SingleStrategy(string section, string itemName, int tierChange)
+        {
+            if (tierChange == 1)
+            {
+                RemoveFromBaseTypeTiers(section, itemName);
+                AddToSingleBaseTypeTier(section, itemName, tierChange.ToString());
+            }
+            else
+            {
+                RemoveFromBaseTypeTiers(section, itemName);
+            }
+        }
+
+        private void ChangeTier_RareStrategy(string section, string itemName, int tierChange)
         {
             if (tierChange <= 2)
             {
-                RemoveFromBaseTypeTiers(itemName);
-                AddToSingleBaseTypeTier(itemName, tierChange.ToString());
+                RemoveFromBaseTypeTiers(section, itemName);
+                AddToSingleBaseTypeTier(section, itemName, tierChange.ToString());
             }
 
             if (tierChange == 3)
             {
-                RemoveFromBaseTypeTiers(itemName);
-                ChangeDropLevel(itemName);
+                RemoveFromBaseTypeTiers(section, itemName);
+                ChangeDropLevel(section, itemName);
             }
 
             if (tierChange == 4)
             {
-                RemoveFromBaseTypeTiers(itemName);
+                RemoveFromBaseTypeTiers(section, itemName);
             }
         }
 
-        public string LookUpTierName(string itemName)
+        public string LookUpTierName(string section, string itemName)
         {
-            var entry = this.LookUpTier(itemName);
+            var entry = this.LookUpTier(section, itemName);
 
             if (entry.IsNull())
             {
@@ -80,7 +108,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             return entry.Key ?? string.Empty;
         }
 
-        public void ChangeDropLevel(string itemName, string dropLevel = "")
+        public void ChangeDropLevel(string section, string itemName, string dropLevel = "")
         {
             if (dropLevel == "")
             {
@@ -89,7 +117,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
 
 
-            var tier = LookUpTier(itemName, true);
+            var tier = LookUpTier(section, itemName, true);
 
             if (tier.IsNull())
             {
@@ -98,10 +126,10 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
 
             var entry = tier.Value.Entry[0];
-            
+
             if (entry.GetLines("BaseType").Any())
             {
-                RemoveFromBaseTypeTiers(itemName);
+                RemoveFromBaseTypeTiers(section, itemName);
                 ChangeDropLevel(itemName, dropLevel);
                 return;
             }
@@ -116,16 +144,16 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
         }
 
-        public void AddToSingleBaseTypeTier(string itemName, string tierlevel)
+        public void AddToSingleBaseTypeTier(string section, string itemName, string tierlevel)
         {
-            string relevantTierName = GetAppropriateTier(itemName, tierlevel);
+            string relevantTierName = GetAppropriateTier(section, itemName, tierlevel);
 
             if (relevantTierName == null)
             {
                 LoggingFacade.LogWarning($"Can't find relevant tiername for: {itemName} with tier level {tierlevel}");
             }
 
-            foreach (var tier in this.FilterTiers.FilterEntries)
+            foreach (var tier in this.FilterTiers.TierListData[section].FilterEntries)
             {
                 if (tier.Key == relevantTierName)
                 {
@@ -141,9 +169,9 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
         }
 
-        public void RemoveFromBaseTypeTiers(string itemName)
+        public void RemoveFromBaseTypeTiers(string section, string itemName)
         {
-            var tier = this.LookUpTier(itemName);
+            var tier = this.LookUpTier(section, itemName);
 
             if (tier.Key != null && (tier.Key.Contains("t1") || tier.Key.Contains("t2")))
             {
@@ -159,8 +187,15 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
         }
 
         // Gets the appropriate tier from the filter, using itemdata
-        private string GetAppropriateTier(string itemName, string tierlevel)
+        private string GetAppropriateTier(string section, string itemName, string tierlevel)
         {
+            var strategy = FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies[section];
+
+            if (strategy != FilterPolishUtil.MatrixTieringMode.rareTiering)
+            {
+                return "t" + tierlevel;
+            }
+
             var itemStats = BaseTypeDataProvider.BaseTypeData[itemName];
             var itemClass = itemStats["Class"];
             var height = int.Parse(itemStats["Height"]);
@@ -173,14 +208,14 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             }
 
             var itemSize = "s";
-            if (width > 1 && height >2)
+            if (width > 1 && height > 2)
             {
                 itemSize = "l";
             }
 
             var suffix = "t" + tierlevel + itemType + itemSize;
 
-            foreach (var item in this.FilterTiers.FilterEntries)
+            foreach (var item in this.FilterTiers.TierListData[section].FilterEntries)
             {
                 if (item.Key.Contains(suffix))
                 {
@@ -191,7 +226,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
             return null;
         }
 
-        public KeyValuePair<string,SingleTier> LookUpTier(string itemName, bool skipLevelCheck = false)
+        public KeyValuePair<string, SingleTier> LookUpTier(string section, string itemName, bool skipLevelCheck = false)
         {
             if (BaseTypeDataProvider.BaseTypeData.ContainsKey(itemName))
             {
@@ -199,7 +234,7 @@ namespace FilterEconomyProcessor.BaseTypeMatrix
                 var itemClass = itemStats["Class"];
                 var dropLevel = itemStats["DropLevel"];
 
-                foreach (var item in this.FilterTiers.FilterEntries)
+                foreach (var item in this.FilterTiers.TierListData[section].FilterEntries)
                 {
                     if (item.Value.Entry.Count == 1)
                     {

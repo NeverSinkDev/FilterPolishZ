@@ -8,8 +8,6 @@ namespace FilterEconomyProcessor.RuleSet
     {
         public static FilterEconomyRuleSet Generate(ConcreteEconomyRules ruleHost, string segment)
         {
-            float valueMultiplierEffectiveness = 0.4f;
-
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection(segment)
                 .UseCustomQuery(((s) => ruleHost.EconomyInformation.EconomyTierlistOverview["generalcrafting"][s]))

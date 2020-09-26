@@ -29,13 +29,13 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
     public partial class BaseTypeTieringView : UserControl, INotifyPropertyChanged
     {
 
-        private bool Initialized = false;
+        private bool Inited = false;
 
         public ObservableCollection<KeyBaseTypeRow> BaseTypeMatrixTable { get; set; } = new ObservableCollection<KeyBaseTypeRow>();
-        
+
         public static List<KeyBaseTypeRow> TableContent = new List<KeyBaseTypeRow>();
         public static string Key;
-        public static string Mode;
+        public static string Section;
         public static BaseTypeMatrixFacade Facade;
 
         public static int CursorMode = 1;
@@ -44,19 +44,24 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
         {
             InitializeComponent();
             this.DataContext = this;
+
             this.SelectedKey1.ItemsSource = BaseTypeDataProvider.BaseTypeTieringMatrixData.Keys;
             this.SelectedKey1.SelectedItem = BaseTypeDataProvider.BaseTypeTieringMatrixData.Keys.First();
+            this.SelectedSection.ItemsSource = FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies.Keys;
+            this.SelectedSection.SelectedItem = FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies.Keys.First();
+
             Key = this.SelectedKey1.SelectedItem.ToString();
+            Section = this.SelectedSection.SelectedItem.ToString();
             Facade = BaseTypeMatrixFacade.GetInstance();
             this.GenerateOutputTable();
-            this.Initialized = true;
+            this.Inited = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static string LookUpItem(string itemName)
         {
-            return Facade.LookUpTierName(itemName);
+            return Facade.LookUpTierName(Section, itemName);
         }
 
         public void GenerateOutputTable()
@@ -75,6 +80,13 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
             var subClasses = classgroup.Keys.ToList();
 
             // the key represents overclasses such as amortypes or weapons
+            var aheadList = new Dictionary<string, int>();
+
+            foreach (var item in subClasses)
+            {
+                aheadList.Add(item, 0);
+            }
+
             for (int j = 0; j < subClasses.Count; j++)
             {
                 // something like: ES-boots
@@ -82,7 +94,24 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
 
                 for (int i = 0; i < itemGroup.Count; i++)
                 {
+                    bool isSpecialBase = false;
                     Dictionary<string, string> baseType = itemGroup[i];
+
+                    if (FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(baseType["BaseType"]))
+                    {
+                        isSpecialBase = true;
+                    }
+                    
+                    if (isSpecialBase)
+                    {
+                        if (FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies[Section] == FilterPolishUtil.MatrixTieringMode.rareTiering)
+                        {
+                            aheadList[subClasses[j]]++;
+                            continue;
+                        }
+                    }
+                    var aheadCounter = aheadList[subClasses[j]];
+
                     var cell = new KeyBaseTypeCell()
                     {
                         Name = baseType["BaseType"],
@@ -97,22 +126,22 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
                     switch (subClasses[j])
                     {
                         case "all":
-                            results[i].All = cell;
+                            results[i - aheadCounter].All = cell;
                             break;
                         case "Boots":
-                            results[i].Boots = cell;
+                            results[i - aheadCounter].Boots = cell;
                             break;
                         case "Body Armours":
-                            results[i].Body = cell;
+                            results[i - aheadCounter].Body = cell;
                             break;
                         case "Helmets":
-                            results[i].Helmets = cell;
+                            results[i - aheadCounter].Helmets = cell;
                             break;
                         case "Shields":
-                            results[i].Shields = cell;
+                            results[i - aheadCounter].Shields = cell;
                             break;
                         case "Gloves":
-                            results[i].Gloves = cell;
+                            results[i - aheadCounter].Gloves = cell;
                             break;
                         default:
                             throw new Exception("unknown subclass!");
@@ -126,13 +155,42 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
 
         private void SelectedKey1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!Initialized)
+            if (!Inited)
             {
                 return;
             }
 
             Key = this.SelectedKey1.SelectedItem.ToString();
             GenerateOutputTable();
+        }
+
+        private void SelectedSection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!Inited)
+            {
+                return;
+            }
+
+            Section = this.SelectedSection.SelectedItem.ToString();
+            ToggleButtonEnableState();
+            GenerateOutputTable();
+        }
+
+        private void ToggleButtonEnableState()
+        {
+            var strategy = FilterPolishUtil.FilterPolishConfig.MatrixTiersStrategies[Section];
+
+            switch (strategy)
+            {
+                case FilterPolishUtil.MatrixTieringMode.singleTier:
+                    TierChangeButton2.IsEnabled = false;
+                    TierChangeButton3.IsEnabled = false;
+                    break;
+                case FilterPolishUtil.MatrixTieringMode.rareTiering:
+                    TierChangeButton3.IsEnabled = true;
+                    TierChangeButton2.IsEnabled = true;
+                    break;
+            }
         }
 
         private void curs1click(object sender, RoutedEventArgs e)
@@ -164,7 +222,7 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
         {
             DependencyObject dep = (DependencyObject)e.OriginalSource;
 
-            while (dep!=null && !(dep is DataGridCell))
+            while (dep != null && !(dep is DataGridCell))
             {
                 dep = VisualTreeHelper.GetParent(dep);
             }
@@ -185,7 +243,7 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
                     return;
                 }
 
-                Facade.ChangeTier(itemName, CursorMode);
+                Facade.ChangeTier(Section, itemName, CursorMode);
                 GenerateOutputTableBody();
 
                 // BindingOperations.GetBindingExpression(dep, DataGridCell.SourceProperty).UpdateTarget();

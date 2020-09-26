@@ -34,7 +34,7 @@ namespace FilterPolishZ.ModuleWindows.TieringSuggestions
             
             foreach (var item in FilterPolishConfig.FilterTierLists)
             {
-                if (FilterPolishConfig.AutoTieringIgnoredTiers.Contains(item))
+                if (FilterPolishConfig.MatrixTiersStrategies.Keys.Contains(item))
                 {
                     continue;
                 }

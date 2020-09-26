@@ -91,7 +91,7 @@ namespace FilterEconomy.Facades
             {
                 if (!this.TierListData.ContainsKey(section.Key) || (this.TierListData[section.Key].FilterEntries?.Count == 0))
                 {
-                    if (FilterPolishConfig.AutoTieringIgnoredTiers.Contains(section.Key))
+                    if (FilterPolishConfig.MatrixTiersStrategies.Keys.Contains(section.Key))
                     {
                         continue;
                     }

@@ -58,8 +58,9 @@ namespace FilterPolishZ.ModuleWindows.GenerationOptions
             }
         }
 
-
+        #pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
+        #pragma warning restore CS0067
 
         private void Refresh(object sender, System.Windows.RoutedEventArgs e)
         {

@@ -15,12 +15,14 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "rr"
+            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "rr", "expl->synth", "expl->fract"
         };
 
-        public static HashSet<string> AutoTieringIgnoredTiers { get; set; } = new HashSet<string>()
-        { 
-            "rr" 
+        public static Dictionary<string, MatrixTieringMode> MatrixTiersStrategies { get; set; } = new Dictionary<string, MatrixTieringMode>()
+        {
+            { "rr", MatrixTieringMode.rareTiering },
+            { "expl->synth", MatrixTieringMode.singleTier },
+            { "expl->fract", MatrixTieringMode.singleTier }
         };
 
         public static HashSet<string> TopBases { get; set; } = new HashSet<string>();
@@ -237,5 +239,11 @@ namespace FilterPolishUtil
         lowest,
         highest,
         rawavg
+    }
+
+    public enum MatrixTieringMode
+    {
+        singleTier,
+        rareTiering
     }
 }

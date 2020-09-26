@@ -30,17 +30,20 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+
+                <ComboBox SelectedIndex="0" x:Name="SelectedSection" IsSynchronizedWithCurrentItem="True" SelectionChanged="SelectedSection_SelectionChanged"/>
+                
                 <Button ToolTip="1" Click="curs1click">
-                    <materialDesign:PackIcon Kind="Numeric1Box" Foreground="DeepSkyBlue"  />
+                    <materialDesign:PackIcon x:Name="TierChangeButton1" Kind="Numeric1Box" Foreground="DeepSkyBlue"  />
                 </Button>
                 <Button ToolTip="2" Click="curs2click">
-                    <materialDesign:PackIcon Kind="Numeric2Box" Foreground="YellowGreen"  />
+                    <materialDesign:PackIcon x:Name="TierChangeButton2" Kind="Numeric2Box" Foreground="YellowGreen"  />
                 </Button>
                 <Button ToolTip="3" Click="curs3click">
-                    <materialDesign:PackIcon Kind="Numeric3Box" Foreground="Orange"  />
+                    <materialDesign:PackIcon x:Name="TierChangeButton3" Kind="Numeric3Box" Foreground="Orange"  />
                 </Button>
                 <Button ToolTip="4" Click="curs4click">
-                    <materialDesign:PackIcon Kind="LetterRBox" Foreground="Crimson"  />
+                    <materialDesign:PackIcon x:Name="TierChangeButtonR" Kind="LetterRBox" Foreground="Crimson"  />
                 </Button>
                 <Button ToolTip="Reload/Refresh" Click="Refresh_Click">
                     <materialDesign:PackIcon Kind="Refresh" Foreground="White"  />

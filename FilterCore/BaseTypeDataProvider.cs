@@ -131,7 +131,7 @@ namespace FilterCore.Constants
                 if (FilterPolishUtil.FilterPolishConfig.BestBaseCheckIgnore.Contains(itemtype.Key.ToLower()))
                 {
                     // rings, amulets and belts don't need any indication about the best base
-                    continue;
+                    // continue;
                 }
 
                 if (!itemtype.Value.FirstOrDefault().ContainsKey("LevelSorting"))
@@ -139,7 +139,8 @@ namespace FilterCore.Constants
                     continue;
                 }
 
-                var output = itemtype.Value.Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]) ).OrderByDescending(y => float.Parse(y["LevelSorting"])).ToList();
+                // .Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]) )
+                var output = itemtype.Value.OrderByDescending(y => float.Parse(y["LevelSorting"])).ToList();
 
                 if (itemtype.Key == "Boots" || itemtype.Key == "Body Armours" || itemtype.Key == "Helmets" || itemtype.Key == "Shields" || itemtype.Key == "Gloves")
                 {

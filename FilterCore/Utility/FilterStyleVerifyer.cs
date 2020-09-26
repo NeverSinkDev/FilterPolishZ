@@ -69,11 +69,6 @@ namespace FilterCore.Utility
                         
                         // TODO: Add: "Do you want to select the name #" + index + " as style name?";
                         return;
-
-                        pair.Value.RemoveAll(x => x.Key != selectedName);
-                        break;
-
-                        index++;
                     }
                 }
             }
@@ -104,25 +99,6 @@ namespace FilterCore.Utility
                         // TODO: Make it conditional
                         msg += "Do you want to select value #" + index + " as style value?";
                         return;
-
-                        var removed = new List<KeyValuePair<string, int>>(pair.Value.Where(x => x.Key != selectedValue));
-                        foreach (var keyValuePair in removed)
-                        {
-                            var oldValue = keyValuePair.Key;
-
-                            this.nameToValuesDic.Values.ToList().ForEach(x => x.Remove(oldValue));
-
-                            this.valueToNamesDic.Remove(oldValue);
-                            if (this.valueToNamesDic[selectedValue].ContainsKey(pair.Key)) this.valueToNamesDic[selectedValue][pair.Key] += keyValuePair.Value;
-                            else
-                            {
-//                                throw new Exception("unexpected error in filterStyleVerifyer");
-                                this.valueToNamesDic[selectedValue].Add(pair.Key, keyValuePair.Value);
-                            }
-                        }
-                        break;
-
-                        index++;
                     }
                 }
             }
