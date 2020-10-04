@@ -100,6 +100,30 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_LayeredFunctions()
+        {
+            var input = new List<string>()
+            {
+                "Func xVal () { 2; };",
+                "Func yVal (a) { a; };",
+                "Func test (a) { SetBorderColor 1 xVal() 3 4; TX 1 xVal() yVal(a) 4; };",
+                "Section Incubators : IncubatorBase",
+                "{",
+                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(3); };",
+                "Rule T1 { test(3); };",
+                "# Rule error;",
+                "}"
+            };
+
+            var res = this.StringToFilterEntries(input).Select(x => x.Serialize()).ToList();
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(2, res.Count);
+            Assert.AreEqual("\tSetTextColor 1 2 3 4", res[0][3]);
+            Assert.AreEqual("\tSetBorderColor 1 2 3 4", res[0][4]);
+        }
+
+        [Test]
         public void ExoProcessor_BasicExpressionMerging()
         {
             var input = new List<string>()

@@ -27,7 +27,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             {
                 var vars = split.SplitDivide(x => x.Value == ",");
 
-                if (vars != null && vars.Count >= 1)
+                if (vars != null && vars.Count >= 1 && vars[0].Count != 0)
                 {
                     varNames = vars.Select(x => x.FirstOrDefault().Value).ToList();
                 }

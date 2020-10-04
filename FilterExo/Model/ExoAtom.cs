@@ -69,7 +69,12 @@ namespace FilterExo.Model
 
         public ExoAtom(string value)
         {
-            if (IsReservedType(value) || value.All(x => char.IsDigit(x)))
+            if (FilterExoConfig.Abbreviations.ContainsKey(value))
+            {
+                this.IdentifiedType = ExoAtomType.prim;
+                this.ValueCore = new SimpleAtomValueCore() { Value = FilterExoConfig.Abbreviations[value], CanBeVariable = false };
+            }
+            else if (IsReservedType(value) || value.All(x => char.IsDigit(x)))
             {
                 this.IdentifiedType = ExoAtomType.prim;
                 this.ValueCore = new SimpleAtomValueCore() { Value = value, CanBeVariable = false };
