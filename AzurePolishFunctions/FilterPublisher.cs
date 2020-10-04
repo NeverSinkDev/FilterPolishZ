@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using AzurePolishFunctions.DataFileRequests;
+using AzurePolishFunctions.Procedures;
 using FilterCore;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
@@ -21,6 +22,8 @@ namespace AzurePolishFunctions
         public string RepoName {get; set;}
         public string League { get; set; }
 
+        public string RepoFolder { get; set; } = string.Empty;
+
         public bool PublishPrice = true;
 
         public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
@@ -32,7 +35,7 @@ namespace AzurePolishFunctions
             this.League = league;
         }
         
-        public void Run(FileRequestResult dataRes)
+        public void Init(FileRequestResult dataRes)
         {
             if (dataRes != FileRequestResult.Success)
             {
@@ -41,6 +44,7 @@ namespace AzurePolishFunctions
 
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
             var repoFolder = filterOutFolder + "\\" + RepoName;
+            this.RepoFolder = repoFolder;
 
             LoggingFacade.LogInfo($"Tempfolder prepared");
 
@@ -50,18 +54,19 @@ namespace AzurePolishFunctions
             // and push the update as the actual small changes.
             if (Directory.Exists(repoFolder))
             {
-                LoggingFacade.LogInfo($"Repo folder existing... pulling");
-                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
-                using (var repo = new Repository(repoFolder))
-                {
-                    var options = new PullOptions();
-                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
-                    LoggingFacade.LogInfo($"Pulling done");
-                }
+                LoggingFacade.LogInfo($"Repo folder existing... renewing");
+                DeleteDirectory(repoFolder);
+//                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
+//                using (var repo = new Repository(repoFolder))
+//                {
+//                    var options = new PullOptions();
+//                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+//                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
+//                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
+//                    LoggingFacade.LogInfo($"Pulling done");
+//                }
             }
-            else
+            
             {
                 LoggingFacade.LogInfo($"Repo folder not existing... cloning");
                 Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
@@ -70,24 +75,42 @@ namespace AzurePolishFunctions
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
-            FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(GenerateFilters.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(MainGenerationRoutine.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            filterWriter.Wait();
+
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
 
-            LoggingFacade.LogInfo($"Starting publishing!");
+            LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
+        }
 
-            PushToFTP("www", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade: done");
 
-            PushToFTP("beta", repoFolder, "NeverSink_AutoEcoUpdate_" + GenerateFilters.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade-beta: done");
 
-            PushToGit(repoFolder, PublishPrice);
-            LoggingFacade.LogInfo($"Publishing to GitHub: done");
-            
-            UploadToPoe(repoFolder);
+        public void PublishToLadder()
+        {
+            LoggingFacade.LogInfo($"PoeUpload: starting");
+            UploadToPoe(RepoFolder);
             LoggingFacade.LogInfo($"PoeUpload: done");
+        }
 
-            // no cleanUp -> we keep this folder here and just pull/push whenever we generate new filters
+        public void PublishToGitHub()
+        {
+            LoggingFacade.LogInfo($"GitUpdate: starting");
+            PushToGit(this.RepoFolder, PublishPrice);
+            LoggingFacade.LogInfo($"GitUpdate: done");
+        }
+
+        public void PublishToFilterBlade()
+        {
+            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
+            PushToFTP("www", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade: done");
+        }
+
+        public void PublishToFilterBladeBETA()
+        {
+            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
+            PushToFTP("beta", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
+            LoggingFacade.LogInfo($"Publishing to filterblade: done");
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)

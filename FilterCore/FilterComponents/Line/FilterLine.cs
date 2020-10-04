@@ -1,5 +1,6 @@
 ﻿using System;
 using FilterCore.Entry;
+using FilterCore.Line.Parsing;
 using FilterDomain.LineStrategy;
 using FilterPolishUtil;
 

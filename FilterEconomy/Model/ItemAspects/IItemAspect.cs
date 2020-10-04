@@ -93,6 +93,12 @@ namespace FilterEconomy.Model.ItemAspects
     //    public override string Group => "Meta";
     //}
 
+    public class ReplicaAspect : AbstractItemAspect
+    {
+        public override string Group => "Meta";
+        public override AspectType Type => AspectType.uniques;
+    }
+
     public class AnchorAspect : AbstractItemAspect
     {
         public override string Group => "Meta";
@@ -144,20 +150,33 @@ namespace FilterEconomy.Model.ItemAspects
         public override AspectType Type => AspectType.uniques;
     }
 
+    public class BuffAspect : AbstractItemAspect
+    {
+        public override string Group => "TemporalAspect";
+
+        public override bool IsActive()
+        {
+            return FilterPolishConfig.IsEarlyLeague;
+        }
+    }
+
+    public class NerfAspect : AbstractItemAspect
+    {
+        public override string Group => "TemporalAspect";
+
+        public override bool IsActive()
+        {
+            return FilterPolishConfig.IsEarlyLeague;
+        }
+    }
+
     public class EarlyLeagueInterestAspect : AbstractItemAspect
     {
         public override string Group => "TemporalAspect";
 
         public override bool IsActive()
         {
-            if (EconomyRequestFacade.GetInstance().ActiveMetaTags.ContainsKey("EarlyLeagueInterestAspect"))
-            {
-                if (EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && EconomyRequestFacade.GetInstance().ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return FilterPolishConfig.IsEarlyLeague;
         }
     }
 

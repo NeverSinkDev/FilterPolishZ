@@ -6,6 +6,18 @@ namespace FilterExo
 {
     public static class FilterExoConfig
     {
+        // PROCESSOR
+
+        public enum ExoFilterType
+        {
+            generic,
+            root,
+            bearer,
+            scope
+        }
+
+        // TOKENIZER
+
         public static HashSet<char> Separators = new HashSet<char>()
         {
             ' ',
@@ -18,6 +30,21 @@ namespace FilterExo
             comment,
             quoted
         }
+
+        public static char QuoteCharacter = '\"';
+        public static char CommentCharacter = '#';
+
+        public static HashSet<char> SimpleOperators = new HashSet<char>()
+        {
+            '=', '>', '<', '(', ')', '{', '}', '[', ']', ';', ',', '+', '-'
+        };
+
+        public static HashSet<string> CombinedOperators = new HashSet<string>()
+        {
+            "==", ">=", "<=", "<>", "=>"
+        };
+
+        // STRUCTURIZER
 
         public enum StructurizerMode
         {
@@ -36,17 +63,13 @@ namespace FilterExo
             expl
         }
 
-        public static char QuoteCharacter = '\"';
-        public static char CommentCharacter = '#';
-
-        public static HashSet<char> SimpleOperators = new HashSet<char>()
+        public static Dictionary<string, string> Abbreviations = new Dictionary<string, string>()
         {
-            '=', '>', '<', '(', ')', '{', '}', '[', ']', ';'
-        };
-
-        public static HashSet<string> CombinedOperators = new HashSet<string>()
-        {
-            "==", ">=", "<=", "<>", "=>"
+            { "BG", "SetBackgroundColor" },
+            { "BC", "SetBorderColor" },
+            { "TX", "SetTextColor" },
+            { "BT", "BaseType" },
+            { "Mod", "HasExplicitMod" }
         };
     }
 }

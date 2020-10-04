@@ -19,18 +19,15 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            var leagueStart = new DateTime(2020, 3, 13);
+            var leagueStart = new DateTime(2020, 9, 18);
             this.ActiveMetaTags.Add("EarlyLeagueInterestAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
+
+            FilterPolishConfig.IsEarlyLeague = ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now;
         }
 
         public bool IsEarlyLeague()
         {
-            if (ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now)
-            {
-                return true;
-            }
-
-            return false;
+            return FilterPolishConfig.IsEarlyLeague;
         }
 
         public static EconomyRequestFacade GetInstance()
@@ -72,6 +69,13 @@ namespace FilterEconomy.Facades
                 }
                 else
                 {   // Request online file
+                    if (league == string.Empty)
+                    {
+                        // do not do anything, if there's no league running!
+                        // will request standard economy information if line is removed
+                        // return null;
+                    }
+
                     string variation = this.CreateNinjaLeagueParameter(league, leagueType);
 
                     var urlRequest = $"{economySegmentBranch}&league={variation}";
@@ -308,6 +312,11 @@ namespace FilterEconomy.Facades
 
         public string GetActiveLeagueName()
         {
+            if (this.PoeLeagues.Count == 0)
+            {
+                return string.Empty;
+            }
+
             return this.PoeLeagues?.FirstOrDefault(x => !x.Key.Contains("Hardcore")).Value.Id;
         }
 

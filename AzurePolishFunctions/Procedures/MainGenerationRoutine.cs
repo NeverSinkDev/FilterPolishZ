@@ -1,62 +1,36 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using FilterEconomy.Facades;
+﻿using AzurePolishFunctions.DataFileRequests;
 using FilterCore;
-using FilterEconomyProcessor;
-using System.Linq;
-using System.Collections.Generic;
-using FilterPolishUtil.Collections;
-using FilterEconomy.Model;
-using AzurePolishFunctions.DataFileRequests;
 using FilterCore.Constants;
+using FilterEconomy.Facades;
+using FilterEconomyProcessor;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace AzurePolishFunctions
+namespace AzurePolishFunctions.Procedures
 {
-    public static class GenerateFilters
+    public class MainGenerationRoutine
     {
-        public static EconomyRequestFacade EconomyData { get; set; } 
+        public static EconomyRequestFacade EconomyData { get; set; }
         public static ItemInformationFacade ItemInfoData { get; set; }
         public static TierListFacade TierListFacade { get; set; }
         public static FilterAccessFacade FilterAccessFacade { get; set; }
         public static DataFileRequestFacade DataFiles { get; set; }
+        public static FilterPublisher Publisher { get; set; }
 
         public static LoggingFacade Logging { get; set; }
 
-        [FunctionName("GenerateFilters")]
-        public static string Run([ActivityTrigger] string req, ILogger log)
+        public void Execute(string req, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            Logging?.Clean();
+            // Logging?.Clean();
             Logging = LoggingFacade.GetInstance();
-
             Logging.SetCustomLoggingMessage((s) => log.LogInformation(s));
 
-            try
-            {
-                PerformMainRoutine(req);
-                return "finished generation succesfully!";
-            }
-            catch (Exception e)
-            {
-                LoggingFacade.LogError("ERRROR: " + e.Message);
-                return e.Message;
-            }
-        }
-
-        public static void PerformMainRoutine(string req)
-        {
-            // 0) Cleanup
             EconomyData?.Clean();
             ItemInfoData?.Clean();
             TierListFacade?.Clean();
@@ -82,16 +56,10 @@ namespace AzurePolishFunctions
             // 1) Acquire Data
 
             var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
-
-            // string body = new StreamReader(req.Body).ReadToEnd();
-            // var repoName = GetReqParams(req, data, "repoName", "NeverSink-EconomyUpdated-Filter");
-            // var leagueType = GetReqParams(req, data.leagueType, "leagueType", "tmpstandard");
-
             dynamic data = JsonConvert.DeserializeObject(req);
 
-            string leagueType = data.leagueType ?? "tmpstandard";
-            string repoName = data.repoName ?? "NeverSink-EconomyUpdated-Filter";
-
+            string leagueType = data.leagueType ?? Environment.GetEnvironmentVariable("leagueType", EnvironmentVariableTarget.Process) ?? "tmpstandard";
+            string repoName = data.repoName ?? Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter";
             string league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
 
             LoggingFacade.LogInfo($"[CONFIG] leagueType: {leagueType}");
@@ -101,16 +69,19 @@ namespace AzurePolishFunctions
 
             FilterPolishConfig.ApplicationExecutionMode = ExecutionMode.Function;
 
+            DataFiles = new DataFileRequestFacade();
+
             if (localMode == "true")
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.Dynamic;
+                DataFiles.BaseStoragePath = @"C:\FilterOutput\EcoData";
             }
             else
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
             }
 
-            DataFiles = new DataFileRequestFacade();
+            
             LoggingFacade.LogInfo($"[CONFIG] FileRequestFacade Created!");
 
             FileRequestResult dataRes = DataFiles.GetAllFiles(league, leagueType);
@@ -125,7 +96,7 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"[DEBUG] League Active: {EconomyData.IsLeagueActive().ToString()}");
 
             // null check the ecoData in case of disabled/early leagues
-            if (dataRes == FileRequestResult.Success)
+            if (dataRes == FileRequestResult.Success && EconomyData.IsLeagueActive())
             {
                 // 4) Load tier list information and enrichment procedures
                 var tiers = FilterAccessFacade.PrimaryFilter.ExtractTiers(FilterPolishConfig.FilterTierLists);
@@ -136,7 +107,7 @@ namespace AzurePolishFunctions
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
                 FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
-                
+
                 // EconomyData.PerformClassAbstractionProcedures();
 
                 TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
@@ -155,34 +126,22 @@ namespace AzurePolishFunctions
             LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting publishing...");
 
             // 8) Generate and Upload Filters
-            new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType).Run(dataRes);
-        }
+            Publisher = new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType);
 
-        private static string GetReqParams(string req, dynamic data, string name, string defValue)
-        {
-            string result = string.Empty;
+            LoggingFacade.LogInfo($"[DEBUG] Initializing Publisher...");
+            Publisher.Init(dataRes);
 
-            result = req;
+            LoggingFacade.LogInfo($"[DEBUG] LadderPublishing:");
+            Publisher.PublishToLadder();
 
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
+            LoggingFacade.LogInfo($"[DEBUG] GitHub:");
+            Publisher.PublishToGitHub();
 
-            result = data?[name];
+            LoggingFacade.LogInfo($"[DEBUG] FilterBlade:");
+            Publisher.PublishToFilterBlade();
 
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
-
-            result = Environment.GetEnvironmentVariable(name);
-            if (result != null && result != string.Empty)
-            {
-                return result;
-            }
-
-            return defValue;
+            LoggingFacade.LogInfo($"[DEBUG] FilterBlade Beta:");
+            Publisher.PublishToFilterBladeBETA();
         }
     }
 }

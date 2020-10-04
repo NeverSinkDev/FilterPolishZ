@@ -112,6 +112,15 @@ namespace FilterCore.Entry
                 .ToList();
         }
 
+        public List<string> DebugRawValues()
+        {
+            return this.Content
+                .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize() }))
+                .OrderBy(x => FilterGenerationConfig.LineTypesSort[x.Ident])
+                .Select(x => x.SerializedString)
+                .ToList();
+        }
+
         public FilterEntryDataContent Clone()
         {
             var cloneContent = new Dictionary<string, List<IFilterLine>>();

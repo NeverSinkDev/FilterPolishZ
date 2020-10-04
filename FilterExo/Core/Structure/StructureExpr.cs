@@ -14,9 +14,9 @@ namespace FilterExo.Core.Structure
 
         }
 
-        public StructureExpr(ExoToken token)
+        public StructureExpr(ExoToken token, StructurizerMode mode = StructurizerMode.atom)
         {
-            Mode = StructurizerMode.atom;
+            Mode = mode;
             Value = token.value;
             this.PrimitiveValue = token;
         }
@@ -28,7 +28,7 @@ namespace FilterExo.Core.Structure
         // Tree-Structure
         public StructureExpr Parent { get; set; }
         public List<StructureExpr> Children { get; set; } = new List<StructureExpr>();
-        public Dictionary<string, List<StructureExpr>> Properties { get; set; } = new Dictionary<string, List<StructureExpr>>();
+        public List<StructureExpr> PropertyExpression { get; set; } = new List<StructureExpr>();
 
         // Value-Properties
         public string Value { get; set; }
@@ -42,6 +42,15 @@ namespace FilterExo.Core.Structure
             }
 
             return this.Parent;
+        }
+
+        public bool IsSection()
+        {
+            if (this.PropertyExpression.Any(x => x.Value == "Section"))
+            {
+                return true;
+            }
+            return false;
         }
 
         public StructureExpr GetExplParent()
@@ -59,6 +68,18 @@ namespace FilterExo.Core.Structure
             child.Parent = this;
             this.Children.Add(child);
             return this;
+        }
+
+        public string GetFirstPropertyDescriptor()
+        {
+            var property = this.PropertyExpression.FirstOrDefault();
+
+            if (property == null)
+            {
+                return string.Empty;
+            }
+
+            return property.PrimitiveValue.value;
         }
 
         public StructureExpr PackageAtomicChildren()

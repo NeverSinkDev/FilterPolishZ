@@ -1,4 +1,5 @@
-﻿using FilterDomain.LineStrategy;
+﻿using FilterCore.Line.Parsing;
+using FilterDomain.LineStrategy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,26 @@ namespace FilterCore.Line
         {
             me.Value = LineValueCore;
             return me;
+        }
+
+        public static IFilterLine ToFilterLine(this string rawData)
+        {
+            var tokens = LineParser.TokenizeFilterLineString(rawData);
+            return LineParser.GenerateFilterLine(tokens);
+        }
+
+        public static IFilterLine ToFilterLine(this List<string> rawData)
+        {
+            var joinedString =  string.Join(" ", rawData);
+            var tokens = LineParser.TokenizeFilterLineString(joinedString);
+            return LineParser.GenerateFilterLine(tokens);
+        }
+
+        public static IFilterLine ToFilterLine(this List<string> rawData, string ident)
+        {
+            var joinedString = string.Join(" ", rawData);
+            var tokens = LineParser.TokenizeFilterLineString(ident + " " + joinedString);
+            return LineParser.GenerateFilterLine(tokens);
         }
     }
 }

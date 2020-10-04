@@ -15,7 +15,14 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials"
+            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "rr", "expl->synth", "expl->fract"
+        };
+
+        public static Dictionary<string, MatrixTieringMode> MatrixTiersStrategies { get; set; } = new Dictionary<string, MatrixTieringMode>()
+        {
+            { "rr", MatrixTieringMode.rareTiering },
+            { "expl->synth", MatrixTieringMode.singleTier },
+            { "expl->fract", MatrixTieringMode.singleTier }
         };
 
         public static HashSet<string> TopBases { get; set; } = new HashSet<string>();
@@ -25,7 +32,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> SpecialBases { get; set; } = new HashSet<string>()
         {
-            "Opal Ring", "Steel Ring", "Vermillion Ring", "Blue Pearl Amulet", "Bone Helmet", "Cerulean Ring", "Convoking Wand", "Crystal Belt", "Fingerless Silk Gloves", "Gripped Gloves", "Marble Amulet", "Sacrificial Garb", "Spiked Gloves", "Stygian Vise", "Two-Toned Boots", "Vanguard Belt"
+            "Opal Ring", "Steel Ring", "Vermillion Ring", "Blue Pearl Amulet", "Bone Helmet", "Cerulean Ring", "Convoking Wand", "Crystal Belt", "Fingerless Silk Gloves", "Gripped Gloves", "Marble Amulet", "Sacrificial Garb", "Spiked Gloves", "Stygian Vise", "Two-Toned Boots", "Vanguard Belt", "Ornate Quiver"
         };
 
         /// <summary>
@@ -70,7 +77,7 @@ namespace FilterPolishUtil
         /// <summary>
         /// Aspects that should be ignored during certain enrichments procedures
         /// </summary>
-        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect" };
+        public static List<string> GlobalIgnoreAspects = new List<string>() { "IgnoreAspect", "ReplicaAspect" };
         public static List<string> IgnoredHighestPriceAspects { get; } = new List<string>() { "ProphecyResultAspect", "NonDropAspect" };
 
         public static HashSet<string> GearClasses = new HashSet<string>()
@@ -101,6 +108,12 @@ namespace FilterPolishUtil
         /// By default no tiering is applied to a section if the exalted orb price is lower than this price, because the economy is usually not stable enough.
         /// </summary>
         public static float TieringEnablingExaltedOrbPrice = 35f;
+
+
+        /// <summary>
+        /// Checks if we're using early League Mode
+        /// </summary>
+        public static bool IsEarlyLeague = false;
 
         /// <summary>
         /// Useful for easy acquiring the section names above, without redundancy
@@ -226,5 +239,11 @@ namespace FilterPolishUtil
         lowest,
         highest,
         rawavg
+    }
+
+    public enum MatrixTieringMode
+    {
+        singleTier,
+        rareTiering
     }
 }

@@ -31,6 +31,7 @@ using FilterCore.Constants;
 using Application = System.Windows.Application;
 using FilterExo;
 using FilterPolishZ.ModuleWindows.GenerationOptions;
+using FilterEconomyProcessor.BaseTypeMatrix;
 
 namespace FilterPolishZ
 {
@@ -80,7 +81,7 @@ namespace FilterPolishZ
             this.EconomyData = this.LoadEconomyOverviewData();
             this.EconomyData.RequestPoeLeagueInfo();
 
-            if (!this.EconomyData.IsLeagueActive())
+            if (Configuration.AppSettings["testLeague"] == "true" && !this.EconomyData.IsLeagueActive())
             {
                 LoggingFacade.LogWarning("No Active League detected!");
             }
@@ -110,7 +111,16 @@ namespace FilterPolishZ
             // run tiering
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
+            // Disable if CRASHY
+            this.InitializeMatrixFacade();
+
             LoggingFacade.LogInfo($"FilterBlade main subroutine loaded succesfully");
+        }
+
+        private void InitializeMatrixFacade()
+        {
+            var matrixFacade = BaseTypeMatrixFacade.GetInstance();
+            matrixFacade.Initialize(FilterAccessFacade);
         }
 
         private void PerformEconomyTiering()
@@ -429,13 +439,19 @@ namespace FilterPolishZ
             this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
             var output = this.FilterExoFacade.Execute();
 
-            GenerationOptions.DebugText = output;
+            GenerationOptions.TextSources = output;
             EventGrid.Publish();
 
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
             {
                 LoggingFacade.LogWarning($"Loading Filter: Meta-Filter Content Suspiciously Short");
             }
+        }
+
+        private void TierBaseTypeMatrix(object sender, RoutedEventArgs e)
+        {
+            
+
         }
     }
 }

@@ -42,8 +42,14 @@ namespace FilterExo.Core.Structure
                     if (SpecialCharacterTreatment(token)) return;
                 }
 
+                else if (token.type == TokenizerMode.comment)
+                {
+                    cursor.AddChild(new StructureExpr(token, StructurizerMode.comm));
+                    return;
+                }
+
                 // If we're in an explicit scope, we have to create a new scope before writing.
-                if (cursor.Mode == StructurizerMode.root || cursor.ScopeType == StructurizerScopeType.expl)
+                else if (cursor.Mode == StructurizerMode.root || cursor.ScopeType == StructurizerScopeType.expl)
                 {
                     var child = StructureExpr.CreateScope(StructurizerScopeType.impl);
                     cursor = cursor.AddAndScopeOnChild(child);
@@ -83,7 +89,7 @@ namespace FilterExo.Core.Structure
                     cursor.Children.Add(scope);
 
                     // Add children as descriptors
-                    scope.Properties.Add("descriptor", children);
+                    scope.PropertyExpression.AddRange(children);
                     cursor = scope;
 
                     return true;

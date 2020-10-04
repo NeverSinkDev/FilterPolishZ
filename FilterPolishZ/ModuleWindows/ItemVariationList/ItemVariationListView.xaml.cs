@@ -161,7 +161,19 @@ namespace FilterPolishZ.ModuleWindows.ItemVariationList
                     {
                         if (((ItemVariationTable.SelectedItem ?? ItemVariationTable.Items[0]) as NinjaItem).Aspects.Any(y => y.Name.Contains(z.label)))
                         {
-                            z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#651fff"));
+                            
+                            if (z.label.ToLower().Contains("early") || z.label.ToLower().Contains("buff"))
+                            {
+                                z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00AA00"));
+                            }
+                            else if (z.label.ToLower().Contains("anchor") || z.label.ToLower().Contains("nerf") || z.label.ToLower().Contains("poor"))
+                            {
+                                z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AA0000"));
+                            }
+                            else
+                            {
+                                z.value.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#651fff"));
+                            }
                         }
                         else
                         {

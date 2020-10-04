@@ -30,6 +30,12 @@ namespace FilterEconomyProcessor.RuleSet
                 {
                     return this.Item.HasAspect("AnchorAspect");
                 }));
+
+            this.AddRule("TEMPANCHOR", "ANCHOR",
+                new Func<string, bool>((string s) =>
+                {
+                    return this.Item.HasAspect("AnchorAspect");
+                }));
         }
 
         public RuleSetBuilder SetSection(string s)
@@ -75,6 +81,26 @@ namespace FilterEconomyProcessor.RuleSet
 
             return this;
         }
+
+        public RuleSetBuilder AddEarlyLeagueProtectionBlock(string target, HashSet<string> protectedTiers, string ruleName = "earlyProt")
+        {
+            return this.AddRule(ruleName, target,
+            new Func<string, bool>((string s) =>
+            {
+                if (!FilterPolishConfig.IsEarlyLeague)
+                {
+                    return false;
+                }
+
+                if (this.IsOfTier(s, protectedTiers))
+                {
+                    return true;
+                }
+
+                return false;
+            }));
+        }
+
 
         public RuleSetBuilder AddDefaultIntegrationTarget()
         {
@@ -285,9 +311,30 @@ namespace FilterEconomyProcessor.RuleSet
                 return "rest";
             }
 
-            return string.Join(",", 
+            return string.Join(",",
                 RuleHost.TierListFacade.GetTiersForBasetype(this.RuleSet.GoverningSection, basetype)
                 .Select(x => x.SubStringLast("->")));
+        }
+
+        public bool IsOfTier(string basetype, HashSet<string> tiers)
+        {
+            var currentTiers = RuleHost.TierListFacade.GetTiersForBasetype(this.RuleSet.GoverningSection, basetype)
+                .Select(x => x.SubStringLast("->")).ToList();
+
+            if (currentTiers.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var tier in currentTiers)
+            {
+                if (tiers.Contains(tier))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -61,17 +61,6 @@
   <PropertyGroup>
     <ApplicationIcon>2942999_SwB_icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MetaDebug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\MetaDebug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
@@ -130,7 +119,11 @@
     <Compile Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml.cs">
       <DependentUpon>BaseTypeMigrateView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModuleWindows\BaseTypeTiering\BaseTypeTieringView.xaml.cs">
+      <DependentUpon>BaseTypeTieringView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModuleWindows\Converters\ArrayAccessConverter.cs" />
+    <Compile Include="ModuleWindows\Converters\BaseTypeToMatrixTierColorConverter.cs" />
     <Compile Include="ModuleWindows\ItemInfo\ItemTieringData.cs" />
     <Compile Include="ModuleWindows\Logging\LoggingScreenView.xaml.cs">
       <DependentUpon>LoggingScreenView.xaml</DependentUpon>
@@ -147,6 +140,10 @@
     <Compile Include="Util\InfoPopUpMessageDisplay.cs" />
     <Compile Include="Util\WpfUtil.cs" />
     <Page Include="ModuleWindows\BaseTypeMigrate\BaseTypeMigrateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModuleWindows\BaseTypeTiering\BaseTypeTieringView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

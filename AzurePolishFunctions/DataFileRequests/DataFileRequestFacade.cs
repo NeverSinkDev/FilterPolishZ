@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AzurePolishFunctions.Procedures;
 using FilterCore;
 using FilterEconomy.Facades;
 using FilterEconomy.Model;
@@ -19,6 +20,9 @@ namespace AzurePolishFunctions.DataFileRequests
         public Dictionary<string, List<string>> ItemAspects { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; }
         public Dictionary<string, Dictionary<string, ItemList<NinjaItem>>> EconomyData { get; set; }
+
+        public string BaseStoragePath = string.Empty;
+
         public List<string> SeedFilter { get; set; }
         public string LeagueType { get; set; }
 
@@ -62,7 +66,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
         private FileRequestResult LoadEcoData(string league, string leagueType)
         {
-            var result = GenerateFilters.EconomyData;
+            var result = MainGenerationRoutine.EconomyData;
 
             foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
             {
@@ -72,7 +76,7 @@ namespace AzurePolishFunctions.DataFileRequests
 
             FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url)
             {
-                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, null);
+                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, BaseStoragePath);
                 if (ecoData == null) return FileRequestResult.Ecoless;
                 result.AddToDictionary(dictionaryKey, ecoData);
                 return FileRequestResult.Success;

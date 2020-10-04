@@ -132,6 +132,9 @@
                                         <Button ToolTip="Load Metafilter DebugMode" Click="LoadMetaFilter">
                                             <materialDesign:PackIcon Kind="Gavel" />
                                         </Button>
+                                        <Button ToolTip="Perform BaseType Modification" Click="TierBaseTypeMatrix">
+                                            <materialDesign:PackIcon Kind="TestTube" />
+                                        </Button>
                                     </ToolBar>
                             </ToolBarTray>
 

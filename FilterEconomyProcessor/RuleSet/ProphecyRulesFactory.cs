@@ -35,6 +35,8 @@ namespace FilterEconomyProcessor.RuleSet
                     return price > FilterPolishConfig.DiviT2BreakPoint;
                 }));
 
+            builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
+
             builder.AddRule("t3mapping", "t3mapping",
                 new Func<string, bool>((string s) =>
                 {

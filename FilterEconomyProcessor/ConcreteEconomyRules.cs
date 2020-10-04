@@ -95,7 +95,6 @@ namespace FilterEconomyProcessor
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
-                .SkipInEarlyLeague()
                 .AddSimpleComparisonRule("t1", "t1", FilterPolishConfig.MiscT1BreakPoint)
                 .AddSimpleComparisonRule("t2", "t2", FilterPolishConfig.MiscT2BreakPoint)
                 .AddPoorDropRoutine("t4", FilterPolishConfig.MiscT4BreakPoint)

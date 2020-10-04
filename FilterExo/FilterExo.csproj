@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Configurations>Debug;Release;MetaDebug</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <ProjectReference Include="..\FilterCore\FilterCore.csproj" />
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />
   </ItemGroup>
 
 </Project>

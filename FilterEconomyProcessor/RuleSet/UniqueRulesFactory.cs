@@ -35,6 +35,8 @@ namespace FilterEconomyProcessor.RuleSet
                     return builder.Item.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
+            // builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
+
             // items with one expensive rare version and one common, less rare verison are handled by this rule.
             builder.AddRule("uncommon", "multispecial",
                 new Func<string, bool>((string s) =>
@@ -183,6 +185,10 @@ namespace FilterEconomyProcessor.RuleSet
 
                     return builder.Item.HasAspect("ProphecyMaterialAspect");
                 }));
+
+            builder.AddSimpleAspectContainerRule("EARLYNerfAspect", "t3", "NerfAspect");
+            builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string>() { "t1" }, "earlyProtHIGH");
+            builder.AddEarlyLeagueProtectionBlock("t3", new HashSet<string>() { "t2" }, "earlyProtLOW");
 
             builder.AddRule("hideable-nondrop", "hideable2",
             new Func<string, bool>((string s) =>

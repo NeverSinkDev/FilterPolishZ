@@ -8,7 +8,6 @@
     <Copyright>By NeverSink, MIT Licenced</Copyright>
     <PackageProjectUrl>https://github.com/NeverSinkDev/FilterPolishZ</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NeverSinkDev/FilterPolishZ</RepositoryUrl>
-    <Configurations>Debug;Release;MetaDebug</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.26.1" />

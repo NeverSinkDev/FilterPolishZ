@@ -13,10 +13,9 @@ namespace FilterCore.Constants
     {
         private const string DataFileUrl = "https://www.filterblade.xyz/datafiles/other/BasetypeStorage.csv";
 
-        private static Dictionary<string, Dictionary<string, string>> data;
-        private static Dictionary<string, List<Dictionary<string, string>>> classBasedTierList;
-
         public static Dictionary<string, Dictionary<string, string>> BaseTypeData { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, Dictionary<string, List<Dictionary<string, string>>>> BaseTypeTieringMatrixData { get; private set; } = new Dictionary<string, Dictionary<string, List<Dictionary<string, string>>>>();
+
         public static Dictionary<string, List<Dictionary<string, string>>> ClassBasedTierList = new Dictionary<string, List<Dictionary<string, string>>>();
 
         public static void Initialize()
@@ -85,44 +84,143 @@ namespace FilterCore.Constants
 
             // transform a basetype:info list to -> class:(basetype:info)
 
-            try
+            foreach (var item in BaseTypeData)
             {
-                foreach (var item in BaseTypeData)
+                var iClass = item.Value["Class"];
+                if (!results.ContainsKey(iClass))
                 {
-                    var iClass = item.Value["Class"];
-                    if (!results.ContainsKey(iClass))
-                    {
-                        results.Add(iClass, new List<Dictionary<string, string>>());
-                    }
-
-                    results[iClass].Add(item.Value);
+                    results.Add(iClass, new List<Dictionary<string, string>>());
                 }
 
-                // Order lists by itemlevel
-                var keys = new List<string>();
-                foreach (var item in results)
-                {
-                    keys.Add(item.Key);
-                }
-
-                EnrichItemsWithLevelSorting(results, keys);
-                EnrichItemsWithApsSorting(results);
-
-                EnrichItemsWithBestBaseTypeInformation(results, keys);
-
-                return results;
+                results[iClass].Add(item.Value);
             }
-            catch (Exception e)
+
+            // Order lists by itemlevel
+            var keys = new List<string>();
+            foreach (var item in results)
             {
-                throw e;
+                keys.Add(item.Key);
             }
+
+            EnrichItemsWithLevelSorting(results, keys);
+            EnrichItemsWithApsSorting(results);
+
+            CreateLevelSortedBaseTypeList(results);
+
+            EnrichItemsWithBestBaseTypeInformation(results);
+
+            return results;
 
         }
 
-        private static void EnrichItemsWithBestBaseTypeInformation(Dictionary<string, List<Dictionary<string, string>>> results, List<string> keys)
+        private static void CreateLevelSortedBaseTypeList(Dictionary<string, List<Dictionary<string, string>>> results)
+        {
+            // INPUT: SORTED LIST<PROP,VALUE>
+            // ARMORTYPE(weapon or EV/ES) => { CLASS : LIST<PROP, VALUE> (sorted by droplevel) }
+            var finalgroups = new Dictionary<string, Dictionary<string, List<Dictionary<string, string>>>>();
+
+            foreach (var itemtype in results)
+            {
+                var subgroups = new Dictionary<string, List<Dictionary<string, string>>>();
+
+                if (!FilterPolishUtil.FilterPolishConfig.GearClasses.Contains(itemtype.Key))
+                {
+                    continue;
+                }
+
+                if (FilterPolishUtil.FilterPolishConfig.BestBaseCheckIgnore.Contains(itemtype.Key.ToLower()))
+                {
+                    // rings, amulets and belts don't need any indication about the best base
+                    // continue;
+                }
+
+                if (!itemtype.Value.FirstOrDefault().ContainsKey("LevelSorting"))
+                {
+                    continue;
+                }
+
+                // .Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]) )
+                var output = itemtype.Value.OrderByDescending(y => float.Parse(y["LevelSorting"])).ToList();
+
+                if (itemtype.Key == "Boots" || itemtype.Key == "Body Armours" || itemtype.Key == "Helmets" || itemtype.Key == "Shields" || itemtype.Key == "Gloves")
+                {
+                    subgroups = output.Subdivide(new List<Tuple<string, Func<Dictionary<string, string>, bool>>>()
+                    {
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ar", x => IsArmor(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ev", x => IsEvasion(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("es", x => IsEnergyShield(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("arev", x => IsArmorEvasion(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ares", x => IsArmorEnergyShield(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("eves", x => IsEvasionEnergyShield(x))
+                    });
+                }
+                else
+                {
+                    subgroups.Add("all", output);
+                }
+
+                foreach (var item in subgroups)
+                {
+
+                    string key1 = item.Key;
+                    string key2 = itemtype.Key;
+                    if (item.Key == "all")
+                    {
+                        key1 = itemtype.Key;
+                        key2 = item.Key;
+                    }
+
+                    // add the armor type
+                    if (!finalgroups.ContainsKey(key1))
+                    {
+                        finalgroups.Add(key1, new Dictionary<string, List<Dictionary<string, string>>>());
+                    }
+
+                    if (!finalgroups[key1].ContainsKey(key2))
+                    {
+                        finalgroups[key1].Add(key2, new List<Dictionary<string, string>>());
+                    }
+
+                    finalgroups[key1][key2] = item.Value;
+                }
+            }
+
+            BaseTypeTieringMatrixData = finalgroups;
+        }
+
+        private static bool IsEvasionEnergyShield(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] != "";
+        }
+
+        private static bool IsArmorEnergyShield(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != "";
+        }
+
+        private static bool IsArmorEvasion(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] != "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == "";
+        }
+
+        private static bool IsEnergyShield(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] == "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != "";
+        }
+
+        private static bool IsEvasion(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == "";
+        }
+
+        private static bool IsArmor(Dictionary<string, string> x)
+        {
+            return x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] == "";
+        }
+
+        private static void EnrichItemsWithBestBaseTypeInformation(Dictionary<string, List<Dictionary<string, string>>> results)
         {
             HashSet<string> resultingBases = new HashSet<string>();
-            bool apsRelevant = false;
 
             foreach (var itemtype in results)
             {
@@ -149,12 +247,12 @@ namespace FilterCore.Constants
                     
                     itemgroups = itemtype.Value.Subdivide(new List<Tuple<string, Func<Dictionary<string, string>, bool>>>()
                     {
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ar", x => x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] == ""),
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ev", x => x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == ""),
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("es", x => x["Game:Armour"] == "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != ""),
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("arev", x => x["Game:Armour"] != "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] == ""),
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ares", x => x["Game:Armour"] != "" && x["Game:Evasion"] == "" && x["Game:Energy Shield"] != ""),
-                        new Tuple<string, Func<Dictionary<string, string>, bool>>("eves", x => x["Game:Armour"] == "" && x["Game:Evasion"] != "" && x["Game:Energy Shield"] != "")
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ar", x => IsArmor(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ev", x => IsEvasion(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("es", x => IsEnergyShield(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("arev", x => IsArmorEvasion(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("ares", x => IsArmorEnergyShield(x)),
+                        new Tuple<string, Func<Dictionary<string, string>, bool>>("eves", x => IsEvasionEnergyShield(x))
                     });
                 }
                 else
@@ -164,11 +262,6 @@ namespace FilterCore.Constants
 
                 foreach (var itemgroup in itemgroups)
                 {
-                    if (itemgroup.Value.FirstOrDefault().ContainsKey("ApsSorting"))
-                    {
-                        apsRelevant = true;
-                    }
-
                     var rawingridients = itemgroup.Value
                         .Where(x => !FilterPolishUtil.FilterPolishConfig.SpecialBases.Contains(x["BaseType"]))
                         .Select(x => new { value = x, lvlSort = float.Parse(x["LevelSorting"]), apsSort = float.Parse(x["ApsSorting"]) });

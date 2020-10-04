@@ -41,7 +41,7 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     var price = builder.Item.LowestPrice;
-                    return price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
+                    return price > FilterPolishConfig.MiscT1BreakPoint * 1.25f;
                 }));
 
             builder.AddRule("t1 predictable", "t1p",
@@ -50,7 +50,7 @@ namespace FilterEconomyProcessor.RuleSet
                     var isPredictable = builder.Item.HasAspect("PredictableDropAspect");
                     var price = builder.Item.LowestPrice;
 
-                    return isPredictable && price > FilterPolishConfig.MiscT1BreakPoint * 1.5f;
+                    return isPredictable && price > FilterPolishConfig.MiscT1BreakPoint * 1.25f;
                 }));
 
             builder.AddRule("t2", "t2",
