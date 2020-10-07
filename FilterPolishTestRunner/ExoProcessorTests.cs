@@ -104,8 +104,8 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "Func xVal () { 2; };",
-                "Func yVal (a) { a; };",
+                "Func xVal () { 2 };",
+                "Func yVal (a) { a };",
                 "Func test (a) { SetBorderColor 1 xVal() 3 4; TX 1 xVal() yVal(a) 4; };",
                 "Section Incubators : IncubatorBase",
                 "{",
