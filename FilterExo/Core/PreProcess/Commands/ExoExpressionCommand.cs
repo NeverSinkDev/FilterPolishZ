@@ -181,7 +181,7 @@ namespace FilterExo.Core.PreProcess.Commands
                     {
                         subexpression.RemoveAt(i);
                         subexpression.RemoveAt(i - 1);
-                        subexpression.Add(funcRes[0].ToBranch());
+                        subexpression.Insert(i - 1, funcRes[0].ToBranch());
                         totalCount = subexpression.Count;
                         i--;
                     }

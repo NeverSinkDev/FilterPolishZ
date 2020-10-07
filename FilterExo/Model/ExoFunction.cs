@@ -17,15 +17,21 @@ namespace FilterExo.Model
         {
             TraceUtility.Check(atom.Content != null, "called function child has content!");
 
+            // refactor this! currently cleans variables from previous runs
             foreach (var item in Variables)
             {
                 Content.Variables.Remove(item);
             }
 
             var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
+            if (splitChildren.Count == 1 && splitChildren[0].Count == 0)
+            {
+                splitChildren.Clear();
+            }
 
             TraceUtility.Check(splitChildren.Count != Variables.Count, "function call has unequal children definition");
 
+            // adds variables int function
             for (int i = 0; i < splitChildren.Count; i++)
             {
                 var vari = splitChildren[i];

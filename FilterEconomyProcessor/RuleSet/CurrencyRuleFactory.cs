@@ -36,18 +36,18 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddSimpleComparisonRule("SextantTier", "t21", 1.5f);
 
             // chaos level rules
-            builder.AddSimpleComparisonRule("ChaosTier", "t22", 0.60f);
+            builder.AddSimpleComparisonRule("ChaosTier", "t22", 0.5f);
             builder.AddSimpleAspectContainerRule("ChaosBottom", "t22", "ChaosBottomAspect");
 
             // alchemy level rules
-            builder.AddSimpleComparisonRule("AlchemyTier", "t23", 0.30f);
+            builder.AddSimpleComparisonRule("AlchemyTier", "t23", 0.20f);
             builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyButtomAspect");
             builder.AddEarlyLeagueHandling("t23");
 
-            builder.AddSimpleComparisonRule("SilverAltTier", "t31", 0.16f);
+            builder.AddSimpleComparisonRule("SilverAltTier", "t31", 0.12f);
             builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "SilverBottomAspect");
 
-            builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.06f);
+            builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.05f);
             builder.AddSimpleAspectContainerRule("ChanceBottom", "t32", "ChanceBottomAspect");
 
             builder.AddExplicitRest("TransmuteTier", "t33");
