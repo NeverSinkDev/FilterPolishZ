@@ -31,8 +31,8 @@ namespace FilterEconomyProcessor.RuleSet
                     return true;
                 }));
 
-            builder.AddSimpleComparisonRule("ExTier", "t11", FilterPolishConfig.ExaltedOrbPrice / 2);
-            builder.AddSimpleComparisonRule("DivineTier", "t12", FilterPolishConfig.ExaltedOrbPrice / 5);
+            builder.AddSimpleComparisonRule("ExTier", "t11", 5 + (FilterPolishConfig.ExaltedOrbPrice / 2.5f));
+            builder.AddSimpleComparisonRule("DivineTier", "t12", 3 + (FilterPolishConfig.ExaltedOrbPrice / 8f));
             builder.AddSimpleComparisonRule("SextantTier", "t21", 1.5f);
 
             // chaos level rules

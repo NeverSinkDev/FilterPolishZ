@@ -170,7 +170,7 @@ namespace FilterEconomyProcessor.RuleSet
                 new Func<string, bool>((string s) =>
                 {
                     
-                    if (Item.All(x => x.CVal == 0 || x.IndexedCount == 0))
+                    if (Item.All(x => x.CVal == 0))
                     {
                         return true;
                     }
@@ -185,6 +185,11 @@ namespace FilterEconomyProcessor.RuleSet
                     if (this.RuleSet.GoverningSection.ToLower() == "fragments" || this.RuleSet.GoverningSection.ToLower() == "currency")
                     {
                         return false;
+                    }
+
+                    if (Item.All(x => x.IndexedCount == 0))
+                    {
+                        return true;
                     }
 
                     if (this.Item?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0 && isEarlyLeague)
