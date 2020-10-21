@@ -41,11 +41,11 @@ namespace FilterEconomyProcessor.RuleSet
 
             // alchemy level rules
             builder.AddSimpleComparisonRule("AlchemyTier", "t23", 0.20f);
-            builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyButtomAspect");
+            builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyBottomAspect");
             builder.AddEarlyLeagueHandling("t23");
 
             builder.AddSimpleComparisonRule("SilverAltTier", "t31", 0.12f);
-            builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "SilverBottomAspect");
+            builder.AddSimpleAspectContainerRule("SilverBottom", "t31", "SilverBottomAspect");
 
             builder.AddSimpleComparisonRule("ChanceTier", "t32", 0.05f);
             builder.AddSimpleAspectContainerRule("ChanceBottom", "t32", "ChanceBottomAspect");
