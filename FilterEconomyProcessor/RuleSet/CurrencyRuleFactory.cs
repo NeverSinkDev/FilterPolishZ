@@ -15,7 +15,7 @@ namespace FilterEconomyProcessor.RuleSet
                 // .SkipInEarlyLeague()
                 // .LimitExecutionMode(ExecutionMode.Function)
                 .UseDefaultQuery()
-                .OverrideMinimalExaltedPriceThreshhold(40)
+                // .OverrideMinimalExaltedPriceThreshhold(40)
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 

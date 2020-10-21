@@ -13,7 +13,6 @@ namespace FilterEconomyProcessor.RuleSet
             var builder = new RuleSetBuilder(ruleHost)
                 .SetSection("fragments")
                 .UseDefaultQuery()
-                .OverrideMinimalExaltedPriceThreshhold(40)
                 .AddDefaultPostProcessing()
                 .SkipInEarlyLeague()
                 .AddDefaultIntegrationTarget();

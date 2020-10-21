@@ -120,7 +120,6 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("currency->fossil")
-                .OverrideMinimalExaltedPriceThreshhold(45)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()
@@ -149,7 +148,6 @@ namespace FilterEconomyProcessor
         {
             return new RuleSetBuilder(this)
                 .SetSection("vials")
-                .OverrideMinimalExaltedPriceThreshhold(40)
                 .UseDefaultQuery()
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget()

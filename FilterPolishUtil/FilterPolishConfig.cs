@@ -107,7 +107,7 @@ namespace FilterPolishUtil
         /// <summary>
         /// By default no tiering is applied to a section if the exalted orb price is lower than this price, because the economy is usually not stable enough.
         /// </summary>
-        public static float TieringEnablingExaltedOrbPrice = 35f;
+        public static float TieringEnablingExaltedOrbPrice = 30f;
 
 
         /// <summary>
