@@ -61,8 +61,6 @@ namespace FilterExo.Core.PreProcess
                 {
                     builder = new ExpressionBuilder(this);
                 }
-
-
             }
 
             // LOCAL: Perform work on write branch, by reading current step
@@ -86,6 +84,8 @@ namespace FilterExo.Core.PreProcess
                     if (readChild.IsSection())
                     {
                         var child = new ExoBlock();
+                        ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
+
                         child.Parent = this.WriteCursor;
                         WriteCursor.Scopes.Add(child);
                         WriteCursor = child;

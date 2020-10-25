@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using static FilterExo.Model.SimpleAtomValueCore;
+using static FilterExo.Model.SingularValueCore;
 
 namespace FilterExo.Model
 {
@@ -72,12 +72,12 @@ namespace FilterExo.Model
             if (FilterExoConfig.Abbreviations.ContainsKey(value))
             {
                 this.IdentifiedType = ExoAtomType.prim;
-                this.ValueCore = new SimpleAtomValueCore() { Value = FilterExoConfig.Abbreviations[value], CanBeVariable = false };
+                this.ValueCore = new SingularValueCore() { Value = FilterExoConfig.Abbreviations[value], CanBeVariable = false };
             }
             else if (IsReservedType(value) || value.All(x => char.IsDigit(x)))
             {
                 this.IdentifiedType = ExoAtomType.prim;
-                this.ValueCore = new SimpleAtomValueCore() { Value = value, CanBeVariable = false };
+                this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
             }
             else if (IsStringType(value))
             {
@@ -87,7 +87,7 @@ namespace FilterExo.Model
             else if (value.Length <= 2 && FilterExoConfig.SimpleOperators.Contains(value[0]) || FilterExoConfig.CombinedOperators.Contains(value))
             {
                 this.IdentifiedType = ExoAtomType.oper;
-                this.ValueCore = new SimpleAtomValueCore() { Value = value, CanBeVariable = false };
+                this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
             }
             else if (value.ContainsSpecialCharacters())
             {
@@ -96,7 +96,7 @@ namespace FilterExo.Model
             else
             {
                 this.IdentifiedType = ExoAtomType.prim;
-                this.ValueCore = new SimpleAtomValueCore() { Value = value, CanBeVariable = true };
+                this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = true };
             }
         }
 

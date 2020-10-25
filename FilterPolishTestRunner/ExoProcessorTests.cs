@@ -78,12 +78,45 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_BasicMutatorTest()
+        {
+            var input = new List<string>()
+            {
+                "Func CurrencyBase(){ SetTextColor 200 0 0 255; BG 255 255 255 255; }",
+                "Func IncubatorBase(){ SetTextColor 255 0 0 255; }",
+                "Section Incubators : CurrencyBase(), IncubatorBase()",
+                "{",
+                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
+                "Rule T4 { BaseType \"Exalted Orb\"; };",
+                "# Rule error;",
+                "}",
+                "Rule T1 { BaseType \"Scroll of Wisdom\"; };"
+            };
+
+            var res = this.StringToExoFilter(input);
+
+            Assert.IsNotNull(res);
+            Assert.AreEqual(2, res.RootEntry.Scopes.Count);
+            Assert.AreEqual(2, res.RootEntry.Scopes[0].Mutators.Count);
+            Assert.AreEqual(2, res.RootEntry.Scopes[0].Scopes.Count);
+
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
+
+            Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
+            Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));
+            Assert.AreEqual("SetTextColor 255 0 0 255", string.Join(" ", commands0[2]));
+            Assert.AreEqual("ItemLevel >= 81", string.Join(" ", commands0[3]));
+
+            Assert.AreEqual("BaseType \"Scroll of Wisdom\"", res.RootEntry.Scopes[1].Commands[0].SerializeDebug());
+        }
+
+        [Test]
         public void ExoProcessor_BasicFunctions()
         {
             var input = new List<string>()
             {
                 "Func test (a,b) { SetBorderColor a 0 0 b; SetTextColor a 0 0 b; };",
-                "Section Incubators : IncubatorBase",
+                "Section Incubators",
                 "{",
                 "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(100,200); };",
                 "Rule T1 { test(100,200); };",
@@ -106,8 +139,8 @@ namespace FilterPolishTestRunner
             {
                 "Func xVal () { 2 };",
                 "Func yVal (a) { a };",
-                "Func test (a) { SetBorderColor 1 xVal() 3 4; TX 1 xVal() yVal(a) 4; };",
-                "Section Incubators : IncubatorBase",
+                "Func test (a) { BD 1 xVal() 3 4; TX 1 xVal() yVal(a) 4; };",
+                "Section Incubators",
                 "{",
                 "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(3); };",
                 "Rule T1 { test(3); };",
