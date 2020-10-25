@@ -9,6 +9,7 @@ using FilterPolishUtil.Model;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -17,9 +18,12 @@ using static FilterPolishUtil.TraceUtility;
 
 namespace FilterExo.Model
 {
+    [DebuggerDisplay("{debugView}")]
     public class ExoBlock
     {
-        public ExoFilterType Type;
+        private string debugView => $"{this.Type.ToString()} C:{this.Scopes.Count} DATA:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count}";
+
+        public ExoFilterType Type = ExoFilterType.generic;
 
         // Hierarchical elements
         public ExoBlock Parent;
@@ -32,14 +36,24 @@ namespace FilterExo.Model
         public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
+        public List<string> SimpleComments = new List<string>();
+
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {
-            var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
-            var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
+            if (this.Type == ExoFilterType.comment)
+            {
+                return this.SimpleComments.Select(x => new List<string>() { x });
+            }
+            else
+            {
+                var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
+                var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
 
-            return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
+                return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
+            }
+
         }
 
         public IEnumerable<List<string>> ResolveAndSerializeSingleSection(ExoExpressionCommandSource target)
@@ -104,22 +118,18 @@ namespace FilterExo.Model
 
         public IEnumerable<ExoExpressionCommand> YieldMutators()
         {
-            foreach (var item in this.Mutators)
-            {
-                yield return item;
-            }
-
-            if (this.Type == ExoFilterType.root)
-            {
-                yield break;
-            }
-            else
+            if (this.Type != ExoFilterType.root)
             {
                 var parentMutators = this.GetParent().YieldMutators();
                 foreach (var item in parentMutators)
                 {
                     yield return item;
                 }
+            }
+
+            foreach (var item in this.Mutators)
+            {
+                yield return item;
             }
         }
 

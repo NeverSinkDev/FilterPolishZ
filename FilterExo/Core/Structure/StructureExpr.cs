@@ -1,14 +1,18 @@
 ﻿using FilterExo.Core.Parsing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using static FilterExo.FilterExoConfig;
 
 namespace FilterExo.Core.Structure
 {
+    [DebuggerDisplay("{debugView}")]
     public class StructureExpr
     {
+        private string debugView => $"{Mode.ToString()}{ScopeType.ToString()} {Value} {(Children.Count > 0 ? '+' : ' ')}{(PropertyExpression.Count > 0 ? '!' : ' ')}";
+
         public StructureExpr()
         {
 

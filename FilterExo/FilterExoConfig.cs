@@ -12,8 +12,7 @@ namespace FilterExo
         {
             generic,
             root,
-            bearer,
-            scope
+            comment
         }
 
         public enum ExoExpressionCommandSource

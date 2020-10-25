@@ -53,7 +53,11 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "Section Incubators : IncubatorBase",
+                "#------------------------------------",
+                "# [0702] Layer - T2 - ECONOMY",
+                "#------------------------------------",
+                "",
+                "Section Incubators",
                 "{",
                 "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
                 "Rule T1 { BaseType<>; };",
@@ -78,13 +82,41 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_Stacking()
+        {
+            var input = new List<string>()
+            {
+                "Func CurrencyBase(){ SetTextColor 200 0 0 255; BG 255 255 255 255; }",
+                "Func IncubatorBase(){ SetTextColor 255 0 0 255; }",
+                "Section Currency : CurrencyBase",
+                "{",
+                    "Section Incubators :  IncubatorBase",
+                    "{",
+                        "Rule leveledex { BaseType \"Obscure Orb\"; };",
+                    "}",
+                "}",
+            };
+
+            var res = this.StringToExoFilter(input);
+
+            Assert.IsNotNull(res);
+
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
+
+            Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
+            Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));
+            Assert.AreEqual("SetTextColor 255 0 0 255", string.Join(" ", commands0[2]));
+            Assert.AreEqual("BaseType \"Obscure Orb\"", string.Join(" ", commands0[3]));
+        }
+
+        [Test]
         public void ExoProcessor_BasicMutatorTest()
         {
             var input = new List<string>()
             {
                 "Func CurrencyBase(){ SetTextColor 200 0 0 255; BG 255 255 255 255; }",
                 "Func IncubatorBase(){ SetTextColor 255 0 0 255; }",
-                "Section Incubators : CurrencyBase(), IncubatorBase()",
+                "Section Incubators : CurrencyBase, IncubatorBase",
                 "{",
                 "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
                 "Rule T4 { BaseType \"Exalted Orb\"; };",

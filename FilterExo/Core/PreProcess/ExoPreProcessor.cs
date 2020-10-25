@@ -74,7 +74,21 @@ namespace FilterExo.Core.PreProcess
                 // identify the line type
                 if (readChild?.PrimitiveValue?.type == FilterExoConfig.TokenizerMode.comment)
                 {
-                    // treat it as comment
+
+                    //if (WriteCursor.Type == FilterExoConfig.ExoFilterType.comment)
+                    //{
+                    //    WriteCursor.SimpleComments.Add(readChild.Value);
+                    //    return;
+                    //}
+
+                    //var child = new ExoBlock();
+                    //child.Type = FilterExoConfig.ExoFilterType.comment;
+
+                    //child.Parent = this.WriteCursor;
+                    //WriteCursor.Scopes.Add(child);
+                    //WriteCursor = child;
+                    //WriteCursor.SimpleComments.Add(readChild.Value);
+
                     return;
                 }
 
@@ -84,11 +98,11 @@ namespace FilterExo.Core.PreProcess
                     if (readChild.IsSection())
                     {
                         var child = new ExoBlock();
-                        ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
-
                         child.Parent = this.WriteCursor;
                         WriteCursor.Scopes.Add(child);
                         WriteCursor = child;
+
+                        ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
                     }
 
                     return;
@@ -105,6 +119,11 @@ namespace FilterExo.Core.PreProcess
                         {
                             builder.AddKeyWord(item);
                         }
+
+                        //if (item.Mode == FilterExoConfig.StructurizerMode.comm)
+                        //{
+                        //    builder.AddKeyWord(item);
+                        //}
                     }
                 }
             }

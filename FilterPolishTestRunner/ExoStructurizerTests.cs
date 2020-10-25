@@ -76,7 +76,9 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "# [4112] Incubator",
+                "#------------------------------------",
+                "# [0702] Layer - T2 - ECONOMY",
+                "#------------------------------------",
                 "",
                 "Section Incubators : IncubatorBase"
             };
@@ -85,7 +87,7 @@ namespace FilterPolishTestRunner
             var treeDict = StructurizerDebugger.SelectOnTree(result, x => x.Mode.ToString() + x.ScopeType.ToString());
 
             Assert.IsNotNull(treeDict);
-            Assert.IsTrue(treeDict["r.0"] == "commnone");
+            Assert.IsTrue(treeDict["r.0.0"] == "commnone");
         }
 
         private StructureExpr Structurize(List<string> input)

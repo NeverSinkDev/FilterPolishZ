@@ -20,7 +20,16 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             foreach (var item in splitmutators)
             {
-                var expr = new ExoExpressionCommand(item);
+                ExoExpressionCommand expr;
+                if (item.Count == 1 && block.IsFunction(item[0].Value))
+                {
+                    expr = new ExoExpressionCommand(new List<string>() { item[0].Value, "(", ")" });
+                }
+                else
+                {
+                    expr = new ExoExpressionCommand(item);
+                }
+
                 expr.Parent = block;
                 expr.Source = FilterExoConfig.ExoExpressionCommandSource.mutator;
                 block.Mutators.Add(expr);
