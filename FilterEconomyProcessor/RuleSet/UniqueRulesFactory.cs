@@ -46,7 +46,7 @@ namespace FilterEconomyProcessor.RuleSet
                     {
                         if (builder.Item.HasAspect("UncommonAspect"))
                         {
-                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect" });
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "UncommonAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -62,7 +62,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("ExpensiveTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
-                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                     if (relevantList.Count > 1)
                     {
@@ -79,7 +79,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("Expensive-Single-NonLeagueTwin", "multispecial",
                 new Func<string, bool>((string s) =>
                 {
-                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect" });
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "HandledAspect" }, new HashSet<string>() { "UncommonAspect", "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "ProphecyResultAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                     if (relevantList.Count == 1)
                     {
@@ -100,7 +100,7 @@ namespace FilterEconomyProcessor.RuleSet
                     {
                         if (builder.Item.HasAspect("HighVarietyAspect"))
                         {
-                            var relevantList = builder.Item.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect" });
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>(), new HashSet<string>() { "BossDropAspect", "NonDropAspect", "LeagueDropAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -120,7 +120,7 @@ namespace FilterEconomyProcessor.RuleSet
                     {
                         if (builder.Item.HasAspect("LeagueDropAspect"))
                         {
-                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "NonEventDropAspect" });
+                            var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "BossDropAspect", "NonDropAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                             if (relevantList.Count > 0)
                             {
@@ -138,7 +138,7 @@ namespace FilterEconomyProcessor.RuleSet
                     var fit = false;
                     if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint)
                     {
-                        var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect" });
+                        var relevantList = builder.Item.AspectCheck(new HashSet<string> { }, new HashSet<string>() { "NonDropAspect", "ReplicaAspect" });
 
                         if (relevantList.Count > 0 && relevantList.AllItemsFullFill(new HashSet<string>() { "BossDropAspect" }, new HashSet<string>()))
                         {
@@ -157,7 +157,7 @@ namespace FilterEconomyProcessor.RuleSet
                 {
                     if (builder.Item.HighestPrice > FilterPolishConfig.UniqueT1BreakPoint)
                     {
-                        var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect" });
+                        var relevantList = builder.Item.AspectCheck(new HashSet<string>() { "LeagueDropAspect" }, new HashSet<string>() { "NonDropAspect", "NonEventDropAspect", "ReplicaAspect" });
 
                         if (relevantList.Count > 0)
                         {
@@ -174,17 +174,17 @@ namespace FilterEconomyProcessor.RuleSet
                     return bossDrop || builder.Item.LowestPrice < FilterPolishConfig.UniqueT2BreakPoint && builder.Item.HighestPrice > FilterPolishConfig.UniqueT2BreakPoint;
                 }));
 
-            builder.AddRule("prophecy", "prophecy",
-                new Func<string, bool>((string s) =>
-                {
-                    var aspects = builder.RuleHost.ItemInformation["uniques", s];
-                    if (aspects == null)
-                    {
-                        return false;
-                    }
+            //builder.AddRule("prophecy", "prophecy",
+            //    new Func<string, bool>((string s) =>
+            //    {
+            //        var aspects = builder.RuleHost.ItemInformation["uniques", s];
+            //        if (aspects == null)
+            //        {
+            //            return false;
+            //        }
 
-                    return builder.Item.HasAspect("ProphecyMaterialAspect");
-                }));
+            //        return builder.Item.HasAspect("ProphecyMaterialAspect");
+            //    }));
 
             builder.AddSimpleAspectContainerRule("EARLYNerfAspect", "t3", "NerfAspect");
             builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string>() { "t1" }, "earlyProtHIGH");
@@ -193,7 +193,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("hideable-nondrop", "hideable2",
             new Func<string, bool>((string s) =>
             {
-                var aspectTest = builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>() { "HighVarietyAspect", "NonEventDropAspect", "PreventHidingAspect" });
+                var aspectTest = builder.Item.AllItemsFullFill(new HashSet<string>() { }, new HashSet<string>() { "HighVarietyAspect", "NonEventDropAspect", "PreventHidingAspect", "ReplicaAspect" });
 
                 if (!aspectTest)
                 {
@@ -202,7 +202,7 @@ namespace FilterEconomyProcessor.RuleSet
 
 
                 var relevantListNonDrop = builder.Item.AspectCheck(new HashSet<string>() { "NonDropAspect" }, new HashSet<string>() { });
-                var relevantListRest = builder.Item.AspectCheck(new HashSet<string>() {  }, new HashSet<string>() { "NonDropAspect" });
+                var relevantListRest = builder.Item.AspectCheck(new HashSet<string>() {  }, new HashSet<string>() { "NonDropAspect", "ReplicaAspect" });
 
                 if (relevantListNonDrop.Count > 0)
                 {
@@ -220,8 +220,7 @@ namespace FilterEconomyProcessor.RuleSet
             builder.AddRule("hideable", "hideable",
                 new Func<string, bool>((string s) =>
                 {
-
-                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { }, new HashSet<string>() { "NonDropAspect", "PreventHidingAspect" });
+                    var relevantList = builder.Item.AspectCheck(new HashSet<string>() { }, new HashSet<string>() { "NonDropAspect", "PreventHidingAspect", "ProphecyResultAspect", "ReplicaAspect" });
 
                     if (relevantList.Count == 0)
                     {

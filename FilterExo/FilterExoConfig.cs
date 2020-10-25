@@ -12,8 +12,14 @@ namespace FilterExo
         {
             generic,
             root,
-            bearer,
-            scope
+            comment
+        }
+
+        public enum ExoExpressionCommandSource
+        {
+            direct,
+            mutator,
+            style
         }
 
         // TOKENIZER
@@ -49,8 +55,6 @@ namespace FilterExo
         public enum StructurizerMode
         {
             root,
-            expr,
-            desc,
             atom,
             scop,
             comm
@@ -65,9 +69,16 @@ namespace FilterExo
 
         public static Dictionary<string, string> Abbreviations = new Dictionary<string, string>()
         {
+            { "Background", "SetBackgroundColor" },
             { "BG", "SetBackgroundColor" },
+
+            { "Border", "SetBorderColor" },
             { "BC", "SetBorderColor" },
+            { "BD", "SetBorderColor" },
+
+            { "Text", "SetTextColor" },
             { "TX", "SetTextColor" },
+
             { "BT", "BaseType" },
             { "Mod", "HasExplicitMod" }
         };

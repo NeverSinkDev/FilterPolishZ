@@ -99,7 +99,18 @@ namespace FilterPolishUtil.Extensions
             }
 
             return true;
+        }
 
+        public static IEnumerable<T> YieldTogether<T>(params IEnumerable<T>[] collections)
+        {
+
+            for (int i = 0; i < collections.Length; i++)
+            {
+                foreach (var item in collections[i])
+                {
+                    yield return item;
+                }
+            }
         }
 
         public static T Not<T,T1>(this T collection, T1 except) where T : ICollection<T1>, new() where T1 : IComparable

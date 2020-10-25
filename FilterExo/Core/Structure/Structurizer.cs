@@ -42,17 +42,17 @@ namespace FilterExo.Core.Structure
                     if (SpecialCharacterTreatment(token)) return;
                 }
 
-                else if (token.type == TokenizerMode.comment)
-                {
-                    cursor.AddChild(new StructureExpr(token, StructurizerMode.comm));
-                    return;
-                }
-
                 // If we're in an explicit scope, we have to create a new scope before writing.
                 else if (cursor.Mode == StructurizerMode.root || cursor.ScopeType == StructurizerScopeType.expl)
                 {
                     var child = StructureExpr.CreateScope(StructurizerScopeType.impl);
                     cursor = cursor.AddAndScopeOnChild(child);
+                }
+
+                if (token.type == TokenizerMode.comment)
+                {
+                    cursor.AddChild(new StructureExpr(token, StructurizerMode.comm));
+                    return;
                 }
 
                 // currently never happens! keeping it around for safety purposes 

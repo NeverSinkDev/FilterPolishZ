@@ -47,7 +47,7 @@ namespace FilterExo.Model
 
         public string GetRawValue()
         {
-            return string.Empty;
+            return string.Join(" ", Values.Select(x => x.GetRawValue()));
         }
 
         public string Serialize(ExoBlock parent)
@@ -59,7 +59,7 @@ namespace FilterExo.Model
     /// <summary>
     /// Either primitive value or variable refering to a value
     /// </summary>
-    public class SimpleAtomValueCore : IExoAtomValueCore
+    public class SingularValueCore : IExoAtomValueCore
     {
         public string Value;
         public bool CanBeVariable;
@@ -68,7 +68,7 @@ namespace FilterExo.Model
         {
             if (this.CanBeVariable)
             {
-                return string.Empty;
+                return this.Value;
             }
 
             return this.Value;
@@ -107,7 +107,7 @@ namespace FilterExo.Model
 
             public string GetRawValue()
             {
-                return string.Empty;
+                return Value.Name;
             }
 
             public IEnumerable<ExoAtom> Resolve(ExoBlock parent)

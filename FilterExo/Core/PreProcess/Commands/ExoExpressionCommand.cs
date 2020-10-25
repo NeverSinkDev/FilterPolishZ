@@ -1,4 +1,5 @@
 ﻿using FilterCore.Line;
+using FilterExo.Core.Structure;
 using FilterExo.Model;
 using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
@@ -7,14 +8,38 @@ using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using static FilterExo.FilterExoConfig;
 
 namespace FilterExo.Core.PreProcess.Commands
 {
+    [DebuggerDisplay("{debugView}")]
     public class ExoExpressionCommand
     {
+        private string debugView => this.DebugView();
+
+        public ExoBlock Parent { get; set; }
+        public ExoBlock Exectutor { get; set; }
+
+        public ExoExpressionCommandSource Source { get; internal set; } = ExoExpressionCommandSource.direct;
+        public int ExecutionContext = -1;
+
+        public bool ContainerCommand = false;
+        public bool DerivedCommand = false;
+
+        public List<ExoAtom> Values = new List<ExoAtom>();
+
+        public ExoExpressionCommand(List<StructureExpr> mutatorData)
+        {
+            foreach (var item in mutatorData)
+            {
+                this.Values.Add(new ExoAtom(item.Value));
+            }
+        }
+
         public ExoExpressionCommand(List<string> values)
         {
             foreach (var item in values)
@@ -27,10 +52,6 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             this.Values.AddRange(values);
         }
-
-        public ExoBlock Parent { get; set; }
-
-        public List<ExoAtom> Values = new List<ExoAtom>();
 
         public List<string> Serialize()
         {
@@ -170,11 +191,12 @@ namespace FilterExo.Core.PreProcess.Commands
                             subexpression.RemoveAt(i - 1);
 
                             i = totalCount;
-
-                            foreach (var item in funcRes)
-                            {
-                                this.Parent.AddCommand(new ExoExpressionCommand(item));
-                            }
+                            this.Exectutor.InsertCommands(funcRes, this);
+                            this.ContainerCommand = true;
+                        }
+                        else
+                        {
+                            TraceUtility.Throw("Multi-return function has additional illegal children!");
                         }
                     }
                     else
@@ -255,6 +277,17 @@ namespace FilterExo.Core.PreProcess.Commands
             var serializedCommand = this.Serialize();
             var line = serializedCommand.ToFilterLine();
             return line.Serialize();
+        }
+
+        public string DebugView()
+        {
+            var result = "";
+            foreach (var item in this.Values)
+            {
+                result += item.GetRawValue() + " ";
+            }
+
+            return result;
         }
 
         public void SetParent(ExoBlock parent)

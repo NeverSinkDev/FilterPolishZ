@@ -165,11 +165,19 @@ namespace FilterEconomyProcessor.RuleSet
 
         public RuleSetBuilder AddSafetyRule()
         {
+            var isEarlyLeague = EconomyRequestFacade.GetInstance().IsEarlyLeague();
             return this.AddRule("No Data Found", "???",
                 new Func<string, bool>((string s) =>
                 {
+                    
+                    if (Item.All(x => x.CVal == 0))
+                    {
+                        return true;
+                    }
+
                     var price = Item.LowestPrice;
-                    if (price == 0)
+
+                    if (price == 0 && isEarlyLeague)
                     {
                         return true;
                     }
@@ -179,9 +187,32 @@ namespace FilterEconomyProcessor.RuleSet
                         return false;
                     }
 
-                    if (this.Item?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0)
+                    if (Item.All(x => x.IndexedCount == 0))
                     {
                         return true;
+                    }
+
+                    if (this.Item?.FirstOrDefault(x => x.Name == s)?.IndexedCount == 0 && isEarlyLeague)
+                    {
+                        return true;
+                    }
+
+                    if (price == 0)
+                    {
+                        var items = Item.Where(x => x.CVal > 0).ToList();
+
+                        if (items.Count > 0 && (items.All(x => x.HasAspect("AnchorAspect") || x.HasAspect("NonDropAspect"))))
+                        {
+                            Item.LowestPrice = items.Min(x => x.CVal);
+                        }
+                        else if (items.Count == 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Item.LowestPrice = items.Where(x => !x.HasAspect("AnchorAspect") && !x.HasAspect("NonDropAspect")).Min(x => x.CVal);
+                        }
                     }
 
                     return false;
