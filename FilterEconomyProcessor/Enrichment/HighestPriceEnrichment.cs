@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FilterCore;
-using FilterCore.Constants;
 using FilterEconomy.Model;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;

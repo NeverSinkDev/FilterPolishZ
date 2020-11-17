@@ -66,6 +66,7 @@ namespace FilterCore
             { "Mirrored",      new BoolLineStrategy() },
 
             { "HasInfluence",  new EnumLineStrategy(true) },
+            { "GemQualityType",new EnumLineStrategy(true) },
             { "LinkedSockets", new NumericLineStrategy() },
             { "Sockets",       new NumericLineStrategy() },
             { "Quality",       new NumericLineStrategy() },

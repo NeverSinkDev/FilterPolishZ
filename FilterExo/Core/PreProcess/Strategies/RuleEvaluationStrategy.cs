@@ -65,6 +65,8 @@ namespace FilterExo.Core.PreProcess.Strategies
             newEntry.Parent = builder.Owner.WriteCursor;
             builder.Owner.WriteCursor.Scopes.Add(newEntry);
 
+            newEntry.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value;
+
             foreach (var item in result)
             {
                 newEntry.AddCommand(item);

@@ -28,7 +28,8 @@ namespace FilterExo.Core.PreProcess.Strategies
         {
             new RuleEvaluationStrategy(),
             new VarEvaluationStrategy(),
-            new FuncEvaluationStrategy()
+            new FuncEvaluationStrategy(),
+            new CommentEvaluationStrategy()
         };
 
         public string Mode;

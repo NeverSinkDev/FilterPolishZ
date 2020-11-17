@@ -24,7 +24,6 @@ using Newtonsoft.Json;
 using FilterPolishUtil.Model;
 using System.IO.Compression;
 using FilterPolishWindowUtils;
-using FilterPolishZ.Economy;
 using FilterEconomyProcessor;
 using FilterEconomyProcessor.ClassAbstraction;
 using FilterCore.Constants;

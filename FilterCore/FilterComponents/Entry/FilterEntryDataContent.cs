@@ -34,6 +34,16 @@ namespace FilterCore.Entry
             this.Content["comment"].Add(line);
         }
 
+        public void AddComment(string line)
+        {
+            if (!this.Content.ContainsKey("comment"))
+            {
+                this.Content.Add("comment", new List<IFilterLine>());
+            }
+
+            this.Content["comment"].Add(line.ToFilterLine());
+        }
+
         public bool Has(string ident)
         {
             return this.Content.ContainsKey(ident);

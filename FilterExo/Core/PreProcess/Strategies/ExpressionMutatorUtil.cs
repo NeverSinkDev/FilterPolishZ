@@ -23,7 +23,7 @@ namespace FilterExo.Core.PreProcess.Strategies
                 ExoExpressionCommand expr;
                 if (item.Count == 1 && block.IsFunction(item[0].Value))
                 {
-                    expr = new ExoExpressionCommand(new List<string>() { item[0].Value, "(", ")" });
+                    expr = new ExoExpressionCommand(new List<string> { item[0].Value, "(", ")" });
                 }
                 else
                 {

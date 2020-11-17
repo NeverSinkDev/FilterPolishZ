@@ -1,8 +1,6 @@
 ﻿using FilterEconomy.Processor;
 using FilterPolishUtil;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FilterEconomyProcessor.RuleSet
 {

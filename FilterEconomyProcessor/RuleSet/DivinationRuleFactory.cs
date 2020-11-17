@@ -1,11 +1,8 @@
-﻿using FilterEconomy.Processor;
-using FilterEconomyProcessor;
-using FilterEconomyProcessor.RuleSet;
+﻿using System.Collections.Generic;
+using FilterEconomy.Processor;
 using FilterPolishUtil;
-using System;
-using System.Collections.Generic;
 
-namespace FilterPolishZ.Economy.RuleSet
+namespace FilterEconomyProcessor.RuleSet
 {
     public static class DivinationRuleFactory
     {
@@ -17,55 +14,39 @@ namespace FilterPolishZ.Economy.RuleSet
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
-            builder.AddRule("unknown", "unknown",
-                new Func<string, bool>((string s) =>
-                {
-                    return !ruleHost.EconomyInformation.EconomyTierlistOverview["divination"].ContainsKey(s);
-                }));
+            builder.AddRule("unknown", "unknown", s => !ruleHost.EconomyInformation.EconomyTierlistOverview["divination"].ContainsKey(s));
 
-
-            builder.AddRule("t1", "t1",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t1", "t1", s =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
                     return price > FilterPolishConfig.DiviT1BreakPoint;
-                }));
+                });
 
-            builder.AddRule("t2", "t2",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t2", "t2", s =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
                     return price > FilterPolishConfig.DiviT2BreakPoint;
-                }));
+                });
 
-            builder.AddRule("SingleCardSave", "t2",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("SingleCardAspect");
-                }));
+            builder.AddRule("SingleCardSave", "t2", s => builder.Item.HasAspect("SingleCardAspect"));
 
             builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
 
-            builder.AddRule("t3", "t3",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t3", "t3", s =>
                 {
                     // We reduce the tiering of CurrencyType items here. They should be more weighted towards t4c, since poe.ninja seems to price them higher than they are.
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier * (builder.Item.HasAspect("CurrencyTypeAspect") ? 0.8f : 1f);
 
                     return price > FilterPolishConfig.DiviT3BreakPoint;
-                }));
+                });
 
-            builder.AddRule("TimelessSave", "t3",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("TimelessResultAspect");
-                }));
+            builder.AddRule("TimelessSave", "t3", s => builder.Item.HasAspect("TimelessResultAspect"));
 
             builder.AddEarlyLeagueHandling("t3");
-            builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string>() { "t1", "t2" }, "earlyProtHIGH");
+            
+            builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string> { "t1", "t2" }, "earlyProtHIGH");
 
-            builder.AddRule("CurrencySaveT4", "t4c",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("CurrencySaveT4", "t4c", s =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
 
@@ -75,17 +56,14 @@ namespace FilterPolishZ.Economy.RuleSet
                         {
                             return (price > FilterPolishConfig.DiviT5BreakPoint * 3);
                         }
-                        else
-                        {
-                            return (price > FilterPolishConfig.DiviT5BreakPoint * 1.5);
-                        }
+
+                        return (price > FilterPolishConfig.DiviT5BreakPoint * 1.5);
                     }
 
                     return false;
-                }));
+                });
 
-            builder.AddRule("CurrencySaveT4X", "t4c",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("CurrencySaveT4X", "t4c", s =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
 
@@ -95,34 +73,24 @@ namespace FilterPolishZ.Economy.RuleSet
                     }
 
                     return false;
-                }));
+                });
 
-            builder.AddEarlyLeagueProtectionBlock("t4", new HashSet<string>() { "t3" }, "earlyProtLOW");
+            builder.AddEarlyLeagueProtectionBlock("t4", new HashSet<string> { "t3" }, "earlyProtLOW");
 
-            builder.AddRule("CurrencySaveT5", "t5c",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("CurrencyTypeAspect");
-                }));
+            builder.AddRule("CurrencySaveT5", "t5c", s => builder.Item.HasAspect("CurrencyTypeAspect"));
 
             builder.AddSimpleAspectContainerRule("EARLYNerfAspect", "t2", "NerfAspect");
 
-            builder.AddRule("RandomSave", "t4",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("LargeRandomPoolAspect");
-                }));
+            builder.AddRule("RandomSave", "t4", s => builder.Item.HasAspect("LargeRandomPoolAspect"));
 
 
-            builder.AddRule("PoorCard", "t5",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("PoorCard", "t5", s =>
                 {
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
                     return (price < (FilterPolishConfig.DiviT5BreakPoint * 2.5f) && builder.Item.HasAspect("PoorDropAspect"));
-                }));
+                });
 
-            builder.AddRule("T5RedemptionPrevented", "t5",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("T5RedemptionPrevented", "t5", s =>
                 {
                     if (builder.GetTierOfItem(s).Contains("t5"))
                     {
@@ -131,10 +99,9 @@ namespace FilterPolishZ.Economy.RuleSet
                     }
 
                     return false;
-                }));
+                });
 
-            builder.AddRule("t5", "t5",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t5", "t5", s =>
                 {
                     if (builder.Item.HasAspect("PreventHidingAspect"))
                     {
@@ -143,15 +110,9 @@ namespace FilterPolishZ.Economy.RuleSet
 
                     var price = builder.Item.LowestPrice * builder.Item.ValueMultiplier;
                     return price < FilterPolishConfig.DiviT5BreakPoint;
-                }));
+                });
 
             builder.AddExplicitRest("t4", "t4");
-
-            //builder.AddRule("rest", "rest",
-            //    new Func<string, bool>((string s) =>
-            //    {
-            //        return true;
-            //    }));
 
             return builder.Build();
         }

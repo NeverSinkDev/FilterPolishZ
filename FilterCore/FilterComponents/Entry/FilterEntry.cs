@@ -120,6 +120,21 @@ namespace FilterCore.Entry
             return entry;
         }
 
+        public static FilterEntry CreateCommentEntry()
+        {
+            var entry = new FilterEntry();
+
+            entry.Header = new FilterEntryHeader();
+            entry.Header.Type = FilterGenerationConfig.FilterEntryType.Comment;
+            entry.Header.IsFrozen = true;
+            entry.Header.IsActive = true;
+
+            entry.Content = new FilterEntryDataContent();
+            entry.Content.Content = new Dictionary<string, List<IFilterLine>>();
+
+            return entry;
+        }
+
         public static FilterEntry CreateFillerEntry()
         {
             var entry = new FilterEntry();

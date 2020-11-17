@@ -29,10 +29,7 @@ namespace FilterEconomyProcessor.RuleSet
                 }));
 
             builder.AddRule("rest", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+                s => true);
 
             return builder.Build();
 
@@ -43,14 +40,7 @@ namespace FilterEconomyProcessor.RuleSet
                     return 0;
                 }
 
-                if (builder.Item.ftPrice.ContainsKey(level))
-                {
-                    return builder.Item.ftPrice[level];
-                }
-                else
-                {
-                    return GetPrice(level + 1);
-                }
+                return builder.Item.ftPrice.ContainsKey(level) ? builder.Item.ftPrice[level] : GetPrice(level + 1);
             }
         }
     }

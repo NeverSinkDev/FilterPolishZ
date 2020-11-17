@@ -28,7 +28,6 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
     /// </summary>
     public partial class BaseTypeTieringView : UserControl, INotifyPropertyChanged
     {
-
         private bool Inited = false;
 
         public ObservableCollection<KeyBaseTypeRow> BaseTypeMatrixTable { get; set; } = new ObservableCollection<KeyBaseTypeRow>();
@@ -193,30 +192,11 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
             }
         }
 
-        private void curs1click(object sender, RoutedEventArgs e)
-        {
-            CursorMode = 1;
-        }
-
-        private void curs2click(object sender, RoutedEventArgs e)
-        {
-            CursorMode = 2;
-        }
-
-        private void curs3click(object sender, RoutedEventArgs e)
-        {
-            CursorMode = 3;
-        }
-
-        private void curs4click(object sender, RoutedEventArgs e)
-        {
-            CursorMode = 4;
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-            this.GenerateOutputTable();
-        }
+        private void curs1click(object sender, RoutedEventArgs e) => CursorMode = 1;
+        private void curs2click(object sender, RoutedEventArgs e) => CursorMode = 2;
+        private void curs3click(object sender, RoutedEventArgs e) => CursorMode = 3;
+        private void curs4click(object sender, RoutedEventArgs e) => CursorMode = 4;
+        private void Refresh_Click(object sender, RoutedEventArgs e) => this.GenerateOutputTable();
 
         private void TieringMatrixGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -238,7 +218,7 @@ namespace FilterPolishZ.ModuleWindows.BaseTypeTiering
                 KeyBaseTypeRow data = cell.DataContext as KeyBaseTypeRow;
                 var itemName = BaseTypeToMatrixTierColorConverter.GetItemName(cell.Column.DisplayIndex, data);
 
-                if (itemName == null || itemName == string.Empty)
+                if (string.IsNullOrEmpty(itemName))
                 {
                     return;
                 }

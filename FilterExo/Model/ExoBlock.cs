@@ -21,7 +21,7 @@ namespace FilterExo.Model
     [DebuggerDisplay("{debugView}")]
     public class ExoBlock
     {
-        private string debugView => $"{this.Type.ToString()} C:{this.Scopes.Count} DATA:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count}";
+        private string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
 
         public ExoFilterType Type = ExoFilterType.generic;
 
@@ -39,6 +39,7 @@ namespace FilterExo.Model
         public List<string> SimpleComments = new List<string>();
 
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
+        public string Name { get; internal set; }
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {

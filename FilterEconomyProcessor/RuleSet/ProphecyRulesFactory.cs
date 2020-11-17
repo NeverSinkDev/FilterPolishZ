@@ -1,6 +1,5 @@
 ﻿using FilterEconomy.Processor;
 using FilterPolishUtil;
-using System;
 
 namespace FilterEconomyProcessor.RuleSet
 {
@@ -14,37 +13,29 @@ namespace FilterEconomyProcessor.RuleSet
                 .AddDefaultPostProcessing()
                 .AddDefaultIntegrationTarget();
 
-            builder.AddRule("t1", "t1",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t1", "t1", s =>
                 {
                     var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.DiviT1BreakPoint;
-                }));
+                });
 
-            builder.AddRule("MultiBase", "t2",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("MultiBase", "t2", s =>
                 {
                     var price = builder.Item.HighestPrice;
                     return price > FilterPolishConfig.DiviT1BreakPoint;
-                }));
+                });
 
-            builder.AddRule("t2", "t2",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t2", "t2", s =>
                 {
                     var price = builder.Item.LowestPrice;
                     return price > FilterPolishConfig.DiviT2BreakPoint;
-                }));
+                });
 
             builder.AddSimpleAspectContainerRule("EARLYBuffAspect", "t2", "BuffAspect");
 
-            builder.AddRule("t3mapping", "t3mapping",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("MapUpgradeProphecyAspect");
-                }));
+            builder.AddRule("t3mapping", "t3mapping", s => builder.Item.HasAspect("MapUpgradeProphecyAspect"));
 
-            builder.AddRule("t3", "t3",
-                new Func<string, bool>((string s) =>
+            builder.AddRule("t3", "t3", s =>
                 {
                     var price = builder.Item.HighestPrice;
 
@@ -62,31 +53,15 @@ namespace FilterEconomyProcessor.RuleSet
                     var mapUpgrade = builder.Item.HasAspect("MapUpgradeProphecyAspect") && !builder.Item.HasAspect("TimelessProphecyAspect") ? 0.5f : 1f;
 
                     return mapUpgrade * isUpgrade * price * isDrop * isCheap * 0.5f > FilterPolishConfig.DiviT5BreakPoint;
-                }));
+                });
 
-            builder.AddRule("t3timeless", "t3",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("TimelessProphecyAspect") || builder.Item.HasAspect("PreventHidingAspect");
-                }));
+            builder.AddRule("t3timeless", "t3", s => builder.Item.HasAspect("TimelessProphecyAspect") || builder.Item.HasAspect("PreventHidingAspect"));
 
-            builder.AddRule("t4upgrade", "t4upgrade",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("ItemUpgradeProphecyAspect");
-                }));
+            builder.AddRule("t4upgrade", "t4upgrade", s => builder.Item.HasAspect("ItemUpgradeProphecyAspect"));
 
-            builder.AddRule("t4drop", "t4drop",
-                new Func<string, bool>((string s) =>
-                {
-                    return builder.Item.HasAspect("ItemDropProphecyAspect");
-                }));
+            builder.AddRule("t4drop", "t4drop", s => builder.Item.HasAspect("ItemDropProphecyAspect"));
 
-            builder.AddRule("t4", "t4",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            builder.AddRule("t4", "t4", s => true);
 
             return builder.Build();
         }

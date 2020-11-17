@@ -180,6 +180,30 @@ namespace FilterEconomy.Facades
             this.AddToDictionary("rare->hunter", metaDictionary["Hunter"]);
             this.AddToDictionary("generalcrafting", otherbases);
 
+            var replicas = new Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>();
+
+            // replica section
+            var replicasections = new List<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>()
+            {
+                this.EconomyTierlistOverview["uniques"],
+                this.EconomyTierlistOverview["unique->maps"]
+            };
+
+            foreach (var section in replicasections)
+            {
+                foreach (var items in section)
+                {
+                    var selected = items.Value.Crop(x => x.Name.ToLower().Contains("replica")).ToList();
+                    if (selected.Count != 0)
+                    {
+                        replicas.Add(items.Key, new ItemList<NinjaItem>());
+                        replicas[items.Key].AddRange((selected));
+                    }
+                }
+            }
+
+            this.AddToDictionary("unique->replicas", replicas);
+
             LoggingFacade.LogInfo($"Done Generating Sub-Economy Tiers");
         }
 

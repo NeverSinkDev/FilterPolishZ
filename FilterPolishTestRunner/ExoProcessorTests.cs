@@ -8,6 +8,7 @@ using FilterExo.Model;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
@@ -72,13 +73,16 @@ namespace FilterPolishTestRunner
             var res = this.StringToExoFilter(input);
 
             Assert.IsNotNull(res);
-            Assert.AreEqual(2, res.RootEntry.Scopes.Count);
-            Assert.AreEqual(5, res.RootEntry.Scopes[0].Scopes.Count);
-            Assert.AreEqual( res.RootEntry.Scopes[0].Scopes[0].Commands[0].Values[0].GetRawValue(), "ItemLevel");
-            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[0].SerializeDebug(), "ItemLevel >= 81");
-            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[0].Commands[1].SerializeDebug(), "BaseType \"Exalted Orb\"");
-            Assert.AreEqual(res.RootEntry.Scopes[0].Scopes[4].Commands[0].SerializeDebug(), "BaseType \"Exalted Orb\"");
-            Assert.AreEqual(res.RootEntry.Scopes[1].Commands[0].SerializeDebug(), "BaseType \"Scroll of Wisdom\"");
+            Assert.AreEqual(3, res.RootEntry.Scopes.Count);
+            Assert.AreEqual(6, res.RootEntry.Scopes[1].Scopes.Count);
+            Assert.AreEqual(3, res.RootEntry.Scopes[0].SimpleComments.Count);
+            Assert.AreEqual("# [0702] Layer - T2 - ECONOMY", res.RootEntry.Scopes[0].SimpleComments[1]);
+            Assert.AreEqual("leveledex", res.RootEntry.Scopes[1].Scopes[0].Name);
+            Assert.AreEqual("ItemLevel >= 81", res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug());
+            Assert.AreEqual("ItemLevel", res.RootEntry.Scopes[1].Scopes[0].Commands[0].Values[0].GetRawValue());
+            Assert.AreEqual("BaseType \"Exalted Orb\"", res.RootEntry.Scopes[1].Scopes[0].Commands[1].SerializeDebug());
+            Assert.AreEqual("BaseType \"Exalted Orb\"", res.RootEntry.Scopes[1].Scopes[4].Commands[0].SerializeDebug());
+            Assert.AreEqual("BaseType \"Scroll of Wisdom\"", res.RootEntry.Scopes[2].Commands[0].SerializeDebug());
         }
 
         [Test]
@@ -130,7 +134,7 @@ namespace FilterPolishTestRunner
             Assert.IsNotNull(res);
             Assert.AreEqual(2, res.RootEntry.Scopes.Count);
             Assert.AreEqual(2, res.RootEntry.Scopes[0].Mutators.Count);
-            Assert.AreEqual(2, res.RootEntry.Scopes[0].Scopes.Count);
+            Assert.AreEqual(3, res.RootEntry.Scopes[0].Scopes.Count);
 
             var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
 
@@ -156,12 +160,19 @@ namespace FilterPolishTestRunner
                 "}"
             };
 
-            var res = this.StringToFilterEntries(input).Select(x => x.Serialize()).ToList();
-
-            Assert.IsNotNull(res);
-            Assert.AreEqual(2, res.Count);
-            Assert.AreEqual("\tSetTextColor 100 0 0 200", res[0][3]);
-            Assert.AreEqual("\tSetBorderColor 100 0 0 200", res[0][4]);
+            // repeated execution
+            Stopwatch sw = new Stopwatch();
+            sw.Restart();
+            for (int i = 0; i < 3; i++)
+            {
+                var res = this.StringToFilterEntries(input).Select(x => x.Serialize()).ToList();
+                Assert.IsNotNull(res);
+                Assert.AreEqual(3, res.Count);
+                Assert.AreEqual("\tSetTextColor 100 0 0 200", res[0][3]);
+                Assert.AreEqual("\tSetBorderColor 100 0 0 200", res[0][4]);
+            }
+            sw.Stop();
+            Debug.WriteLine(sw.Elapsed);
         }
 
         [Test]
@@ -183,7 +194,7 @@ namespace FilterPolishTestRunner
             var res = this.StringToFilterEntries(input).Select(x => x.Serialize()).ToList();
 
             Assert.IsNotNull(res);
-            Assert.AreEqual(2, res.Count);
+            Assert.AreEqual(3, res.Count);
             Assert.AreEqual("\tSetTextColor 1 2 3 4", res[0][3]);
             Assert.AreEqual("\tSetBorderColor 1 2 3 4", res[0][4]);
         }
@@ -254,26 +265,36 @@ namespace FilterPolishTestRunner
 
             // var res = this.StringToFilterEntries(input.Split(System.Environment.NewLine).ToList());
 
-            var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
+            // repeated execution
+            Stopwatch sw = new Stopwatch();
+            sw.Restart();
+            for (int i = 0; i < 3; i++)
+            {
+                var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
-            Assert.IsNotNull(res);
-            Assert.AreEqual(2, res.RootEntry.Scopes.Count);
+                Assert.IsNotNull(res);
+                Assert.AreEqual(3, res.RootEntry.Scopes.Count);
 
-            // OUTER SCOPE
-            Assert.AreEqual("\"ALPHA\" \"BETA\"", res.RootEntry.Variables["t1inc"].Serialize(res.RootEntry));
+                // OUTER SCOPE
+                Assert.AreEqual("\"ALPHA\" \"BETA\"", res.RootEntry.Variables["t1inc"].Serialize(res.RootEntry));
 
-            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].Values[0].GetRawValue(), "BaseType");
-            Assert.AreEqual(res.RootEntry.Scopes[0].Commands[0].SerializeDebug(), "BaseType \"ALPHA\" \"BETA\"");
+                Assert.AreEqual("BaseType", res.RootEntry.Scopes[1].Commands[0].Values[0].GetRawValue());
+                Assert.AreEqual("BaseType \"ALPHA\" \"BETA\"", res.RootEntry.Scopes[1].Commands[0].SerializeDebug());
 
-            // INNER SCOPE
-            Assert.AreEqual("\"GAMMA\"", res.RootEntry.Scopes[1].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
+                // INNER SCOPE
+                Assert.AreEqual("\"GAMMA\"", res.RootEntry.Scopes[2].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
 
-            Assert.AreEqual(3, res.RootEntry.Scopes[1].Scopes.Count);
-            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug());
-            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[0].Commands[0].SerializeDebug());
-            Assert.AreEqual("ItemLevel >= 81", res.RootEntry.Scopes[1].Scopes[1].Commands[0].SerializeDebug());
-            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[1].Commands[1].SerializeDebug());
-            Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[1].Scopes[2].Commands[0].SerializeDebug());
+                Assert.AreEqual(4, res.RootEntry.Scopes[2].Scopes.Count);
+                Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[0].Commands[0].SerializeDebug());
+                Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[0].Commands[0].SerializeDebug());
+                Assert.AreEqual("ItemLevel >= 81", res.RootEntry.Scopes[2].Scopes[1].Commands[0].SerializeDebug());
+                Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[1].Commands[1].SerializeDebug());
+                Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[3].Commands[0].SerializeDebug());
+            }
+            sw.Stop();
+            Debug.WriteLine(sw.Elapsed);
+
+
         }
     }
 }

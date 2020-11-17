@@ -22,7 +22,7 @@ namespace FilterExo.Core.PreProcess
 
             // transformation process definition
             ReadCursor = tree.GoToRoot();
-            WriteCursor = new ExoBlock() { Type = FilterExoConfig.ExoFilterType.root };
+            WriteCursor = new ExoBlock {Type = FilterExoConfig.ExoFilterType.root, Name = "ROOT"};
 
             // builder information
             var builder = new ExpressionBuilder(this);
@@ -63,47 +63,33 @@ namespace FilterExo.Core.PreProcess
                 }
             }
 
-            // LOCAL: Perform work on write branch, by reading current step
+            
             void DoWorkOnReadChild(StructureExpr readChild)
             {
+                // LOCAL: We skip the lowest level and instead treat them within sections.
                 if (readChild.Mode == FilterExoConfig.StructurizerMode.atom)
                 {
                     return;
                 }
 
-                // identify the line type
+                // LOCAL: We skip the lowest level and instead treat them within sections.
                 if (readChild?.PrimitiveValue?.type == FilterExoConfig.TokenizerMode.comment)
                 {
-
-                    //if (WriteCursor.Type == FilterExoConfig.ExoFilterType.comment)
-                    //{
-                    //    WriteCursor.SimpleComments.Add(readChild.Value);
-                    //    return;
-                    //}
-
-                    //var child = new ExoBlock();
-                    //child.Type = FilterExoConfig.ExoFilterType.comment;
-
-                    //child.Parent = this.WriteCursor;
-                    //WriteCursor.Scopes.Add(child);
-                    //WriteCursor = child;
-                    //WriteCursor.SimpleComments.Add(readChild.Value);
-
                     return;
                 }
 
                 // explicit scope handling
                 if (readChild.ScopeType == FilterExoConfig.StructurizerScopeType.expl)
                 {
-                    if (readChild.IsSection())
-                    {
-                        var child = new ExoBlock();
-                        child.Parent = this.WriteCursor;
-                        WriteCursor.Scopes.Add(child);
-                        WriteCursor = child;
+                    if (!readChild.IsSection()) return;
 
-                        ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
-                    }
+                    var child = new ExoBlock();
+                    child.Parent = this.WriteCursor;
+                    WriteCursor.Scopes.Add(child);
+                    WriteCursor = child;
+                    WriteCursor.Name = readChild.PropertyExpression[1].Value;
+
+                    ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
 
                     return;
                 }
@@ -120,10 +106,10 @@ namespace FilterExo.Core.PreProcess
                             builder.AddKeyWord(item);
                         }
 
-                        //if (item.Mode == FilterExoConfig.StructurizerMode.comm)
-                        //{
-                        //    builder.AddKeyWord(item);
-                        //}
+                        if (item.Mode == FilterExoConfig.StructurizerMode.comm)
+                        {
+                            builder.AddKeyWord(item);
+                        }
                     }
                 }
             }

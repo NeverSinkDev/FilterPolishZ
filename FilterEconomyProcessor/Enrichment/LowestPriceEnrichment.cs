@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FilterCore;
-using FilterCore.Constants;
 using FilterEconomy.Model;
-using FilterEconomy.Model.ItemAspects;
 using FilterPolishUtil;
 using FilterPolishUtil.Collections;
-using FilterPolishUtil.Extensions;
 
 namespace FilterEconomyProcessor.Enrichment
 {

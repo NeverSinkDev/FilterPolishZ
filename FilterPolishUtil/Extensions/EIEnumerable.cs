@@ -16,6 +16,15 @@ namespace FilterPolishUtil.Extensions
 
     public static class EIEnumerable
     {
+        public static IEnumerable<I> Crop<I>(this ICollection<I> me, Predicate<I> filter)
+        {
+            // have an initial list
+            // in that
+            var selected = me.Where(x => filter(x)).ToList();
+            selected.ForEach(x => me.Remove(x));
+            return selected;
+        }
+
         public static List<T> RemoveFrom<T>(this List<T> lst, int from)
         {
             if (lst.Count <= from)
@@ -206,8 +215,8 @@ namespace FilterPolishUtil.Extensions
         public static IEnumerable<T1> PairSelect<T,T1>(this IEnumerable<T> collection, Func<T,T,T1> selector)
         {
             var initialized = false;
-            T current = default(T);
-            T previous = default(T);
+            T current = default;
+            T previous = default;
 
             foreach (var item in collection)
             {

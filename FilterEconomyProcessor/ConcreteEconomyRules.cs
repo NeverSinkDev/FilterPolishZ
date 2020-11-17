@@ -3,9 +3,7 @@ using FilterEconomy.Processor;
 using FilterEconomyProcessor.RuleSet;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
-using FilterPolishZ.Economy.RuleSet;
 using FilterUtilModels.Economy;
-using System;
 using System.Collections.Generic;
 
 namespace FilterEconomyProcessor
@@ -47,6 +45,10 @@ namespace FilterEconomyProcessor
             this.Rules.Add(ShaperElderRulesFactory.Generate(this,"rare->redeemer"));
 
             this.Rules.Add(NormalCraftingBasesRuleFactory.Generate(this, "generalcrafting"));
+
+            // TODO
+            this.Rules.Add(ReplicaRuleFactory.Generate(this));
+            this.Rules.Add(GemsRuleFactory.Generate(this));
         }
 
         /// <summary>

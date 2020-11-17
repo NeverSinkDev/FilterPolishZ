@@ -21,9 +21,14 @@ namespace FilterExo.Core.Process
             {
                 foreach (var readChild in cursor.Scopes)
                 {
+                    if (readChild.SimpleComments.Count > 0)
+                    {
+                        CreateCommentFromChild(readChild);
+                    }
+
                     if (readChild.Commands.Count > 0)
                     {
-                        DoWorkOnReadChild(readChild);
+                        CreateEntryFromChild(readChild);
                     }
 
                     if (readChild.Scopes.Count > 0)
@@ -33,9 +38,22 @@ namespace FilterExo.Core.Process
                 }
             }
 
-            void DoWorkOnReadChild(ExoBlock readChild)
+            void CreateEntryFromChild(ExoBlock readChild)
             {
                 var entry = FilterEntry.CreateDataEntry("Show");
+
+                foreach (var comm in readChild.ResolveAndSerialize())
+                {
+                    var line = comm.ToFilterLine();
+                    entry.Content.Add(line);
+                }
+
+                results.Add(entry);
+            }
+
+            void CreateCommentFromChild(ExoBlock readChild)
+            {
+                var entry = FilterEntry.CreateCommentEntry();
 
                 foreach (var comm in readChild.ResolveAndSerialize())
                 {
