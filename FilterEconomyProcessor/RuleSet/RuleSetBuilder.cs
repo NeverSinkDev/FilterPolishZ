@@ -58,6 +58,20 @@ namespace FilterEconomyProcessor.RuleSet
             return this;
         }
 
+        public RuleSetBuilder AddRule(string ruleAndTier, Func<string, bool> rule, string group = default(string), string nextgroup = default(string))
+        {
+            this.RuleSet.EconomyRules.Add(new FilterEconomyRule()
+            {
+                RuleName = ruleAndTier,
+                TargetTier = ruleAndTier,
+                Rule = rule,
+                RuleGroup = group,
+                NextRuleGroupToken = nextgroup
+            });
+
+            return this;
+        }
+
         public RuleSetBuilder AddRule(string rulename, string targetTier, Func<string, bool> rule, string group = default(string), string nextgroup = default(string))
         {
             this.RuleSet.EconomyRules.Add(new FilterEconomyRule()

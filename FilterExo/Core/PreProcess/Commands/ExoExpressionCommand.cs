@@ -119,25 +119,23 @@ namespace FilterExo.Core.PreProcess.Commands
 
         private void ResolveVariables(Branch<ExoAtom> item)
         {
-            if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
-            {
-                // when dealing with variables, we resolve them and if resolvement was succesfull
-                // we put resolved single varibales into content and a list of values into leaves
-                var resolved = item.Content.Resolve(this.Parent);
+            if (item.Content == null || item.Content.IdentifiedType != ExoAtomType.prim) return;
+            
+            // when dealing with variables, we resolve them and if resolvement was succesfull
+            // we put resolved single varibales into content and a list of values into leaves
+            var resolved = item.Content.Resolve(this.Parent);
 
-                if (resolved.Any())
-                {
-                    var resolvedList = resolved.ToList();
-                    if (resolvedList.Count == 1)
-                    {
-                        item.Content = resolvedList[0];
-                    }
-                    else
-                    {
-                        item.Content = null;
-                        resolvedList.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
-                    }
-                }
+            var exoAtoms = resolved.ToList();
+            if (!exoAtoms.Any()) return;
+
+            if (exoAtoms.Count == 1)
+            {
+                item.Content = exoAtoms[0];
+            }
+            else
+            {
+                item.Content = null;
+                exoAtoms.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
             }
         }
 
@@ -233,14 +231,13 @@ namespace FilterExo.Core.PreProcess.Commands
 
                 for (int i = 0; i < wipBranch.Count; i++)
                 {
+                    // adds a new element into the combiner and checks if it matches a pattern
                     success = combiner.Add(wipBranch[i]);
+                    if (!success) continue;
 
-                    if (success)
-                    {
-                        combiner.Results.AddRange(wipBranch.Skip(i + 1));
-                        wipBranch = combiner.Results;
-                        break;
-                    }
+                    combiner.Results.AddRange(wipBranch.Skip(i + 1));
+                    wipBranch = combiner.Results;
+                    break;
                 }
 
                 if (!success)
