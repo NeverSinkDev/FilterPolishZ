@@ -436,9 +436,16 @@ namespace FilterPolishZ
             LoggingFacade.LogInfo($"Loading Meta Filter: {outputFolder}");
 
             this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
-            var output = this.FilterExoFacade.Execute();
+            var bundle = this.FilterExoFacade.CreateBundle();
 
-            GenerationOptions.TextSources = output;
+            bundle.SetInput(this.FilterExoFacade.RawMetaFilterText)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
+
+            var results = bundle.Process();
+
+            GenerationOptions.TextSources = bundle.DebugData;
             EventGrid.Publish();
 
             if (this.FilterRawString == null || this.FilterRawString.Count < 4500)

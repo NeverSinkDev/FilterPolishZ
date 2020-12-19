@@ -5,6 +5,7 @@ using FilterExo.Model;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -43,27 +44,52 @@ namespace FilterExo.Core.PreProcess
                         ProcessTreeStep(readChild);
                     }
                 }
-
                 this.ReadCursor = cursor;
-                PerformClosingScopeResolution(cursor);
-            }
 
-            void PerformClosingScopeResolution(StructureExpr cursor)
-            {
-                var success = builder.Execute();
+                // Run Builder if necessary
+                ManageClosingScopeWork();
 
+                // go up a level, once we're done with this one
                 if (cursor.IsSection())
                 {
                     WriteCursor = WriteCursor.GetParent();
                 }
+            }
 
+            // check if the closing scope needs some actions performed
+            void ManageClosingScopeWork()
+            {
+                if (this.ReadCursor.ScopeType == FilterExoConfig.StructurizerScopeType.expl || this.ReadCursor.Mode == FilterExoConfig.StructurizerMode.root)
+                {
+                    DoExplicitScopeBuilderWork();
+                }
+                else
+                {
+                    DoImplicitScopeBuilderWork();
+                }
+            }
+
+            // perform necessary actions when closing a scope
+            void DoExplicitScopeBuilderWork()
+            {
+                var success = builder.ExecuteExplicit();
                 if (success)
                 {
                     builder = new ExpressionBuilder(this);
                 }
             }
 
-            
+            // perform necessary actions when closing a scope
+            void DoImplicitScopeBuilderWork()
+            {
+                var success = builder.ExecuteImplicit();
+                if (success)
+                {
+                    builder = new ExpressionBuilder(this);
+                }
+            }
+
+
             void DoWorkOnReadChild(StructureExpr readChild)
             {
                 // LOCAL: We skip the lowest level and instead treat them within sections.

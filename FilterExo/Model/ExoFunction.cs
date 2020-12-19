@@ -4,11 +4,24 @@ using FilterPolishUtil.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FilterExo.Core.Process.GlobalFunctions;
 
 namespace FilterExo.Model
 {
+    public enum ExoFunctionType
+    {
+        userdefined,
+        global
+    }
+
     public class ExoFunction
     {
+        public ExoFunctionType Type = ExoFunctionType.userdefined;
+
+        // global function specific params
+        public IExoGlobalFunction GlobalFunctionLink;
+
+        // general parameters
         public string Name;
         public ExoBlock Content;
         public List<string> Variables = new List<string>();
@@ -41,9 +54,26 @@ namespace FilterExo.Model
                 Content.Variables.Add(name, new ExoAtom(flattened));
             }
 
-            foreach (var item in Content.Commands)
+            switch (Type)
             {
-                yield return item.ResolveExpression();
+                // normal execution
+                case ExoFunctionType.userdefined:
+                    foreach (var item in Content.Commands)
+                    {
+                        if (item.MetaValues.Count > 0)
+                        {
+                            caller?.Parent?.MetaTags.AddRange(item.GetMetaValues());
+                        }
+
+                        yield return item.ResolveExpression();
+                    }
+                    break;
+                // global function execution
+                case ExoFunctionType.global:
+                    yield return GlobalFunctionLink.Execute(Content, caller);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

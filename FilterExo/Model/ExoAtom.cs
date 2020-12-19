@@ -16,7 +16,8 @@ namespace FilterExo.Model
         prim,   // not combinable, instead primitive values that have to keep their order
         pack,
         oper,    // + - 
-        func
+        func,
+        meta
     }
 
     [DebuggerDisplay("{debugView}")]
@@ -87,6 +88,11 @@ namespace FilterExo.Model
             else if (value.Length <= 2 && FilterExoConfig.SimpleOperators.Contains(value[0]) || FilterExoConfig.CombinedOperators.Contains(value))
             {
                 this.IdentifiedType = ExoAtomType.oper;
+                this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
+            }
+            else if (value[0] == '%')
+            {
+                this.IdentifiedType = ExoAtomType.meta;
                 this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
             }
             else if (value.ContainsSpecialCharacters())

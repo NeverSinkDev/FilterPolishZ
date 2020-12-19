@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 
@@ -60,14 +61,14 @@ namespace FilterPolishTestRunner
                 "",
                 "Section Incubators",
                 "{",
-                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
-                "Rule T1 { BaseType<>; };",
-                "Rule T2 { BaseType<>; };",
-                "Rule T3 { BaseType<>; };",
-                "Rule T4 { BaseType \"Exalted Orb\"; };",
-                "# Rule error;",
+                "Show leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
+                "Show T1 { BaseType<>; };",
+                "Show T2 { BaseType<>; };",
+                "Show T3 { BaseType<>; };",
+                "Show T4 { BaseType \"Exalted Orb\"; };",
+                "# Show error;",
                 "}",
-                "Rule T1 { BaseType \"Scroll of Wisdom\"; };"
+                "Show T1 { BaseType \"Scroll of Wisdom\"; };"
             };
 
             var res = this.StringToExoFilter(input);
@@ -96,7 +97,7 @@ namespace FilterPolishTestRunner
                 "{",
                     "Section Incubators :  IncubatorBase",
                     "{",
-                        "Rule leveledex { BaseType \"Obscure Orb\"; };",
+                        "Show leveledex { BaseType \"Obscure Orb\"; };",
                     "}",
                 "}",
             };
@@ -114,19 +115,35 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_GlobalFunctionsSupport()
+        {
+            var input = new List<string>()
+            {
+                "AddTimeComment();"
+            };
+
+            var res = this.StringToFilterEntries(input);
+            Assert.IsNotNull(res);
+            Assert.AreEqual(1, res.Count);
+
+            // worst test ever
+            Assert.IsTrue(res[0].SerializeMergedString.Contains(DateTime.Now.Year.ToString()));
+        }
+
+        [Test]
         public void ExoProcessor_BasicMutatorTest()
         {
             var input = new List<string>()
             {
                 "Func CurrencyBase(){ SetTextColor 200 0 0 255; BG 255 255 255 255; }",
-                "Func IncubatorBase(){ SetTextColor 255 0 0 255; }",
-                "Section Incubators : CurrencyBase, IncubatorBase",
+                "Func IncubatorBase(){ SetTextColor 255 0 0 255; %D4; }",
+                "Section Incubators : CurrencyBase, IncubatorBase, %HS5",
                 "{",
-                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
-                "Rule T4 { BaseType \"Exalted Orb\"; };",
-                "# Rule error;",
+                "Show leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; };",
+                "Show T4 { BaseType \"Exalted Orb\"; };",
+                "# Show error;",
                 "}",
-                "Rule T1 { BaseType \"Scroll of Wisdom\"; };"
+                "Show T1 { BaseType \"Scroll of Wisdom\"; };"
             };
 
             var res = this.StringToExoFilter(input);
@@ -135,6 +152,7 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(2, res.RootEntry.Scopes.Count);
             Assert.AreEqual(2, res.RootEntry.Scopes[0].Mutators.Count);
             Assert.AreEqual(3, res.RootEntry.Scopes[0].Scopes.Count);
+            Assert.AreEqual(1, res.RootEntry.Scopes[0].MetaTags.Count);
 
             var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
 
@@ -144,6 +162,15 @@ namespace FilterPolishTestRunner
             Assert.AreEqual("ItemLevel >= 81", string.Join(" ", commands0[3]));
 
             Assert.AreEqual("BaseType \"Scroll of Wisdom\"", res.RootEntry.Scopes[1].Commands[0].SerializeDebug());
+
+            var resFilter = this.StringToFilterEntries(input);
+            Assert.IsFalse(resFilter[2].Serialize().Contains("%HS5"));
+            Assert.IsTrue(resFilter[0].Serialize()[0].Contains("%HS5"));
+            Assert.IsTrue(resFilter[0].Serialize()[0].Contains("%D4"));
+            Assert.IsTrue(resFilter[1].Serialize()[0].Contains("%HS5"));
+            
+            // TODO
+            // Assert.IsTrue(resFilter[1].Serialize()[0].Contains("%D4"));
         }
 
         [Test]
@@ -154,9 +181,9 @@ namespace FilterPolishTestRunner
                 "Func test (a,b) { SetBorderColor a 0 0 b; SetTextColor a 0 0 b; };",
                 "Section Incubators",
                 "{",
-                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(100,200); };",
-                "Rule T1 { test(100,200); };",
-                "# Rule error;",
+                "Show leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(100,200); };",
+                "Show T1 { test(100,200); };",
+                "# Show error;",
                 "}"
             };
 
@@ -185,9 +212,9 @@ namespace FilterPolishTestRunner
                 "Func test (a) { BD 1 xVal() 3 4; TX 1 xVal() yVal(a) 4; };",
                 "Section Incubators",
                 "{",
-                "Rule leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(3); };",
-                "Rule T1 { test(3); };",
-                "# Rule error;",
+                "Show leveledex { ItemLevel >= 81; BaseType \"Exalted Orb\"; test(3); };",
+                "Show T1 { test(3); };",
+                "# Show error;",
                 "}"
             };
 
@@ -204,12 +231,35 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "Rule T1 { BaseType ( \"Mirror\" + \"Wisdom\" ); };"
+                "Show T1 { BaseType ( \"Mirror\" + \"Wisdom\" ); %HS5; };"
             };
 
             var res = this.StringToExoFilter(input);
+            var resFilter = this.StringToFilterEntries(input);
 
+            Assert.AreEqual(1, resFilter[0].Header.GenerationTags.Count);
+            Assert.AreEqual("HS", resFilter[0].Header.GenerationTags[0].Value);
             Assert.AreEqual("BaseType \"Mirror\" \"Wisdom\"", res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
+        }
+
+        [Test]
+        public void ExoProcessor_ShowHideContinue()
+        {
+            var input = new List<string>()
+            {
+                "Show T1 { BaseType ( \"Mirror\" + \"Wisdom\" ); };",
+                "Hide T2 { BaseType ( \"Mirror\" + \"Wisdom\" ); };",
+                "Cont T3 { BaseType ( \"Mirror\" + \"Wisdom\" ); };"
+            };
+
+            var res = this.StringToFilterEntries(input);
+
+            Assert.AreEqual(res[0].Serialize(), new List<string>() { "Show","\tBaseType \"Mirror\" \"Wisdom\"" });
+            Assert.AreEqual(res[1].Serialize(), new List<string>() { "Hide","\tBaseType \"Mirror\" \"Wisdom\"" });
+            Assert.AreEqual(res[2].Serialize(), new List<string>() { "Show","\tBaseType \"Mirror\" \"Wisdom\"", "\tContinue"});
+            Assert.AreEqual(res[0].Header.HeaderValue, "Show");
+            Assert.AreEqual(res[1].Header.HeaderValue, "Hide");
+            Assert.AreEqual(res[2].Header.HeaderValue, "Show");
         }
 
         [Test]
@@ -219,7 +269,7 @@ namespace FilterPolishTestRunner
                 var b = ""mirror"" ""ex"" - ""ex"";
                 var c = ""zero"" ""sword"";
                 var d = ""wisdom"";
-                Rule T1 { BaseType ( a + b + c - d ); };";
+                Show T1 { BaseType ( a + b + c - d ); };";
 
             var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
@@ -228,11 +278,11 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
-        public void ExoProcessor_SingleRuleSerialization()
+        public void ExoProcessor_SingleShowSerialization()
         {
             var input = new List<string>()
             {
-                "Rule T1 { BaseType<>; };"
+                "Show T1 { BaseType<>; };"
             };
 
             var res = this.StringToFilterEntries(input);
@@ -250,17 +300,17 @@ namespace FilterPolishTestRunner
                 var t1inc = ""ALPHA"" ""BETA"";
                 # var t1inc = ""Geomancer's Incubator"" ""Thaumaturge's Incubator"" ""Time-Lost Incubator"" 
 
-                Rule ONE { BaseType t1inc; };
+                Show ONE { BaseType t1inc; };
 
                 Section Incubators : IncubatorBase
                 {
 	                var t1inc = ""GAMMA"";
-	                Rule TWO { BaseType t1inc; };
+	                Show TWO { BaseType t1inc; };
 
-	                Rule THREE { ItemLevel >= 81; BaseType t1inc; };
-	                # Rule error;
+	                Show THREE { ItemLevel >= 81; BaseType t1inc; };
+	                # Show error;
 
-	                Rule FOUR { BaseType t1inc; };
+	                Show FOUR { BaseType t1inc; };
                 }";
 
             // var res = this.StringToFilterEntries(input.Split(System.Environment.NewLine).ToList());

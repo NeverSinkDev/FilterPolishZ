@@ -39,7 +39,7 @@ namespace FilterPolishTestRunner
         [Test]
         public void ExoExpression_TreeParsing()
         {
-            string s = "Rule Wat { a(1,1) + 2 + b((3+3),(4+4)) };";
+            string s = "Show Wat { a(1,1) + 2 + b((3+3),(4+4)) };";
 
             var res = this.StringToExoFilter(new List<string>() { s });
          

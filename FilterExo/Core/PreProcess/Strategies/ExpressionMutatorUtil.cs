@@ -30,9 +30,17 @@ namespace FilterExo.Core.PreProcess.Strategies
                     expr = new ExoExpressionCommand(item);
                 }
 
-                expr.Parent = block;
-                expr.Source = FilterExoConfig.ExoExpressionCommandSource.mutator;
-                block.Mutators.Add(expr);
+                if (expr.MetaValues.Count > 0)
+                {
+                    block.MetaTags.AddRange(expr.MetaValues);
+                }
+
+                if (expr.Values.Count > 0)
+                {
+                    expr.Parent = block;
+                    expr.Source = FilterExoConfig.ExoExpressionCommandSource.mutator;
+                    block.Mutators.Add(expr);
+                }
             }
         }
     }

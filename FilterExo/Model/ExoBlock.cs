@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FilterExo.Core.Process.GlobalFunctions;
 using static FilterExo.FilterExoConfig;
 using static FilterPolishUtil.TraceUtility;
 
@@ -21,9 +22,17 @@ namespace FilterExo.Model
     [DebuggerDisplay("{debugView}")]
     public class ExoBlock
     {
-        private string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
+        static ExoBlock()
+        {
+            new AddTimeCommentFunction().Integrate();
+        }
+
+        public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
 
         public ExoFilterType Type = ExoFilterType.generic;
+
+        public static Dictionary<string, ExoAtom> GlobalFunctions { get; set; } = new Dictionary<string, ExoAtom>();
+        // public static Dictionary<string, ExoAtom> GlobalVariables { get; set; } = new Dictionary<string, ExoAtom>();
 
         // Hierarchical elements
         public ExoBlock Parent;
@@ -31,7 +40,7 @@ namespace FilterExo.Model
 
         // functions, properties, interfaces that get applied to all children.
         public List<ExoExpressionCommand> Mutators { get; set; } = new List<ExoExpressionCommand>();
-
+        public List<ExoAtom> MetaTags { get; set; } = new List<ExoAtom>();
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
@@ -40,21 +49,37 @@ namespace FilterExo.Model
 
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
         public string Name { get; internal set; }
+        public string DescriptorCommand { get; set; }
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {
+            UpdateMetaValues();
+
             if (this.Type == ExoFilterType.comment)
             {
-                return this.SimpleComments.Select(x => new List<string>() { x });
+                return this.SimpleComments.Select(x => new List<string>() { x }).ToList();
             }
             else
             {
                 var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
                 var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
-
                 return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
             }
 
+        }
+
+        public void UpdateMetaValues()
+        {
+            this.MetaTags = new List<ExoAtom>();
+            foreach (var exoExpressionCommand in Mutators)
+            {
+                MetaTags.AddRange(exoExpressionCommand.GetMetaValues());
+            }
+
+            foreach (var exoExpressionCommand in Commands)
+            {
+                MetaTags.AddRange(exoExpressionCommand.GetMetaValues());
+            }
         }
 
         public IEnumerable<List<string>> ResolveAndSerializeSingleSection(ExoExpressionCommandSource target)
@@ -117,6 +142,23 @@ namespace FilterExo.Model
             return GetInternalFunction(key);
         }
 
+        public IEnumerable<ExoAtom> YieldMetaTags()
+        {
+            if (this.Type != ExoFilterType.root)
+            {
+                var parentTags = this.GetParent().YieldMetaTags();
+                foreach (var item in parentTags)
+                {
+                    yield return item;
+                }
+            }
+
+            foreach (var item in this.MetaTags)
+            {
+                yield return item;
+            }
+        }
+
         public IEnumerable<ExoExpressionCommand> YieldMutators()
         {
             if (this.Type != ExoFilterType.root)
@@ -136,6 +178,11 @@ namespace FilterExo.Model
 
         internal bool IsFunction(string key)
         {
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return true;
+            }
+
             if (this.Functions.ContainsKey(key))
             {
                 return true;
@@ -176,6 +223,11 @@ namespace FilterExo.Model
 
         private ExoAtom GetInternalFunction(string key)
         {
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return GlobalFunctions[key];
+            }
+
             if (this.Functions.ContainsKey(key))
             {
                 return this.Functions[key];
@@ -198,6 +250,7 @@ namespace FilterExo.Model
         public void AddCommand(ExoExpressionCommand command)
         {
             this.Commands.Add(command);
+            this.MetaTags.AddRange(command.MetaValues);
             command.SetParent(this);
         }
 

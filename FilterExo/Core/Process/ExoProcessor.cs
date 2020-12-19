@@ -4,7 +4,10 @@ using FilterExo.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
+using FilterCore;
+using FilterPolishUtil;
 
 namespace FilterExo.Core.Process
 {
@@ -21,16 +24,35 @@ namespace FilterExo.Core.Process
             {
                 foreach (var readChild in cursor.Scopes)
                 {
+                    // Comments
+                    if (readChild.DescriptorCommand == "snippet")
+                    {
+                        var entry = FilterEntry.CreateCommentEntry();
+                        foreach (var comm in readChild.ResolveAndSerialize())
+                        {
+                            var line = comm.ToFilterLine();
+                            entry.Content.Add(line);
+                        }
+
+                        if (entry.Content.Content.Count > 0)
+                        {
+                            results.Add(entry);
+                        }
+                    }
+
+                    // Comments
                     if (readChild.SimpleComments.Count > 0)
                     {
-                        CreateCommentFromChild(readChild);
+                        results.Add(CreateCommentFromChild(readChild));
                     }
 
-                    if (readChild.Commands.Count > 0)
+                    // Regular entries
+                    if (readChild.Commands.Count > 0 && readChild.DescriptorCommand != "snippet")
                     {
-                        CreateEntryFromChild(readChild);
+                        results.Add(CreateEntryFromChild(readChild));
                     }
 
+                    // Recurse
                     if (readChild.Scopes.Count > 0)
                     {
                         ProcessTreeStep(readChild);
@@ -38,20 +60,52 @@ namespace FilterExo.Core.Process
                 }
             }
 
-            void CreateEntryFromChild(ExoBlock readChild)
+            FilterEntry CreateEntryFromChild(ExoBlock readChild)
             {
-                var entry = FilterEntry.CreateDataEntry("Show");
-
+                FilterEntry entry = null;
+                
+                var lines = new List<IFilterLine>();
                 foreach (var comm in readChild.ResolveAndSerialize())
                 {
                     var line = comm.ToFilterLine();
-                    entry.Content.Add(line);
+                    lines.Add(line);
                 }
 
-                results.Add(entry);
+                var metaExpression = string.Join(" ", readChild.YieldMetaTags().Select(x => x.GetRawValue()));
+
+                if (metaExpression != string.Empty)
+                {
+                    metaExpression = " # " + metaExpression;
+                }
+
+                switch (readChild.DescriptorCommand)
+                {
+                    case "Hide":
+                    case "Show":
+                        entry = FilterEntry.CreateDataEntry(readChild.DescriptorCommand + metaExpression);
+                        break;
+                    case "Cont":
+                        entry = FilterEntry.CreateDataEntry("Show" + metaExpression);
+                        entry.Content.Add("Continue".ToFilterLine());
+                        break;
+                    case "Conh":
+                        entry = FilterEntry.CreateDataEntry("Hide" + metaExpression);
+                        entry.Content.Add("Continue".ToFilterLine());
+                        break;
+                    default:
+                        TraceUtility.Throw("Unknown rule type?!");
+                        break;
+                }
+
+                foreach (var item in lines)
+                {
+                    entry.Content.Add(item);
+                }
+
+                return entry;
             }
 
-            void CreateCommentFromChild(ExoBlock readChild)
+            FilterEntry CreateCommentFromChild(ExoBlock readChild)
             {
                 var entry = FilterEntry.CreateCommentEntry();
 
@@ -61,7 +115,7 @@ namespace FilterExo.Core.Process
                     entry.Content.Add(line);
                 }
 
-                results.Add(entry);
+                return entry;
             }
 
             return results;

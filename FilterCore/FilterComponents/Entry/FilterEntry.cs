@@ -120,7 +120,7 @@ namespace FilterCore.Entry
             return entry;
         }
 
-        public static FilterEntry CreateCommentEntry()
+        public static FilterEntry CreateCommentEntry(List<string> content = null)
         {
             var entry = new FilterEntry();
 
@@ -131,6 +131,14 @@ namespace FilterCore.Entry
 
             entry.Content = new FilterEntryDataContent();
             entry.Content.Content = new Dictionary<string, List<IFilterLine>>();
+
+            if (content != null && content.Count > 0)
+            {
+                foreach (var line in content)
+                {
+                    entry.Content.Add(line.ToFilterLine());
+                }
+            }
 
             return entry;
         }

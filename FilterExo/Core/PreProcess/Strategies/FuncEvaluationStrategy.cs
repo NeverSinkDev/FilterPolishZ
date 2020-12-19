@@ -81,8 +81,6 @@ namespace FilterExo.Core.PreProcess.Strategies
                 newEntry.AddCommand(item);
             }
 
-
-
             // Resolve rule into a "Show" filter entry.
             var function = new ExoFunction
             {

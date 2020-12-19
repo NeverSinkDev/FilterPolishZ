@@ -24,12 +24,17 @@ namespace FilterExo.Core.PreProcess.Strategies
 
         public ExoPreProcessor Owner;
 
-        public static List<IExpressionEvaluationStrategy> Strategies = new List<IExpressionEvaluationStrategy>()
+        public static List<IExpressionEvaluationStrategy> ExplicitStrategies = new List<IExpressionEvaluationStrategy>()
         {
             new RuleEvaluationStrategy(),
+            new FuncEvaluationStrategy()
+        };
+
+        public static List<IExpressionEvaluationStrategy> ImplicitStrategies = new List<IExpressionEvaluationStrategy>()
+        {
             new VarEvaluationStrategy(),
-            new FuncEvaluationStrategy(),
-            new CommentEvaluationStrategy()
+            new CommentEvaluationStrategy(),
+            new SnippetExecutionStrategy()
         };
 
         public string Mode;
@@ -65,9 +70,23 @@ namespace FilterExo.Core.PreProcess.Strategies
             return this;
         }
 
-        public bool Execute()
+        public bool ExecuteExplicit()
         {
-            foreach (var item in Strategies)
+            foreach (var item in ExplicitStrategies)
+            {
+                if (item.Match(this))
+                {
+                    item.Execute(this);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool ExecuteImplicit()
+        {
+            foreach (var item in ImplicitStrategies)
             {
                 if (item.Match(this))
                 {

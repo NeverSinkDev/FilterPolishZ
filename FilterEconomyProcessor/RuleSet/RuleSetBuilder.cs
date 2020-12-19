@@ -236,6 +236,32 @@ namespace FilterEconomyProcessor.RuleSet
                 s => Item.HasAspect("EarlyLeagueInterestAspect"));
         }
 
+        public RuleSetBuilder AddEarlyLeagueHandlingForAspect(string tier, params string[] extraAspect)
+        {
+            string ruleName = "ELI";
+            foreach (var aspect in extraAspect)
+            {
+                ruleName += "-";
+                ruleName += aspect.Substring(0, 5);
+            }
+
+            return this.AddRule(ruleName, tier,
+                s =>
+                {
+                    if (!Item.HasAspect("EarlyLeagueInterestAspect")) return false;
+
+                    foreach (var aspect in extraAspect)
+                    {
+                        if (!Item.HasAspect(aspect))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+        }
+
         public RuleSetBuilder AddPoorDropRoutine(string tier, float comparer, float weight = 2.0f, bool redemptionLag = true, float redemptionWeight = 1.5f, PricingMode pricingMode = PricingMode.lowest)
         {
             // Low value drops tend to have a high noise amplitude on Poe.ninja/the actual economy.

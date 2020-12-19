@@ -1,34 +1,35 @@
-﻿using FilterExo.Core.PreProcess.Commands;
-using FilterExo.Core.Structure;
-using FilterExo.Model;
-using FilterPolishUtil.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FilterExo.Core.PreProcess.Commands;
+using FilterExo.Core.Structure;
+using FilterExo.Model;
+using FilterPolishUtil.Extensions;
+using FilterPolishUtil.Model;
 
 namespace FilterExo.Core.PreProcess.Strategies
 {
-    public class RuleEvaluationStrategy : IExpressionEvaluationStrategy
+    public class SnippetExecutionStrategy : IExpressionEvaluationStrategy
     {
         public bool Match(ExpressionBuilder builder)
         {
-            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
-            var validDescriptors = new HashSet<string>(){ "Show", "Hide", "Cont", "ConH" };
+            // detect function snippets
+            if (builder.expressions.Count != 1) { return false; }
 
-            return validDescriptors.Contains(descriptor);
+            if (builder.expressions[0].Last().Value != ")") { return false; }
+
+            var name = builder.expressions[0][0].Value;
+            return ExoBlock.GlobalFunctions.ContainsKey(name);
         }
 
         public void Execute(ExpressionBuilder builder)
         {
             var result = new List<ExoExpressionCommand>();
-            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
+            var descriptor = "snippet";
 
             // treat a whole entry
-            for (int j = 0; j < builder.expressions.Count; j++)
-            {
-                TreatSinglePage(builder.expressions[j]);
-            }
+            for (int j = 0; j < builder.expressions.Count; j++) { TreatSinglePage(builder.expressions[j]); }
 
             // treat a single line
             void TreatSinglePage(List<StructureExpr> page)
@@ -39,10 +40,7 @@ namespace FilterExo.Core.PreProcess.Strategies
                 {
                     var current = page[i];
 
-                    if (current.Mode == FilterExoConfig.StructurizerMode.comm)
-                    {
-                        continue;
-                    }
+                    if (current.Mode == FilterExoConfig.StructurizerMode.comm) { continue; }
 
                     if (i == 0)
                     {
@@ -68,14 +66,11 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             builder.Owner.WriteCursor.Scopes.Add(block);
 
-            block.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value;
+            block.Name = "snippet";
             block.DescriptorCommand = descriptor;
 
             block.MetaTags = new List<ExoAtom>();
-            foreach (var item in result)
-            {
-                block.AddCommand(item);
-            }
+            foreach (var item in result) { block.AddCommand(item); }
         }
     }
 }

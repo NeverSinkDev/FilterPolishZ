@@ -42,6 +42,8 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddRule("TimelessSave", "t3", s => builder.Item.HasAspect("TimelessResultAspect"));
 
+            builder.AddEarlyLeagueHandlingForAspect("t4c","PoorDropAspect", "CurrencyTypeAspect");
+            builder.AddEarlyLeagueHandlingForAspect("t4", "PoorDropAspect");
             builder.AddEarlyLeagueHandling("t3");
             
             builder.AddEarlyLeagueProtectionBlock("t2", new HashSet<string> { "t1", "t2" }, "earlyProtHIGH");

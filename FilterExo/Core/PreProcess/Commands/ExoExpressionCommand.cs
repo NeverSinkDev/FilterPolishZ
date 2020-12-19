@@ -4,14 +4,9 @@ using FilterExo.Model;
 using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using static FilterExo.FilterExoConfig;
 
 namespace FilterExo.Core.PreProcess.Commands
@@ -31,12 +26,21 @@ namespace FilterExo.Core.PreProcess.Commands
         public bool DerivedCommand = false;
 
         public List<ExoAtom> Values = new List<ExoAtom>();
+        public List<ExoAtom> MetaValues = new List<ExoAtom>();
 
         public ExoExpressionCommand(List<StructureExpr> mutatorData)
         {
             foreach (var item in mutatorData)
             {
-                this.Values.Add(new ExoAtom(item.Value));
+                var atom = new ExoAtom(item.Value);
+                if (atom.IdentifiedType == ExoAtomType.meta)
+                {
+                    this.MetaValues.Add(atom);
+                }
+                else
+                {
+                    this.Values.Add(atom);
+                }
             }
         }
 
@@ -44,13 +48,36 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             foreach (var item in values)
             {
-                this.Values.Add(new ExoAtom(item));
+                var atom = new ExoAtom(item);
+                if (atom.IdentifiedType == ExoAtomType.meta)
+                {
+                    this.MetaValues.Add(atom);
+                }
+                else
+                {
+                    this.Values.Add(atom);
+                }
             }
         }
 
         public ExoExpressionCommand(List<ExoAtom> values)
         {
-            this.Values.AddRange(values);
+            foreach (var item in values)
+            {
+                if (item.IdentifiedType == ExoAtomType.meta)
+                {
+                    this.MetaValues.Add(item);
+                }
+                else
+                {
+                    this.Values.Add(item);
+                }
+            }
+        }
+
+        public List<ExoAtom> GetMetaValues()
+        {
+            return this.MetaValues;
         }
 
         public List<string> Serialize()
@@ -120,7 +147,7 @@ namespace FilterExo.Core.PreProcess.Commands
         private void ResolveVariables(Branch<ExoAtom> item)
         {
             if (item.Content == null || item.Content.IdentifiedType != ExoAtomType.prim) return;
-            
+
             // when dealing with variables, we resolve them and if resolvement was succesfull
             // we put resolved single varibales into content and a list of values into leaves
             var resolved = item.Content.Resolve(this.Parent);
