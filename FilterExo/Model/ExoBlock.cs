@@ -26,6 +26,7 @@ namespace FilterExo.Model
         {
             new AddTimeCommentFunction().Integrate();
             new TypeTagFunction().Integrate();
+            new TierTagFunction().Integrate();
         }
 
         public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";

@@ -112,7 +112,8 @@ namespace FilterExo.Core.Process
 
             if (readChild.Commands.Count > 0 || readChild.Mutators.Count > 0)
             {
-                readChild.ResolveAndSerialize().ForEach(x => builder.AddCommand(x));
+                var resolvedTokens = readChild.ResolveAndSerialize().ToList();
+                resolvedTokens.ForEach(x => builder.AddCommand(x));
             }
             
             if (readChild.SimpleComments.Count > 0)

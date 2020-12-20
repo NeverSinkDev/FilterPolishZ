@@ -95,10 +95,10 @@ namespace FilterPolishTestRunner
                 "Func IncubatorBase(){ SetTextColor 255 0 0 255; }",
                 "Section Currency : CurrencyBase",
                 "{",
-                    "Section Incubators :  IncubatorBase",
-                    "{",
-                        "Show leveledex { BaseType \"Obscure Orb\"; };",
-                    "}",
+                "Section Incubators :  IncubatorBase",
+                "{",
+                "Show leveledex { BaseType \"Obscure Orb\"; };",
+                "}",
                 "}",
             };
 
@@ -169,7 +169,7 @@ namespace FilterPolishTestRunner
             Assert.IsTrue(resFilter[0].Serialize()[0].Contains("%HS5"));
             Assert.IsTrue(resFilter[0].Serialize()[0].Contains("%D4"));
             Assert.IsTrue(resFilter[1].Serialize()[0].Contains("%HS5"));
-            
+
             // TODO
             // Assert.IsTrue(resFilter[1].Serialize()[0].Contains("%D4"));
         }
@@ -199,6 +199,7 @@ namespace FilterPolishTestRunner
                 Assert.AreEqual("\tSetTextColor 100 0 0 200", res[0][3]);
                 Assert.AreEqual("\tSetBorderColor 100 0 0 200", res[0][4]);
             }
+
             sw.Stop();
             Debug.WriteLine(sw.Elapsed);
         }
@@ -255,9 +256,10 @@ namespace FilterPolishTestRunner
 
             var res = this.StringToFilterEntries(input);
 
-            Assert.AreEqual(res[0].Serialize(), new List<string>() { "Show","\tBaseType \"Mirror\" \"Wisdom\"" });
-            Assert.AreEqual(res[1].Serialize(), new List<string>() { "Hide","\tBaseType \"Mirror\" \"Wisdom\"" });
-            Assert.AreEqual(res[2].Serialize(), new List<string>() { "Show","\tBaseType \"Mirror\" \"Wisdom\"", "\tContinue"});
+            Assert.AreEqual(res[0].Serialize(), new List<string>() {"Show", "\tBaseType \"Mirror\" \"Wisdom\""});
+            Assert.AreEqual(res[1].Serialize(), new List<string>() {"Hide", "\tBaseType \"Mirror\" \"Wisdom\""});
+            Assert.AreEqual(res[2].Serialize(),
+                new List<string>() {"Show", "\tBaseType \"Mirror\" \"Wisdom\"", "\tContinue"});
             Assert.AreEqual(res[0].Header.HeaderValue, "Show");
             Assert.AreEqual(res[1].Header.HeaderValue, "Hide");
             Assert.AreEqual(res[2].Header.HeaderValue, "Show");
@@ -274,7 +276,7 @@ namespace FilterPolishTestRunner
 
             var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
 
-            Assert.AreEqual(@"BaseType ""fishing rod"" ""mirror"" ""portal"" ""sword"" ""zero""", 
+            Assert.AreEqual(@"BaseType ""fishing rod"" ""mirror"" ""portal"" ""sword"" ""zero""",
                 res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
         }
 
@@ -333,7 +335,8 @@ namespace FilterPolishTestRunner
                 Assert.AreEqual("BaseType \"ALPHA\" \"BETA\"", res.RootEntry.Scopes[1].Commands[0].SerializeDebug());
 
                 // INNER SCOPE
-                Assert.AreEqual("\"GAMMA\"", res.RootEntry.Scopes[2].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
+                Assert.AreEqual("\"GAMMA\"",
+                    res.RootEntry.Scopes[2].Variables["t1inc"].Serialize(res.RootEntry.Scopes[1]));
 
                 Assert.AreEqual(4, res.RootEntry.Scopes[2].Scopes.Count);
                 Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[0].Commands[0].SerializeDebug());
@@ -342,10 +345,77 @@ namespace FilterPolishTestRunner
                 Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[1].Commands[1].SerializeDebug());
                 Assert.AreEqual("BaseType \"GAMMA\"", res.RootEntry.Scopes[2].Scopes[3].Commands[0].SerializeDebug());
             }
+
             sw.Stop();
             Debug.WriteLine(sw.Elapsed);
+        }
 
+        [Test]
+        public void LargeCommentTest()
+        {
+            var testString =
+                @"#===============================================================================================================
+# NeverSink's Indepth Loot Filter - for Path of Exile
+#===============================================================================================================
+# VERSION:  7.10.5
+# TYPE:     SEED
+# STYLE:    NORMAL
+# AUTHOR:   NeverSink
+# BUILDNOTES: Filter generated with NeverSink's FilterpolishZ
+#
+#------------------------------------
+# LINKS TO LATEST VERSION AND FILTER EDITOR
+#------------------------------------
+#
+# EDIT/CUSTOMIZE FILTER ON: 	https://www.FilterBlade.xyz
+# GET THE LATEST VERSION ON: 	https://www.FilterBlade.xyz or https://github.com/NeverSinkDev/NeverSink-Filter
+# POE FORUM THREAD: 			https://goo.gl/oQn4EN
+#
+#------------------------------------
+# SUPPORT THE DEVELOPMENT:
+#------------------------------------
+#
+# SUPPORT ME ON PATREON: 		https://www.patreon.com/Neversink
+# SUPPORT THE FILTERBLADE TEAM: https://www.filterblade.xyz/About
+#
+#------------------------------------
+# INSTALLATION / UPDATE :
+#------------------------------------
+#
+# 0) It's recommended to check for updates once a month or at least before new leagues, to receive economy finetuning and new features!
+# 1) Paste this file into the following folder: %userprofile%/Documents/My Games/Path of Exile
+# 2) INGAME: Escape -> Options -> UI -> Scroll down -> Select the filter from the Dropdown box
+#
+#------------------------------------
+# CONTACT - if you want to get notifications about updates or just get in touch:
+#------------------------------------
+# PLEASE READ THE FAQ ON https://goo.gl/oQn4EN BEFORE ASKING QUESTIONS
+#
+# TWITTER: @NeverSinkGaming
+# REDDIT:  NeverSinkDev
+# GITHUB:  NeverSinkDev
+# EMAIL :  NeverSinkGaming-at-gmail.com
 
+#------------------------------------
+# [0702] Layer - T2 - ECONOMY""
+#------------------------------------
+
+Func IncubatorBase() { HasInfluence ""Shaper"" ""Elder""; };
+var t1inc = ""Diviner's Incubator"" ""Enchanted Incubator"";
+# var t1inc = ""Geomancer's Incubator"" ""Thaumaturge's Incubator"" ""Time-Lost Incubator"" 
+
+Hide ONE { BaseType t1inc; };
+
+Section Incubators : IncubatorBase
+{
+	var t1inc = ""Foreboding Incubator"";
+	Show TWO { BaseType t1inc; };
+	Show THREE { ItemLevel >= 81; BaseType t1inc; };
+	Show FOUR { BaseType t1inc; };
+	# Show error;
+}";
+                var res = this.StringToFilterEntries(testString.Split(System.Environment.NewLine).ToList());
+                Assert.AreEqual(6, res.Count);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FilterPolishUtil;
 
 namespace FilterExo.Core.PreProcess
 {
@@ -131,8 +132,7 @@ namespace FilterExo.Core.PreProcess
                         {
                             builder.AddKeyWord(item);
                         }
-
-                        if (item.Mode == FilterExoConfig.StructurizerMode.comm)
+                        else if (item.Mode == FilterExoConfig.StructurizerMode.comm)
                         {
                             builder.AddKeyWord(item);
                         }

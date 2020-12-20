@@ -9,8 +9,7 @@ namespace FilterExo.Core.Process.GlobalFunctions
     public interface IExoGlobalFunction
     {
         string Name { get; }
-        List<ExoAtom> Execute(ExoBlock content, ExoExpressionCommand caller);
-        
+        List<ExoAtom> Execute(List<ExoAtom> variables, ExoExpressionCommand caller);
     }
 
     public static class EExoGlobalFunction
@@ -19,7 +18,7 @@ namespace FilterExo.Core.Process.GlobalFunctions
         {
             var function = new ExoFunction()
             {
-                Content = new ExoBlock() { Name = me.Name, Type = FilterExoConfig.ExoFilterType.generic },
+                // Content = new ExoBlock() { Name = me.Name, Type = FilterExoConfig.ExoFilterType.generic },
                 Name = me.Name,
                 Type = ExoFunctionType.global,
                 GlobalFunctionLink = me

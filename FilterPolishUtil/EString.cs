@@ -42,6 +42,11 @@ namespace FilterPolishUtil
             return me;
         }
 
+        public static string DeQuote(this string me)
+        {
+            return me.Replace("\"", "");
+        }
+
         public static bool ContainsSpecialCharacters(this string s)
         {
             Regex RgxUrl = new Regex("[^a-zA-Z0-9]");

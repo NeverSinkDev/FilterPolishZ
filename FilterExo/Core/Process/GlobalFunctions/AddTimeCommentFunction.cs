@@ -11,7 +11,7 @@ namespace FilterExo.Core.Process.GlobalFunctions
     {
         public string Name => "AddTimeComment";
 
-        public List<ExoAtom> Execute(ExoBlock content, ExoExpressionCommand caller)
+        public List<ExoAtom> Execute(List<ExoAtom> content, ExoExpressionCommand caller)
         {
             caller.Parent.SimpleComments.Add($"# {DateTime.Now}");
             caller.Parent.Type = FilterExoConfig.ExoFilterType.comment;

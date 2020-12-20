@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Transactions;
+using FilterPolishUtil;
 
 namespace FilterExo.Core.PreProcess.Strategies
 {
@@ -27,7 +28,8 @@ namespace FilterExo.Core.PreProcess.Strategies
         public static List<IExpressionEvaluationStrategy> ExplicitStrategies = new List<IExpressionEvaluationStrategy>()
         {
             new RuleEvaluationStrategy(),
-            new FuncEvaluationStrategy()
+            new FuncEvaluationStrategy(),
+            new UnknownStepEvaluationStrategy()
         };
 
         public static List<IExpressionEvaluationStrategy> ImplicitStrategies = new List<IExpressionEvaluationStrategy>()
@@ -96,6 +98,26 @@ namespace FilterExo.Core.PreProcess.Strategies
             }
 
             return false;
+        }
+    }
+
+    public class UnknownStepEvaluationStrategy : IExpressionEvaluationStrategy
+    {
+        public bool Match(ExpressionBuilder builder)
+        {
+            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
+            if (descriptor == string.Empty || descriptor == "Section")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void Execute(ExpressionBuilder builder)
+        {
+            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
+            TraceUtility.Throw($"Unknown descriptor: {descriptor}");
         }
     }
 }

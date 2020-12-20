@@ -50,18 +50,19 @@ namespace FilterPolishTestRunner
         {
             var input = new List<string>()
             {
-                "Section Incubators",
+                "Func IncubatorBase(){ Class \"Currency\"; Tierlist(\"currency->incubators\"); }",
+                "Section Incubators : IncubatorBase",
                 "{",
-                    "Show T1 { BaseType \"Exalted Orb\"; Type(); };",
+                    "Show T1 { BaseType \"Obscure Incubator\"; Tier(\"T1\"); };",
                 "}",
             };
-
             var res = this.StringToFilterEntries(input);
             Assert.IsNotNull(res);
             Assert.AreEqual(1, res.Count);
 
             // worst test ever
-            Assert.IsTrue(res[0].SerializeMergedString.Contains("%HS5"));
+            Assert.IsTrue(res[0].SerializeMergedString.Contains("$type->currency->incubators"));
+            Assert.IsTrue(res[0].SerializeMergedString.Contains("$tier->t1"));
         }
     }
 }
