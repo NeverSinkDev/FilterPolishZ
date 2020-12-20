@@ -29,12 +29,6 @@ namespace FilterExo.Core.PreProcess.Strategies
                 {
                     expr = new ExoExpressionCommand(item);
                 }
-
-                if (expr.MetaValues.Count > 0)
-                {
-                    block.MetaTags.AddRange(expr.MetaValues);
-                }
-
                 if (expr.Values.Count > 0)
                 {
                     expr.Parent = block;

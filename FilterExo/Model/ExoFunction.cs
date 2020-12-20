@@ -60,11 +60,6 @@ namespace FilterExo.Model
                 case ExoFunctionType.userdefined:
                     foreach (var item in Content.Commands)
                     {
-                        if (item.MetaValues.Count > 0)
-                        {
-                            caller?.Parent?.MetaTags.AddRange(item.GetMetaValues());
-                        }
-
                         yield return item.ResolveExpression();
                     }
                     break;

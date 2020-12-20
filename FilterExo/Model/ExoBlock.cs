@@ -25,6 +25,7 @@ namespace FilterExo.Model
         static ExoBlock()
         {
             new AddTimeCommentFunction().Integrate();
+            new TypeTagFunction().Integrate();
         }
 
         public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
@@ -53,8 +54,6 @@ namespace FilterExo.Model
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {
-            UpdateMetaValues();
-
             if (this.Type == ExoFilterType.comment)
             {
                 return this.SimpleComments.Select(x => new List<string>() { x }).ToList();
@@ -66,20 +65,6 @@ namespace FilterExo.Model
                 return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
             }
 
-        }
-
-        public void UpdateMetaValues()
-        {
-            this.MetaTags = new List<ExoAtom>();
-            foreach (var exoExpressionCommand in Mutators)
-            {
-                MetaTags.AddRange(exoExpressionCommand.GetMetaValues());
-            }
-
-            foreach (var exoExpressionCommand in Commands)
-            {
-                MetaTags.AddRange(exoExpressionCommand.GetMetaValues());
-            }
         }
 
         public IEnumerable<List<string>> ResolveAndSerializeSingleSection(ExoExpressionCommandSource target)
@@ -250,7 +235,6 @@ namespace FilterExo.Model
         public void AddCommand(ExoExpressionCommand command)
         {
             this.Commands.Add(command);
-            this.MetaTags.AddRange(command.MetaValues);
             command.SetParent(this);
         }
 

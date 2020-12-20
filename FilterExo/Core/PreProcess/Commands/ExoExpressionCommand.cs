@@ -26,21 +26,13 @@ namespace FilterExo.Core.PreProcess.Commands
         public bool DerivedCommand = false;
 
         public List<ExoAtom> Values = new List<ExoAtom>();
-        public List<ExoAtom> MetaValues = new List<ExoAtom>();
 
         public ExoExpressionCommand(List<StructureExpr> mutatorData)
         {
             foreach (var item in mutatorData)
             {
                 var atom = new ExoAtom(item.Value);
-                if (atom.IdentifiedType == ExoAtomType.meta)
-                {
-                    this.MetaValues.Add(atom);
-                }
-                else
-                {
-                    this.Values.Add(atom);
-                }
+                this.Values.Add(atom);
             }
         }
 
@@ -49,14 +41,7 @@ namespace FilterExo.Core.PreProcess.Commands
             foreach (var item in values)
             {
                 var atom = new ExoAtom(item);
-                if (atom.IdentifiedType == ExoAtomType.meta)
-                {
-                    this.MetaValues.Add(atom);
-                }
-                else
-                {
-                    this.Values.Add(atom);
-                }
+                this.Values.Add(atom);
             }
         }
 
@@ -64,20 +49,8 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             foreach (var item in values)
             {
-                if (item.IdentifiedType == ExoAtomType.meta)
-                {
-                    this.MetaValues.Add(item);
-                }
-                else
-                {
-                    this.Values.Add(item);
-                }
+                this.Values.Add(item);
             }
-        }
-
-        public List<ExoAtom> GetMetaValues()
-        {
-            return this.MetaValues;
         }
 
         public List<string> Serialize()

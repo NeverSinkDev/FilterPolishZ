@@ -7,15 +7,21 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using FilterCore;
+using FilterCore.FilterComponents.Entry;
 using FilterPolishUtil;
+using FilterPolishUtil.Extensions;
 
 namespace FilterExo.Core.Process
 {
     public class ExoProcessor
     {
+        FilterEntryBuilder builder = new FilterEntryBuilder();
+        List<FilterEntry> results = new List<FilterEntry>();
+
         public List<FilterEntry> Execute(ExoFilter exoFilter)
         {
-            List<FilterEntry> results = new List<FilterEntry>();
+            results.Clear();
+            builder = new FilterEntryBuilder();
 
             ProcessTreeStep(exoFilter.RootEntry);
 
@@ -25,31 +31,9 @@ namespace FilterExo.Core.Process
                 foreach (var readChild in cursor.Scopes)
                 {
                     // Comments
-                    if (readChild.DescriptorCommand == "snippet")
+                    if (readChild.SimpleComments.Count > 0 || readChild.Commands.Count > 0)
                     {
-                        var entry = FilterEntry.CreateCommentEntry();
-                        foreach (var comm in readChild.ResolveAndSerialize())
-                        {
-                            var line = comm.ToFilterLine();
-                            entry.Content.Add(line);
-                        }
-
-                        if (entry.Content.Content.Count > 0)
-                        {
-                            results.Add(entry);
-                        }
-                    }
-
-                    // Comments
-                    if (readChild.SimpleComments.Count > 0)
-                    {
-                        results.Add(CreateCommentFromChild(readChild));
-                    }
-
-                    // Regular entries
-                    if (readChild.Commands.Count > 0 && readChild.DescriptorCommand != "snippet")
-                    {
-                        results.Add(CreateEntryFromChild(readChild));
+                        HandleChild(readChild);
                     }
 
                     // Recurse
@@ -60,65 +44,89 @@ namespace FilterExo.Core.Process
                 }
             }
 
-            FilterEntry CreateEntryFromChild(ExoBlock readChild)
-            {
-                FilterEntry entry = null;
+            //FilterEntry CreateEntryFromChild(ExoBlock readChild)
+            //{
+            //    FilterEntry entry = null;
                 
-                var lines = new List<IFilterLine>();
-                foreach (var comm in readChild.ResolveAndSerialize())
-                {
-                    var line = comm.ToFilterLine();
-                    lines.Add(line);
-                }
+            //    var lines = new List<IFilterLine>();
+            //    foreach (var comm in readChild.ResolveAndSerialize())
+            //    {
+            //        var line = comm.ToFilterLine();
+            //        lines.Add(line);
+            //    }
 
-                var metaExpression = string.Join(" ", readChild.YieldMetaTags().Select(x => x.GetRawValue()));
+            //    var metaExpression = string.Join(" ", readChild.YieldMetaTags().Select(x => x.GetRawValue()));
 
-                if (metaExpression != string.Empty)
-                {
-                    metaExpression = " # " + metaExpression;
-                }
+            //    if (metaExpression != string.Empty)
+            //    {
+            //        metaExpression = " # " + metaExpression;
+            //    }
 
-                switch (readChild.DescriptorCommand)
-                {
-                    case "Hide":
-                    case "Show":
-                        entry = FilterEntry.CreateDataEntry(readChild.DescriptorCommand + metaExpression);
-                        break;
-                    case "Cont":
-                        entry = FilterEntry.CreateDataEntry("Show" + metaExpression);
-                        entry.Content.Add("Continue".ToFilterLine());
-                        break;
-                    case "Conh":
-                        entry = FilterEntry.CreateDataEntry("Hide" + metaExpression);
-                        entry.Content.Add("Continue".ToFilterLine());
-                        break;
-                    default:
-                        TraceUtility.Throw("Unknown rule type?!");
-                        break;
-                }
+            //    switch (readChild.DescriptorCommand)
+            //    {
+            //        case "Hide":
+            //        case "Show":
+            //            entry = FilterEntry.CreateDataEntry(readChild.DescriptorCommand + metaExpression);
+            //            break;
+            //        case "Cont":
+            //            entry = FilterEntry.CreateDataEntry("Show" + metaExpression);
+            //            entry.Content.Add("Continue".ToFilterLine());
+            //            break;
+            //        case "Conh":
+            //            entry = FilterEntry.CreateDataEntry("Hide" + metaExpression);
+            //            entry.Content.Add("Continue".ToFilterLine());
+            //            break;
+            //        default:
+            //            TraceUtility.Throw("Unknown rule type?!");
+            //            break;
+            //    }
 
-                foreach (var item in lines)
-                {
-                    entry.Content.Add(item);
-                }
+            //    foreach (var item in lines)
+            //    {
+            //        entry.Content.Add(item);
+            //    }
 
-                return entry;
-            }
+            //    return entry;
+            //}
 
-            FilterEntry CreateCommentFromChild(ExoBlock readChild)
-            {
-                var entry = FilterEntry.CreateCommentEntry();
+            //FilterEntry CreateCommentFromChild(ExoBlock readChild)
+            //{
+            //    var entry = FilterEntry.CreateCommentEntry();
 
-                foreach (var comm in readChild.ResolveAndSerialize())
-                {
-                    var line = comm.ToFilterLine();
-                    entry.Content.Add(line);
-                }
+            //    foreach (var comm in readChild.ResolveAndSerialize())
+            //    {
+            //        var line = comm.ToFilterLine();
+            //        entry.Content.Add(line);
+            //    }
 
-                return entry;
-            }
+            //    return entry;
+            //}
 
             return results;
+        }
+
+        private void HandleChild(ExoBlock readChild)
+        {
+            builder.Reset();
+            builder.RestoreInitialValues();
+
+            if (readChild.Commands.Count > 0 || readChild.Mutators.Count > 0)
+            {
+                readChild.ResolveAndSerialize().ForEach(x => builder.AddCommand(x));
+            }
+            
+            if (readChild.SimpleComments.Count > 0)
+            {
+                readChild.SimpleComments.ForEach(x => builder.AddCommand(x));
+            }
+
+            if (FilterEntryBuilder.HeaderDescriptors.Contains(readChild.DescriptorCommand))
+            {
+                builder.AddCommand(readChild.DescriptorCommand);
+            }
+
+            var entry = builder.Execute();
+            results.Add(entry);
         }
     }
 }
