@@ -92,9 +92,9 @@ namespace FilterExo.Model
                     var flattened = ExoExpressionCommand.FlattenBranch(vari);
                     Content.Variables.Add(name, new ExoAtom(flattened));
                 }
-
                 foreach (var item in Content.Commands)
                 {
+                    item.Executor = caller.Executor;
                     yield return item.ResolveExpression();
                 }
             }

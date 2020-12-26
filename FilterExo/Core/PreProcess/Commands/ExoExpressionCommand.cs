@@ -17,7 +17,7 @@ namespace FilterExo.Core.PreProcess.Commands
         private string debugView => this.DebugView();
 
         public ExoBlock Parent { get; set; }
-        public ExoBlock Exectutor { get; set; }
+        public ExoBlock Executor { get; set; }
 
         public ExoExpressionCommandSource Source { get; internal set; } = ExoExpressionCommandSource.direct;
         public int ExecutionContext = -1;
@@ -189,7 +189,7 @@ namespace FilterExo.Core.PreProcess.Commands
                             subexpression.RemoveAt(i - 1);
 
                             i = totalCount;
-                            this.Exectutor.InsertCommands(funcRes, this);
+                            this.Executor.InsertCommands(funcRes, this);
                             this.ContainerCommand = true;
                         }
                         else

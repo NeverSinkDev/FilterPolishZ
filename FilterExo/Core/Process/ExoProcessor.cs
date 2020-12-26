@@ -31,7 +31,7 @@ namespace FilterExo.Core.Process
                 foreach (var readChild in cursor.Scopes)
                 {
                     // Comments
-                    if (readChild.SimpleComments.Count > 0 || readChild.Commands.Count > 0)
+                    if (readChild.SimpleComments.Count > 0 || readChild.Commands.Count > 0 || FilterEntryBuilder.HeaderDescriptors.Contains(readChild.DescriptorCommand))
                     {
                         HandleChild(readChild);
                     }
@@ -44,64 +44,6 @@ namespace FilterExo.Core.Process
                 }
             }
 
-            //FilterEntry CreateEntryFromChild(ExoBlock readChild)
-            //{
-            //    FilterEntry entry = null;
-                
-            //    var lines = new List<IFilterLine>();
-            //    foreach (var comm in readChild.ResolveAndSerialize())
-            //    {
-            //        var line = comm.ToFilterLine();
-            //        lines.Add(line);
-            //    }
-
-            //    var metaExpression = string.Join(" ", readChild.YieldMetaTags().Select(x => x.GetRawValue()));
-
-            //    if (metaExpression != string.Empty)
-            //    {
-            //        metaExpression = " # " + metaExpression;
-            //    }
-
-            //    switch (readChild.DescriptorCommand)
-            //    {
-            //        case "Hide":
-            //        case "Show":
-            //            entry = FilterEntry.CreateDataEntry(readChild.DescriptorCommand + metaExpression);
-            //            break;
-            //        case "Cont":
-            //            entry = FilterEntry.CreateDataEntry("Show" + metaExpression);
-            //            entry.Content.Add("Continue".ToFilterLine());
-            //            break;
-            //        case "Conh":
-            //            entry = FilterEntry.CreateDataEntry("Hide" + metaExpression);
-            //            entry.Content.Add("Continue".ToFilterLine());
-            //            break;
-            //        default:
-            //            TraceUtility.Throw("Unknown rule type?!");
-            //            break;
-            //    }
-
-            //    foreach (var item in lines)
-            //    {
-            //        entry.Content.Add(item);
-            //    }
-
-            //    return entry;
-            //}
-
-            //FilterEntry CreateCommentFromChild(ExoBlock readChild)
-            //{
-            //    var entry = FilterEntry.CreateCommentEntry();
-
-            //    foreach (var comm in readChild.ResolveAndSerialize())
-            //    {
-            //        var line = comm.ToFilterLine();
-            //        entry.Content.Add(line);
-            //    }
-
-            //    return entry;
-            //}
-
             return results;
         }
 
@@ -110,7 +52,7 @@ namespace FilterExo.Core.Process
             builder.Reset();
             builder.RestoreInitialValues();
 
-            if (readChild.Commands.Count > 0 || readChild.Mutators.Count > 0)
+            if (readChild.Commands.Count > 0 || readChild.YieldMutators().Any())
             {
                 var resolvedTokens = readChild.ResolveAndSerialize().ToList();
                 resolvedTokens.ForEach(x => builder.AddCommand(x));

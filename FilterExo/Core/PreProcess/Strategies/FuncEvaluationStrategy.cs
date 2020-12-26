@@ -73,6 +73,8 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             var newEntry = new ExoBlock();
             newEntry.Parent = builder.Owner.WriteCursor;
+            newEntry.Name = functionName.Value;
+            newEntry.DescriptorCommand = "func";
             // newEntry.Parent = builder.Owner.WriteCursor;
             //builder.Owner.WriteCursor.Scopes.Add(newEntry);
 
@@ -86,7 +88,7 @@ namespace FilterExo.Core.PreProcess.Strategies
             {
                 Name = functionName.Value,
                 Content = newEntry,
-                Variables = varNames
+                Variables = varNames,
             };
 
             builder.Owner.WriteCursor.Functions.Add(functionName.Value, new ExoAtom(function));

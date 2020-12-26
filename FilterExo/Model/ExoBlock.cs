@@ -27,6 +27,8 @@ namespace FilterExo.Model
             new AddTimeCommentFunction().Integrate();
             new TypeTagFunction().Integrate();
             new TierTagFunction().Integrate();
+            new AutoTierFunction().Integrate();
+            new EmptyFunction().Integrate();
         }
 
         public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
@@ -77,7 +79,7 @@ namespace FilterExo.Model
             {
                 ExoExpressionCommand comm = TemporaryCommandStorage[i];
                 comm.ExecutionContext = i;
-                comm.Exectutor = this;
+                comm.Executor = this;
 
                 if (comm.ContainerCommand)
                 {
@@ -244,7 +246,7 @@ namespace FilterExo.Model
             var results = new List<string>();
             results.Add($"TYPE: {this.Type.ToString()} // CHILDREN: {this.Scopes.Count}");
             results.Add($"VARIABLES: {string.Join(" ", this.Variables.Keys)}");
-            results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
+            // results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
             return results;
         }
 
@@ -269,12 +271,14 @@ namespace FilterExo.Model
                     foreach (var item in this.Commands)
                     {
                         this.TemporaryCommandStorage.Add(item);
+                        item.ContainerCommand = false;
                     }
                     break;
                 case ExoExpressionCommandSource.mutator:
                     foreach (var item in this.YieldMutators())
                     {
                         this.TemporaryCommandStorage.Add(item);
+                        item.ContainerCommand = false;
                     }
                     break;
                 case ExoExpressionCommandSource.style:

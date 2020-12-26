@@ -33,4 +33,17 @@ namespace FilterExo.Core.Process.GlobalFunctions
             return new List<ExoAtom>() { new ExoAtom("$tier->" + variables[0].DeQuote()) };
         }
     }
+
+    public class AutoTierFunction : IExoGlobalFunction
+    {
+        public string Name => "AutoTier";
+
+        public List<ExoAtom> Execute(List<ExoAtom> content, ExoExpressionCommand caller)
+        {
+            var variables = content.Select(x => x.Serialize(caller.Parent)).ToList();
+            TraceUtility.Check(variables.Count != 0, "wrong variables count");
+
+            return new List<ExoAtom>() { new ExoAtom("$tier->" + caller.Executor.Name) };
+        }
+    }
 }

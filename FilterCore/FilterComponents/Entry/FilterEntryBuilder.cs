@@ -126,9 +126,18 @@ namespace FilterCore.FilterComponents.Entry
             }
 
             var header = this.ResolveHeader();
-            entry = FilterEntry.CreateDataEntry(header);
-            ResolveAllLines(entry);
 
+            if (HeaderDescriptors.Contains(this.Header))
+            {
+                entry = FilterEntry.CreateDataEntry(header);
+                ResolveAllLines(entry);
+            }
+            else
+            {
+                // TraceUtility.Throw("Undetected comment entry!");
+                return FilterEntry.CreateFillerEntry();
+            }
+            
             return entry;
         }
 
@@ -158,7 +167,12 @@ namespace FilterCore.FilterComponents.Entry
         {
             var resultingHeader = string.Empty;
 
-            if (!this.Enabled) resultingHeader += "# ";
+            if (!this.Enabled)
+            {
+                resultingHeader += "# ";
+                this.IsComment = true;
+            }
+
             resultingHeader += this.Header;
 
             if (this.tags.dict.Count > 0)

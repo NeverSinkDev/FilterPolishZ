@@ -19,7 +19,18 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             if (builder.expressions[0].Last().Value != ")") { return false; }
 
+            if (builder.Owner?.ReadCursor?.Parent?.GetFirstPropertyDescriptor() == "Show" || builder.Owner?.ReadCursor?.Parent?.GetFirstPropertyDescriptor() == "Hide")
+            {
+                return false;
+            }
+
             var name = builder.expressions[0][0].Value;
+
+            if (name == "Empty")
+            {
+                return false;
+            }
+
             return ExoBlock.GlobalFunctions.ContainsKey(name);
         }
 
