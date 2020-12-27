@@ -13,7 +13,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FilterExo.Core.Process;
 using FilterExo.Core.Process.GlobalFunctions;
+using FilterExo.Core.Process.GlobalFunctions.StyleFunctions;
+using FilterExo.Core.Process.StyleResoluton;
 using static FilterExo.FilterExoConfig;
 using static FilterPolishUtil.TraceUtility;
 
@@ -29,6 +32,8 @@ namespace FilterExo.Model
             new TierTagFunction().Integrate();
             new AutoTierFunction().Integrate();
             new EmptyFunction().Integrate();
+
+            new ApplyStyleFunction().Integrate();
         }
 
         public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
@@ -56,7 +61,14 @@ namespace FilterExo.Model
         // Execution parameters - ugly
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
 
-        public IEnumerable<List<string>> ResolveAndSerialize(ExoFilter attachedFiles)
+        public IEnumerable<List<string>> ResolveAndSerializeStyle()
+        {
+                var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
+                var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
+                return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
+        }
+
+        public IEnumerable<List<string>> ResolveAndSerialize(ExoStyleDictionary styleDict)
         {
             if (this.Type == ExoFilterType.comment)
             {
@@ -66,9 +78,15 @@ namespace FilterExo.Model
             {
                 var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
                 var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
-                return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
-            }
 
+                List<List<string>> styleCommands = new List<List<string>>();
+                if (styleDict != null)
+                {
+                    styleCommands = StyleResolutionStrategy.Execute(this, styleDict);
+                }
+
+                return EIEnumerable.YieldTogether(mutatorCommands, directCommands, styleCommands);
+            }
         }
 
         public IEnumerable<List<string>> ResolveAndSerializeSingleSection(ExoExpressionCommandSource target)
@@ -186,6 +204,23 @@ namespace FilterExo.Model
             }
 
             return this.GetParent().IsFunction(key);
+        }
+
+        public IEnumerable<ExoBlock> FindChildSection(string key)
+        {
+            foreach (var exoBlock in this.Scopes)
+            {
+                if (string.Equals(key,exoBlock.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return exoBlock;
+                }
+                
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
         }
 
         public bool IsVariable(string key)

@@ -13,16 +13,15 @@ using FilterPolishUtil.Extensions;
 
 namespace FilterExo.Core.Process
 {
-    public class ExoProcessor
+    public class ExoFilterProcessor
     {
         FilterEntryBuilder builder = new FilterEntryBuilder();
         List<FilterEntry> results = new List<FilterEntry>();
 
-        ExoFilter styleFile;
+        ExoStyleDictionary styleFile;
 
-        public List<FilterEntry> Execute(ExoFilter exoFilter, ExoFilter styleFile)
+        public List<FilterEntry> Execute(ExoFilter exoFilter, ExoStyleDictionary styleFile)
         {
-            this.styleFile = styleFile;
             results.Clear();
             builder = new FilterEntryBuilder();
 
@@ -33,7 +32,7 @@ namespace FilterExo.Core.Process
             {
                 foreach (var readChild in cursor.Scopes)
                 {
-                    // Comments
+                    // Commands
                     if (readChild.SimpleComments.Count > 0 || readChild.Commands.Count > 0 || FilterEntryBuilder.HeaderDescriptors.Contains(readChild.DescriptorCommand))
                     {
                         HandleChild(readChild);

@@ -27,7 +27,7 @@ namespace FilterPolishTestRunner
             IncubatorMeta = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorfilter01.filter").Split(System.Environment.NewLine).ToList();
             IncubatorStyle = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorstyle01.filter").Split(System.Environment.NewLine).ToList();
 
-            var style = IncubatorMeta.Select(x => x).ToList();
+            var style = IncubatorStyle.Select(x => x).ToList();
             var meta = IncubatorMeta.Select(x => x).ToList();
 
             StyleBundle = new ExoBundle();
@@ -42,8 +42,6 @@ namespace FilterPolishTestRunner
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
-
-            FilterBundle.Attach(StyleBundle);
         }
 
         [Test]
@@ -76,13 +74,14 @@ namespace FilterPolishTestRunner
         [Test]
         public void ParseBasicStyle()
         {
-            var styleBundle = new ExoBundle()
-                .SetInput(this.IncubatorStyle)
-                .Tokenize()
-                .Structurize()
-                .PreProcess();
+            var dict = StyleBundle.StyleProcess();
 
-            Assert.IsNotNull(styleBundle);
+            Assert.IsNotNull(dict);
+
+            FilterBundle.DefineStyleDictionary(dict);
+            var results = FilterBundle.Process();
+
+            Assert.IsNotNull(results);
         }
 
     }

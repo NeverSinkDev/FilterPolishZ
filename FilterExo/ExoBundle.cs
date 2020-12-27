@@ -27,20 +27,13 @@ namespace FilterExo
         public ExoFilter ExoFilter;
 
         public ExoPreProcessor PreProcessor;
-        public ExoProcessor Processor;
+        public ExoFilterProcessor FilterProcessor;
+        public ExoStyleDictionary StyleDictionary;
         public ExoBundleType Type;
-
-        public List<ExoBundle> AttachedBundles = new List<ExoBundle>();
 
         public ExoBundle SetInput(List<string> rawInput)
         {
             this.RawInput = rawInput;
-            return this;
-        }
-
-        public ExoBundle SetType(ExoBundleType type)
-        {
-            this.Type = type;
             return this;
         }
 
@@ -85,31 +78,25 @@ namespace FilterExo
 
         public List<FilterEntry> Process()
         {
-            this.Processor = new ExoProcessor();
+            this.FilterProcessor = new ExoFilterProcessor();
 
-            ExoFilter style = new ExoFilter();
-            if (this.AttachedBundles.Count != 0)
-            {
-                style = this.AttachedBundles[0].ExoFilter;
-            }
-
-            var serializedResults = Processor.Execute(this.ExoFilter, style);
+            var serializedResults = FilterProcessor.Execute(this.ExoFilter, StyleDictionary);
             var serializedSeedFilter = serializedResults.SelectMany(x => x.Serialize()).ToList();
             this.DebugData.Add("ExoOutput", string.Join(System.Environment.NewLine, serializedSeedFilter));
 
             return serializedResults;
         }
 
-        public ExoBundle Attach(ExoBundle styleBundle)
+        public ExoBundle DefineStyleDictionary(ExoStyleDictionary dictionary)
         {
-            this.AttachedBundles.Add(styleBundle);
-
-            if (ExoFilter != null)
-            {
-                this.ExoFilter.AttachedSections.Add(styleBundle.ExoFilter);
-            }
-
+            this.StyleDictionary = dictionary;
             return this;
+        }
+
+        public ExoStyleDictionary StyleProcess()
+        {
+            var styleProcessor = new ExoStyleProcessor();
+            return styleProcessor.Execute(this.ExoFilter);
         }
     }
 }

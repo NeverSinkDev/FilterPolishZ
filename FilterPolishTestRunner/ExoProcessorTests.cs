@@ -22,7 +22,7 @@ namespace FilterPolishTestRunner
         private Structurizer Structurizer;
         private ExoTokenizer Tokenizer;
         private ExoPreProcessor PreProcessor;
-        private ExoProcessor Processor;
+        private ExoFilterProcessor _filterProcessor;
 
         [SetUp]
         public void Prepare()
@@ -30,7 +30,7 @@ namespace FilterPolishTestRunner
             this.Structurizer = new Structurizer();
             this.Tokenizer = new ExoTokenizer();
             this.PreProcessor = new ExoPreProcessor();
-            this.Processor = new ExoProcessor();
+            this._filterProcessor = new ExoFilterProcessor();
         }
 
         public List<FilterEntry> StringToFilterEntries(List<string> input)
@@ -38,7 +38,7 @@ namespace FilterPolishTestRunner
             Tokenizer.Execute(input);
             var structurizerOutput = Structurizer.Execute(Tokenizer.Results);
             var preproc = PreProcessor.Execute(structurizerOutput);
-            var proc = Processor.Execute(preproc, new ExoFilter());
+            var proc = _filterProcessor.Execute(preproc, new ExoStyleDictionary());
             return proc;
         }
 
@@ -106,7 +106,7 @@ namespace FilterPolishTestRunner
 
             Assert.IsNotNull(res);
 
-            var commands0 = res.RootEntry.Scopes[0].Scopes[0].Scopes[0].ResolveAndSerialize(new ExoFilter()).ToList();
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].Scopes[0].ResolveAndSerialize(new ExoStyleDictionary()).ToList();
 
             Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
             Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));
@@ -153,7 +153,7 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(3, res.RootEntry.Scopes[0].Mutators.Count);
             Assert.AreEqual(3, res.RootEntry.Scopes[0].Scopes.Count);
 
-            var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize(new ExoFilter()).ToList();
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize(new ExoStyleDictionary()).ToList();
 
             Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
             Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));

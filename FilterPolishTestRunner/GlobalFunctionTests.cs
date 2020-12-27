@@ -17,7 +17,7 @@ namespace FilterPolishTestRunner
         private Structurizer Structurizer;
         private ExoTokenizer Tokenizer;
         private ExoPreProcessor PreProcessor;
-        private ExoProcessor Processor;
+        private ExoFilterProcessor _filterProcessor;
 
         [SetUp]
         public void Prepare()
@@ -25,7 +25,7 @@ namespace FilterPolishTestRunner
             this.Structurizer = new Structurizer();
             this.Tokenizer = new ExoTokenizer();
             this.PreProcessor = new ExoPreProcessor();
-            this.Processor = new ExoProcessor();
+            this._filterProcessor = new ExoFilterProcessor();
         }
 
         public List<FilterEntry> StringToFilterEntries(List<string> input)
@@ -33,7 +33,7 @@ namespace FilterPolishTestRunner
             Tokenizer.Execute(input);
             var structurizerOutput = Structurizer.Execute(Tokenizer.Results);
             var preproc = PreProcessor.Execute(structurizerOutput);
-            var proc = Processor.Execute(preproc, new ExoFilter());
+            var proc = _filterProcessor.Execute(preproc, new ExoStyleDictionary());
             return proc;
         }
 

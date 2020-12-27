@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FilterExo.Core.Process;
+using FilterExo.Core.Process.StyleResoluton;
 
 namespace FilterExo.Model
 {
