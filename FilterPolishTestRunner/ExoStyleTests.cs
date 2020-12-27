@@ -81,6 +81,10 @@ namespace FilterPolishTestRunner
             FilterBundle.DefineStyleDictionary(dict);
             var results = FilterBundle.Process();
 
+            var serializedResults = results.SelectMany(x => x.Serialize()).ToList();
+            Filter tempFilter = new Filter(serializedResults);
+            var filterText = tempFilter.Serialize();
+
             Assert.IsNotNull(results);
         }
 

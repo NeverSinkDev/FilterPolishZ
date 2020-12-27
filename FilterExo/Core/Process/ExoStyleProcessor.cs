@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FilterCore.FilterComponents.Entry;
+using FilterExo.Core.PreProcess.Commands;
 using FilterExo.Model;
 
 namespace FilterExo.Core.Process
@@ -12,6 +13,7 @@ namespace FilterExo.Core.Process
         public string attachmentRule;
         public string metaRule;
         public ExoBlock Block;
+        public ExoExpressionCommand Caller;
     }
 
     public class ExoStyleDictionary

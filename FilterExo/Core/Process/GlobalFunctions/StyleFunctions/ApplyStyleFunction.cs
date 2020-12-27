@@ -26,6 +26,7 @@ namespace FilterExo.Core.Process.GlobalFunctions.StyleFunctions
             var rule = new ExoStylePiece();
 
             rule.attachmentRule = sectionNames;
+            rule.Caller = caller;
 
             var section = style.RootEntry.FindChildSection(styleName).ToList();
             if (section.Count == 0)

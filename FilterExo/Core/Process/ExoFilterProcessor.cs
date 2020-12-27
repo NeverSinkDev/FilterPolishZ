@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using FilterCore;
 using FilterCore.FilterComponents.Entry;
+using FilterExo.Core.PreProcess.Commands;
 using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 
@@ -24,6 +25,7 @@ namespace FilterExo.Core.Process
         {
             results.Clear();
             builder = new FilterEntryBuilder();
+            this.styleFile = styleFile;
 
             ProcessTreeStep(exoFilter.RootEntry);
 
