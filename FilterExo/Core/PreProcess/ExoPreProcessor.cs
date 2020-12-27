@@ -115,7 +115,7 @@ namespace FilterExo.Core.PreProcess
                     child.DescriptorCommand = readChild.Value;
                     WriteCursor.Scopes.Add(child);
                     WriteCursor = child;
-                    WriteCursor.Name = readChild.PropertyExpression[1].Value;
+                    WriteCursor.Name = readChild.PropertyExpression[1].Value.ToLower();
 
                     ExpressionMutatorUtil.ExpandBlockWithMutators(child, readChild.PropertyExpression, "mutator");
 

@@ -68,7 +68,7 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             builder.Owner.WriteCursor.Scopes.Add(block);
 
-            block.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value;
+            block.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value.ToLower();
             block.DescriptorCommand = descriptor;
             foreach (var item in result)
             {
