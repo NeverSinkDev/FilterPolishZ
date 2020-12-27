@@ -1,6 +1,7 @@
 ﻿using FilterCore.Line;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FilterCore.Constants;
 using FilterDomain.LineStrategy;
@@ -8,10 +9,13 @@ using System.Runtime.CompilerServices;
 
 namespace FilterCore.Entry
 {
+    [DebuggerDisplay("{debugView}")]
     public class FilterEntry : IFilterEntry
     {
         public FilterEntryHeader Header { get; set; }
         public FilterEntryDataContent Content { get; set; }
+
+        public string debugView => SerializeMergedString;
 
         public bool IsFrozen
         {

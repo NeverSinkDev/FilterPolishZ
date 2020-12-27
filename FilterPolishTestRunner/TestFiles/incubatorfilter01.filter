@@ -2,7 +2,7 @@
 #   [4913] Incubator
 #------------------------------------
 
-Func IncubatorBase(){ Class Incubator; Tierlist("ex->incubators"); }
+Func IncubatorBase(){ Class Incubator; Tierlist("incubators"); }
 Section Incubator : IncubatorBase
 {
 	var IncuHiLevel = 81;
@@ -13,5 +13,5 @@ Section Incubator : IncubatorBase
 	Show t2 { BaseType auto; };
 	Show t3 { BaseType auto; };
 	Show t4 { BaseType auto; %HS3 };
-	Show restex { };
+	Show restex { Empty(); };
 }

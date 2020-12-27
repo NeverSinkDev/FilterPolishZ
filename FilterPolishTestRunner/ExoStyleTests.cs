@@ -15,41 +15,30 @@ namespace FilterPolishTestRunner
     [TestFixture]
     public class ExoStyleTests
     {
-        private ExoBundle Bundle;
+        private ExoBundle FilterBundle = new ExoBundle();
+        private ExoBundle StyleBundle = new ExoBundle();
 
-        private List<string> BasicStyleFile = new List<string>();
+        private List<string> IncubatorStyle = new List<string>();
+        private List<string> IncubatorMeta = new List<string>();
 
         [SetUp]
         public void SetUp()
         {
-            BasicStyleFile = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\basicstyle.filter").Split(System.Environment.NewLine).ToList();
+            IncubatorMeta = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorfilter01.filter").Split(System.Environment.NewLine).ToList();
+            IncubatorStyle = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorstyle01.filter").Split(System.Environment.NewLine).ToList();
 
-            // AutoTier
-            Bundle = new ExoBundle();
-            var metaFilter = new List<string>()
-            {
-                "#------------------------------------",
-                "#   [4913] Incubator (filter code)",
-                "#------------------------------------",
-                "",
-                "Func IncubatorBase(){ Class Incubator; Tierlist(\"incubator\"); AutoTier(); }",
-                "Section Incubator : IncubatorBase",
-                "{",
-                "\tvar IncuHiLevel = 81;",
-                "\tvar HiLevelIncus = \"Celestial Armoursmith's Incubator\" \"Celestial Blacksmith's Incubator\" \"Celestial Jeweller's Incubator\" \"Enchanted Incubator\" \"Fragmented Incubator\" \"Otherworldly Incubator\";",
-                "",
-                "\tShow leveledex { ItemLevel >= IncuHiLevel; BaseType HiLevelIncus; %HS5;  };",
-                "\tShow t1 { BaseType auto; };",
-                "\tShow t2 { BaseType auto; };",
-                "\tShow t3 { BaseType auto; };",
-                "\tShow t4 { BaseType auto; };",
-                "\tShow restex { Empty(); };",
-                "}"
-            };
+            var style = IncubatorMeta.Select(x => x).ToList();
+            var meta = IncubatorMeta.Select(x => x).ToList();
 
-            var input = metaFilter.Select(x => x).ToList();
+            StyleBundle = new ExoBundle();
+            FilterBundle = new ExoBundle();
 
-            Bundle.SetInput(input)
+            StyleBundle.SetInput(style)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
+
+            FilterBundle.SetInput(meta)
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
@@ -58,7 +47,7 @@ namespace FilterPolishTestRunner
         [Test]
         public void MetaFilterIntegrityCheck()
         {
-            var output = Bundle.Process();
+            var output = FilterBundle.Process();
 
             Assert.AreEqual(7, output.Count);
             var content = output.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content).ToList();
@@ -79,14 +68,14 @@ namespace FilterPolishTestRunner
         [Test]
         public void FileIntegrityTest()
         {
-            Assert.IsNotEmpty(this.BasicStyleFile);
+            Assert.IsNotEmpty(this.IncubatorStyle);
         }
 
         [Test]
         public void ParseBasicStyle()
         {
             var styleBundle = new ExoBundle()
-                .SetInput(this.BasicStyleFile)
+                .SetInput(this.IncubatorStyle)
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
