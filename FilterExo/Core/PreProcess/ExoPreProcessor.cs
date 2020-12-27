@@ -25,7 +25,7 @@ namespace FilterExo.Core.PreProcess
             // transformation process definition
             ReadCursor = tree.GoToRoot();
             WriteCursor = new ExoBlock {Type = FilterExoConfig.ExoFilterType.root, Name = "ROOT"};
-
+            var rootEntry = WriteCursor;
             // builder information
             var builder = new ExpressionBuilder(this);
 

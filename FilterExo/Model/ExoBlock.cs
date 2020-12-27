@@ -56,8 +56,7 @@ namespace FilterExo.Model
         // Execution parameters - ugly
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
 
-
-        public IEnumerable<List<string>> ResolveAndSerialize()
+        public IEnumerable<List<string>> ResolveAndSerialize(ExoFilter attachedFiles)
         {
             if (this.Type == ExoFilterType.comment)
             {

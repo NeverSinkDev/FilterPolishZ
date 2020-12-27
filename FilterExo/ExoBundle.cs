@@ -30,6 +30,8 @@ namespace FilterExo
         public ExoProcessor Processor;
         public ExoBundleType Type;
 
+        public List<ExoBundle> AttachedBundles = new List<ExoBundle>();
+
         public ExoBundle SetInput(List<string> rawInput)
         {
             this.RawInput = rawInput;
@@ -84,11 +86,30 @@ namespace FilterExo
         public List<FilterEntry> Process()
         {
             this.Processor = new ExoProcessor();
-            var serializedResults = Processor.Execute(this.ExoFilter);
+
+            ExoFilter style = new ExoFilter();
+            if (this.AttachedBundles.Count != 0)
+            {
+                style = this.AttachedBundles[0].ExoFilter;
+            }
+
+            var serializedResults = Processor.Execute(this.ExoFilter, style);
             var serializedSeedFilter = serializedResults.SelectMany(x => x.Serialize()).ToList();
             this.DebugData.Add("ExoOutput", string.Join(System.Environment.NewLine, serializedSeedFilter));
 
             return serializedResults;
+        }
+
+        public ExoBundle Attach(ExoBundle styleBundle)
+        {
+            this.AttachedBundles.Add(styleBundle);
+
+            if (ExoFilter != null)
+            {
+                this.ExoFilter.AttachedSections.Add(styleBundle.ExoFilter);
+            }
+
+            return this;
         }
     }
 }

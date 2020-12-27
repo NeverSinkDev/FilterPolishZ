@@ -90,7 +90,8 @@ namespace FilterExo
             // 3) COMPILE INTO SEEDFILTER
 
             var exoProcessor = new ExoProcessor();
-            var seedFilter = exoProcessor.Execute(exoFilter);
+
+            var seedFilter = exoProcessor.Execute(exoFilter, new ExoFilter());
             var serializedSeedFilter = seedFilter.SelectMany(x => x.Serialize()).ToList();
 
             results.Add("ExoOutput", string.Join(System.Environment.NewLine, serializedSeedFilter));

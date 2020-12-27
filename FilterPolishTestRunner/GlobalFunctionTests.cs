@@ -33,7 +33,7 @@ namespace FilterPolishTestRunner
             Tokenizer.Execute(input);
             var structurizerOutput = Structurizer.Execute(Tokenizer.Results);
             var preproc = PreProcessor.Execute(structurizerOutput);
-            var proc = Processor.Execute(preproc);
+            var proc = Processor.Execute(preproc, new ExoFilter());
             return proc;
         }
 

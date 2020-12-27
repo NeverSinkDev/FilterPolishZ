@@ -38,7 +38,7 @@ namespace FilterPolishTestRunner
             Tokenizer.Execute(input);
             var structurizerOutput = Structurizer.Execute(Tokenizer.Results);
             var preproc = PreProcessor.Execute(structurizerOutput);
-            var proc = Processor.Execute(preproc);
+            var proc = Processor.Execute(preproc, new ExoFilter());
             return proc;
         }
 
@@ -106,7 +106,7 @@ namespace FilterPolishTestRunner
 
             Assert.IsNotNull(res);
 
-            var commands0 = res.RootEntry.Scopes[0].Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].Scopes[0].ResolveAndSerialize(new ExoFilter()).ToList();
 
             Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
             Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));
@@ -153,7 +153,7 @@ namespace FilterPolishTestRunner
             Assert.AreEqual(3, res.RootEntry.Scopes[0].Mutators.Count);
             Assert.AreEqual(3, res.RootEntry.Scopes[0].Scopes.Count);
 
-            var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize().ToList();
+            var commands0 = res.RootEntry.Scopes[0].Scopes[0].ResolveAndSerialize(new ExoFilter()).ToList();
 
             Assert.AreEqual("SetTextColor 200 0 0 255", string.Join(" ", commands0[0]));
             Assert.AreEqual("SetBackgroundColor 255 255 255 255", string.Join(" ", commands0[1]));

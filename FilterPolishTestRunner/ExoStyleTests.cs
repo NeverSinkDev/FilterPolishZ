@@ -42,6 +42,8 @@ namespace FilterPolishTestRunner
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
+
+            FilterBundle.Attach(StyleBundle);
         }
 
         [Test]

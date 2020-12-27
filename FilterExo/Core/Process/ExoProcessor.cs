@@ -18,8 +18,11 @@ namespace FilterExo.Core.Process
         FilterEntryBuilder builder = new FilterEntryBuilder();
         List<FilterEntry> results = new List<FilterEntry>();
 
-        public List<FilterEntry> Execute(ExoFilter exoFilter)
+        ExoFilter styleFile;
+
+        public List<FilterEntry> Execute(ExoFilter exoFilter, ExoFilter styleFile)
         {
+            this.styleFile = styleFile;
             results.Clear();
             builder = new FilterEntryBuilder();
 
@@ -54,7 +57,7 @@ namespace FilterExo.Core.Process
 
             if (readChild.Commands.Count > 0 || readChild.YieldMutators().Any())
             {
-                var resolvedTokens = readChild.ResolveAndSerialize().ToList();
+                var resolvedTokens = readChild.ResolveAndSerialize(this.styleFile).ToList();
                 resolvedTokens.ForEach(x => builder.AddCommand(x));
             }
             
