@@ -33,10 +33,12 @@ namespace FilterExo.Model
 
         public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
 
+        // Descriptive properties
+        public string Name { get; internal set; }
+        public string DescriptorCommand { get; set; }
         public ExoFilterType Type = ExoFilterType.generic;
 
-        public static Dictionary<string, ExoAtom> GlobalFunctions { get; set; } = new Dictionary<string, ExoAtom>();
-        // public static Dictionary<string, ExoAtom> GlobalVariables { get; set; } = new Dictionary<string, ExoAtom>();
+        public List<ExoBlock> References;
 
         // Hierarchical elements
         public ExoBlock Parent;
@@ -44,16 +46,16 @@ namespace FilterExo.Model
 
         // functions, properties, interfaces that get applied to all children.
         public List<ExoExpressionCommand> Mutators { get; set; } = new List<ExoExpressionCommand>();
-        public List<ExoAtom> MetaTags { get; set; } = new List<ExoAtom>();
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
+        public static Dictionary<string, ExoAtom> GlobalFunctions { get; set; } = new Dictionary<string, ExoAtom>();
 
         public List<string> SimpleComments = new List<string>();
 
+        // Execution parameters - ugly
         private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
-        public string Name { get; internal set; }
-        public string DescriptorCommand { get; set; }
+
 
         public IEnumerable<List<string>> ResolveAndSerialize()
         {
@@ -111,6 +113,8 @@ namespace FilterExo.Model
             Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(name), "variable uses reserved name!");
             Check(name.ContainsSpecialCharacters(), "variable uses invalid characters!");
 
+            name = name.ToLower();
+
             // we treat the variable as a command/expression to allow internal simplifications
             var command = new ExoExpressionCommand(variableContent);
             command.SetParent(this);
@@ -122,29 +126,29 @@ namespace FilterExo.Model
 
         public ExoAtom GetVariable(string key)
         {
-            return GetInternalVariable(key);
+            key = key.ToLower();
+            if (this.Variables.ContainsKey(key))
+            {
+                return this.Variables[key];
+            }
+
+            return this.GetParent().GetVariable(key);
         }
 
         public ExoAtom GetFunction(string key)
         {
-            return GetInternalFunction(key);
-        }
-
-        public IEnumerable<ExoAtom> YieldMetaTags()
-        {
-            if (this.Type != ExoFilterType.root)
+            key = key.ToLower();
+            if (GlobalFunctions.ContainsKey(key))
             {
-                var parentTags = this.GetParent().YieldMetaTags();
-                foreach (var item in parentTags)
-                {
-                    yield return item;
-                }
+                return GlobalFunctions[key];
             }
 
-            foreach (var item in this.MetaTags)
+            if (this.Functions.ContainsKey(key))
             {
-                yield return item;
+                return this.Functions[key];
             }
+
+            return this.GetParent().GetFunction(key);
         }
 
         public IEnumerable<ExoExpressionCommand> YieldMutators()
@@ -166,6 +170,7 @@ namespace FilterExo.Model
 
         internal bool IsFunction(string key)
         {
+            key = key.ToLower();
             if (GlobalFunctions.ContainsKey(key))
             {
                 return true;
@@ -186,6 +191,7 @@ namespace FilterExo.Model
 
         public bool IsVariable(string key)
         {
+            key = key.ToLower();
             if (this.Variables.ContainsKey(key))
             {
                 return true;
@@ -197,31 +203,6 @@ namespace FilterExo.Model
             }
 
             return this.GetParent().IsVariable(key);
-        }
-
-        private ExoAtom GetInternalVariable(string key)
-        {
-            if (this.Variables.ContainsKey(key))
-            {
-                return this.Variables[key];
-            }
-
-            return this.GetParent().GetVariable(key);
-        }
-
-        private ExoAtom GetInternalFunction(string key)
-        {
-            if (GlobalFunctions.ContainsKey(key))
-            {
-                return GlobalFunctions[key];
-            }
-
-            if (this.Functions.ContainsKey(key))
-            {
-                return this.Functions[key];
-            }
-
-            return this.GetParent().GetFunction(key);
         }
 
         public ExoBlock GetParent()
@@ -249,6 +230,8 @@ namespace FilterExo.Model
             // results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
             return results;
         }
+
+        // RUNTIME FUNCTIONS
 
         public void InsertCommands(List<List<ExoAtom>> funcRes, ExoExpressionCommand exoExpressionCommand)
         {
@@ -283,21 +266,6 @@ namespace FilterExo.Model
                     break;
                 case ExoExpressionCommandSource.style:
                     break;
-            }
-        }
-
-        private IEnumerable<ExoExpressionCommand> GetCommandSource(ExoExpressionCommandSource sourceType)
-        {
-            switch (sourceType)
-            {
-                case ExoExpressionCommandSource.direct:
-                    return this.Commands;
-                case ExoExpressionCommandSource.mutator:
-                    return this.Mutators;
-                case ExoExpressionCommandSource.style:
-                    return this.Commands;
-                default:
-                    throw new Exception("unknown command source!");
             }
         }
     }

@@ -50,7 +50,7 @@ namespace FilterExo.Core.Structure
 
         public bool IsSection()
         {
-            if (this.PropertyExpression.Any(x => x.Value == "Section"))
+            if (this.PropertyExpression.Any(x => x.Value == "Section" || x.Value == "Style"))
             {
                 return true;
             }

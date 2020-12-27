@@ -70,8 +70,6 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             block.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value;
             block.DescriptorCommand = descriptor;
-
-            block.MetaTags = new List<ExoAtom>();
             foreach (var item in result)
             {
                 block.AddCommand(item);

@@ -24,7 +24,7 @@ namespace FilterExo.Core.PreProcess.Strategies
                 return false;
             }
 
-            var name = builder.expressions[0][0].Value;
+            var name = builder.expressions[0][0].Value.ToLower();
 
             if (name == "Empty")
             {
@@ -80,7 +80,6 @@ namespace FilterExo.Core.PreProcess.Strategies
             block.Name = "snippet";
             block.DescriptorCommand = descriptor;
 
-            block.MetaTags = new List<ExoAtom>();
             foreach (var item in result) { block.AddCommand(item); }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using FilterCore;
@@ -16,9 +17,13 @@ namespace FilterPolishTestRunner
     {
         private ExoBundle Bundle;
 
+        private List<string> BasicStyleFile = new List<string>();
+
         [SetUp]
         public void SetUp()
         {
+            BasicStyleFile = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\basicstyle.filter").Split(System.Environment.NewLine).ToList();
+
             // AutoTier
             Bundle = new ExoBundle();
             var metaFilter = new List<string>()
@@ -56,10 +61,37 @@ namespace FilterPolishTestRunner
             var output = Bundle.Process();
 
             Assert.AreEqual(7, output.Count);
-            Assert.IsTrue(output.Count(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content) == 6);
+            var content = output.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content).ToList();
+            
+            Assert.IsTrue(content.Count == 6);
+            Assert.IsTrue(content.All(x => x.Header.IsActive));
+            Assert.IsTrue(content.All(x => !x.Header.IsFrozen));
+            Assert.IsTrue(content.All(x => x.Header.HeaderValue == "Show"));
+            Assert.IsTrue(content.All(x => x.Content.Content.ContainsKey("Class")));
+            Assert.IsTrue(content.All(x => x.SerializeMergedString.Contains("$type->incubator")));
 
             var serOutput = output.SelectMany(x => x.Serialize()).ToList();
+
             Assert.NotNull(serOutput);
+            Assert.AreEqual(21, serOutput.Count);
+        }
+
+        [Test]
+        public void FileIntegrityTest()
+        {
+            Assert.IsNotEmpty(this.BasicStyleFile);
+        }
+
+        [Test]
+        public void ParseBasicStyle()
+        {
+            var styleBundle = new ExoBundle()
+                .SetInput(this.BasicStyleFile)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
+
+            Assert.IsNotNull(styleBundle);
         }
 
     }

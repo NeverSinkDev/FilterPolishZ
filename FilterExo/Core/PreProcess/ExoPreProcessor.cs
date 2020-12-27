@@ -112,6 +112,7 @@ namespace FilterExo.Core.PreProcess
 
                     var child = new ExoBlock();
                     child.Parent = this.WriteCursor;
+                    child.DescriptorCommand = readChild.Value;
                     WriteCursor.Scopes.Add(child);
                     WriteCursor = child;
                     WriteCursor.Name = readChild.PropertyExpression[1].Value;

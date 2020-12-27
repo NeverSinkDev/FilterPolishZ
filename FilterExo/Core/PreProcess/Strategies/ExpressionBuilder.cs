@@ -106,7 +106,7 @@ namespace FilterExo.Core.PreProcess.Strategies
         public bool Match(ExpressionBuilder builder)
         {
             var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
-            if (descriptor == string.Empty || descriptor == "Section")
+            if (descriptor == string.Empty || descriptor == "Section" || descriptor == "Style")
             {
                 return false;
             }

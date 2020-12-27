@@ -1,0 +1,110 @@
+﻿#------------------------------------
+# Basic Highlight
+#------------------------------------
+
+var sBlack = 0 0 0 255;
+var sWhite = 255 255 255 255;
+
+var t1icon = Star;
+
+var t1col = Red;
+var t2col = Yellow;
+var t3col = White;
+var t4col = Grey;
+
+#------------------------------------
+# Basic Strategies
+#------------------------------------
+
+# Basic markup strategy for item tiering
+Style Marking
+{
+	# ex-tier
+	Func T1 () {SetFontSize 45; PlayAlertSound 6 300; PlayEffect t1col; MinimapIcon 0 t1col Star; };
+	# divine tier
+	Func T2 (icon) {SetFontSize 45; PlayAlertSound 1 300; PlayEffect t2col; MinimapIcon 1 t1col icon; };
+	# chaos tier
+	Func T3 (icon) {SetFontSize 45; PlayAlertSound 2 300; PlayEffect t3col; MinimapIcon 1 t3col icon; };
+	# alteration tier
+	Func T4h (icon){SetFontSize 45; PlayEffect t4col; MinimapIcon 2 t4col icon; };
+	Func T4 (icon) {SetFontSize 45; PlayEffect t4col Temp; };
+	# low tier
+	Func T5 (icon) {SetFontSize 40; PlayEffect t4col Temp; MinimapIcon 2 t4col icon; };
+	Func T6 (icon) {SetFontSize 40; };
+}
+
+# Basic color strategy for item tiering
+Style BaseTiering
+{
+	# ex tier
+	var T1c = 255 0 0 255; 		# Ex
+	Func T1 () 		{ SetTextColor T1c; SetBorderColor T1c; SetBackgroundColor sWhite; };
+
+	# divine tier
+	var T2c = 240 90 35 255; 	# Divine
+	Func T2 () 		{ SetBackgroundColor T2c; SetBorderColor sWhite; SetTextColor sWhite; };
+	
+	# chaos tier - variations
+	var T3c = 249 150 25 255;	# Chaos
+	Func T3 () 		{ SetBackgroundColor T3c; SetBorderColor sBlack; SetTextColor sBlack; };
+
+	# alteration tier - variations
+	var T4c = 210 178 135 255; 	# Alteration
+	Func T4 () 		{ SetBackgroundColor T4c; SetTextColor sBlack; SetBorderColor sBlack; };
+
+	# low tier 1
+	Func T5 () 		{ SetTextColor acc; SetBorderColor acc; SetBackgroundColor sBlack; };
+
+	# low tier 2
+	Func T6 () 		{ SetTextColor acc; SetBorderColor sBlack; };
+}
+
+#------------------------------------
+# Currency Strategy
+#------------------------------------
+
+Style Currency : BaseTiering, Marking(Circle)
+{
+	var T3hc = 240 90 35 255;		# Sextant
+	var T3lc = 213 159 0 255;		# Alchemy
+	var T3cacc = 255 255 255 255;	# Temp
+	var T4cacc = 45 50 130 255;
+
+	Func T3acc : T3	(){ SetBorderColor T3cacc; };
+	Func T3h : T3 		(){ SetBackgroundColor T3hc; };
+	Func T3l : T3 		(){ SetBackgroundColor T3lc; };
+	Func T4acc1 : T4 	(){ SetBorderColor T4cacc; SetTextColor T4cacc; };
+}
+
+Style Divination : BaseTiering, Marking(Triangle)
+{
+	var T1c = 0 0 255 255;
+	var T2c = 0 20 180 255;
+	var T3c	= 50 220 240 255;
+
+	# needs border adjustments
+	var T4c = 145 215 230 225;
+
+	# needs rework
+	var T5c = 175 215 230 180;
+}
+
+Style Fragment : BaseTiering, Marking(Hexagon)
+{
+	var T1c = 159 15 213 255;
+	var T2c = 159 15 213 255;
+	var T3c = 159 15 213 255;
+	var T4c = 159 15 213 255;
+}
+
+Style Incubator : Currency{}
+
+# Function execution -> functions need to be executed with the context of a child
+# IsEnabled, needs to test if any of the layers is enabled, the lowest enabled child is chosen
+# Functions need to execute all previous overriding functions, unless differently specified.
+# Treat integrations as commands and styles as functions.
+
+#------------------------------------
+#   [4913] Integration
+#------------------------------------
+

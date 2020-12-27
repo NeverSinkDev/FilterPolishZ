@@ -19,13 +19,13 @@ namespace FilterExo.Core.Process.GlobalFunctions
             var function = new ExoFunction()
             {
                 // Content = new ExoBlock() { Name = me.Name, Type = FilterExoConfig.ExoFilterType.generic },
-                Name = me.Name,
+                Name = me.Name.ToLower(),
                 Type = ExoFunctionType.global,
                 GlobalFunctionLink = me
             };
 
             var atom = new ExoAtom(function);
-            ExoBlock.GlobalFunctions.Add(me.Name, atom);
+            ExoBlock.GlobalFunctions.Add(me.Name.ToLower(), atom);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace FilterExo.Model
                 // refactor this! currently cleans variables from previous runs
                 foreach (var item in Variables)
                 {
-                    Content.Variables.Remove(item);
+                    Content.Variables.Remove(item.ToLower());
                 }
 
                 var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
@@ -87,7 +87,7 @@ namespace FilterExo.Model
                 for (int i = 0; i < splitChildren.Count; i++)
                 {
                     var vari = splitChildren[i];
-                    var name = Variables[i];
+                    var name = Variables[i].ToLower();
 
                     var flattened = ExoExpressionCommand.FlattenBranch(vari);
                     Content.Variables.Add(name, new ExoAtom(flattened));

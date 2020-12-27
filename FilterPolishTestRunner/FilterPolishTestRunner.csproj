@@ -19,4 +19,10 @@
     <ProjectReference Include="..\FilterExo\FilterExo.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestFiles\basicstyle.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
