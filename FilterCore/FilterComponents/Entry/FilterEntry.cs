@@ -158,5 +158,19 @@ namespace FilterCore.Entry
 
             return entry;
         }
+
+        public string IsContaining(params string[] snippets)
+        {
+            var serializedText = this.Serialize();
+            foreach (var snippet in snippets)
+            {
+                if (!serializedText.Any(x => x.Contains(snippet)))
+                {
+                    return snippet;
+                }
+            }
+
+            return "OK";
+        }
     }
 }

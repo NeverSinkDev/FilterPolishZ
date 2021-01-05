@@ -1,6 +1,8 @@
-﻿#------------------------------------
+#------------------------------------
 #   [4913] Incubator
 #------------------------------------
+
+# >> Checkpoint: Incubators / Before incubators.
 
 Func IncubatorBase(){ Class Incubator; Tierlist("incubators"); AutoTier(); }
 Section Incubator : IncubatorBase
@@ -14,4 +16,9 @@ Section Incubator : IncubatorBase
 	Show t3 { BaseType auto; };
 	Show t4 { BaseType auto; %HS3 };
 	Show restex { Empty(); };
+}
+
+Section ThirdSection
+{
+	Show t2 { BaseType auto; };
 }

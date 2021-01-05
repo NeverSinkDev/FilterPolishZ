@@ -62,9 +62,18 @@ Style BaseTiering : Marking
 	Func T6 () 		{ SetTextColor acc; SetBorderColor sBlack; };
 }
 
+# Basic color strategy for item tiering
+Style CircleSection : BaseTiering
+{
+	var icon = Circle;
+	# Func T2 () 		{ Rarity >= Rare; };	
+}
+
 Style BasicIntegration
 {
 	Apply (Basetiering => Incubator);
+	Apply (CircleSection => ThirdSection);
+
 
 	# functions should be case insensetive. 
 
@@ -80,6 +89,3 @@ Style BasicIntegration
 	#Apply Incubators (Incubators){BaseTiering};
 	#Apply Incubators (){BaseTiering => Incubator};
 }
-
-
-# 

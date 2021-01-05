@@ -231,6 +231,40 @@ namespace FilterExo.Model
             return this.GetParent().GetFunctionDirect(key);
         }
 
+        public IEnumerable<ExoFunction> YieldLinkedFunctions(string key)
+        {
+            key = key.ToLower();
+            var funcs = new List<ExoFunction>();
+
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return new List<ExoFunction>() { GlobalFunctions[key].GetFunction(this)};
+            }
+
+            if (this.Functions.ContainsKey(key))
+            {
+                funcs.Add(this.Functions[key].GetFunction(this));
+            }
+
+            if (this.Parent != null)
+            {
+                foreach (var func in this.Parent.YieldLinkedFunctions(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                foreach (var func in block.YieldLinkedFunctions(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            return funcs.Distinct();
+        }
+
         public IEnumerable<ExoFunction> YieldFunctions(string key)
         {
             var results = new List<ExoFunction>();
@@ -342,6 +376,14 @@ namespace FilterExo.Model
             if (this.Variables.ContainsKey(key))
             {
                 return true;
+            }
+
+            foreach (var linkedBlock in this.LinkedBlocks)
+            {
+                if (linkedBlock.IsVariable(key))
+                {
+                    return true;
+                }
             }
 
             if (this.Type == ExoFilterType.root)

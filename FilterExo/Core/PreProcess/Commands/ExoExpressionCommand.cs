@@ -123,6 +123,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
             // when dealing with variables, we resolve them and if resolvement was succesfull
             // we put resolved single varibales into content and a list of values into leaves
+            
             var resolved = item.Content.Resolve(this.Parent);
 
             var exoAtoms = resolved.ToList();

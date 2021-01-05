@@ -13,34 +13,35 @@ namespace FilterExo.Core.Process.StyleResoluton
         {
             var result = new List<List<string>>();
 
-            var currentRuleName = currentRule.Name;
-            var parentSectionName = currentRule.Parent.Name;
+            var currentRuleName = currentRule.Name;          // rulename: "t1"
+            var parentSectionName = currentRule.Parent.Name; // sectionName: "Incubators"
 
             var relevantRules = style.Rules.Where(x => string.Equals(x.attachmentRule, parentSectionName, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            if (relevantRules.Count > 0)
+            foreach (var styleRule in relevantRules)
             {
-                if (!relevantRules[0].Block.IsFunction(currentRuleName))
+                var functions = styleRule.Block.YieldLinkedFunctions(currentRuleName).ToList();
+                if (functions.Count == 0)
                 {
-                    return result;
+                    continue;
                 }
 
-                var parent = relevantRules[0].Block;
-                var functionName = parent.Functions[currentRuleName];
+                var parent = styleRule.Block;
                 var parameters = new PreProcess.Commands.Branch<ExoAtom>();
-                var caller = relevantRules[0].Caller;
-
-                var functions = relevantRules[0].Block.YieldFunctions(functionName.GetRawValue());
+                var caller = styleRule.Caller;
 
                 var funcResults = new List<List<ExoAtom>>();
                 foreach (var function in functions)
                 {
+                    caller.Executor = parent;
+                    caller.Parent = parent;
+                    function.Content.Parent = parent;
                     funcResults.AddRange(function.Execute(parameters, caller).ToList());
                 }
 
                 foreach (var item in funcResults)
                 {
-                    result.Add(new ExoExpressionCommand(item){ Parent = parent, Executor = parent }.Serialize());
+                    result.Add(new ExoExpressionCommand(item) { Parent = parent, Executor = parent }.Serialize());
                 }
             }
 

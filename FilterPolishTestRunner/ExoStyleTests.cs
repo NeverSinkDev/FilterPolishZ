@@ -83,9 +83,13 @@ namespace FilterPolishTestRunner
 
             var serializedResults = results.SelectMany(x => x.Serialize()).ToList();
             Filter tempFilter = new Filter(serializedResults);
-            var filterText = tempFilter.Serialize();
-
             Assert.IsNotNull(results);
+
+            var filterText = tempFilter.Serialize();
+            Assert.IsNotNull(filterText);
+
+            Assert.AreEqual("OK", results.FindByTag("t1").IsContaining("BaseType auto", "SetFontSize 45", "SetTextColor 255 0 0 255"));
+            Assert.AreEqual("OK", results.FindByTag("t2").IsContaining("BaseType auto", "SetFontSize 45", "SetBackgroundColor 240 90 35 255", "MinimapIcon 1 Red Triangle"));
         }
 
     }

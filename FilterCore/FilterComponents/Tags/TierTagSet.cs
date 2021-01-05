@@ -60,7 +60,17 @@ namespace FilterCore.FilterComponents.Tags
 
         public bool ContainsKey(string s)
         {
-            return this.TierTags.ContainsKey(s);
+            if (this.TierTags.ContainsKey(s))
+            {
+                return true;
+            }
+
+            if (this.TierTags.Values.Any(x => x.CombinedTagValue.Contains(s)))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public TierTag this[string key]
