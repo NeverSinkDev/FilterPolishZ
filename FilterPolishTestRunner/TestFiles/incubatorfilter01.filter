@@ -2,14 +2,14 @@
 #   [4913] Incubator
 #------------------------------------
 
-Func IncubatorBase(){ Class Incubator; Tierlist("incubators"); }
+Func IncubatorBase(){ Class Incubator; Tierlist("incubators"); AutoTier(); }
 Section Incubator : IncubatorBase
 {
 	var IncuHiLevel = 81;
 	var HiLevelIncus = "Celestial Armoursmith's Incubator" "Celestial Blacksmith's Incubator" "Celestial Jeweller's Incubator" "Enchanted Incubator" "Fragmented Incubator" "Otherworldly Incubator";
 
 	Show leveledex { ItemLevel >= IncuHiLevel; BaseType HiLevelIncus; %HS5  };
-	Show t1 { BaseType auto; Tier("CustomTier"); };
+	Show t1 { BaseType auto; };
 	Show t2 { BaseType auto; };
 	Show t3 { BaseType auto; };
 	Show t4 { BaseType auto; %HS3 };

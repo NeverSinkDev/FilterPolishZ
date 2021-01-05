@@ -31,6 +31,7 @@ namespace FilterPolishTestRunner
             this.Tokenizer = new ExoTokenizer();
             this.PreProcessor = new ExoPreProcessor();
             this._filterProcessor = new ExoFilterProcessor();
+            this._filterProcessor.AddEmptyLines = false;
         }
 
         public List<FilterEntry> StringToFilterEntries(List<string> input)

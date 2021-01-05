@@ -20,8 +20,20 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             foreach (var item in splitmutators)
             {
+                if (item.Count == 0)
+                {
+                    continue;
+                }
+
+                var potentialSection = block.FindChildSectionFromRoot(item[0].Value).ToList();
+
                 ExoExpressionCommand expr;
-                if (item.Count == 1 && block.IsFunction(item[0].Value))
+                if (potentialSection.Count == 1)
+                {
+                    block.LinkedBlocks.Add(potentialSection[0]);
+                    return;
+                }
+                else if (item.Count == 1 && block.IsFunction(item[0].Value))
                 {
                     expr = new ExoExpressionCommand(new List<string> { item[0].Value, "(", ")" });
                 }

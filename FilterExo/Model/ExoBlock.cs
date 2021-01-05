@@ -54,6 +54,9 @@ namespace FilterExo.Model
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
+
+        public List<ExoBlock> LinkedBlocks { get; set; } = new List<ExoBlock>();
+
         public static Dictionary<string, ExoAtom> GlobalFunctions { get; set; } = new Dictionary<string, ExoAtom>();
 
         public List<string> SimpleComments = new List<string>();
@@ -63,9 +66,19 @@ namespace FilterExo.Model
 
         public IEnumerable<List<string>> ResolveAndSerializeStyle()
         {
-                var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
-                var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
-                return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
+            var linkedResults = new List<List<string>>();
+            foreach (var linkedBlock in this.LinkedBlocks)
+            {
+                var linkedBlockResults = linkedBlock.ResolveAndSerializeStyle();
+                foreach (var linkedBlockResult in linkedBlockResults)
+                {
+                    linkedResults.Add(linkedBlockResult);
+                }
+            }
+
+            var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
+            var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
+            return EIEnumerable.YieldTogether(linkedResults, mutatorCommands, directCommands);
         }
 
         public IEnumerable<List<string>> ResolveAndSerialize(ExoStyleDictionary styleDict)
@@ -76,6 +89,16 @@ namespace FilterExo.Model
             }
             else
             {
+                var linkedResults = new List<List<string>>();
+                foreach (var linkedBlock in this.LinkedBlocks)
+                {
+                    var linkedBlockResults = linkedBlock.ResolveAndSerializeStyle();
+                    foreach (var linkedBlockResult in linkedBlockResults)
+                    {
+                        linkedResults.Add(linkedBlockResult);
+                    }
+                }
+
                 var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
                 var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
 
@@ -85,7 +108,7 @@ namespace FilterExo.Model
                     styleCommands = StyleResolutionStrategy.Execute(this, styleDict);
                 }
 
-                return EIEnumerable.YieldTogether(mutatorCommands, directCommands, styleCommands);
+                return EIEnumerable.YieldTogether(linkedResults, mutatorCommands, directCommands, styleCommands);
             }
         }
 
@@ -149,6 +172,14 @@ namespace FilterExo.Model
                 return this.Variables[key];
             }
 
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsVariable(key))
+                {
+                    return block.GetVariable(key);
+                }
+            }
+
             return this.GetParent().GetVariable(key);
         }
 
@@ -165,11 +196,74 @@ namespace FilterExo.Model
                 return this.Functions[key];
             }
 
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsFunction(key))
+                {
+                    return block.GetFunction(key);
+                }
+            }
+
             return this.GetParent().GetFunction(key);
+        }
+
+        public ExoFunction GetFunctionDirect(string key)
+        {
+            key = key.ToLower();
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return GlobalFunctions[key].GetFunction(this);
+            }
+
+            if (this.Functions.ContainsKey(key))
+            {
+                return this.Functions[key].GetFunction(this);
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsFunction(key))
+                {
+                    return block.GetFunctionDirect(key);
+                }
+            }
+
+            return this.GetParent().GetFunctionDirect(key);
+        }
+
+        public IEnumerable<ExoFunction> YieldFunctions(string key)
+        {
+            var results = new List<ExoFunction>();
+
+            key = key.ToLower();
+
+            if (IsFunction(key))
+            {
+                results.Add(GetFunctionDirect(key));
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsFunction(key))
+                {
+                    results.Add(block.GetFunctionDirect(key));
+                }
+            }
+
+            return results;
         }
 
         public IEnumerable<ExoExpressionCommand> YieldMutators()
         {
+            foreach (var block in this.LinkedBlocks)
+            {
+                var mutators = block.YieldMutators();
+                foreach (var mutator in mutators)
+                {
+                    yield return mutator;
+                }
+            }
+
             if (this.Type != ExoFilterType.root)
             {
                 var parentMutators = this.GetParent().YieldMutators();
@@ -223,6 +317,25 @@ namespace FilterExo.Model
             }
         }
 
+        public IEnumerable<ExoBlock> FindChildSectionFromRoot(string key)
+        {
+            var target = this.GetRoot();
+
+            foreach (var exoBlock in target.Scopes)
+            {
+                if (string.Equals(key, exoBlock.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return exoBlock;
+                }
+
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
+        }
+
         public bool IsVariable(string key)
         {
             key = key.ToLower();
@@ -248,6 +361,18 @@ namespace FilterExo.Model
             }
 
             return this.Parent;
+        }
+
+        public ExoBlock GetRoot()
+        {
+            if (this.Type == ExoFilterType.root)
+            {
+                return this;
+            }
+            else
+            {
+                return this.Parent.GetRoot();
+            }
         }
 
         public void AddCommand(ExoExpressionCommand command)

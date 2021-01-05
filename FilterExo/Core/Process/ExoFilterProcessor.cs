@@ -19,6 +19,8 @@ namespace FilterExo.Core.Process
         FilterEntryBuilder builder = new FilterEntryBuilder();
         List<FilterEntry> results = new List<FilterEntry>();
 
+        public bool AddEmptyLines = true;
+
         ExoStyleDictionary styleFile;
 
         public List<FilterEntry> Execute(ExoFilter exoFilter, ExoStyleDictionary styleFile)
@@ -74,6 +76,11 @@ namespace FilterExo.Core.Process
 
             var entry = builder.Execute();
             results.Add(entry);
+
+            if (AddEmptyLines)
+            {
+                results.Add(FilterEntry.CreateFillerEntry());
+            }
         }
     }
 }

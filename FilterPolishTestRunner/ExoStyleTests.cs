@@ -49,7 +49,7 @@ namespace FilterPolishTestRunner
         {
             var output = FilterBundle.Process();
 
-            Assert.AreEqual(7, output.Count);
+            Assert.AreEqual(14, output.Count);
             var content = output.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content).ToList();
             
             Assert.IsTrue(content.Count == 6);
@@ -62,7 +62,7 @@ namespace FilterPolishTestRunner
             var serOutput = output.SelectMany(x => x.Serialize()).ToList();
 
             Assert.NotNull(serOutput);
-            Assert.AreEqual(21, serOutput.Count);
+            Assert.AreEqual(28, serOutput.Count);
         }
 
         [Test]

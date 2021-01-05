@@ -19,23 +19,26 @@ var t4col = Grey;
 # Basic markup strategy for item tiering
 Style Marking
 {
+	var icon = Square;
 	# ex-tier
 	Func T1 () {SetFontSize 45; PlayAlertSound 6 300; PlayEffect t1col; MinimapIcon 0 t1col Star; };
 	# divine tier
-	Func T2 (icon) {SetFontSize 45; PlayAlertSound 1 300; PlayEffect t2col; MinimapIcon 1 t1col icon; };
+	Func T2 () {SetFontSize 45; PlayAlertSound 1 300; PlayEffect t2col; MinimapIcon 1 t1col icon; };
 	# chaos tier
-	Func T3 (icon) {SetFontSize 45; PlayAlertSound 2 300; PlayEffect t3col; MinimapIcon 1 t3col icon; };
+	Func T3 () {SetFontSize 45; PlayAlertSound 2 300; PlayEffect t3col; MinimapIcon 1 t3col icon; };
 	# alteration tier
-	Func T4h (icon){SetFontSize 45; PlayEffect t4col; MinimapIcon 2 t4col icon; };
-	Func T4 (icon) {SetFontSize 45; PlayEffect t4col Temp; };
+	Func T4h (){SetFontSize 45; PlayEffect t4col; MinimapIcon 2 t4col icon; };
+	Func T4 () {SetFontSize 45; PlayEffect t4col Temp; };
 	# low tier
-	Func T5 (icon) {SetFontSize 40; PlayEffect t4col Temp; MinimapIcon 2 t4col icon; };
-	Func T6 (icon) {SetFontSize 40; };
+	Func T5 () {SetFontSize 40; PlayEffect t4col Temp; MinimapIcon 2 t4col icon; };
+	Func T6 () {SetFontSize 40; };
 }
 
 # Basic color strategy for item tiering
-Style BaseTiering
+Style BaseTiering : Marking
 {
+	var icon = Triangle;
+
 	# ex tier
 	var T1c = 255 0 0 255; 		# Ex
 	Func T1 () 		{ SetTextColor T1c; SetBorderColor T1c; SetBackgroundColor sWhite; };

@@ -20,7 +20,7 @@ namespace FilterExo.Core.Process.StyleResoluton
 
             if (relevantRules.Count > 0)
             {
-                if (!relevantRules[0].Block.Functions.ContainsKey(currentRuleName))
+                if (!relevantRules[0].Block.IsFunction(currentRuleName))
                 {
                     return result;
                 }
@@ -30,11 +30,17 @@ namespace FilterExo.Core.Process.StyleResoluton
                 var parameters = new PreProcess.Commands.Branch<ExoAtom>();
                 var caller = relevantRules[0].Caller;
 
-                var funcResults= functionName.GetFunction(parent).Execute(parameters, caller).ToList();
+                var functions = relevantRules[0].Block.YieldFunctions(functionName.GetRawValue());
+
+                var funcResults = new List<List<ExoAtom>>();
+                foreach (var function in functions)
+                {
+                    funcResults.AddRange(function.Execute(parameters, caller).ToList());
+                }
 
                 foreach (var item in funcResults)
                 {
-                    result.Add(new ExoExpressionCommand(item).Serialize());
+                    result.Add(new ExoExpressionCommand(item){ Parent = parent, Executor = parent }.Serialize());
                 }
             }
 
