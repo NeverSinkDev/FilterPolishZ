@@ -16,6 +16,7 @@ namespace FilterExo.Core.Process.StyleResoluton
             var currentRuleName = currentRule.Name;          // rulename: "t1"
             var parentSectionName = currentRule.Parent.Name; // sectionName: "Incubators"
 
+            // match the filter-rules (such as T1) to the style rules. Handle different application strategies here later
             var relevantRules = style.Rules.Where(x => string.Equals(x.attachmentRule, parentSectionName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             foreach (var styleRule in relevantRules)

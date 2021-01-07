@@ -13,7 +13,7 @@ using FilterExo.Core.Structure;
 namespace FilterPolishTestRunner
 {
     [TestFixture]
-    public class ExoStyleTests
+    public class ExoStyleDevelopmentTests
     {
         private ExoBundle FilterBundle = new ExoBundle();
         private ExoBundle StyleBundle = new ExoBundle();
@@ -24,8 +24,8 @@ namespace FilterPolishTestRunner
         [SetUp]
         public void SetUp()
         {
-            IncubatorMeta = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorfilter01.filter").Split(System.Environment.NewLine).ToList();
-            IncubatorStyle = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\incubatorstyle01.filter").Split(System.Environment.NewLine).ToList();
+            IncubatorMeta = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\alphafilter.filter").Split(System.Environment.NewLine).ToList();
+            IncubatorStyle = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\TestFiles\\alphastyle.filter").Split(System.Environment.NewLine).ToList();
 
             var style = IncubatorStyle.Select(x => x).ToList();
             var meta = IncubatorMeta.Select(x => x).ToList();
@@ -42,27 +42,6 @@ namespace FilterPolishTestRunner
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
-        }
-
-        [Test]
-        public void MetaFilterIntegrityCheck()
-        {
-            var output = FilterBundle.Process();
-
-            Assert.AreEqual(14, output.Count);
-            var content = output.Where(x => x.Header.Type == FilterGenerationConfig.FilterEntryType.Content).ToList();
-            
-            Assert.IsTrue(content.Count == 6);
-            Assert.IsTrue(content.All(x => x.Header.IsActive));
-            Assert.IsTrue(content.All(x => !x.Header.IsFrozen));
-            Assert.IsTrue(content.All(x => x.Header.HeaderValue == "Show"));
-            Assert.IsTrue(content.All(x => x.Content.Content.ContainsKey("Class")));
-            Assert.IsTrue(content.All(x => x.SerializeMergedString.Contains("$type->incubator")));
-
-            var serOutput = output.SelectMany(x => x.Serialize()).ToList();
-
-            Assert.NotNull(serOutput);
-            Assert.AreEqual(29, serOutput.Count);
         }
 
         [Test]
@@ -87,9 +66,6 @@ namespace FilterPolishTestRunner
 
             var filterText = tempFilter.Serialize();
             Assert.IsNotNull(filterText);
-
-            Assert.AreEqual("OK", results.FindByTag("t1").IsContaining("BaseType auto", "SetFontSize 45", "SetTextColor 255 0 0 255"));
-            Assert.AreEqual("OK", results.FindByTag("t2").IsContaining("BaseType auto", "SetFontSize 45", "SetBackgroundColor 240 90 35 255", "MinimapIcon 1 Red Triangle"));
         }
 
     }

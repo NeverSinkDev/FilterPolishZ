@@ -38,7 +38,6 @@ namespace FilterExo.Model
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            TraceUtility.Check(atom.Content != null, "called function child has content!");
 
             // for the "normal" functions
             IEnumerable<List<ExoAtom>> ExecuteGlobalFunction()

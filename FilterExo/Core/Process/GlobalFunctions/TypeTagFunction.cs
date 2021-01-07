@@ -8,6 +8,19 @@ using FilterPolishUtil;
 
 namespace FilterExo.Core.Process.GlobalFunctions
 {
+    public class AutoTagFunction : IExoGlobalFunction
+    {
+        public string Name => "Auto";
+
+        public List<ExoAtom> Execute(List<ExoAtom> content, ExoExpressionCommand caller)
+        {
+            var variables = content.Select(x => x.Serialize(caller.Parent)).ToList();
+            TraceUtility.Check(variables.Count != 1, "wrong variables count");
+
+            return new List<ExoAtom>() { new ExoAtom("$type->" + variables[0].DeQuote()), new ExoAtom("$tier->" + caller.Executor.Name) };
+        }
+    }
+
     public class TypeTagFunction : IExoGlobalFunction
     {
         public string Name => "Tierlist";

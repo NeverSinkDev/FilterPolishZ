@@ -190,7 +190,7 @@ namespace FilterExo.Core.PreProcess.Commands
                             subexpression.RemoveAt(i - 1);
 
                             i = totalCount;
-                            this.Executor.InsertCommands(funcRes, this);
+                            this.Executor.QueueRuntimeCommands(funcRes, this);
                             this.ContainerCommand = true;
                         }
                         else
