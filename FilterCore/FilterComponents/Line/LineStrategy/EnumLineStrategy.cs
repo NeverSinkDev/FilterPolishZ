@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore;
 
 namespace FilterDomain.LineStrategy
 {
@@ -33,14 +34,23 @@ namespace FilterDomain.LineStrategy
     {
         public bool PerformSort = true;
         public HashSet<LineToken> Value = new HashSet<LineToken>();
-        public bool ExactSearch = false;
+
+        public string SpecialOperator = string.Empty;
+        public string SpecialCount = string.Empty;
 
         public void Parse(List<LineToken> tokens)
         {
-            if (tokens[0].value == "==")
+            if (FilterGenerationConfig.FilterOperators.Contains(tokens[0].value))
             {
-                ExactSearch = true;
+                SpecialOperator = tokens[0].value;
                 tokens.RemoveAt(0);
+
+                var num = 0;
+                if (int.TryParse(tokens[0].value, out num))
+                {
+                    SpecialCount = tokens[0].value;
+                    tokens.RemoveAt(0);
+                }
             }
 
             foreach (var item in tokens)
@@ -75,9 +85,14 @@ namespace FilterDomain.LineStrategy
             }
 
             // add exactsearch operator
-            if (this.ExactSearch)
+            if (this.SpecialOperator != string.Empty)
             {
-                value.Insert(0, "==");
+                value.Insert(0, this.SpecialOperator);
+
+                if (this.SpecialCount != string.Empty)
+                {
+                    value.Insert(1, this.SpecialCount);
+                }
             }
 
             return string.Join(" ", value);

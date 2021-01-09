@@ -77,7 +77,13 @@
 
                             <ToolBarTray Grid.Row="0" Background="Transparent">
                                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" Background="Transparent">
-                                    
+
+                                    <Button ToolTip="Reload Filter" Click="Reload_Filter">
+                                        <materialDesign:PackIcon Kind="Reload" />
+                                    </Button>
+
+                                    <Separator/>
+
                                     <Button ToolTip="Open seed file" Click="SelectSeedFilterFile">
                                         <materialDesign:PackIcon Kind="FileUploadOutline" />
                                     </Button>

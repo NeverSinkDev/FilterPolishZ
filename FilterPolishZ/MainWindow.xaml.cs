@@ -74,11 +74,14 @@ namespace FilterPolishZ
             Application.Current.Shutdown();
         }
 
-        private void LoadAllComponents()
+        private void LoadAllComponents(bool skipFetchOnlineData = false)
         {
             // request ninja-economy info
-            this.EconomyData = this.LoadEconomyOverviewData();
-            this.EconomyData.RequestPoeLeagueInfo();
+            if (!skipFetchOnlineData)
+            {
+                this.EconomyData = this.LoadEconomyOverviewData();
+                this.EconomyData.RequestPoeLeagueInfo();
+            }
 
             if (Configuration.AppSettings["testLeague"] == "true" && !this.EconomyData.IsLeagueActive())
             {
@@ -86,15 +89,16 @@ namespace FilterPolishZ
             }
 
             // load aspects
-            this.ItemInfoData = this.LoadItemInformationOverview();
+            if (!skipFetchOnlineData) { this.ItemInfoData = this.LoadItemInformationOverview(); }
 
             // load filter tierlists
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // add derived tiers (Shaper, Elder)
-            this.EconomyData.CreateSubEconomyTiers();
+            if (!skipFetchOnlineData) { this.EconomyData.CreateSubEconomyTiers(); }
 
-            BaseTypeDataProvider.Initialize();
+            // get the filterblade basetype table
+            if (!skipFetchOnlineData) { BaseTypeDataProvider.Initialize(); }
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
@@ -458,6 +462,15 @@ namespace FilterPolishZ
         {
             
 
+        }
+
+        private void Reload_Filter(object sender, RoutedEventArgs e)
+        {
+            // this.ResetAllComponents();
+            this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
+            LoadAllComponents(true);
+            PerformEconomyTiering();
+            this.EventGrid.Publish();
         }
     }
 }

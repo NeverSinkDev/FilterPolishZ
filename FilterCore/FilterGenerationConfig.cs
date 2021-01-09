@@ -80,6 +80,9 @@ namespace FilterCore
             { "DropLevel",     new NumericLineStrategy() },
             { "AreaLevel",     new NumericLineStrategy() },
             { "Rarity",        new NumericLineStrategy() },
+
+            { "EnchantmentPassiveNum", new NumericLineStrategy() },
+
             { "SocketGroup",   new EnumLineStrategy(false) },
             { "Class",         new EnumLineStrategy(true) },
             { "BaseType",      new EnumLineStrategy(true) },

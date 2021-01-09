@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace FilterPolishUtil
@@ -40,6 +41,25 @@ namespace FilterPolishUtil
                 return me.Substring(loc + from.Length);
             }
             return me;
+        }
+
+        public static string ContainsAny(this string me, IEnumerable<string> comparisons)
+        {
+            var result = string.Empty;
+            foreach (var comparison in comparisons)
+            {
+                if (me.Contains(comparison))
+                {
+                    if (result != string.Empty)
+                    {
+                        throw new Exception(
+                            "Multiple Results Found for ContainsAny. Possibly Gem with Phantasmal in name?");
+                    }
+                    result = comparison;
+                }
+            }
+
+            return result;
         }
 
         public static string DeQuote(this string me)

@@ -16,17 +16,17 @@ namespace FilterEconomyProcessor.RuleSet
             var builder = new RuleSetBuilder(ruleHost).SetSection("gems").UseDefaultQuery().AddDefaultPostProcessing()
                 .SkipInEarlyLeague().AddDefaultIntegrationTarget();
             builder.AddRule("t1-awa", x => IsAwakened() && MinIst1(1.25f));
-            builder.AddRule("t1-ano", x => IsAltQuality("anomalous") && MinIst1());
-            builder.AddRule("t1-div", x => IsAltQuality("divergent") && MinIst1());
-            builder.AddRule("t1-pha", x => IsAltQuality("phantasmal") && MinIst1());
+            builder.AddRule("t1-ano", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Anomalous"), group: "t1-ano", nextgroup: "ANY");
+            builder.AddRule("t1-div", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Divergent"), group: "t1-div", nextgroup: "ANY");
+            builder.AddRule("t1-pha", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Phantasmal"), group: "t1-pha", nextgroup: "ANY");
             builder.AddRule("exception", "rest", x => ExceptionGems.Contains(builder.Item[0].Name));
 
             // t1 LEVEL RULES
             // 20-20, no corruption
-            builder.AddRule("t1-20-20z", x => GemQuery(20, 20, false, 2, FilterPolishConfig.GemT1BreakPoint), nextgroup: "t2");
-            builder.AddRule("t1-21-00", x => GemQuery(21, 0, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), nextgroup: "t2");
-            builder.AddRule("t1-21-20", x => GemQuery(21, 20, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), nextgroup: "t2");
-            builder.AddRule("t1-21-23", x => GemQuery(21, 23, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), nextgroup: "t2");
+            builder.AddRule("t1-20-20z", x => GemQuery(20, 20, false, 2, FilterPolishConfig.GemT1BreakPoint), group: "t1", nextgroup: "t2");
+            builder.AddRule("t1-21-00", x => GemQuery(21, 0, true, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
+            builder.AddRule("t1-21-20", x => GemQuery(21, 20, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
+            builder.AddRule("t1-21-23", x => GemQuery(21, 23, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
 
             // t2 RULES !!!
             builder.AddRule("t2-19-00z", x => GemQuery(19, 0, false, 3, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
@@ -53,10 +53,11 @@ namespace FilterEconomyProcessor.RuleSet
             bool IsAwakened() => builder.Item[0].Name.ToLower().Contains("awakened");
 
             // runs the GemCheck algorith (below) and also filters out awakened, alt quality gems and checks that the indexedcount and price is appropriate
-            bool GemQuery(int maxLevel, int maxQual, bool? corruptionState, int indexedCountMin, float minPrice)
+            bool GemQuery(int maxLevel, int maxQual, bool? corruptionState, int indexedCountMin, float minPrice, string qualityType = "")
             {
-                if (IsAltQuality() || IsAwakened()) return false;
-                var gems = GemCheck(maxLevel, maxQual, corruptionState);
+                if (IsAwakened()) return false;
+
+                var gems = GemCheck(maxLevel, maxQual, corruptionState, qualityType);
                 if (gems.Count > 0)
                 {
                     var appropriatePrice = gems.Where(y => y.CVal > minPrice && y.IndexedCount >= indexedCountMin)
@@ -68,7 +69,7 @@ namespace FilterEconomyProcessor.RuleSet
             }
 
             // gets a subset of a gems with quality, level and corruption states lower or equal to the provided data
-            List<NinjaItem> GemCheck(int maxLevel = 1, int maxQuality = 0, bool? corruptState = null)
+            List<NinjaItem> GemCheck(int maxLevel = 1, int maxQuality = 0, bool? corruptState = null, string qualityType = "")
             {
                 var checkedItems = builder.Item.Where(x =>
                 {
@@ -88,6 +89,8 @@ namespace FilterEconomyProcessor.RuleSet
                         qualS = int.TryParse(parts[1].Replace("c", ""), out qual);
                     }
 
+                    if (x.EQualityType != qualityType) { return false; }
+
                     // parsing error
                     if (!lvlS || !qualS) { return false; }
 
@@ -101,23 +104,13 @@ namespace FilterEconomyProcessor.RuleSet
 
             bool IsAltQuality(string type = default)
             {
-                var name = builder.Item[0].Name.ToLower();
-                if (type != default) { return name.Contains(type); }
-
-                var altQualities = new HashSet<string>() {"anomalous", "divergent", "phantasmal"};
-                return altQualities.Any(item => name.Contains(item));
+                if (type != default) { return builder.Item[0].EQualityType == type; }
+                return builder.Item[0].EQualityType != string.Empty;
             }
 
             string GetAltQuality()
             {
-                var altQualities = new HashSet<string>() {"anomalous", "divergent", "phantasmal"};
-                var name = builder.Item[0].Name.ToLower();
-                foreach (var item in altQualities)
-                {
-                    if (name.Contains(item)) return item;
-                }
-
-                return string.Empty;
+                return builder.Item[0].EQualityType;
             }
         }
     }
