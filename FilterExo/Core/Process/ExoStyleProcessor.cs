@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using FilterCore.FilterComponents.Entry;
 using FilterExo.Core.PreProcess.Commands;
+using FilterExo.Core.Process.StyleResoluton;
 using FilterExo.Model;
+using FilterPolishUtil;
 
 namespace FilterExo.Core.Process
 {
-    public class ExoStylePiece
-    {
-        public string attachmentRule;
-        public string metaRule;
-        public ExoBlock Block;
-        public ExoExpressionCommand Caller;
-    }
-
     public class ExoStyleDictionary
     {
         public List<ExoStylePiece> Rules = new List<ExoStylePiece>();

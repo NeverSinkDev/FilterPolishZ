@@ -66,7 +66,7 @@ Style BaseTiering : Marking
 Style BasicIntegration
 {
 	Apply (Basetiering => Incubator);
-
+	
 	# functions should be case insensetive. 
 
 	#AutoApply();

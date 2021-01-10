@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using FilterExo.Core.Process;
 using FilterExo.Core.Process.GlobalFunctions;
 using FilterExo.Core.Process.GlobalFunctions.StyleFunctions;
@@ -229,6 +230,37 @@ namespace FilterExo.Model
             return this.GetParent().GetFunction(key);
         }
 
+        public IEnumerable<ExoFunction> YieldLinkedFunctionsRegex(string key)
+        {
+            var funcs = new List<ExoFunction>();
+
+            foreach (var function in this.Functions)
+            {
+                if (Regex.IsMatch(function.Key, key))
+                {
+                    funcs.Add(this.Functions[key].GetFunction(this));
+                }
+            }
+
+            if (this.Parent != null)
+            {
+                foreach (var func in this.Parent.YieldLinkedFunctionsRegex(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                foreach (var func in block.YieldLinkedFunctionsRegex(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            return funcs.Distinct();
+        }
+
         public IEnumerable<ExoFunction> YieldLinkedFunctions(string key)
         {
             key = key.ToLower();
@@ -323,6 +355,28 @@ namespace FilterExo.Model
             foreach (var exoBlock in this.Scopes)
             {
                 if (string.Equals(key, exoBlock.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return exoBlock;
+                }
+
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
+        }
+
+        public IEnumerable<ExoBlock> FindChildSectionRegex(string key)
+        {
+            foreach (var exoBlock in this.Scopes)
+            {
+                if (exoBlock.Type == ExoFilterType.comment)
+                {
+                    continue;
+                }
+
+                if (Regex.IsMatch(key, exoBlock.Name.ToLower()))
                 {
                     yield return exoBlock;
                 }

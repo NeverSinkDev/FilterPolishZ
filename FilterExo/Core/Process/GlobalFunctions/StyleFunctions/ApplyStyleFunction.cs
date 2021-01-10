@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FilterExo.Core.PreProcess.Commands;
+using FilterExo.Core.Process.StyleResoluton;
 using FilterExo.Model;
 using FilterPolishUtil;
 
@@ -23,21 +24,9 @@ namespace FilterExo.Core.Process.GlobalFunctions.StyleFunctions
             var styleName = results[0].Trim();
             var sectionNames = results[1].Trim();
 
-            var rule = new ExoStylePiece();
+            var rules = ExoStylePiece.FromExpression(styleName, sectionNames, this.Name, caller);
 
-            rule.attachmentRule = sectionNames;
-            rule.Caller = caller;
-
-            var section = style.RootEntry.FindChildSection(styleName).ToList();
-            if (section.Count == 0)
-            {
-                TraceUtility.Throw($"Style section not found! {mergedVars}");
-            }
-
-            rule.Block = section[0];
-            rule.metaRule = this.Name;
-
-            dict.Rules.Add(rule);
+            dict.Rules.AddRange(rules);
 
             return new List<ExoAtom>();
         }
