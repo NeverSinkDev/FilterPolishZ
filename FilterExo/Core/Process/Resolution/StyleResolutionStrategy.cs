@@ -122,12 +122,45 @@ namespace FilterExo.Core.Process.StyleResoluton
                 foreach (var exoBlock in sections)
                 {
                     List<ExoFunction> functions = new List<ExoFunction>();
-                    if (style.Mode == ExoStyleSearchMode.match)
+
+                    var mode = style.Mode;
+                    if (style.Rule != "" && this.FilterSection.Rule != "")
+                    {
+                        mode = ExoStyleSearchMode.forced;
+                    }
+
+                    if (mode == ExoStyleSearchMode.match)
                     {
                         if (style.Rule == "")
                         {
                             // if the style section has no rule specified, perform an exact name match
                             functions = exoBlock.YieldLinkedFunctionsRegex(filterRuleName).ToList();
+                        }
+                        else
+                        {
+                            var relevantForStyle = exoBlock.YieldLinkedFunctionsRegex(style.RuleMatch);
+                            var relevantForFilter = exoBlock.YieldLinkedFunctionsRegex(filterRuleName);
+
+                            functions.AddRange(relevantForStyle.Intersect(relevantForFilter));
+
+                            if (this.FilterSection.Rule == "")
+                            {
+                                functions.Where(x => Regex.IsMatch(filterRuleName, style.RuleMatch));
+                            }
+
+                            // Apply (IncubatorStyle.T1 =>    IncubatorFilter)
+                            // Apply (IncubatorStyle.T1 => IncubatorFilter.T1)
+                        }
+                    }
+                    else if (mode == ExoStyleSearchMode.forced)
+                    {
+                        if (style.Rule == "")
+                        {
+                            functions = exoBlock.YieldLinkedFunctionsRegex(StringWork.WildCardToRegular("*")).ToList();
+                        }
+                        else
+                        {
+                            functions = exoBlock.YieldLinkedFunctionsRegex(style.RuleMatch).ToList();
                         }
                     }
 

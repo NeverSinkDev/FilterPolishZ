@@ -90,7 +90,7 @@ namespace FilterExo.Model
                 this.IdentifiedType = ExoAtomType.oper;
                 this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
             }
-            else if (value[0] == '%' || value[0] == '$')
+            else if (value[0] == '%' || value[0] == '$' || value[0] == '!')
             {
                 this.IdentifiedType = ExoAtomType.meta;
                 this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };

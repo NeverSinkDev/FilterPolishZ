@@ -66,18 +66,5 @@ Style BaseTiering : Marking
 Style BasicIntegration
 {
 	Apply (Basetiering => Incubator);
-	
-	# functions should be case insensetive. 
-
-	#AutoApply();
-	#Apply (Marking => Incubator);
-	#Apply (Marking => Incubator);
-	#Disable(BasicIntegration.Basic);
-	#Apply NewStyle(BaseTiering, Marking => Incubator);
-
-	#BaseTiering.Apply(Incubator);
-	#Incubator => BaseTiering;
-	#Apply(Incubator => BaseTiering);
-	#Apply Incubators (Incubators){BaseTiering};
-	#Apply Incubators (){BaseTiering => Incubator};
+	Apply (!BaseTiering.T1 => 6Links);
 }

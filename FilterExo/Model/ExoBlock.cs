@@ -238,7 +238,7 @@ namespace FilterExo.Model
             {
                 if (Regex.IsMatch(function.Key, key))
                 {
-                    funcs.Add(this.Functions[key].GetFunction(this));
+                    funcs.Add(this.Functions[function.Key].GetFunction(this));
                 }
             }
 

@@ -65,6 +65,7 @@ namespace FilterPolishTestRunner
             Assert.IsNotNull(results);
 
             var filterText = tempFilter.Serialize();
+            var filterJoinedString = string.Join(System.Environment.NewLine, filterText);
             Assert.IsNotNull(filterText);
         }
 
