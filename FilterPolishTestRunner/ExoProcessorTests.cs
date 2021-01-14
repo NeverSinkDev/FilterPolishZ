@@ -282,6 +282,20 @@ namespace FilterPolishTestRunner
         }
 
         [Test]
+        public void ExoProcessor_VariableArrayAccessing()
+        {
+            var input = @"var a = ""alpha"" ""beta"" ""gamma"";
+                var b = ""x"" ""y"" ""z"" - ""y"";
+                var c = ""wisdom"";
+                Show T1 { BaseType ( a[2] + b + c[1] ); };";
+
+            var res = this.StringToExoFilter(input.Split(System.Environment.NewLine).ToList());
+
+            Assert.AreEqual(@"BaseType ""alpha"" ""beta"" ""wisdom"" ""x"" ""z""",
+                res.RootEntry.Scopes[0].Commands[0].SerializeDebug());
+        }
+
+        [Test]
         public void ExoProcessor_SingleShowSerialization()
         {
             var input = new List<string>()

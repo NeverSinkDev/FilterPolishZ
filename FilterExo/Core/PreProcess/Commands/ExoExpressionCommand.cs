@@ -224,31 +224,46 @@ namespace FilterExo.Core.PreProcess.Commands
         // this way we handle the results of the expressions as a new variable
         private List<ExoAtom> CombinePatterns(List<ExoAtom> wipBranch)
         {
+            var operatorSplit = wipBranch.SplitPreserve(x => x.GetRawValue() == "+" || x.GetRawValue() == "-").ToList();
+            var semiRefinedList = new List<ExoAtom>();
+
+            var secondLayer = false;
+            for (var index = 0; index < operatorSplit.Count; index++)
+            {
+                var splitPiece = operatorSplit[index];
+                semiRefinedList.AddRange(this.CombinePatternsInner(splitPiece, false));
+            }
+
+            return CombinePatternsInner(semiRefinedList, true);
+        }
+
+        private List<ExoAtom> CombinePatternsInner(List<ExoAtom> splitPiece, bool secondaryMode)
+        {
             bool success = true;
             while (success)
             {
-                var combiner = new ExoExpressionCombineBuilder(this.Parent);
+                var combiner = new ExoExpressionCombineBuilder(this.Parent) { SecondPatternLayer = secondaryMode };
                 success = false;
 
-                for (int i = 0; i < wipBranch.Count; i++)
+                for (int i = 0; i < splitPiece.Count; i++)
                 {
                     // adds a new element into the combiner and checks if it matches a pattern
-                    success = combiner.Add(wipBranch[i]);
+                    success = combiner.Add(splitPiece[i]);
                     if (!success) continue;
 
-                    combiner.Results.AddRange(wipBranch.Skip(i + 1));
-                    wipBranch = combiner.Results;
+                    combiner.Results.AddRange(splitPiece.Skip(i + 1));
+                    splitPiece = combiner.Results;
                     break;
                 }
 
                 if (!success)
                 {
                     success = combiner.Finish();
-                    wipBranch = combiner.Results;
+                    splitPiece = combiner.Results;
                 }
             }
 
-            return wipBranch;
+            return splitPiece;
         }
 
         public static List<ExoAtom> FlattenBranch(List<Branch<ExoAtom>> subexpression)

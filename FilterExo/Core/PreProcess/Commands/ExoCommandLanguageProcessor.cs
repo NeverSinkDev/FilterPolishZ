@@ -16,12 +16,26 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public ExoBlock ResolutionParent;
 
+        // TODO
+        public bool SecondPatternLayer = false;
+
+        public void TrySecondPattern()
+        {
+            this.SecondPatternLayer = true;
+        }
+
+        public static List<IExoAtomMergeStrategy> PriorityPatterns = new List<IExoAtomMergeStrategy>()
+        {
+            new DictArrayAccessRangeSimpleStrategy(),
+            //new DictArrayAccessRangeStrategy(),
+            new DictPassiveMergeStrategy()
+        };
+
         public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
         {
-            new DictArrayAccessRangeStrategy(),
-            new DictPassiveMergeStrategy(),
+            new DictRemoveMergeStrategy(),
             new DictAddUpStrategy(),
-            new DictRemoveMergeStrategy()
+            new DictPassiveMergeStrategy()
         };
 
         public ExoExpressionCombineBuilder(ExoBlock parent)
@@ -57,7 +71,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         private bool CanResolve()
         {
-            foreach (var pattern in Patterns)
+            foreach (var pattern in this.SecondPatternLayer ? Patterns : PriorityPatterns)
             {
                 if (pattern.Match(Stack))
                 {
@@ -75,7 +89,7 @@ namespace FilterExo.Core.PreProcess.Commands
                 return false;
             }
 
-            foreach (var pattern in Patterns)
+            foreach (var pattern in this.SecondPatternLayer ? Patterns : PriorityPatterns )
             {
                 if (pattern.Match(Stack))
                 {
@@ -103,6 +117,9 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
             hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
+
+            
+            
             var merge = new ExoAtom(hs1);
             return new List<ExoAtom>() { merge };
         }
@@ -171,21 +188,20 @@ namespace FilterExo.Core.PreProcess.Commands
         }
     }
 
-    public class DictArrayAccessRangeStrategy : IExoAtomMergeStrategy
+    public class DictArrayAccessRangeSimpleStrategy : IExoAtomMergeStrategy
     {
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
 
             var results = new List<ExoAtom>();
-            var lowerBounds = int.Parse(input[2].GetRawValue());
-            var upperbounds = int.Parse(input[4].GetRawValue());
+            var upperbounds = int.Parse(input[2].GetRawValue());
 
             var i = 0;
             foreach (var item in hs1)
             {
                 i++;
-                if (i >= lowerBounds && i < upperbounds)
+                if (i <= upperbounds)
                 {
                     results.Add(new ExoAtom(item));
                 }
@@ -196,16 +212,9 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public bool Match(List<ExoAtom> input)
         {
-            if (input.Count > 3)
-            {
-                var y = "asd";
-            }
-
             var match = input.ConfirmPattern(
                 x => x.IdentifiedType == ExoAtomType.dict,
                 x => x.GetRawValue() == "[",
-                x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
-                x => x.GetRawValue() == "-",
                 x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
                 x => x.GetRawValue() == "]"
             );
@@ -213,4 +222,42 @@ namespace FilterExo.Core.PreProcess.Commands
             return match;
         }
     }
+
+    //public class DictArrayAccessRangeStrategy : IExoAtomMergeStrategy
+    //{
+    //    public List<ExoAtom> Execute(List<ExoAtom> input)
+    //    {
+    //        var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+
+    //        var results = new List<ExoAtom>();
+    //        var lowerBounds = int.Parse(input[2].GetRawValue());
+    //        var upperbounds = int.Parse(input[4].GetRawValue());
+
+    //        var i = 0;
+    //        foreach (var item in hs1)
+    //        {
+    //            i++;
+    //            if (i >= lowerBounds && i <= upperbounds)
+    //            {
+    //                results.Add(new ExoAtom(item));
+    //            }
+    //        }
+
+    //        return results;
+    //    }
+
+    //    public bool Match(List<ExoAtom> input)
+    //    {
+    //        var match = input.ConfirmPattern(
+    //            x => x.IdentifiedType == ExoAtomType.dict,
+    //            x => x.GetRawValue() == "[",
+    //            x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+    //            x => x.GetRawValue() == "-",
+    //            x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+    //            x => x.GetRawValue() == "]"
+    //        );
+
+    //        return match;
+    //    }
+    //}
 }

@@ -43,6 +43,31 @@ namespace FilterPolishUtil.Extensions
                 action(item);
             }
         }
+        public static IEnumerable<List<T>> SplitPreserve<T>(this IEnumerable<T> enumeration, Predicate<T> splitBy)
+        {
+            var currentList = new List<T>();
+            foreach (T item in enumeration)
+            {
+                if (!splitBy(item))
+                {
+                    currentList.Add(item);
+                }
+                else
+                {
+                    if (currentList.Count != 0)
+                    {
+                        yield return currentList;
+                    }
+                    yield return new List<T>() {item};
+                    currentList = new List<T>();
+                }
+            }
+
+            if (currentList.Count != 0)
+            {
+                yield return currentList;
+            }
+        }
 
         public static void RemoveAll<T>(this ICollection<T> collection, Func<T, bool> predicate)
         {

@@ -16,7 +16,7 @@ namespace FilterExo.Model
 
     public class HashSetValueCore : IExoAtomValueCore
     {
-        public HashSet<string> Values;
+        public OrderedSet<string> Values;
 
         public string GetRawValue()
         {
