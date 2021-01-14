@@ -146,8 +146,8 @@ namespace FilterEconomyProcessor.RuleSet
                     return false;
                 }
 
-                var relevantListNonDrop = builder.Item.AspectCheck(new HashSet<string>() { "NonDropAspect" }, new HashSet<string>() { });
-                var relevantListRest = builder.Item.AspectCheck(new HashSet<string>() {  }, new HashSet<string>() { "NonDropAspect" });
+                var relevantListNonDrop = builder.Item.AspectCheck(new HashSet<string>() { "NonDropAspect", "ProphecyResultAspect" }, new HashSet<string>() { });
+                var relevantListRest = builder.Item.AspectCheck(new HashSet<string>() {  }, new HashSet<string>() { "NonDropAspect", "ProphecyResultAspect" });
 
                 if (relevantListNonDrop.Count <= 0) return false;
                 if (relevantListRest.Count <= 0) return true;

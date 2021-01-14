@@ -2,6 +2,7 @@
 using FilterPolishUtil.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -17,6 +18,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
         {
+            new DictArrayAccessRangeStrategy(),
             new DictPassiveMergeStrategy(),
             new DictAddUpStrategy(),
             new DictRemoveMergeStrategy()
@@ -29,7 +31,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public bool Add(ExoAtom input)
         {
-            if (input.IdentifiedType == ExoAtomType.prim)
+            if (input.IdentifiedType == ExoAtomType.prim && !int.TryParse(input.GetRawValue(), out _))
             {
                 var result = ResolveStack();
                 Results.Add(input);
@@ -164,6 +166,49 @@ namespace FilterExo.Core.PreProcess.Commands
                     x => x.IdentifiedType == ExoAtomType.dict,
                     x => x.IdentifiedType == ExoAtomType.dict
                 );
+
+            return match;
+        }
+    }
+
+    public class DictArrayAccessRangeStrategy : IExoAtomMergeStrategy
+    {
+        public List<ExoAtom> Execute(List<ExoAtom> input)
+        {
+            var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+
+            var results = new List<ExoAtom>();
+            var lowerBounds = int.Parse(input[2].GetRawValue());
+            var upperbounds = int.Parse(input[4].GetRawValue());
+
+            var i = 0;
+            foreach (var item in hs1)
+            {
+                i++;
+                if (i >= lowerBounds && i < upperbounds)
+                {
+                    results.Add(new ExoAtom(item));
+                }
+            }
+
+            return results;
+        }
+
+        public bool Match(List<ExoAtom> input)
+        {
+            if (input.Count > 3)
+            {
+                var y = "asd";
+            }
+
+            var match = input.ConfirmPattern(
+                x => x.IdentifiedType == ExoAtomType.dict,
+                x => x.GetRawValue() == "[",
+                x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+                x => x.GetRawValue() == "-",
+                x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+                x => x.GetRawValue() == "]"
+            );
 
             return match;
         }

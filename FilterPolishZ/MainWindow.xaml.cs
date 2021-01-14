@@ -437,25 +437,33 @@ namespace FilterPolishZ
         {
             var outputFolder = Configuration.AppSettings["Meta Filter Path"];
 
+            var metaFilter = FileWork.ReadLinesFromFile(Configuration.AppSettings["metaFilter"]);
+            var metaStyle = FileWork.ReadLinesFromFile(Configuration.AppSettings["metaStyle"]);
+
             LoggingFacade.LogInfo($"Loading Meta Filter: {outputFolder}");
 
-            this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
-            var bundle = this.FilterExoFacade.CreateBundle();
+            var style = metaStyle.Select(x => x).ToList();
+            var meta = metaFilter.Select(x => x).ToList();
 
-            bundle.SetInput(this.FilterExoFacade.RawMetaFilterText)
+            var styleBundle = new ExoBundle();
+            var filterBundle = new ExoBundle();
+
+            styleBundle.SetInput(style)
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
 
-            var results = bundle.Process();
+            filterBundle.SetInput(meta)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
 
-            GenerationOptions.TextSources = bundle.DebugData;
+            var dict = styleBundle.StyleProcess();
+            filterBundle.DefineStyleDictionary(dict);
+
+            GenerationOptions.TextSources = filterBundle.DebugData;
             EventGrid.Publish();
 
-            if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
-            {
-                LoggingFacade.LogWarning($"Loading Filter: Meta-Filter Content Suspiciously Short");
-            }
         }
 
         private void TierBaseTypeMatrix(object sender, RoutedEventArgs e)

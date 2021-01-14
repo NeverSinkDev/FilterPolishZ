@@ -1,4 +1,21 @@
 #===============================================================================================================
+# [[0200]] INFLUENCED SECTION
+#===============================================================================================================
+
+Func IdMods(){ Identified True;  }
+
+var mods1 = "Flame Shaper's" "Frost Singer's" "Lithomancer's" "Mad Lord's" "Thunderhand's";
+
+Section IdModSection : IdMods
+{
+	Section Magic : Rarity "Magic", Corrupted False, Auto("MagicID")
+	{
+		Show SpellWeapons1 { Class "Rune Daggers" "Sceptres" "Wands"; Mod mods1 };
+		Show SpellWeapons2 { Class "Rune Daggers" "Sceptres" "Wands"; Mod mods1 - "Thunderhand's" };
+	}
+}
+
+#===============================================================================================================
 # [[0200]] 6 LINKS
 #===============================================================================================================
 
