@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterPolishUtil;
 
 namespace FilterCore.Line
 {
@@ -32,6 +33,41 @@ namespace FilterCore.Line
         {
             me.Value = LineValueCore;
             return me;
+        }
+
+        public static bool IsTag(this string rawData)
+        {
+            var data = rawData.Trim();
+            var prefix = data[0];
+            if (prefix == '$' || prefix == '%')
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsComment(this string rawData)
+        {
+            var data = rawData.Trim();
+            var prefix = data[0];
+            if (prefix == '#')
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsFilterLine(this string rawData)
+        {
+            var ident = rawData.SubstringUntil(" ");
+            return FilterGenerationConfig.LineTypes.ContainsKey(ident);
+        }
+
+        public static string GetFilterLineIdent(this string rawData)
+        {
+            return rawData.SubstringUntil(" ");
         }
 
         public static IFilterLine ToFilterLine(this string rawData)

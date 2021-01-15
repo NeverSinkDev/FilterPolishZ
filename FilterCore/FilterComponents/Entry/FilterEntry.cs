@@ -1,6 +1,7 @@
 ﻿using FilterCore.Line;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FilterCore.Constants;
 using FilterDomain.LineStrategy;
@@ -8,10 +9,13 @@ using System.Runtime.CompilerServices;
 
 namespace FilterCore.Entry
 {
+    [DebuggerDisplay("{debugView}")]
     public class FilterEntry : IFilterEntry
     {
         public FilterEntryHeader Header { get; set; }
         public FilterEntryDataContent Content { get; set; }
+
+        public string debugView => SerializeMergedString;
 
         public bool IsFrozen
         {
@@ -120,6 +124,29 @@ namespace FilterCore.Entry
             return entry;
         }
 
+        public static FilterEntry CreateCommentEntry(List<string> content = null)
+        {
+            var entry = new FilterEntry();
+
+            entry.Header = new FilterEntryHeader();
+            entry.Header.Type = FilterGenerationConfig.FilterEntryType.Comment;
+            entry.Header.IsFrozen = true;
+            entry.Header.IsActive = true;
+
+            entry.Content = new FilterEntryDataContent();
+            entry.Content.Content = new Dictionary<string, List<IFilterLine>>();
+
+            if (content != null && content.Count > 0)
+            {
+                foreach (var line in content)
+                {
+                    entry.Content.Add(line.ToFilterLine());
+                }
+            }
+
+            return entry;
+        }
+
         public static FilterEntry CreateFillerEntry()
         {
             var entry = new FilterEntry();
@@ -130,6 +157,20 @@ namespace FilterCore.Entry
             entry.Header.IsActive = true;
 
             return entry;
+        }
+
+        public string IsContaining(params string[] snippets)
+        {
+            var serializedText = this.Serialize();
+            foreach (var snippet in snippets)
+            {
+                if (!serializedText.Any(x => x.Contains(snippet)))
+                {
+                    return snippet;
+                }
+            }
+
+            return "OK";
         }
     }
 }

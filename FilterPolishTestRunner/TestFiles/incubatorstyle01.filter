@@ -1,0 +1,83 @@
+﻿#------------------------------------
+# Basic Highlight
+#------------------------------------
+
+var sBlack = 0 0 0 255;
+var sWhite = 255 255 255 255;
+
+var t1icon = Star;
+
+var t1col = Red;
+var t2col = Yellow;
+var t3col = White;
+var t4col = Grey;
+
+#------------------------------------
+# Basic Strategies
+#------------------------------------
+
+# Basic markup strategy for item tiering
+Style Marking
+{
+	var icon = Square;
+	# ex-tier
+	Func T1 () {SetFontSize 45; PlayAlertSound 6 300; PlayEffect t1col; MinimapIcon 0 t1col Star; };
+	# divine tier
+	Func T2 () {SetFontSize 45; PlayAlertSound 1 300; PlayEffect t2col; MinimapIcon 1 t1col icon; };
+	# chaos tier
+	Func T3 () {SetFontSize 45; PlayAlertSound 2 300; PlayEffect t3col; MinimapIcon 1 t3col icon; };
+	# alteration tier
+	Func T4h (){SetFontSize 45; PlayEffect t4col; MinimapIcon 2 t4col icon; };
+	Func T4 () {SetFontSize 45; PlayEffect t4col Temp; };
+	# low tier
+	Func T5 () {SetFontSize 40; PlayEffect t4col Temp; MinimapIcon 2 t4col icon; };
+
+	Func T6 () {SetFontSize 40; };
+}
+
+# Basic color strategy for item tiering
+Style BaseTiering : Marking
+{
+	var icon = Triangle;
+
+	# ex tier
+	var T1c = 255 0 0 255; 		# Ex
+	Func T1 () 		{ SetTextColor T1c; SetBorderColor T1c; SetBackgroundColor sWhite; };
+
+	# divine tier
+	var T2c = 240 90 35 255; 	# Divine
+	Func T2 () 		{ SetBackgroundColor T2c; SetBorderColor sWhite; SetTextColor sWhite; };
+	
+	# chaos tier - variations
+	var T3c = 249 150 25 255;	# Chaos
+	Func T3 () 		{ SetBackgroundColor T3c; SetBorderColor sBlack; SetTextColor sBlack; };
+
+	# alteration tier - variations
+	var T4c = 210 178 135 255; 	# Alteration
+	Func T4 () 		{ SetBackgroundColor T4c; SetTextColor sBlack; SetBorderColor sBlack; };
+
+	# low tier 1
+	Func T5 () 		{ SetTextColor acc; SetBorderColor acc; SetBackgroundColor sBlack; };
+
+	# low tier 2
+	Func T6 () 		{ SetTextColor acc; SetBorderColor sBlack; };
+}
+
+Style BasicIntegration
+{
+	Apply (Basetiering => Incubator);
+
+	# functions should be case insensetive. 
+
+	#AutoApply();
+	#Apply (Marking => Incubator);
+	#Apply (Marking => Incubator);
+	#Disable(BasicIntegration.Basic);
+	#Apply NewStyle(BaseTiering, Marking => Incubator);
+
+	#BaseTiering.Apply(Incubator);
+	#Incubator => BaseTiering;
+	#Apply(Incubator => BaseTiering);
+	#Apply Incubators (Incubators){BaseTiering};
+	#Apply Incubators (){BaseTiering => Incubator};
+}

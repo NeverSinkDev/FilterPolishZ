@@ -14,12 +14,15 @@ namespace FilterExo.Core.PreProcess.Strategies
         public bool Match(ExpressionBuilder builder)
         {
             var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
-            return descriptor == "Rule";
+            var validDescriptors = new HashSet<string>(){ "Show", "Hide", "Cont", "ConH" };
+
+            return validDescriptors.Contains(descriptor);
         }
 
         public void Execute(ExpressionBuilder builder)
         {
             var result = new List<ExoExpressionCommand>();
+            var descriptor = builder.Owner.ReadCursor.GetFirstPropertyDescriptor();
 
             // treat a whole entry
             for (int j = 0; j < builder.expressions.Count; j++)
@@ -60,14 +63,16 @@ namespace FilterExo.Core.PreProcess.Strategies
                 result.Add(filterCommand);
             }
 
-            // Resolve rule into a "Show" filter entry.
-            var newEntry = new ExoBlock();
-            newEntry.Parent = builder.Owner.WriteCursor;
-            builder.Owner.WriteCursor.Scopes.Add(newEntry);
+            // Resolve rule into an ExoBlock
+            var block = new ExoBlock {Parent = builder.Owner.WriteCursor};
 
+            builder.Owner.WriteCursor.Scopes.Add(block);
+
+            block.Name = builder.Owner.ReadCursor.PropertyExpression[1].Value.ToLower();
+            block.DescriptorCommand = descriptor;
             foreach (var item in result)
             {
-                newEntry.AddCommand(item);
+                block.AddCommand(item);
             }
         }
     }

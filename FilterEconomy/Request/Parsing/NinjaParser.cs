@@ -14,6 +14,7 @@ namespace FilterEconomy.Request.Parsing
     {
         public static IEnumerable<NinjaItem> ParseNinjaString(string input, string branchKey)
         {
+            var lowerCaseKey = branchKey.ToLower();
             dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(input, new JsonSerializerSettings() { CheckAdditionalContent = true });
 
             if (jsonObj == null)
@@ -21,7 +22,7 @@ namespace FilterEconomy.Request.Parsing
                 yield break;
             }
 
-            if (branchKey.ToLower() == "currency" || branchKey.ToLower() == "fragments")
+            if (lowerCaseKey == "currency" || lowerCaseKey == "fragments")
             {
                 JObject jo = new JObject(jsonObj);
                 CurrencyNinjaItem nCItem = new CurrencyNinjaItem();
@@ -44,6 +45,8 @@ namespace FilterEconomy.Request.Parsing
                 }
 
                 JsonConvert.PopulateObject(job.ToString(), nItem);
+                nItem = NinjaParsingFixes.Process(lowerCaseKey, nItem);
+
                 yield return nItem;
             }
         }

@@ -84,7 +84,7 @@ namespace FilterEconomy.Processor
                 var currentRule = this.EconomyRules[i];
                 currentResult = null;
 
-                if (targetTier == currentRule.RuleGroup || targetTier == "*")
+                if (targetTier == currentRule.RuleGroup || targetTier == "ANY" || targetTier == "*")
                 {
                     currentResult = currentRule.Execute(group, basetype, processorData);
 

@@ -13,6 +13,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
+using FilterExo.Core.Process;
+using FilterExo.Core.Process.GlobalFunctions;
+using FilterExo.Core.Process.GlobalFunctions.StyleFunctions;
+using FilterExo.Core.Process.StyleResoluton;
 using static FilterExo.FilterExoConfig;
 using static FilterPolishUtil.TraceUtility;
 
@@ -21,8 +26,22 @@ namespace FilterExo.Model
     [DebuggerDisplay("{debugView}")]
     public class ExoBlock
     {
-        private string debugView => $"{this.Type.ToString()} C:{this.Scopes.Count} DATA:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count}";
+        static ExoBlock()
+        {
+            new AddTimeCommentFunction().Integrate();
+            new TypeTagFunction().Integrate();
+            new TierTagFunction().Integrate();
+            new AutoTierFunction().Integrate();
+            new AutoTagFunction().Integrate();
+            new EmptyFunction().Integrate();
+            new ApplyStyleFunction().Integrate();
+        }
 
+        public string debugView => $"{this.Name} C:{this.Scopes.Count} D:{this.Mutators.Count + this.Commands.Count} VF:{this.Variables.Count + this.Functions.Count} #:{this.SimpleComments.Count} {this.Type.ToString()}";
+
+        // Descriptive properties
+        public string Name { get; internal set; }
+        public string DescriptorCommand { get; set; }
         public ExoFilterType Type = ExoFilterType.generic;
 
         // Hierarchical elements
@@ -31,53 +50,87 @@ namespace FilterExo.Model
 
         // functions, properties, interfaces that get applied to all children.
         public List<ExoExpressionCommand> Mutators { get; set; } = new List<ExoExpressionCommand>();
-
         public Dictionary<string, ExoAtom> Variables { get; set; } = new Dictionary<string, ExoAtom>();
         public Dictionary<string, ExoAtom> Functions { get; set; } = new Dictionary<string, ExoAtom>();
         public List<ExoExpressionCommand> Commands { get; set; } = new List<ExoExpressionCommand>();
 
+        public bool Enabled = true;
+
+        public List<ExoBlock> LinkedBlocks { get; set; } = new List<ExoBlock>();
+
+        public static Dictionary<string, ExoAtom> GlobalFunctions { get; set; } = new Dictionary<string, ExoAtom>();
+
         public List<string> SimpleComments = new List<string>();
 
-        private List<ExoExpressionCommand> TemporaryCommandStorage { get; set; } = new List<ExoExpressionCommand>();
+        // Necessary Evil
+        private List<ExoExpressionCommand> ExecutionQueue { get; set; } = new List<ExoExpressionCommand>();
 
-        public IEnumerable<List<string>> ResolveAndSerialize()
+        public IEnumerable<List<string>> ResolveAndSerializeStyle()
+        {
+            var linkedResults = new List<List<string>>();
+            foreach (var linkedBlock in this.LinkedBlocks)
+            {
+                var linkedBlockResults = linkedBlock.ResolveAndSerializeStyle();
+                foreach (var linkedBlockResult in linkedBlockResults)
+                {
+                    linkedResults.Add(linkedBlockResult);
+                }
+            }
+
+            List<ExoExpressionCommand> storage = new List<ExoExpressionCommand>();
+
+            var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
+            var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
+            return EIEnumerable.YieldTogether(linkedResults, mutatorCommands, directCommands);
+        }
+
+        public IEnumerable<List<string>> ResolveAndSerialize(ExoStyleDictionary styleDict)
         {
             if (this.Type == ExoFilterType.comment)
             {
-                return this.SimpleComments.Select(x => new List<string>() { x });
+                return this.SimpleComments.Select(x => new List<string>() { x }).ToList();
             }
             else
             {
+                var linkedResults = new List<List<string>>();
+                foreach (var linkedBlock in this.LinkedBlocks)
+                {
+                    var linkedBlockResults = linkedBlock.ResolveAndSerializeStyle();
+                    foreach (var linkedBlockResult in linkedBlockResults)
+                    {
+                        linkedResults.Add(linkedBlockResult);
+                    }
+                }
+
                 var mutatorCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.mutator).ToList();
                 var directCommands = ResolveAndSerializeSingleSection(ExoExpressionCommandSource.direct).ToList();
 
-                return EIEnumerable.YieldTogether(mutatorCommands, directCommands);
-            }
+                List<List<string>> styleCommands = new List<List<string>>();
+                if (styleDict != null)
+                {
+                    styleCommands = StyleResolutionStrategy.Execute(this, styleDict);
+                }
 
+                return EIEnumerable.YieldTogether(linkedResults, mutatorCommands, directCommands, styleCommands);
+            }
         }
 
         public IEnumerable<List<string>> ResolveAndSerializeSingleSection(ExoExpressionCommandSource target)
         {
-            this.InitializeTemporaryStorage(target);
+            this.InitializeExecutionQueue(target);
 
-            var count = TemporaryCommandStorage.Count;
+            var count = ExecutionQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ExoExpressionCommand comm = TemporaryCommandStorage[i];
+                ExoExpressionCommand comm = ExecutionQueue[i];
                 comm.ExecutionContext = i;
-                comm.Exectutor = this;
-
-                if (comm.ContainerCommand)
-                {
-                    count = TemporaryCommandStorage.Count;
-                    continue;
-                }
+                comm.Executor = this;
 
                 var result = comm.Serialize();
 
                 if (comm.ContainerCommand)
                 {
-                    count = TemporaryCommandStorage.Count;
+                    count = ExecutionQueue.Count;
                     continue;
                 }
 
@@ -90,12 +143,40 @@ namespace FilterExo.Model
             }
         }
 
+        // DATA MANAGEMENT
+
+        public bool IsVariable(string key)
+        {
+            key = key.ToLower();
+            if (this.Variables.ContainsKey(key))
+            {
+                return true;
+            }
+
+            foreach (var linkedBlock in this.LinkedBlocks)
+            {
+                if (linkedBlock.IsVariable(key))
+                {
+                    return true;
+                }
+            }
+
+            if (this.Type == ExoFilterType.root)
+            {
+                return false;
+            }
+
+            return this.GetParent().IsVariable(key);
+        }
+
         public void StoreVariable(string name, List<string> variableContent)
         {
             Check(FilterCore.FilterGenerationConfig.TierTagSort.ContainsKey(name), "variable uses reserved name!");
             Check(FilterCore.FilterGenerationConfig.LineTypesSort.ContainsKey(name), "variable uses reserved name!");
             Check(FilterCore.FilterGenerationConfig.ValidRarities.Contains(name), "variable uses reserved name!");
             Check(name.ContainsSpecialCharacters(), "variable uses invalid characters!");
+
+            name = name.ToLower();
 
             // we treat the variable as a command/expression to allow internal simplifications
             var command = new ExoExpressionCommand(variableContent);
@@ -108,16 +189,123 @@ namespace FilterExo.Model
 
         public ExoAtom GetVariable(string key)
         {
-            return GetInternalVariable(key);
+            key = key.ToLower();
+            if (this.Variables.ContainsKey(key))
+            {
+                return this.Variables[key];
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsVariable(key))
+                {
+                    return block.GetVariable(key);
+                }
+            }
+
+            return this.GetParent().GetVariable(key);
         }
 
         public ExoAtom GetFunction(string key)
         {
-            return GetInternalFunction(key);
+            key = key.ToLower();
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return GlobalFunctions[key];
+            }
+
+            if (this.Functions.ContainsKey(key))
+            {
+                return this.Functions[key];
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                if (block.IsFunction(key))
+                {
+                    return block.GetFunction(key);
+                }
+            }
+
+            return this.GetParent().GetFunction(key);
+        }
+
+        public IEnumerable<ExoFunction> YieldLinkedFunctionsRegex(string key)
+        {
+            var funcs = new List<ExoFunction>();
+
+            foreach (var function in this.Functions)
+            {
+                if (Regex.IsMatch(function.Key, key))
+                {
+                    funcs.Add(this.Functions[function.Key].GetFunction(this));
+                }
+            }
+
+            if (this.Parent != null)
+            {
+                foreach (var func in this.Parent.YieldLinkedFunctionsRegex(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                foreach (var func in block.YieldLinkedFunctionsRegex(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            return funcs.Distinct();
+        }
+
+        public IEnumerable<ExoFunction> YieldLinkedFunctions(string key)
+        {
+            key = key.ToLower();
+            var funcs = new List<ExoFunction>();
+
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return new List<ExoFunction>() { GlobalFunctions[key].GetFunction(this)};
+            }
+
+            if (this.Functions.ContainsKey(key))
+            {
+                funcs.Add(this.Functions[key].GetFunction(this));
+            }
+
+            if (this.Parent != null)
+            {
+                foreach (var func in this.Parent.YieldLinkedFunctions(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            foreach (var block in this.LinkedBlocks)
+            {
+                foreach (var func in block.YieldLinkedFunctions(key))
+                {
+                    funcs.Add(func);
+                }
+            }
+
+            return funcs.Distinct();
         }
 
         public IEnumerable<ExoExpressionCommand> YieldMutators()
         {
+            foreach (var block in this.LinkedBlocks)
+            {
+                var mutators = block.YieldMutators();
+                foreach (var mutator in mutators)
+                {
+                    yield return mutator;
+                }
+            }
+
             if (this.Type != ExoFilterType.root)
             {
                 var parentMutators = this.GetParent().YieldMutators();
@@ -135,6 +323,12 @@ namespace FilterExo.Model
 
         internal bool IsFunction(string key)
         {
+            key = key.ToLower();
+            if (GlobalFunctions.ContainsKey(key))
+            {
+                return true;
+            }
+
             if (this.Functions.ContainsKey(key))
             {
                 return true;
@@ -148,39 +342,70 @@ namespace FilterExo.Model
             return this.GetParent().IsFunction(key);
         }
 
-        public bool IsVariable(string key)
+        public void AddCommand(ExoExpressionCommand command)
         {
-            if (this.Variables.ContainsKey(key))
-            {
-                return true;
-            }
-
-            if (this.Type == ExoFilterType.root)
-            {
-                return false;
-            }
-
-            return this.GetParent().IsVariable(key);
+            this.Commands.Add(command);
+            command.SetParent(this);
         }
 
-        private ExoAtom GetInternalVariable(string key)
-        {
-            if (this.Variables.ContainsKey(key))
-            {
-                return this.Variables[key];
-            }
+        // NAVIGATION FUNCTIONS
 
-            return this.GetParent().GetVariable(key);
+        public IEnumerable<ExoBlock> FindChildSection(string key)
+        {
+            foreach (var exoBlock in this.Scopes)
+            {
+                if (string.Equals(key, exoBlock.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return exoBlock;
+                }
+
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
         }
 
-        private ExoAtom GetInternalFunction(string key)
+        public IEnumerable<ExoBlock> FindChildSectionRegex(string key)
         {
-            if (this.Functions.ContainsKey(key))
+            foreach (var exoBlock in this.Scopes)
             {
-                return this.Functions[key];
-            }
+                if (exoBlock.Type == ExoFilterType.comment)
+                {
+                    continue;
+                }
 
-            return this.GetParent().GetFunction(key);
+                if (Regex.IsMatch(key, exoBlock.Name.ToLower()))
+                {
+                    yield return exoBlock;
+                }
+
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
+        }
+
+        public IEnumerable<ExoBlock> FindChildSectionFromRoot(string key)
+        {
+            var target = this.GetRoot();
+
+            foreach (var exoBlock in target.Scopes)
+            {
+                if (string.Equals(key, exoBlock.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return exoBlock;
+                }
+
+                var childRes = exoBlock.FindChildSection(key);
+                foreach (var res in childRes)
+                {
+                    yield return res;
+                }
+            }
         }
 
         public ExoBlock GetParent()
@@ -194,25 +419,24 @@ namespace FilterExo.Model
             return this.Parent;
         }
 
-        public void AddCommand(ExoExpressionCommand command)
+        public ExoBlock GetRoot()
         {
-            this.Commands.Add(command);
-            command.SetParent(this);
+            if (this.Type == ExoFilterType.root)
+            {
+                return this;
+            }
+            else
+            {
+                return this.Parent.GetRoot();
+            }
         }
 
-        public List<string> Debug_GetSummary()
-        {
-            var results = new List<string>();
-            results.Add($"TYPE: {this.Type.ToString()} // CHILDREN: {this.Scopes.Count}");
-            results.Add($"VARIABLES: {string.Join(" ", this.Variables.Keys)}");
-            results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
-            return results;
-        }
+        // RUNTIME / EXECUTION
 
-        public void InsertCommands(List<List<ExoAtom>> funcRes, ExoExpressionCommand exoExpressionCommand)
+        public void QueueRuntimeCommands(List<List<ExoAtom>> funcRes, ExoExpressionCommand exoExpressionCommand)
         {
             var context = exoExpressionCommand.ExecutionContext + 1;
-            TemporaryCommandStorage.InsertRange(context,
+            ExecutionQueue.InsertRange(context,
                     funcRes.Select(x => new ExoExpressionCommand(x)
                     {
                         DerivedCommand = true,
@@ -221,21 +445,23 @@ namespace FilterExo.Model
                     }));
         }
 
-        private void InitializeTemporaryStorage(ExoExpressionCommandSource sourceType)
+        private void InitializeExecutionQueue(ExoExpressionCommandSource sourceType)
         {
-            this.TemporaryCommandStorage = new List<ExoExpressionCommand>();
+            this.ExecutionQueue = new List<ExoExpressionCommand>();
             switch (sourceType)
             {
                 case ExoExpressionCommandSource.direct:
                     foreach (var item in this.Commands)
                     {
-                        this.TemporaryCommandStorage.Add(item);
+                        this.ExecutionQueue.Add(item);
+                        item.ContainerCommand = false;
                     }
                     break;
                 case ExoExpressionCommandSource.mutator:
                     foreach (var item in this.YieldMutators())
                     {
-                        this.TemporaryCommandStorage.Add(item);
+                        this.ExecutionQueue.Add(item);
+                        item.ContainerCommand = false;
                     }
                     break;
                 case ExoExpressionCommandSource.style:
@@ -243,19 +469,15 @@ namespace FilterExo.Model
             }
         }
 
-        private IEnumerable<ExoExpressionCommand> GetCommandSource(ExoExpressionCommandSource sourceType)
+        // DEBUG
+
+        public List<string> Debug_GetSummary()
         {
-            switch (sourceType)
-            {
-                case ExoExpressionCommandSource.direct:
-                    return this.Commands;
-                case ExoExpressionCommandSource.mutator:
-                    return this.Mutators;
-                case ExoExpressionCommandSource.style:
-                    return this.Commands;
-                default:
-                    throw new Exception("unknown command source!");
-            }
+            var results = new List<string>();
+            results.Add($"TYPE: {this.Type.ToString()} // CHILDREN: {this.Scopes.Count}");
+            results.Add($"VARIABLES: {string.Join(" ", this.Variables.Keys)}");
+            // results.AddRange(this.Commands.Select(x => x.SerializeDebug()));
+            return results;
         }
     }
 }

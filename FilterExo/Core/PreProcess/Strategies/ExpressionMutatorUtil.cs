@@ -20,19 +20,33 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             foreach (var item in splitmutators)
             {
-                ExoExpressionCommand expr;
-                if (item.Count == 1 && block.IsFunction(item[0].Value))
+                if (item.Count == 0)
                 {
-                    expr = new ExoExpressionCommand(new List<string>() { item[0].Value, "(", ")" });
+                    continue;
+                }
+
+                var potentialSection = block.FindChildSectionFromRoot(item[0].Value).ToList();
+
+                ExoExpressionCommand expr;
+                if (potentialSection.Count == 1)
+                {
+                    block.LinkedBlocks.Add(potentialSection[0]);
+                    return;
+                }
+                else if (item.Count == 1 && block.IsFunction(item[0].Value))
+                {
+                    expr = new ExoExpressionCommand(new List<string> { item[0].Value, "(", ")" });
                 }
                 else
                 {
                     expr = new ExoExpressionCommand(item);
                 }
-
-                expr.Parent = block;
-                expr.Source = FilterExoConfig.ExoExpressionCommandSource.mutator;
-                block.Mutators.Add(expr);
+                if (expr.Values.Count > 0)
+                {
+                    expr.Parent = block;
+                    expr.Source = FilterExoConfig.ExoExpressionCommandSource.mutator;
+                    block.Mutators.Add(expr);
+                }
             }
         }
     }

@@ -3,47 +3,99 @@ using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using FilterExo.Core.Process.GlobalFunctions;
 
 namespace FilterExo.Model
 {
+    public enum ExoFunctionType
+    {
+        userdefined,
+        global
+    }
+
     public class ExoFunction
     {
+        public ExoFunctionType Type = ExoFunctionType.userdefined;
+
+        // global function specific params
+        public IExoGlobalFunction GlobalFunctionLink;
+
+        // general parameters
         public string Name;
         public ExoBlock Content;
         public List<string> Variables = new List<string>();
 
         public IEnumerable<List<ExoAtom>> Execute(Branch<ExoAtom> atom, ExoExpressionCommand caller)
         {
-            TraceUtility.Check(atom.Content != null, "called function child has content!");
-
-            // refactor this! currently cleans variables from previous runs
-            foreach (var item in Variables)
+            switch (Type)
             {
-                Content.Variables.Remove(item);
+                case ExoFunctionType.userdefined:
+                    return ExecuteUserDefinedFunction();
+                case ExoFunctionType.global:
+                    return ExecuteGlobalFunction();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
-            if (splitChildren.Count == 1 && splitChildren[0].Count == 0)
+            // for the "normal" functions
+            IEnumerable<List<ExoAtom>> ExecuteGlobalFunction()
             {
-                splitChildren.Clear();
+                TraceUtility.Check(atom.Content != null, "called function child has content!");
+
+                var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
+                if (splitChildren.Count == 1 && splitChildren[0].Count == 0)
+                {
+                    splitChildren.Clear();
+                }
+
+                var variables = new List<ExoAtom>();
+
+                // adds variables in function
+                for (int i = 0; i < splitChildren.Count; i++)
+                {
+                    var vari = splitChildren[i];
+                    var flattened = ExoExpressionCommand.FlattenBranch(vari);
+                    variables.Add(new ExoAtom(flattened));
+                }
+
+                yield return GlobalFunctionLink.Execute(variables, caller);
             }
 
-            TraceUtility.Check(splitChildren.Count != Variables.Count, "function call has unequal children definition");
-
-            // adds variables int function
-            for (int i = 0; i < splitChildren.Count; i++)
+            // for the "normal" functions
+            IEnumerable<List<ExoAtom>> ExecuteUserDefinedFunction()
             {
-                var vari = splitChildren[i];
-                var name = Variables[i];
+                TraceUtility.Check(atom.Content != null, "called function child has content!");
 
-                var flattened = ExoExpressionCommand.FlattenBranch(vari);
-                Content.Variables.Add(name, new ExoAtom(flattened));
-            }
+                // refactor this! currently cleans variables from previous runs
+                foreach (var item in Variables)
+                {
+                    Content.Variables.Remove(item.ToLower());
+                }
 
-            foreach (var item in Content.Commands)
-            {
-                yield return item.ResolveExpression();
+                var splitChildren = atom.Leaves.SplitDivide(x => x.Content?.GetRawValue() == ",");
+                if (splitChildren.Count == 1 && splitChildren[0].Count == 0)
+                {
+                    splitChildren.Clear();
+                }
+
+                TraceUtility.Check(splitChildren.Count != Variables.Count, "function call has unequal children definition");
+
+                // adds variables in function
+                for (int i = 0; i < splitChildren.Count; i++)
+                {
+                    var vari = splitChildren[i];
+                    var name = Variables[i].ToLower();
+
+                    var flattened = ExoExpressionCommand.FlattenBranch(vari);
+                    Content.Variables.Add(name, new ExoAtom(flattened));
+                }
+                foreach (var item in Content.Commands)
+                {
+                    item.Executor = caller.Executor;
+                    yield return item.ResolveExpression();
+                }
             }
         }
     }

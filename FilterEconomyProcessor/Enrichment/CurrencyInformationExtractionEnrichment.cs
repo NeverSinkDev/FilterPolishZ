@@ -2,10 +2,7 @@
 using FilterEconomy.Model;
 using FilterPolishUtil.Collections;
 using FilterPolishUtil.Model;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace FilterEconomyProcessor.Enrichment
 {
@@ -18,9 +15,9 @@ namespace FilterEconomyProcessor.Enrichment
             {
                 var cPrice = data.Where(x => x.Name == "Exalted Orb")?.FirstOrDefault()?.CVal;
 
-                if (EconomyRequestFacade.GetInstance().IsEarlyLeague() && cPrice > 60)
+                if (EconomyRequestFacade.GetInstance().IsEarlyLeague() && cPrice > 35)
                 {
-                    cPrice = 60;
+                    cPrice = 35;
                 }
 
                 if (cPrice != null && cPrice > 30)

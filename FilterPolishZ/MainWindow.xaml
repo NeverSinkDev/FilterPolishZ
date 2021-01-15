@@ -77,7 +77,13 @@
 
                             <ToolBarTray Grid.Row="0" Background="Transparent">
                                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" Background="Transparent">
-                                    
+
+                                    <Button ToolTip="Reload Filter" Click="Reload_Filter">
+                                        <materialDesign:PackIcon Kind="Reload" />
+                                    </Button>
+
+                                    <Separator/>
+
                                     <Button ToolTip="Open seed file" Click="SelectSeedFilterFile">
                                         <materialDesign:PackIcon Kind="FileUploadOutline" />
                                     </Button>
@@ -128,7 +134,10 @@
                                     <Button ToolTip="Copy filters from output to project folder" Click="CopyResultsToGitHubFolder">
                                         <materialDesign:PackIcon Kind="Git" />
                                     </Button>
-                                    <Separator/>
+                                        <Button ToolTip="Open Current Economy Folder" Click="OpenEconomyDataFolder">
+                                        <materialDesign:PackIcon Kind="FolderNetwork" />
+                                    </Button>
+                                        <Separator/>
                                         <Button ToolTip="Load Metafilter DebugMode" Click="LoadMetaFilter">
                                             <materialDesign:PackIcon Kind="Gavel" />
                                         </Button>

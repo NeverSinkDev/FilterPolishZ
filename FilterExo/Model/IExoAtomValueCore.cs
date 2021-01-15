@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FilterPolishUtil.Collections;
 
 namespace FilterExo.Model
 {
@@ -15,7 +16,7 @@ namespace FilterExo.Model
 
     public class HashSetValueCore : IExoAtomValueCore
     {
-        public HashSet<string> Values;
+        public OrderedSet<string> Values;
 
         public string GetRawValue()
         {

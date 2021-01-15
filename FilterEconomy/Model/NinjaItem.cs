@@ -53,6 +53,9 @@ namespace FilterEconomy.Model
         [JsonProperty("stackSize")]
         public int StackSize { get; set; }
 
+        [JsonProperty("EQualityType")]
+        public string EQualityType { get; set; }
+
         //[JsonProperty("sparkline")]
         //public int[] SparkLine {get; set;}
 

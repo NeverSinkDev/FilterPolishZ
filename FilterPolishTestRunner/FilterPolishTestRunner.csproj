@@ -19,4 +19,22 @@
     <ProjectReference Include="..\FilterExo\FilterExo.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestFiles\alphafilter.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\alphastyle.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\basicstyle.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\incubatorfilter01.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\incubatorstyle01.filter">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

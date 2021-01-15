@@ -1,4 +1,5 @@
-﻿using FilterCore.Constants;
+﻿using System;
+using FilterCore.Constants;
 using FilterCore.Line;
 using FilterDomain.LineStrategy;
 using System.Collections.Generic;
@@ -8,6 +9,24 @@ namespace FilterCore.Entry
 {
     public static class EFilterEntry
     {
+        public static FilterEntry FindByTag(this List<FilterEntry> me, string tag)
+        {
+            foreach (var entry in me)
+            {
+                if (entry?.Header?.TierTags == null)
+                {
+                    continue;
+                }
+
+                if (entry.Header.TierTags.ContainsKey(tag))
+                {
+                    return entry;
+                }
+            }
+
+            return null;
+        }
+
         public static IEnumerable<FilterLine<T>> GetLines<T>(this IFilterEntry me, string ident) where T : class, ILineValueCore
         {
             if (me.Header.Type != FilterGenerationConfig.FilterEntryType.Content)

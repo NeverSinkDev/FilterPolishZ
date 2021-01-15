@@ -79,7 +79,11 @@ namespace FilterExo
             { "Text", "SetTextColor" },
             { "TX", "SetTextColor" },
 
+            { "Font", "SetFontSize" },
+
             { "BT", "BaseType" },
+            { "Base", "BaseType" },
+
             { "Mod", "HasExplicitMod" }
         };
     }

@@ -15,7 +15,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> FilterTierLists { get; set; } = new HashSet<string>()
         {
-            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "rr", "expl->synth", "expl->fract"
+            "uniques", "divination", "currency", "currency->deliriumorbs", "fragments", "unique->maps", "rare->shaper", "rare->elder", "rare->hunter", "rare->crusader", "rare->redeemer", "rare->warlord", "generalcrafting", "normalcraft->i86", "currency->fossil", "currency->incubators", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "rr", "expl->synth", "expl->fract", "unique->replicas", "gems"
         };
 
         public static Dictionary<string, MatrixTieringMode> MatrixTiersStrategies { get; set; } = new Dictionary<string, MatrixTieringMode>()
@@ -58,6 +58,7 @@ namespace FilterPolishUtil
         {
                 new Tuple<string, string, string>("currency", "currency", "https://poe.ninja/api/data/currencyoverview?type=Currency"),
                 new Tuple<string, string, string>("fragments", "fragments", "https://poe.ninja/api/data/currencyoverview?type=Fragment"),
+                new Tuple<string, string, string>("gems", "gems", "https://poe.ninja/api/data/itemoverview?type=SkillGem"),
                 new Tuple<string, string, string>("divination", "divination", "https://poe.ninja/api/data/itemoverview?type=DivinationCard"),
                 new Tuple<string, string, string>("unique->maps", "uniqueMaps", "https://poe.ninja/api/data/itemoverview?type=UniqueMap"),
                 new Tuple<string, string, string>("currency->fossil", "fossil", "https://poe.ninja/api/data/itemoverview?type=Fossil"),
@@ -72,6 +73,11 @@ namespace FilterPolishUtil
                 new Tuple<string, string, string>("currency->oil", "oil", "https://poe.ninja/api/data/itemoverview?type=Oil"),
                 new Tuple<string, string, string>("vials", "vials", "https://poe.ninja/api/data/itemoverview?type=Vial"),
                 new Tuple<string, string, string>("currency->deliriumorbs", "deliriumorbs", "https://poe.ninja/api/data/itemoverview?type=DeliriumOrb")
+        };
+
+        public static List<string> AdditionalItemOverviewSections { get; set; } = new List<string>
+        {
+            "unique->replicas"
         };
 
         /// <summary>
@@ -118,7 +124,15 @@ namespace FilterPolishUtil
         /// <summary>
         /// Useful for easy acquiring the section names above, without redundancy
         /// </summary>
-        public static List<string> TierableEconomySections => FileRequestData.Select(x => x.Item1).Distinct().ToList();
+        public static List<string> TierableEconomySections
+        {
+            get
+            {
+                var sections = FileRequestData.Select(x => x.Item1).Distinct().ToList();
+                sections.AddRange(AdditionalItemOverviewSections);
+                return sections;
+            }
+        }
 
         public static void AdjustPricingInformation()
         {
@@ -127,6 +141,10 @@ namespace FilterPolishUtil
             // Uniques
             UniqueT1BreakPoint = UniqueT1Base + UniqueExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
             UniqueT2BreakPoint = UniqueT2Base + UniqueExaltedOrbInfluence * T2ExaltedInfluence * ExaltedOrbPrice;
+
+            // Gem
+            GemT1BreakPoint = GemT1Base + GemExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
+            GemT2BreakPoint = GemT2Base + GemExaltedOrbInfluence * T2ExaltedInfluence * ExaltedOrbPrice;
 
             // BaseTypes
             BaseTypeT1BreakPoint = BaseTypeT1Base + BasesExaltedOrbInfluence * T1ExaltedInfluence * ExaltedOrbPrice;
@@ -152,7 +170,7 @@ namespace FilterPolishUtil
         }
 
         // Prices scale based on the exalted orb price. This mostly affects T1 prices
-        private static float T1ExaltedInfluence = 0.70f;
+        private static float T1ExaltedInfluence = 0.80f;
         private static float T2ExaltedInfluence = 0.2f;
         private static float T3ExaltedInfluence = 0.05f;
         private static float T4ExaltedInfluence = 0.02f;
@@ -167,8 +185,8 @@ namespace FilterPolishUtil
         public static float UniqueT1BreakPoint;
         public static float UniqueT2BreakPoint;
 
-        private static float UniqueT1Base = 20f;
-        private static float UniqueT2Base = 5f;
+        private static float UniqueT1Base = 18f;
+        private static float UniqueT2Base = 6f;
 
         // Uniques have a bunch of special conditions, that are used as pricing multipliers
         public static float UncommonAspectMultiplier = 2f;      // Items with several versions and one uncommon version need to reach X the T2 breakpoint
@@ -183,8 +201,17 @@ namespace FilterPolishUtil
         public static float BaseTypeT1BreakPoint;
         public static float BaseTypeT2BreakPoint;
 
-        private static float BaseTypeT1Base = 25f;
-        private static float BaseTypeT2Base = 6.5f;
+        private static float BaseTypeT1Base = 30f;
+        private static float BaseTypeT2Base = 6f;
+
+        // Gems are priced based on their minimum economy value, making their real value sometimes more expenisve, that's why we keep their threshholds a bit lower
+        private static float GemExaltedOrbInfluence = 0.1f;
+
+        public static float GemT1BreakPoint;
+        public static float GemT2BreakPoint;
+
+        private static float GemT1Base = 25f;
+        private static float GemT2Base = 6f;
 
         // Divination cards are tricky. You have to consider their special nature of not being useful until a set is complete and that it takes an extra overhead to purify their value.
         private static float DivinationExaltedOrbInfluence = 0.12f;
@@ -194,13 +221,13 @@ namespace FilterPolishUtil
         public static float DiviT3BreakPoint;
         public static float DiviT5BreakPoint;
 
-        private static float DiviT1Base = 25f;
-        private static float DiviT2Base = 6.5f;
+        private static float DiviT1Base = 30f;
+        private static float DiviT2Base = 6f;
         private static float DiviT3Base = 2f;
         private static float DiviT5Base = 0.5f;
 
         // Fossils and scarabs are often predictable -drops-. Predictable drops are often best kept at high threshholds. Predictability ruins the surprise/excitement
-        private static float MiscExaltedOrbInfluence = 0.05f;
+        private static float MiscExaltedOrbInfluence = 0.1f;
 
         public static float MiscT1BreakPoint;
         public static float MiscT2BreakPoint;
@@ -208,7 +235,7 @@ namespace FilterPolishUtil
         public static float MiscT4BreakPoint;
 
         private static float MiscT1Base = 35f;
-        private static float MiscT2Base = 8f;
+        private static float MiscT2Base = 6f;
         private static float MiscT3Base = 2.5f;
         private static float MiscT4Base = 0.75f;
 

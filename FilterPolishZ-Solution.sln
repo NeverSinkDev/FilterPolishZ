@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9D5F1CAB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterPolishTestRunner", "FilterPolishTestRunner\FilterPolishTestRunner.csproj", "{09EC132D-F618-46E7-9261-2E909762FA31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterExoGenerator", "FilterExoGenerator\FilterExoGenerator.csproj", "{C17762B0-31E6-4374-8101-045CBE1D3483}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{09EC132D-F618-46E7-9261-2E909762FA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09EC132D-F618-46E7-9261-2E909762FA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09EC132D-F618-46E7-9261-2E909762FA31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C17762B0-31E6-4374-8101-045CBE1D3483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C17762B0-31E6-4374-8101-045CBE1D3483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C17762B0-31E6-4374-8101-045CBE1D3483}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C17762B0-31E6-4374-8101-045CBE1D3483}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

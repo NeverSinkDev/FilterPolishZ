@@ -6,8 +6,6 @@ using FilterPolishUtil.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterEconomyProcessor.RuleSet
 {
@@ -25,17 +23,9 @@ namespace FilterEconomyProcessor.RuleSet
 
             this.AddSafetyRule();
 
-            this.AddRule("ANCHOR", "ANCHOR",
-                new Func<string, bool>((string s) =>
-                {
-                    return this.Item.HasAspect("AnchorAspect");
-                }));
+            this.AddRule("ANCHOR", "ANCHOR", s => this.Item.HasAspect("AnchorAspect"));
 
-            this.AddRule("TEMPANCHOR", "ANCHOR",
-                new Func<string, bool>((string s) =>
-                {
-                    return this.Item.HasAspect("AnchorAspect");
-                }));
+            this.AddRule("TEMPANCHOR", "ANCHOR", s => this.Item.HasAspect("AnchorAspect"));
         }
 
         public RuleSetBuilder SetSection(string s)
@@ -65,6 +55,20 @@ namespace FilterEconomyProcessor.RuleSet
         public RuleSetBuilder UseCustomQuery(System.Func<string, FilterPolishUtil.Collections.ItemList<FilterEconomy.Model.NinjaItem>> customQuery)
         {
             this.RuleSet.DefaultItemQuery = customQuery;
+            return this;
+        }
+
+        public RuleSetBuilder AddRule(string ruleAndTier, Func<string, bool> rule, string group = default(string), string nextgroup = default(string))
+        {
+            this.RuleSet.EconomyRules.Add(new FilterEconomyRule()
+            {
+                RuleName = ruleAndTier,
+                TargetTier = ruleAndTier,
+                Rule = rule,
+                RuleGroup = group,
+                NextRuleGroupToken = nextgroup
+            });
+
             return this;
         }
 
@@ -137,37 +141,34 @@ namespace FilterEconomyProcessor.RuleSet
         public RuleSetBuilder AddSimpleAspectContainerRule(string name, string tier, string aspect)
         {
             return this.AddRule(name, tier,
-                new Func<string, bool>((string s) =>
-                {
-                    return Item.HasAspect(aspect);
-                }));
+                s => Item.HasAspect(aspect));
         }
 
         public RuleSetBuilder AddSimpleComparisonRule(string name, string tier, float comparer)
         {
             return this.AddRule(name, tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     var price = Item.LowestPrice;
                     return price > comparer;
-                }));
+                });
         }
 
         public RuleSetBuilder AddRawAverageComparison(string name, string tier, float comparer)
         {
             return this.AddRule(name, tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     var price = Item.RawAveragePrice;
                     return price > comparer;
-                }));
+                });
         }
 
         public RuleSetBuilder AddSafetyRule()
         {
             var isEarlyLeague = EconomyRequestFacade.GetInstance().IsEarlyLeague();
             return this.AddRule("No Data Found", "???",
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     
                     if (Item.All(x => x.CVal == 0))
@@ -216,26 +217,49 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     return false;
-                }));
+                });
         }
 
         public RuleSetBuilder AddSimpleReversedComparisonRule(string name, string tier, float comparer)
         {
             return this.AddRule(name, tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     var price = Item.LowestPrice;
                     return price < comparer;
-                }));
+                });
         }
 
         public RuleSetBuilder AddEarlyLeagueHandling(string tier)
         {
             return this.AddRule("EarlyLeagueInterest", tier,
-                new Func<string, bool>((string s) =>
+                s => Item.HasAspect("EarlyLeagueInterestAspect"));
+        }
+
+        public RuleSetBuilder AddEarlyLeagueHandlingForAspect(string tier, params string[] extraAspect)
+        {
+            string ruleName = "ELI";
+            foreach (var aspect in extraAspect)
+            {
+                ruleName += "-";
+                ruleName += aspect.Substring(0, 5);
+            }
+
+            return this.AddRule(ruleName, tier,
+                s =>
                 {
-                    return Item.HasAspect("EarlyLeagueInterestAspect");
-                }));
+                    if (!Item.HasAspect("EarlyLeagueInterestAspect")) return false;
+
+                    foreach (var aspect in extraAspect)
+                    {
+                        if (!Item.HasAspect(aspect))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
         }
 
         public RuleSetBuilder AddPoorDropRoutine(string tier, float comparer, float weight = 2.0f, bool redemptionLag = true, float redemptionWeight = 1.5f, PricingMode pricingMode = PricingMode.lowest)
@@ -243,14 +267,14 @@ namespace FilterEconomyProcessor.RuleSet
             // Low value drops tend to have a high noise amplitude on Poe.ninja/the actual economy.
             // Items marked as a "PoorItem", need to climb a certain threshold to leave the low item tier
             this.AddRule($"{tier} (PoorItem)", tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     var price = this.Item.GetPriceMod(pricingMode);
                     return (price < (comparer * weight) && this.Item.HasAspect("PoorDropAspect") && !this.Item.HasAspect("EarlyLeagueInterestAspect") && !this.Item.HasAspect("PreventHidingAspect"));
-                }));
+                });
 
             this.AddRule($"{tier} (FailedRedemption)", tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     if (this.Item.HasAspect("EarlyLeagueInterestAspect") || this.Item.HasAspect("PreventHidingAspect"))
                     {
@@ -264,10 +288,10 @@ namespace FilterEconomyProcessor.RuleSet
                     }
 
                     return false;
-                }));
+                });
 
             this.AddRule(tier, tier,
-                new Func<string, bool>((string s) =>
+                s =>
                 {
                     if (this.Item.HasAspect("EarlyLeagueInterestAspect") || this.Item.HasAspect("PreventHidingAspect"))
                     {
@@ -276,27 +300,19 @@ namespace FilterEconomyProcessor.RuleSet
 
                     var price = this.Item.GetPriceMod(pricingMode);
                     return (price < comparer);
-                }));
+                });
 
             return this;
         }
 
         public RuleSetBuilder AddRestRule()
         {
-            return this.AddRule("rest", "rest",
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            return this.AddRule("rest", "rest", s => true);
         }
 
         public RuleSetBuilder AddExplicitRest(string rule, string tier)
         {
-            return this.AddRule(rule, tier,
-                new Func<string, bool>((string s) =>
-                {
-                    return true;
-                }));
+            return this.AddRule(rule, tier, s => true);
         }
 
         public RuleSetBuilder AddPostProcessing(Action<TieringCommand> command)

@@ -8,9 +8,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FilterExo.Core.Process.GlobalFunctions;
+using FilterExo.Model;
 
 namespace FilterExo
 {
+    public enum ExoBundleType
+    {
+        filter,
+        style
+    }
+
     public class FilterExoFacade
     {
         public bool Debug = true;
@@ -32,6 +40,17 @@ namespace FilterExo
             }
 
             return instance;
+        }
+
+        public static void InitializeGlobalFunctions()
+        {
+            // ExoBlock.GlobalFunctions = new Dictionary<string, ExoAtom>();
+            // TODO: everything
+        }
+
+        public ExoBundle CreateBundle()
+        {
+            return new ExoBundle();
         }
 
         public Dictionary<string,string> Execute()
@@ -70,8 +89,9 @@ namespace FilterExo
 
             // 3) COMPILE INTO SEEDFILTER
 
-            var exoProcessor = new ExoProcessor();
-            var seedFilter = exoProcessor.Execute(exoFilter);
+            var exoProcessor = new ExoFilterProcessor();
+
+            var seedFilter = exoProcessor.Execute(exoFilter, new ExoStyleDictionary());
             var serializedSeedFilter = seedFilter.SelectMany(x => x.Serialize()).ToList();
 
             results.Add("ExoOutput", string.Join(System.Environment.NewLine, serializedSeedFilter));

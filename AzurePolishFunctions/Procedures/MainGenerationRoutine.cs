@@ -116,6 +116,7 @@ namespace AzurePolishFunctions.Procedures
                 var economyTieringSystem = new ConcreteEconomyRules();
                 economyTieringSystem.GenerateSuggestions();
 
+
                 // 6) Apply suggestions
                 TierListFacade.ApplyAllSuggestions();
             }

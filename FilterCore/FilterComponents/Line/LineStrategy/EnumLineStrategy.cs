@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore;
 
 namespace FilterDomain.LineStrategy
 {
@@ -33,14 +34,23 @@ namespace FilterDomain.LineStrategy
     {
         public bool PerformSort = true;
         public HashSet<LineToken> Value = new HashSet<LineToken>();
-        public bool ExactSearch = false;
+
+        public string SpecialOperator = string.Empty;
+        public string SpecialCount = string.Empty;
 
         public void Parse(List<LineToken> tokens)
         {
-            if (tokens[0].value == "==")
+            if (FilterGenerationConfig.FilterOperators.Contains(tokens[0].value))
             {
-                ExactSearch = true;
+                SpecialOperator = tokens[0].value;
                 tokens.RemoveAt(0);
+
+                var num = 0;
+                if (int.TryParse(tokens[0].value, out num))
+                {
+                    SpecialCount = tokens[0].value;
+                    tokens.RemoveAt(0);
+                }
             }
 
             foreach (var item in tokens)
@@ -67,17 +77,26 @@ namespace FilterDomain.LineStrategy
             // skip sorting for ExplicitModFiltering
             if (this.PerformSort)
             {
-                value = this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList();
+                value = this.Value
+                    .OrderBy(x => x.value)
+                    .Where(y => !FilterGenerationConfig.IgnorableBaseTypes.Contains(y.value))
+                    .Select(z => z.Serialize()).Distinct().ToList();
             }
             else
             {
-                value = this.Value.ToList().Select(z => z.Serialize()).Distinct().ToList();
+                value = this.Value
+                    .Where(y => !FilterGenerationConfig.IgnorableBaseTypes.Contains(y.value))
+                    .Select(z => z.Serialize()).Distinct().ToList();
             }
 
             // add exactsearch operator
-            if (this.ExactSearch)
+            if (this.SpecialOperator != string.Empty && this.SpecialCount != string.Empty)
             {
-                value.Insert(0, "==");
+                value.Insert(0, this.SpecialOperator + this.SpecialCount);
+            }
+            else if (this.SpecialOperator != string.Empty)
+            {
+                value.Insert(0, this.SpecialOperator);
             }
 
             return string.Join(" ", value);

@@ -1,12 +1,7 @@
 ﻿using FilterEconomy.Model;
-using FilterEconomy.Request;
 using FilterEconomyProcessor.Enrichment;
 using FilterPolishUtil.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilterEconomyProcessor
 {
@@ -34,7 +29,7 @@ namespace FilterEconomyProcessor
 
             // Now perform all the 
             EnrichmentProcedureConfiguration.EnrichmentProcedures.AddToMultiple(
-                new List<string>() { "uniques", "fragments" , "unique->maps", "currency->fossil", "currency->incubators", "currency->deliriumorbs", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials" },
+                new List<string>() { "gems", "uniques", "fragments" , "unique->maps", "currency->fossil", "currency->incubators", "currency->deliriumorbs", "currency->prophecy", "fragments->scarabs", "currency->oil", "vials", "unique->replicas" },
                 new List<IDataEnrichment>()
                 {
                     new LowestPriceEnrichment(),

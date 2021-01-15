@@ -2,6 +2,7 @@
 using FilterPolishUtil.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -15,11 +16,26 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public ExoBlock ResolutionParent;
 
+        // TODO
+        public bool SecondPatternLayer = false;
+
+        public void TrySecondPattern()
+        {
+            this.SecondPatternLayer = true;
+        }
+
+        public static List<IExoAtomMergeStrategy> PriorityPatterns = new List<IExoAtomMergeStrategy>()
+        {
+            new DictArrayAccessRangeSimpleStrategy(),
+            //new DictArrayAccessRangeStrategy(),
+            new DictPassiveMergeStrategy()
+        };
+
         public static List<IExoAtomMergeStrategy> Patterns = new List<IExoAtomMergeStrategy>()
         {
-            new DictPassiveMergeStrategy(),
+            new DictRemoveMergeStrategy(),
             new DictAddUpStrategy(),
-            new DictRemoveMergeStrategy()
+            new DictPassiveMergeStrategy()
         };
 
         public ExoExpressionCombineBuilder(ExoBlock parent)
@@ -29,7 +45,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public bool Add(ExoAtom input)
         {
-            if (input.IdentifiedType == ExoAtomType.prim)
+            if (input.IdentifiedType == ExoAtomType.prim && (!int.TryParse(input.GetRawValue(), out _) || Stack.Count <= 1))
             {
                 var result = ResolveStack();
                 Results.Add(input);
@@ -55,7 +71,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         private bool CanResolve()
         {
-            foreach (var pattern in Patterns)
+            foreach (var pattern in this.SecondPatternLayer ? Patterns : PriorityPatterns)
             {
                 if (pattern.Match(Stack))
                 {
@@ -73,7 +89,7 @@ namespace FilterExo.Core.PreProcess.Commands
                 return false;
             }
 
-            foreach (var pattern in Patterns)
+            foreach (var pattern in this.SecondPatternLayer ? Patterns : PriorityPatterns )
             {
                 if (pattern.Match(Stack))
                 {
@@ -100,8 +116,9 @@ namespace FilterExo.Core.PreProcess.Commands
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
-            hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
-            var merge = new ExoAtom(hs1);
+            var set = hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
+            
+            var merge = new ExoAtom(set);
             return new List<ExoAtom>() { merge };
         }
 
@@ -153,8 +170,8 @@ namespace FilterExo.Core.PreProcess.Commands
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
-            hs1.UnionWith((input[1].ValueCore as HashSetValueCore).Values);
-            var merge = new ExoAtom(hs1);
+            var set = hs1.UnionWith((input[1].ValueCore as HashSetValueCore).Values);
+            var merge = new ExoAtom(set);
             return new List<ExoAtom>() { merge };
         }
 
@@ -168,4 +185,77 @@ namespace FilterExo.Core.PreProcess.Commands
             return match;
         }
     }
+
+    public class DictArrayAccessRangeSimpleStrategy : IExoAtomMergeStrategy
+    {
+        public List<ExoAtom> Execute(List<ExoAtom> input)
+        {
+            var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+
+            var results = new List<ExoAtom>();
+            var upperbounds = int.Parse(input[2].GetRawValue());
+
+            var i = 0;
+            foreach (var item in hs1)
+            {
+                i++;
+                if (i <= upperbounds)
+                {
+                    results.Add(new ExoAtom(item));
+                }
+            }
+
+            return results;
+        }
+
+        public bool Match(List<ExoAtom> input)
+        {
+            var match = input.ConfirmPattern(
+                x => x.IdentifiedType == ExoAtomType.dict,
+                x => x.GetRawValue() == "[",
+                x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+                x => x.GetRawValue() == "]"
+            );
+
+            return match;
+        }
+    }
+
+    //public class DictArrayAccessRangeStrategy : IExoAtomMergeStrategy
+    //{
+    //    public List<ExoAtom> Execute(List<ExoAtom> input)
+    //    {
+    //        var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
+
+    //        var results = new List<ExoAtom>();
+    //        var lowerBounds = int.Parse(input[2].GetRawValue());
+    //        var upperbounds = int.Parse(input[4].GetRawValue());
+
+    //        var i = 0;
+    //        foreach (var item in hs1)
+    //        {
+    //            i++;
+    //            if (i >= lowerBounds && i <= upperbounds)
+    //            {
+    //                results.Add(new ExoAtom(item));
+    //            }
+    //        }
+
+    //        return results;
+    //    }
+
+    //    public bool Match(List<ExoAtom> input)
+    //    {
+    //        var match = input.ConfirmPattern(
+    //            x => x.IdentifiedType == ExoAtomType.dict,
+    //            x => x.GetRawValue() == "[",
+    //            x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+    //            x => x.GetRawValue() == "-",
+    //            x => x.IdentifiedType == ExoAtomType.prim && int.TryParse(x.GetRawValue(), out _),
+    //            x => x.GetRawValue() == "]"
+    //        );
+
+    //        return match;
+    //    }
+    //}
 }

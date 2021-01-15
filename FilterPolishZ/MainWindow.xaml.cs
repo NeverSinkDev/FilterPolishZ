@@ -24,7 +24,6 @@ using Newtonsoft.Json;
 using FilterPolishUtil.Model;
 using System.IO.Compression;
 using FilterPolishWindowUtils;
-using FilterPolishZ.Economy;
 using FilterEconomyProcessor;
 using FilterEconomyProcessor.ClassAbstraction;
 using FilterCore.Constants;
@@ -75,11 +74,14 @@ namespace FilterPolishZ
             Application.Current.Shutdown();
         }
 
-        private void LoadAllComponents()
+        private void LoadAllComponents(bool skipFetchOnlineData = false)
         {
             // request ninja-economy info
-            this.EconomyData = this.LoadEconomyOverviewData();
-            this.EconomyData.RequestPoeLeagueInfo();
+            if (!skipFetchOnlineData)
+            {
+                this.EconomyData = this.LoadEconomyOverviewData();
+                this.EconomyData.RequestPoeLeagueInfo();
+            }
 
             if (Configuration.AppSettings["testLeague"] == "true" && !this.EconomyData.IsLeagueActive())
             {
@@ -87,15 +89,16 @@ namespace FilterPolishZ
             }
 
             // load aspects
-            this.ItemInfoData = this.LoadItemInformationOverview();
+            if (!skipFetchOnlineData) { this.ItemInfoData = this.LoadItemInformationOverview(); }
 
             // load filter tierlists
             this.TierListFacade = this.LoadTierLists(this.FilterAccessFacade.PrimaryFilter);
 
             // add derived tiers (Shaper, Elder)
-            this.EconomyData.CreateSubEconomyTiers();
+            if (!skipFetchOnlineData) { this.EconomyData.CreateSubEconomyTiers(); }
 
-            BaseTypeDataProvider.Initialize();
+            // get the filterblade basetype table
+            if (!skipFetchOnlineData) { BaseTypeDataProvider.Initialize(); }
 
             // run all the enrichment procedures (calculate confidence, min price, max price etc)
             this.EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
@@ -300,6 +303,12 @@ namespace FilterPolishZ
             Process.Start(poePath);
         }
 
+        private void OpenEconomyDataFolder(object sender, RoutedEventArgs e)
+        {
+            var path = EconomyRequestFacade.LatestFolder;
+            Process.Start(path);
+        }
+
         private void OpenOutputFolder(object sender, RoutedEventArgs e)
         {
             Process.Start(Configuration.AppSettings["Output Folder"]);
@@ -363,7 +372,6 @@ namespace FilterPolishZ
         private void ApplyAllSuggestions(object sender, RoutedEventArgs e)
         {
             this.TierListFacade.ApplyAllSuggestions();
-
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             LoggingFacade.LogInfo($"Writing Changelog! Tiers Logged: {this.TierListFacade.Changelog.Select(x => x.Value.Count).Sum()}");
@@ -434,24 +442,48 @@ namespace FilterPolishZ
         {
             var outputFolder = Configuration.AppSettings["Meta Filter Path"];
 
+            var metaFilter = FileWork.ReadLinesFromFile(Configuration.AppSettings["metaFilter"]);
+            var metaStyle = FileWork.ReadLinesFromFile(Configuration.AppSettings["metaStyle"]);
+
             LoggingFacade.LogInfo($"Loading Meta Filter: {outputFolder}");
 
-            this.FilterExoFacade.RawMetaFilterText = FileWork.ReadLinesFromFile(outputFolder);
-            var output = this.FilterExoFacade.Execute();
+            var style = metaStyle.Select(x => x).ToList();
+            var meta = metaFilter.Select(x => x).ToList();
 
-            GenerationOptions.TextSources = output;
+            var styleBundle = new ExoBundle();
+            var filterBundle = new ExoBundle();
+
+            styleBundle.SetInput(style)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
+
+            filterBundle.SetInput(meta)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
+
+            var dict = styleBundle.StyleProcess();
+            filterBundle.DefineStyleDictionary(dict);
+
+            GenerationOptions.TextSources = filterBundle.DebugData;
             EventGrid.Publish();
 
-            if (this.FilterRawString == null || this.FilterRawString.Count < 4500)
-            {
-                LoggingFacade.LogWarning($"Loading Filter: Meta-Filter Content Suspiciously Short");
-            }
         }
 
         private void TierBaseTypeMatrix(object sender, RoutedEventArgs e)
         {
             
 
+        }
+
+        private void Reload_Filter(object sender, RoutedEventArgs e)
+        {
+            // this.ResetAllComponents();
+            this.FilterAccessFacade.PrimaryFilter = this.PerformFilterWork();
+            LoadAllComponents(true);
+            PerformEconomyTiering();
+            this.EventGrid.Publish();
         }
     }
 }

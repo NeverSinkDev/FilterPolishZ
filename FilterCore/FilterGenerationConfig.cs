@@ -45,6 +45,8 @@ namespace FilterCore
             "x"
         };
 
+        public static HashSet<string> IgnorableBaseTypes = new HashSet<string>() {"Samite Helmet", "Magma Orb"};
+
         /// <summary>
         /// Lists all known FilterLine identifiers, their treatment strategy and the sort order.
         /// </summary>
@@ -66,6 +68,7 @@ namespace FilterCore
             { "Mirrored",      new BoolLineStrategy() },
 
             { "HasInfluence",  new EnumLineStrategy(true) },
+            { "GemQualityType",new EnumLineStrategy(true) },
             { "LinkedSockets", new NumericLineStrategy() },
             { "Sockets",       new NumericLineStrategy() },
             { "Quality",       new NumericLineStrategy() },
@@ -79,6 +82,9 @@ namespace FilterCore
             { "DropLevel",     new NumericLineStrategy() },
             { "AreaLevel",     new NumericLineStrategy() },
             { "Rarity",        new NumericLineStrategy() },
+
+            { "EnchantmentPassiveNum", new NumericLineStrategy() },
+
             { "SocketGroup",   new EnumLineStrategy(false) },
             { "Class",         new EnumLineStrategy(true) },
             { "BaseType",      new EnumLineStrategy(true) },

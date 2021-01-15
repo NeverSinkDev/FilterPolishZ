@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FilterPolishUtil.Collections;
 using static FilterExo.Model.SingularValueCore;
 
 namespace FilterExo.Model
@@ -16,7 +17,8 @@ namespace FilterExo.Model
         prim,   // not combinable, instead primitive values that have to keep their order
         pack,
         oper,    // + - 
-        func
+        func,
+        meta
     }
 
     [DebuggerDisplay("{debugView}")]
@@ -27,7 +29,7 @@ namespace FilterExo.Model
         public IExoAtomValueCore ValueCore;
         public ExoAtomType IdentifiedType;
 
-        public ExoAtom(HashSet<string> value)
+        public ExoAtom(OrderedSet<string> value)
         {
             if (!value.All(x => IsStringType(x)))
             {
@@ -64,7 +66,7 @@ namespace FilterExo.Model
             }
 
             this.IdentifiedType = ExoAtomType.dict;
-            this.ValueCore = new HashSetValueCore() { Values = new HashSet<string>(value) };
+            this.ValueCore = new HashSetValueCore() { Values = new OrderedSet<string>(value) };
         }
 
         public ExoAtom(string value)
@@ -82,11 +84,16 @@ namespace FilterExo.Model
             else if (IsStringType(value))
             {
                 this.IdentifiedType = ExoAtomType.dict;
-                this.ValueCore = new HashSetValueCore() { Values = new HashSet<string>() { value } }; // ??
+                this.ValueCore = new HashSetValueCore() { Values = new OrderedSet<string>() { value } }; // ??
             }
             else if (value.Length <= 2 && FilterExoConfig.SimpleOperators.Contains(value[0]) || FilterExoConfig.CombinedOperators.Contains(value))
             {
                 this.IdentifiedType = ExoAtomType.oper;
+                this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
+            }
+            else if (value[0] == '%' || value[0] == '$' || value[0] == '!')
+            {
+                this.IdentifiedType = ExoAtomType.meta;
                 this.ValueCore = new SingularValueCore() { Value = value, CanBeVariable = false };
             }
             else if (value.ContainsSpecialCharacters())

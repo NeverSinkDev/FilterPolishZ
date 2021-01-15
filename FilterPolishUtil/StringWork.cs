@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FilterPolishUtil
 {
     public static class StringWork
     {
+        // If you want to implement both "*" and "?"
+
+        public static string WildCardToRegular(string value)
+        {
+            return "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+        }
+
         public static string SubStringLast(this string me, string substring)
         {
             if (string.IsNullOrEmpty(me) || !me.Contains(substring))

@@ -16,7 +16,7 @@ namespace FilterExo.Core.PreProcess.Strategies
         {
 
             var properties = builder.Owner.ReadCursor.PropertyExpression;
-            var functionName = properties[1];
+            var functionName = properties[1].Value.ToLower();
 
             var split = properties.SelectInnerContents(
                 x => x.Value == "(",
@@ -73,6 +73,8 @@ namespace FilterExo.Core.PreProcess.Strategies
 
             var newEntry = new ExoBlock();
             newEntry.Parent = builder.Owner.WriteCursor;
+            newEntry.Name = functionName;
+            newEntry.DescriptorCommand = "func";
             // newEntry.Parent = builder.Owner.WriteCursor;
             //builder.Owner.WriteCursor.Scopes.Add(newEntry);
 
@@ -81,17 +83,15 @@ namespace FilterExo.Core.PreProcess.Strategies
                 newEntry.AddCommand(item);
             }
 
-
-
             // Resolve rule into a "Show" filter entry.
             var function = new ExoFunction
             {
-                Name = functionName.Value,
+                Name = functionName,
                 Content = newEntry,
-                Variables = varNames
+                Variables = varNames,
             };
 
-            builder.Owner.WriteCursor.Functions.Add(functionName.Value, new ExoAtom(function));
+            builder.Owner.WriteCursor.Functions.Add(functionName, new ExoAtom(function));
         }
 
         public bool Match(ExpressionBuilder builder)

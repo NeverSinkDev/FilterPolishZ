@@ -1,8 +1,6 @@
 ﻿using FilterEconomy.Processor;
 using FilterPolishUtil;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FilterEconomyProcessor.RuleSet
 {
@@ -42,6 +40,13 @@ namespace FilterEconomyProcessor.RuleSet
             // alchemy level rules
             builder.AddSimpleComparisonRule("AlchemyTier", "t23", 0.20f);
             builder.AddSimpleAspectContainerRule("AlchemyBottom", "t23", "AlchemyBottomAspect");
+            
+            builder.AddRule("t32", x =>
+            {
+                return (builder.Item.HasAspect("EarlyLeagueInterestAspect") &&
+                        builder.Item.HasAspect("PoorDropAspect"));
+            });
+
             builder.AddEarlyLeagueHandling("t23");
 
             builder.AddSimpleComparisonRule("SilverAltTier", "t31", 0.12f);

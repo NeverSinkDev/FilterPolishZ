@@ -4,14 +4,9 @@ using FilterExo.Model;
 using FilterPolishUtil;
 using FilterPolishUtil.Extensions;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using static FilterExo.FilterExoConfig;
 
 namespace FilterExo.Core.PreProcess.Commands
@@ -22,7 +17,7 @@ namespace FilterExo.Core.PreProcess.Commands
         private string debugView => this.DebugView();
 
         public ExoBlock Parent { get; set; }
-        public ExoBlock Exectutor { get; set; }
+        public ExoBlock Executor { get; set; }
 
         public ExoExpressionCommandSource Source { get; internal set; } = ExoExpressionCommandSource.direct;
         public int ExecutionContext = -1;
@@ -36,7 +31,8 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             foreach (var item in mutatorData)
             {
-                this.Values.Add(new ExoAtom(item.Value));
+                var atom = new ExoAtom(item.Value);
+                this.Values.Add(atom);
             }
         }
 
@@ -44,13 +40,17 @@ namespace FilterExo.Core.PreProcess.Commands
         {
             foreach (var item in values)
             {
-                this.Values.Add(new ExoAtom(item));
+                var atom = new ExoAtom(item);
+                this.Values.Add(atom);
             }
         }
 
         public ExoExpressionCommand(List<ExoAtom> values)
         {
-            this.Values.AddRange(values);
+            foreach (var item in values)
+            {
+                this.Values.Add(item);
+            }
         }
 
         public List<string> Serialize()
@@ -119,25 +119,24 @@ namespace FilterExo.Core.PreProcess.Commands
 
         private void ResolveVariables(Branch<ExoAtom> item)
         {
-            if (item.Content != null && item.Content.IdentifiedType == ExoAtomType.prim)
-            {
-                // when dealing with variables, we resolve them and if resolvement was succesfull
-                // we put resolved single varibales into content and a list of values into leaves
-                var resolved = item.Content.Resolve(this.Parent);
+            if (item.Content == null || item.Content.IdentifiedType != ExoAtomType.prim) return;
 
-                if (resolved.Any())
-                {
-                    var resolvedList = resolved.ToList();
-                    if (resolvedList.Count == 1)
-                    {
-                        item.Content = resolvedList[0];
-                    }
-                    else
-                    {
-                        item.Content = null;
-                        resolvedList.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
-                    }
-                }
+            // when dealing with variables, we resolve them and if resolvement was succesfull
+            // we put resolved single varibales into content and a list of values into leaves
+            
+            var resolved = item.Content.Resolve(this.Parent);
+
+            var exoAtoms = resolved.ToList();
+            if (!exoAtoms.Any()) return;
+
+            if (exoAtoms.Count == 1)
+            {
+                item.Content = exoAtoms[0];
+            }
+            else
+            {
+                item.Content = null;
+                exoAtoms.ForEach(x => item.Leaves.Add(new Branch<ExoAtom>() { Content = x }));
             }
         }
 
@@ -191,7 +190,7 @@ namespace FilterExo.Core.PreProcess.Commands
                             subexpression.RemoveAt(i - 1);
 
                             i = totalCount;
-                            this.Exectutor.InsertCommands(funcRes, this);
+                            this.Executor.QueueRuntimeCommands(funcRes, this);
                             this.ContainerCommand = true;
                         }
                         else
@@ -225,32 +224,46 @@ namespace FilterExo.Core.PreProcess.Commands
         // this way we handle the results of the expressions as a new variable
         private List<ExoAtom> CombinePatterns(List<ExoAtom> wipBranch)
         {
+            var operatorSplit = wipBranch.SplitPreserve(x => x.GetRawValue() == "+" || x.GetRawValue() == "-").ToList();
+            var semiRefinedList = new List<ExoAtom>();
+
+            var secondLayer = false;
+            for (var index = 0; index < operatorSplit.Count; index++)
+            {
+                var splitPiece = operatorSplit[index];
+                semiRefinedList.AddRange(this.CombinePatternsInner(splitPiece, false));
+            }
+
+            return CombinePatternsInner(semiRefinedList, true);
+        }
+
+        private List<ExoAtom> CombinePatternsInner(List<ExoAtom> splitPiece, bool secondaryMode)
+        {
             bool success = true;
             while (success)
             {
-                var combiner = new ExoExpressionCombineBuilder(this.Parent);
+                var combiner = new ExoExpressionCombineBuilder(this.Parent) { SecondPatternLayer = secondaryMode };
                 success = false;
 
-                for (int i = 0; i < wipBranch.Count; i++)
+                for (int i = 0; i < splitPiece.Count; i++)
                 {
-                    success = combiner.Add(wipBranch[i]);
+                    // adds a new element into the combiner and checks if it matches a pattern
+                    success = combiner.Add(splitPiece[i]);
+                    if (!success) continue;
 
-                    if (success)
-                    {
-                        combiner.Results.AddRange(wipBranch.Skip(i + 1));
-                        wipBranch = combiner.Results;
-                        break;
-                    }
+                    combiner.Results.AddRange(splitPiece.Skip(i + 1));
+                    splitPiece = combiner.Results;
+                    break;
                 }
 
                 if (!success)
                 {
                     success = combiner.Finish();
-                    wipBranch = combiner.Results;
+                    splitPiece = combiner.Results;
                 }
             }
 
-            return wipBranch;
+            return splitPiece;
         }
 
         public static List<ExoAtom> FlattenBranch(List<Branch<ExoAtom>> subexpression)
