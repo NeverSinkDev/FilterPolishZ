@@ -96,15 +96,24 @@ namespace FilterPolishUtil.Collections
             m_LinkedList.CopyTo(array, arrayIndex);
         }
 
-        public void UnionWith(OrderedSet<T> values)
+        public OrderedSet<T> UnionWith(OrderedSet<T> values)
         {
+            var set = new OrderedSet<T>();
+
+            foreach (var value in this)
+            {
+                set.Add(value);
+            }
+
             foreach (var value in values)
             {
-                if (!this.Contains(value))
+                if (!set.Contains(value))
                 {
-                    this.Add(value);
+                    set.Add(value);
                 }
             }
+
+            return set;
         }
     }
 }

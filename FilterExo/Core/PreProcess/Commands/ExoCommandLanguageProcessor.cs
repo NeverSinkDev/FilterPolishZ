@@ -45,7 +45,7 @@ namespace FilterExo.Core.PreProcess.Commands
 
         public bool Add(ExoAtom input)
         {
-            if (input.IdentifiedType == ExoAtomType.prim && !int.TryParse(input.GetRawValue(), out _))
+            if (input.IdentifiedType == ExoAtomType.prim && (!int.TryParse(input.GetRawValue(), out _) || Stack.Count <= 1))
             {
                 var result = ResolveStack();
                 Results.Add(input);
@@ -116,11 +116,9 @@ namespace FilterExo.Core.PreProcess.Commands
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
-            hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
-
+            var set = hs1.UnionWith((input[2].ValueCore as HashSetValueCore).Values);
             
-            
-            var merge = new ExoAtom(hs1);
+            var merge = new ExoAtom(set);
             return new List<ExoAtom>() { merge };
         }
 
@@ -172,8 +170,8 @@ namespace FilterExo.Core.PreProcess.Commands
         public List<ExoAtom> Execute(List<ExoAtom> input)
         {
             var hs1 = (input[0].ValueCore as HashSetValueCore).Values;
-            hs1.UnionWith((input[1].ValueCore as HashSetValueCore).Values);
-            var merge = new ExoAtom(hs1);
+            var set = hs1.UnionWith((input[1].ValueCore as HashSetValueCore).Values);
+            var merge = new ExoAtom(set);
             return new List<ExoAtom>() { merge };
         }
 

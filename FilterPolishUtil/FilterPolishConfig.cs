@@ -185,7 +185,7 @@ namespace FilterPolishUtil
         public static float UniqueT1BreakPoint;
         public static float UniqueT2BreakPoint;
 
-        private static float UniqueT1Base = 25f;
+        private static float UniqueT1Base = 18f;
         private static float UniqueT2Base = 6f;
 
         // Uniques have a bunch of special conditions, that are used as pricing multipliers

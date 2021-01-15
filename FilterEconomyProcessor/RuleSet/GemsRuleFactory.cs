@@ -13,9 +13,19 @@ namespace FilterEconomyProcessor.RuleSet
 
         public static FilterEconomyRuleSet Generate(ConcreteEconomyRules ruleHost)
         {
-            var builder = new RuleSetBuilder(ruleHost).SetSection("gems").UseDefaultQuery().AddDefaultPostProcessing()
-                .SkipInEarlyLeague().AddDefaultIntegrationTarget();
+            var builder = new RuleSetBuilder(ruleHost).SetSection("gems")
+                .UseDefaultQuery()
+                .AddDefaultPostProcessing()
+                //.SkipInEarlyLeague()
+                .AddDefaultIntegrationTarget();
             builder.AddRule("t1-awa", x => IsAwakened() && MinIst1(1.25f));
+
+
+            builder.AddRule("rest", x =>
+            {
+                return (ruleHost.EconomyInformation.IsEarlyLeague());
+            }, nextgroup: "t1");
+
             builder.AddRule("t1-ano", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Anomalous"), group: "t1-ano", nextgroup: "ANY");
             builder.AddRule("t1-div", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Divergent"), group: "t1-div", nextgroup: "ANY");
             builder.AddRule("t1-pha", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Phantasmal"), group: "t1-pha", nextgroup: "ANY");
@@ -23,24 +33,23 @@ namespace FilterEconomyProcessor.RuleSet
 
             // t1 LEVEL RULES
             // 20-20, no corruption
-            builder.AddRule("t1-20-20z", x => GemQuery(20, 20, false, 2, FilterPolishConfig.GemT1BreakPoint), group: "t1", nextgroup: "t2");
-            builder.AddRule("t1-21-00", x => GemQuery(21, 0, true, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
-            builder.AddRule("t1-21-20", x => GemQuery(21, 20, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
-            builder.AddRule("t1-21-23", x => GemQuery(21, 23, null, 2, FilterPolishConfig.GemT1BreakPoint * 1.2f), group: "t1", nextgroup: "t2");
+            builder.AddRule("t1-20-20z", x => GemQuery(20, 20, false, 2, FilterPolishConfig.GemT1BreakPoint), group: "t1");
+            builder.AddRule("t1-21-20", x => GemQuery(21, 20, true, 2, FilterPolishConfig.GemT1BreakPoint), group: "t1");
+            builder.AddRule("t1-21-23", x => GemQuery(21, 23, true, 2, FilterPolishConfig.GemT1BreakPoint), group: "t1");
 
             // t2 RULES !!!
-            builder.AddRule("t2-19-00z", x => GemQuery(19, 0, false, 3, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
-            builder.AddRule("t2-19-19z", x => GemQuery(19, 19, false, 2, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
-            builder.AddRule("t2-20-00z", x => GemQuery(20, 0, false, 2, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
-            builder.AddRule("t2-21-00", x => GemQuery(21, 0, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
-            builder.AddRule("t2-21-20", x => GemQuery(21, 20, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
-            builder.AddRule("t2-21-23", x => GemQuery(21, 23, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-19-00z", x => GemQuery(19, 0, false, 3, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-19-19z", x => GemQuery(19, 19, false, 2, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-20-00z", x => GemQuery(20, 0, false, 2, FilterPolishConfig.GemT2BreakPoint * 1f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-21-00", x => GemQuery(21, 0, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-21-20", x => GemQuery(21, 20, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
+            //builder.AddRule("t2-21-23", x => GemQuery(21, 23, null, 2, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2", nextgroup: "t2q");
 
             // t2 QUALITY CHECK
             // 1-15, no corruption
-            builder.AddRule("t2-01-15z", x => GemQuery(1, 15, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
-            builder.AddRule("t2-01-20z", x => GemQuery(1, 20, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
-            builder.AddRule("t2-01-23z", x => GemQuery(1, 23, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
+            //builder.AddRule("t2-01-15z", x => GemQuery(1, 15, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
+            //builder.AddRule("t2-01-20z", x => GemQuery(1, 20, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
+            //builder.AddRule("t2-01-23z", x => GemQuery(1, 23, false, 3, FilterPolishConfig.GemT2BreakPoint * 1.2f), group: "t2q");
 
             builder.AddRestRule();
 
@@ -79,7 +88,7 @@ namespace FilterEconomyProcessor.RuleSet
                     var parts = x.Variant.Split('/').ToList();
                     if (parts.Count == 1)
                     {
-                        lvlS = int.TryParse(parts[0], out lvl);
+                        lvlS = int.TryParse(parts[0].Replace("c", ""), out lvl);
                         qualS = true;
                         qual = 0;
                     }

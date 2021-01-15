@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,8 +34,12 @@ namespace FilterPolishZ.Util
             }
             
             baseFilter = new Filter(seedFilterString); // we do not want to edit the seedFilter directly and execute its tag commands
-            baseFilter.ExecuteCommandTags();
+            try { baseFilter.ExecuteCommandTags(); }
+            catch (Exception e) {
+                throw e;
+            }
             var baseFilterString = baseFilter.Serialize();
+            
             if (baseFilterString == null || baseFilterString.Count < 4500) LoggingFacade.LogError("Warning: (seed) filter result line count: " + baseFilterString?.Count);
             
             for (var strictnessIndex = 0; strictnessIndex < FilterGenerationConfig.FilterStrictnessLevels.Count; strictnessIndex++)

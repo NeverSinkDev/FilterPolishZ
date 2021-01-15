@@ -12,6 +12,11 @@ namespace FilterCore.Commands.EntryCommands
     {
         public override void Execute(int? strictness = null, int? consoleStrictness = null)
         {
+            if (strictness == null)
+            {
+                throw new Exception();
+            }
+
             if (!this.IsActiveOnStrictness(strictness.Value, consoleStrictness))
             {
                 return;

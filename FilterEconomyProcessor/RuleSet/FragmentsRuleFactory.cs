@@ -55,6 +55,9 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddEarlyLeagueHandling("t3");
 
+            builder.AddRule("t3",
+                x => builder.Item[0].Name == "Sacrifice at Midnight" && ruleHost.EconomyInformation.IsEarlyLeague());
+
             builder.AddRule("HidingPrevented", "t3", s => builder.Item.HasAspect("PreventHidingAspect"));
 
             builder.AddExplicitRest("t4", "t4");

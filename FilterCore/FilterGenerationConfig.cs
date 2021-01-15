@@ -45,6 +45,8 @@ namespace FilterCore
             "x"
         };
 
+        public static HashSet<string> IgnorableBaseTypes = new HashSet<string>() {"Samite Helmet", "Magma Orb"};
+
         /// <summary>
         /// Lists all known FilterLine identifiers, their treatment strategy and the sort order.
         /// </summary>

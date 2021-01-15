@@ -77,22 +77,26 @@ namespace FilterDomain.LineStrategy
             // skip sorting for ExplicitModFiltering
             if (this.PerformSort)
             {
-                value = this.Value.ToList().OrderBy(x => x.value).Select(z => z.Serialize()).Distinct().ToList();
+                value = this.Value
+                    .OrderBy(x => x.value)
+                    .Where(y => !FilterGenerationConfig.IgnorableBaseTypes.Contains(y.value))
+                    .Select(z => z.Serialize()).Distinct().ToList();
             }
             else
             {
-                value = this.Value.ToList().Select(z => z.Serialize()).Distinct().ToList();
+                value = this.Value
+                    .Where(y => !FilterGenerationConfig.IgnorableBaseTypes.Contains(y.value))
+                    .Select(z => z.Serialize()).Distinct().ToList();
             }
 
             // add exactsearch operator
-            if (this.SpecialOperator != string.Empty)
+            if (this.SpecialOperator != string.Empty && this.SpecialCount != string.Empty)
+            {
+                value.Insert(0, this.SpecialOperator + this.SpecialCount);
+            }
+            else if (this.SpecialOperator != string.Empty)
             {
                 value.Insert(0, this.SpecialOperator);
-
-                if (this.SpecialCount != string.Empty)
-                {
-                    value.Insert(1, this.SpecialCount);
-                }
             }
 
             return string.Join(" ", value);

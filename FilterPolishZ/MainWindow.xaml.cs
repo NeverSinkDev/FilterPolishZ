@@ -303,6 +303,12 @@ namespace FilterPolishZ
             Process.Start(poePath);
         }
 
+        private void OpenEconomyDataFolder(object sender, RoutedEventArgs e)
+        {
+            var path = EconomyRequestFacade.LatestFolder;
+            Process.Start(path);
+        }
+
         private void OpenOutputFolder(object sender, RoutedEventArgs e)
         {
             Process.Start(Configuration.AppSettings["Output Folder"]);
@@ -366,7 +372,6 @@ namespace FilterPolishZ
         private void ApplyAllSuggestions(object sender, RoutedEventArgs e)
         {
             this.TierListFacade.ApplyAllSuggestions();
-
             this.TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
 
             LoggingFacade.LogInfo($"Writing Changelog! Tiers Logged: {this.TierListFacade.Changelog.Select(x => x.Value.Count).Sum()}");

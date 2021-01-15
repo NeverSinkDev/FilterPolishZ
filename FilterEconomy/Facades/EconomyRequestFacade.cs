@@ -19,7 +19,7 @@ namespace FilterEconomy.Facades
     {
         private EconomyRequestFacade()
         {
-            var leagueStart = new DateTime(2020, 9, 18);
+            var leagueStart = new DateTime(2021, 1, 15);
             this.ActiveMetaTags.Add("EarlyLeagueInterestAspect",  new Tuple<DateTime, DateTime>(leagueStart, leagueStart.AddDays(5)));
 
             FilterPolishConfig.IsEarlyLeague = ActiveMetaTags["EarlyLeagueInterestAspect"].Item1 < DateTime.Now && ActiveMetaTags["EarlyLeagueInterestAspect"].Item2 > DateTime.Now;
@@ -44,6 +44,8 @@ namespace FilterEconomy.Facades
 
         private static EconomyRequestFacade instance;
 
+        public static string LatestFolder = string.Empty;
+
         public Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> EconomyTierlistOverview { get; set; } = new Dictionary<string, Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>();
 
         public Dictionary<string, PoeLeague> PoeLeagues { get; set; } = new Dictionary<string, PoeLeague>();
@@ -65,6 +67,7 @@ namespace FilterEconomy.Facades
                 {   // Load existing file
 
                     LoggingFacade.LogInfo($"Loading Economy: Loading Cached File {fileFullPath}");
+                    LatestFolder = directoryPath;
                     responseString = FileWork.ReadFromFile(fileFullPath);
                 }
                 else

@@ -25,18 +25,18 @@ namespace FilterExoGenerator
             var styleBundle = new ExoBundle();
             var filterBundle = new ExoBundle();
 
-            //styleBundle.SetInput(style)
-            //    .Tokenize()
-            //    .Structurize()
-            //    .PreProcess();
+            styleBundle.SetInput(style)
+                .Tokenize()
+                .Structurize()
+                .PreProcess();
 
             filterBundle.SetInput(meta)
                 .Tokenize()
                 .Structurize()
                 .PreProcess();
 
-            //var dict = styleBundle.StyleProcess();
-            //filterBundle.DefineStyleDictionary(dict);
+            var dict = styleBundle.StyleProcess();
+            filterBundle.DefineStyleDictionary(dict);
 
             var results = filterBundle.Process();
 
