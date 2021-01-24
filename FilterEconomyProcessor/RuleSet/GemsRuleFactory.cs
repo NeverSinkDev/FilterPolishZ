@@ -26,9 +26,9 @@ namespace FilterEconomyProcessor.RuleSet
                 return (ruleHost.EconomyInformation.IsEarlyLeague());
             }, nextgroup: "t1");
 
-            builder.AddRule("t1-ano", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Anomalous"), group: "t1-ano", nextgroup: "ANY");
-            builder.AddRule("t1-div", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Divergent"), group: "t1-div", nextgroup: "ANY");
-            builder.AddRule("t1-pha", x => GemQuery(19, 20, null, 2, FilterPolishConfig.GemT1BreakPoint, "Phantasmal"), group: "t1-pha", nextgroup: "ANY");
+            builder.AddRule("t1-ano", x => GemQuery(20, 20, false, 1, FilterPolishConfig.GemT1BreakPoint, "Anomalous"), group: "t1-ano", nextgroup: "ANY");
+            builder.AddRule("t1-div", x => GemQuery(20, 20, false, 1, FilterPolishConfig.GemT1BreakPoint, "Divergent"), group: "t1-div", nextgroup: "ANY");
+            builder.AddRule("t1-pha", x => GemQuery(20, 20, false, 1, FilterPolishConfig.GemT1BreakPoint, "Phantasmal"), group: "t1-pha", nextgroup: "ANY");
             builder.AddRule("exception", "rest", x => ExceptionGems.Contains(builder.Item[0].Name));
 
             // t1 LEVEL RULES
@@ -104,7 +104,7 @@ namespace FilterEconomyProcessor.RuleSet
                     if (!lvlS || !qualS) { return false; }
 
                     if (lvl > maxLevel || qual > maxQuality) return false;
-                    if (corruptState == null) return true;
+                    // if (corruptState == null) return true;
                     if (corruptState != corrupted) return false;
                     return true;
                 }).ToList();
