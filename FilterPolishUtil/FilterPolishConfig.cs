@@ -40,7 +40,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> ExtraBases { get; set; } = new HashSet<string>()
         {
-            "Astral Plate", "Thicket Bow", "Royal Burgonet"
+            "Astral Plate", "Thicket Bow", "Royal Burgonet", "Citadel Bow", "Vaal Axe", "Karui Chopper"
         };
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace FilterPolishUtil
         /// </summary>
         public static HashSet<string> DropLevelIgnoredClasses = new HashSet<string>()
         {
-            "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres"
+            "rings", "amulets", "belts", "jewels", "rune dagger", "wands", "sceptres", "quivers"
         };
 
         public static HashSet<string> BestBaseCheckIgnore = new HashSet<string>()
