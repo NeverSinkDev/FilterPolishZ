@@ -1,5 +1,6 @@
 ﻿using System;
 using FilterCore.Entry;
+using FilterCore.Line.LineStrategy;
 using FilterCore.Line.Parsing;
 using FilterDomain.LineStrategy;
 using FilterPolishUtil;
@@ -33,6 +34,11 @@ namespace FilterCore.Line
 
         public virtual string Serialize()
         {
+            if (!this.IsActive)
+            {
+                return string.Empty;
+            }
+
             var res = StringWork.CombinePieces(
                 string.Empty,
                 Ident, 

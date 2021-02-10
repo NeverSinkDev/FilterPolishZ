@@ -116,7 +116,8 @@ namespace FilterCore.Entry
         public List<string> Serialize()
         {
             return this.Content
-                .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize() }))
+                .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize(), IsActive = z.IsActive }))
+                .Where(x => x.IsActive)
                 .OrderBy(x => FilterGenerationConfig.LineTypesSort[x.Ident])
                 .Select(x => x.SerializedString)
                 .ToList();
@@ -125,7 +126,8 @@ namespace FilterCore.Entry
         public List<string> DebugRawValues()
         {
             return this.Content
-                .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize() }))
+                .SelectMany(x => x.Value.Select(z => new { Ident = z.Ident, SerializedString = z.Serialize(), IsActive = z.IsActive }))
+                .Where(x => x.IsActive)
                 .OrderBy(x => FilterGenerationConfig.LineTypesSort[x.Ident])
                 .Select(x => x.SerializedString)
                 .ToList();

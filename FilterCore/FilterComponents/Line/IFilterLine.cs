@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FilterCore.Line.LineStrategy;
 using FilterPolishUtil;
 
 namespace FilterCore.Line
@@ -17,6 +18,7 @@ namespace FilterCore.Line
 
         string Ident { get; set; }
         string Comment { get; set; }
+        bool IsActive { get; set; }
 
         bool identCommented { get; set; }
     }
@@ -72,6 +74,11 @@ namespace FilterCore.Line
 
         public static IFilterLine ToFilterLine(this string rawData)
         {
+            if (rawData.Contains("##"))
+            {
+                return new FilterLine<EmptyValueContainer>() { IsActive = false };
+            }
+
             var tokens = LineParser.TokenizeFilterLineString(rawData);
             return LineParser.GenerateFilterLine(tokens);
         }

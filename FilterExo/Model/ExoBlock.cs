@@ -88,7 +88,8 @@ namespace FilterExo.Model
         {
             if (this.Type == ExoFilterType.comment)
             {
-                return this.SimpleComments.Select(x => new List<string>() { x }).ToList();
+                //  return this.SimpleComments.Select(x => new List<string>() { x }).ToList();
+                return new List<List<string>>();
             }
             else
             {
