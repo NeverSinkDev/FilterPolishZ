@@ -109,7 +109,7 @@ namespace FilterExo.Model
                 List<List<string>> styleCommands = new List<List<string>>();
                 if (styleDict != null)
                 {
-                    styleCommands = StyleResolutionStrategy.Execute(this, styleDict);
+                    styleCommands = StyleResolution.Execute(this, styleDict);
                 }
 
                 return EIEnumerable.YieldTogether(linkedResults, mutatorCommands, directCommands, styleCommands);
@@ -322,6 +322,24 @@ namespace FilterExo.Model
             }
         }
 
+        public IEnumerable<string> YieldParentNames(string stopAt = "")
+        {
+            yield return this.Parent.Name;
+
+            if (this.Parent.Type != ExoFilterType.root)
+            {
+                foreach (var item in this.Parent.YieldParentNames())
+                {
+                    yield return item;
+
+                    if (item.ToLower() == stopAt.ToLower())
+                    {
+                        yield break;
+                    }
+                }
+            }
+        }
+
         internal bool IsFunction(string key)
         {
             key = key.ToLower();
@@ -388,6 +406,8 @@ namespace FilterExo.Model
                     yield return res;
                 }
             }
+
+
         }
 
         public IEnumerable<ExoBlock> FindChildSectionFromRoot(string key)

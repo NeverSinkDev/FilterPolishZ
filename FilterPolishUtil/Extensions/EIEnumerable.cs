@@ -16,10 +16,15 @@ namespace FilterPolishUtil.Extensions
 
     public static class EIEnumerable
     {
-        public static IEnumerable<I> Crop<I>(this ICollection<I> me, Predicate<I> filter)
+        /// <summary>
+        /// (Re)move certain items from a list to another list
+        /// </summary>
+        /// <typeparam name="I"></typeparam>
+        /// <param name="me"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public static IEnumerable<I> Move<I>(this ICollection<I> me, Predicate<I> filter)
         {
-            // have an initial list
-            // in that
             var selected = me.Where(x => filter(x)).ToList();
             selected.ForEach(x => me.Remove(x));
             return selected;
@@ -43,6 +48,14 @@ namespace FilterPolishUtil.Extensions
                 action(item);
             }
         }
+
+        /// <summary>
+        /// Split a list into multiple lists based on separators, return the lists and the separators
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumeration"></param>
+        /// <param name="splitBy"></param>
+        /// <returns></returns>
         public static IEnumerable<List<T>> SplitPreserve<T>(this IEnumerable<T> enumeration, Predicate<T> splitBy)
         {
             var currentList = new List<T>();
@@ -95,6 +108,13 @@ namespace FilterPolishUtil.Extensions
             return (me.Take(index).ToList(), me.Skip(index + 1).ToList());
         }
 
+        /// <summary>
+        /// Split list into multiple lists, based on criteria.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="me"></param>
+        /// <param name="splitter"></param>
+        /// <returns></returns>
         public static List<List<T>> SplitDivide<T>(this List<T> me, Predicate<T> splitter)
         {
             var result = new List<List<T>>();
@@ -117,21 +137,16 @@ namespace FilterPolishUtil.Extensions
             return result;
         }
 
+        /// <summary>
+        /// Test if the collection matches a certain pattern
+        /// </summary>
         public static bool ConfirmPattern<T>(this List<T> me, params Predicate<T>[] pattern)
         {
-            if (me.Count != pattern.Length)
-            {
-                return false;
-            }
-
+            if (me.Count != pattern.Length) return false;
             for (int i = 0; i < pattern.Length; i++)
             {
-                if(!pattern[i](me[i]))
-                {
-                    return false;
-                }
+                if(!pattern[i](me[i])) return false;
             }
-
             return true;
         }
 
@@ -198,6 +213,14 @@ namespace FilterPolishUtil.Extensions
             return analyzedList.Where(x => IComparable.Equals(x.com,max)).Select(x => x.val);
         }
 
+        /// <summary>
+        /// Split a collection into a dictionary based on rules
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="me"></param>
+        /// <param name="rules"></param>
+        /// <param name="hasDefault"></param>
+        /// <returns></returns>
         public static Dictionary<string, List<T>> Subdivide<T>(this IEnumerable<T> me, List<Tuple<string, Func<T, bool>>> rules, bool hasDefault = false)
         {
             var result = new Dictionary<string, List<T>>();
@@ -237,6 +260,14 @@ namespace FilterPolishUtil.Extensions
             return result;
         }
 
+        /// <summary>
+        /// Create a new collection by comparing pairs of items in an existing collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
         public static IEnumerable<T1> PairSelect<T,T1>(this IEnumerable<T> collection, Func<T,T,T1> selector)
         {
             var initialized = false;
@@ -258,6 +289,14 @@ namespace FilterPolishUtil.Extensions
             }
         }
 
+        /// <summary>
+        /// Select items between two predicates
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <returns></returns>
         public static List<T> SelectInnerContents<T>(this IEnumerable<T> collection, Predicate<T> first, Predicate<T> second)
         {
             int state = 0;

@@ -9,14 +9,14 @@ using FilterPolishUtil;
 
 namespace FilterExo.Core.Process.StyleResoluton
 {
-    public static class StyleResolutionStrategy
+    public static class StyleResolution
     {
         public static List<List<string>> Execute(ExoBlock currentRule, ExoStyleDictionary style)
         {
             var result = new List<List<string>>();
 
             // match the filter-rules (such as T1) to the style rules. Handle different application strategies here later
-            var relevantRules = style.Rules.Where(x => x.IsMatch(currentRule)).ToList();
+            var relevantRules = style.Rules.Where(x => x.IsRuleMatched(currentRule)).ToList();
 
             foreach (var styleRule in relevantRules)
             {
@@ -84,20 +84,16 @@ namespace FilterExo.Core.Process.StyleResoluton
     {
         public ExoStylePieceToken FilterSection;
         public List<ExoStylePieceToken> StyleSection;
-        public bool Enabled = true;
-        public string ApplyRuleName = ""; // TODO
-        
         public string OperationName;
-
-        public ExoBlock Block;
         public ExoExpressionCommand Caller;
 
-        public bool IsMatch(ExoBlock currentRule)
+        public bool IsRuleMatched(ExoBlock currentRule)
         {
             var currentRuleName = currentRule.Name.ToLower();          // rulename: "t1"
             var parentSectionName = currentRule.Parent.Name.ToLower(); // sectionName: "Incubators"
+            var parents = currentRule.YieldParentNames(parentSectionName);
 
-            var parentMatch = Regex.IsMatch(this.FilterSection.SectionMatch, parentSectionName);
+            var parentMatch = parents.Any(x => Regex.IsMatch(this.FilterSection.SectionMatch, x.ToLower()));
             bool ruleMatch = true;
 
             if (this.FilterSection.Rule != "")
@@ -124,6 +120,7 @@ namespace FilterExo.Core.Process.StyleResoluton
                     List<ExoFunction> functions = new List<ExoFunction>();
 
                     var mode = style.Mode;
+                    // if the metafilter and the style both have a rulename specified perform a force application
                     if (style.Rule != "" && this.FilterSection.Rule != "")
                     {
                         mode = ExoStyleSearchMode.forced;
@@ -138,6 +135,7 @@ namespace FilterExo.Core.Process.StyleResoluton
                         }
                         else
                         {
+                            // if neither has a rule specified, apply styles to whatever filterchild matches
                             var relevantForStyle = exoBlock.YieldLinkedFunctionsRegex(style.RuleMatch);
                             var relevantForFilter = exoBlock.YieldLinkedFunctionsRegex(filterRuleName);
 
@@ -147,11 +145,9 @@ namespace FilterExo.Core.Process.StyleResoluton
                             {
                                 functions.Where(x => Regex.IsMatch(filterRuleName, style.RuleMatch));
                             }
-
-                            // Apply (IncubatorStyle.T1 =>    IncubatorFilter)
-                            // Apply (IncubatorStyle.T1 => IncubatorFilter.T1)
                         }
                     }
+                    // if the mode is forced, we apply the/any style to the rule
                     else if (mode == ExoStyleSearchMode.forced)
                     {
                         if (style.Rule == "")

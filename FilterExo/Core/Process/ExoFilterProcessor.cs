@@ -21,13 +21,13 @@ namespace FilterExo.Core.Process
 
         public bool AddEmptyLines = true;
 
-        ExoStyleDictionary styleFile;
+        ExoStyleDictionary style;
 
         public List<FilterEntry> Execute(ExoFilter exoFilter, ExoStyleDictionary styleFile)
         {
             results.Clear();
             builder = new FilterEntryBuilder();
-            this.styleFile = styleFile;
+            this.style = styleFile;
 
             ProcessTreeStep(exoFilter.RootEntry);
 
@@ -60,7 +60,7 @@ namespace FilterExo.Core.Process
 
             if (readChild.Commands.Count > 0 || readChild.YieldMutators().Any())
             {
-                var resolvedTokens = readChild.ResolveAndSerialize(this.styleFile).ToList();
+                var resolvedTokens = readChild.ResolveAndSerialize(this.style).ToList();
                 resolvedTokens.ForEach(x => builder.AddCommand(x));
             }
             

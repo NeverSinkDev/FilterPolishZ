@@ -196,7 +196,7 @@ namespace FilterEconomy.Facades
             {
                 foreach (var items in section)
                 {
-                    var selected = items.Value.Crop(x => x.Name.ToLower().Contains("replica")).ToList();
+                    var selected = items.Value.Move(x => x.Name.ToLower().Contains("replica")).ToList();
                     if (selected.Count != 0)
                     {
                         replicas.Add(items.Key, new ItemList<NinjaItem>());
