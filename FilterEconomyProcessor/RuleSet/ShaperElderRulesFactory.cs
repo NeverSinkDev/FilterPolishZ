@@ -55,6 +55,11 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddRule("t2-80", "t2-1", s =>
                 {
+                    if (builder.Item.ValueMultiplier < 0.45f)
+                    {
+                        return false;
+                    }
+
                     var price = GetPrice(82) * (1 + ((builder.Item.ValueMultiplier - 1) * valueMultiplierEffectiveness));
                     return price > FilterPolishConfig.BaseTypeT2BreakPoint * 1.2;
                 }, group: "t2");
@@ -62,6 +67,11 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddRule("t2-85", "t2-2", s =>
                 {
+                    if (builder.Item.ValueMultiplier < 0.1f)
+                    {
+                        return false;
+                    }
+
                     var price = (GetPrice(85) + GetPrice(86) / 2) * (1 + ((builder.Item.ValueMultiplier - 1) * valueMultiplierEffectiveness));
                     return price > FilterPolishConfig.BaseTypeT2BreakPoint;
                 }, group: "t2");

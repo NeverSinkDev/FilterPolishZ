@@ -135,7 +135,7 @@ namespace FilterEconomy.Facades
             foreach (var item in this.Suggestions[section])
             {
                 this.ApplyCommand(item);
-                this.Changelog[section].Add(TieringChange.FromTieringCommand(item));
+                // this.Changelog[section].Add(TieringChange.FromTieringCommand(item));
             }
 
             this.RemoveBaseTypeLinesIfEmpty(section);

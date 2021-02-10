@@ -13,8 +13,8 @@ namespace FilterEconomyProcessor.Enrichment
 {
     public class ShaperElderEnrichment : IDataEnrichment
     {
-        public static float averagePriceMinimum = 3;
-        public static float approvedPricesMinimum = 8;
+        public static float averagePriceMinimum = 4;
+        public static float approvedPricesMinimum = 9;
         public static float unhealthyPriceRange = 500;
 
         public void Enrich(string baseType, ItemList<NinjaItem> data)
@@ -36,7 +36,7 @@ namespace FilterEconomyProcessor.Enrichment
             confidence += AdjustConfidenceBasedOn(data, (s => averagePrice < averagePriceMinimum), -0.2f, 0);
 
             // min price relevant
-            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.15f, 0.1f);
+            confidence += AdjustConfidenceBasedOn(data, (s => minPrice <= averagePriceMinimum), -0.1f, 0.1f);
 
             // count rules
             confidence += AdjustConfidenceBasedOn(data, (s => totalQuant <= 2), -0.5f, 0);
@@ -82,12 +82,12 @@ namespace FilterEconomyProcessor.Enrichment
 
                         if (apsSorting > 0)
                         {
-                            confidence += AdjustConfidenceBasedOn(data, s => apsSorting > 50, ((float)apsSorting / 100) - 0.9f, 0);
+                            confidence += AdjustConfidenceBasedOn(data, s => apsSorting > 50, ((float)apsSorting / 100) - 0.85f, 0);
                         }
 
                         if (lvlSorting > 0)
                         {
-                            confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100) * 1.5f - 1.4f, 0);
+                            confidence += AdjustConfidenceBasedOn(data, s => lvlSorting > 0, ((float)lvlSorting / 100) * 2.5f - 2.25f, 0);
                         }
                     }
 
