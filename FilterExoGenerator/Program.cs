@@ -15,9 +15,8 @@ namespace FilterExoGenerator
             Console.WriteLine("Generating ExoFilters!");
 
 
-            var metaFilter = FileWork.ReadLinesFromFile("C:\\FilterOutput\\RESULTS\\ADDITIONAL-FILES\\SeedFilter\\MetaPrototype.filter");
-            var metaStyle = FileWork.ReadLinesFromFile("C:\\FilterOutput\\RESULTS\\ADDITIONAL-FILES\\SeedFilter\\StylePrototype.filter");
-
+            var metaFilter = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\MetaPrototype.filter");
+            var metaStyle = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\StylePrototype.filter");
 
             var style = metaStyle.Select(x => x).ToList();
             var meta = metaFilter.Select(x => x).ToList();
@@ -35,8 +34,8 @@ namespace FilterExoGenerator
                 .Structurize()
                 .PreProcess();
 
-            var dict = styleBundle.StyleProcess();
-            filterBundle.DefineStyleDictionary(dict);
+            var styleDict = styleBundle.StyleProcess();
+            filterBundle.DefineStyleDictionary(styleDict);
 
             var results = filterBundle.Process();
 
@@ -47,7 +46,7 @@ namespace FilterExoGenerator
             var filterText = tempFilter.Serialize();
             var filterJoinedString = string.Join(System.Environment.NewLine, filterText);
 
-            await FileWork.WriteTextAsync("C:\\FilterOutput\\RESULTS\\ADDITIONAL-FILES\\SeedFilter\\ExoOutput.filter", filterJoinedString);
+            await FileWork.WriteTextAsync("C:\\PROJECTS\\Filter-Precursors\\ExoOutput.filter", filterJoinedString);
         }
     }
 }

@@ -11,16 +11,18 @@ namespace FilterExo.Core.Process.StyleResoluton
 {
     public static class StyleResolution
     {
-        public static List<List<string>> Execute(ExoBlock currentRule, ExoStyleDictionary style)
+        // find all relevant styles for the matching rule
+        public static List<List<string>> Execute(ExoBlock block, ExoStyleDictionary style)
         {
             var result = new List<List<string>>();
 
-            // match the filter-rules (such as T1) to the style rules. Handle different application strategies here later
-            var relevantRules = style.Rules.Where(x => x.IsRuleMatched(currentRule)).ToList();
+            // Test if the FILTER part of the APPLY (style => filter) command matches, the current rule, find matching styles.
+            var relevantRules = style.Rules.Where(x => x.IsMatchForRule(block)).ToList();
 
+            // Style matching has 2 parts, in the second part we do the actual style matching and apply it onto the rule
             foreach (var styleRule in relevantRules)
             {
-                return styleRule.Apply(currentRule);
+                return styleRule.Apply(block);
             }
 
             return result;
@@ -87,37 +89,34 @@ namespace FilterExo.Core.Process.StyleResoluton
         public string OperationName;
         public ExoExpressionCommand Caller;
 
-        public bool IsRuleMatched(ExoBlock currentRule)
+        // Test if the FILTER part of the APPLY (style => filter) command matches, the current rule
+        public bool IsMatchForRule(ExoBlock currentRule)
         {
             var currentRuleName = currentRule.Name.ToLower();          // rulename: "t1"
-            var parentSectionName = currentRule.Parent.Name.ToLower(); // sectionName: "Incubators"
+            var parentSectionName = currentRule.Parent.Name.ToLower(); // sectionName: "IncubatorStyle"
             var parents = currentRule.YieldParentNames(parentSectionName);
 
-            var parentMatch = parents.Any(x => Regex.IsMatch(this.FilterSection.SectionMatch, x.ToLower()));
+            var parentMatch = parents.Any(x => Regex.IsMatch(x.ToLower(), this.FilterSection.SectionMatch));
             bool ruleMatch = true;
 
             if (this.FilterSection.Rule != "")
             {
-                ruleMatch = Regex.IsMatch(this.FilterSection.RuleMatch, currentRuleName);
+                ruleMatch = Regex.IsMatch(currentRuleName, this.FilterSection.RuleMatch);
             }
 
             return parentMatch && ruleMatch;
         }
 
-        public List<List<string>> Apply(ExoBlock currentRule)
+        public List<List<string>> Apply(ExoBlock block)
         {
             var globalStyles = ExoStyleProcessor.WorkedStyleFile;
             var results = new List<List<string>>();
 
-            var filterRuleName = currentRule.Name.ToLower();
+            var filterRuleName = block.Name.ToLower();
 
             foreach (var style in this.StyleSection)
             {
-                var sections = globalStyles.RootEntry.FindChildSectionRegex(style.SectionMatch).ToList();
-
-                foreach (var exoBlock in sections)
-                {
-                    List<ExoFunction> functions = new List<ExoFunction>();
+                List<ExoFunction> functions = new List<ExoFunction>();
 
                     var mode = style.Mode;
                     // if the metafilter and the style both have a rulename specified perform a force application
@@ -126,6 +125,7 @@ namespace FilterExo.Core.Process.StyleResoluton
                         mode = ExoStyleSearchMode.forced;
                     }
 
+                    var exoBlock = style.Parent;
                     if (mode == ExoStyleSearchMode.match)
                     {
                         if (style.Rule == "")
@@ -160,9 +160,8 @@ namespace FilterExo.Core.Process.StyleResoluton
                         }
                     }
 
-                    results.AddRange(ApplyInner(currentRule, functions, style.Parent));
-                }
-            }
+                    results.AddRange(ApplyInner(block, functions, style.Parent));
+                }       
 
             return results;
         }

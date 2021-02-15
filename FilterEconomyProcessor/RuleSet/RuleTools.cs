@@ -24,6 +24,16 @@ namespace FilterEconomyProcessor.RuleSet
                      z.Aspects.Where(x => x.IsActive()).All(x => !exclude.Contains(x.Name))).ToList();
         }
 
+        public static bool NoAspect(this ItemList<NinjaItem> me, string excludedAspect)
+        {
+            return me.All(x => x.Aspects.All(y => y.Name != excludedAspect));
+        }
+
+        public static bool AllUnhandled(this ItemList<NinjaItem> me)
+        {
+            return me.NoAspect("HandledAspect");
+        }
+
         public static bool AllItemsFullFill(this List<NinjaItem> me, HashSet<string> include, HashSet<string> exclude)
         {
             return me.All(

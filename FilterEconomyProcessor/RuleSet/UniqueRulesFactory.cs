@@ -19,6 +19,8 @@ namespace FilterEconomyProcessor.RuleSet
 
             builder.AddRule("unknown", "unknown", s => !ruleHost.EconomyInformation.EconomyTierlistOverview["uniques"].ContainsKey(s));
 
+            builder.AddRule("unhandled", "???", s => builder.Item.AllUnhandled());
+
             builder.AddRule("t1", "t1", s => builder.Item.LowestPrice > FilterPolishConfig.UniqueT1BreakPoint);
 
             builder.AddRule("t2", "t2", s => builder.Item.LowestPrice > FilterPolishConfig.UniqueT2BreakPoint);

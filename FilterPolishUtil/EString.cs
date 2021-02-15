@@ -69,7 +69,7 @@ namespace FilterPolishUtil
 
         public static bool ContainsSpecialCharacters(this string s)
         {
-            Regex RgxUrl = new Regex("[^a-zA-Z0-9_]");
+            Regex RgxUrl = new Regex("[^a-zA-Z0-9_*.]");
             return RgxUrl.IsMatch(s);
         }
     }
