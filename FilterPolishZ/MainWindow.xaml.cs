@@ -79,7 +79,7 @@ namespace FilterPolishZ
             // request ninja-economy info
             if (!skipFetchOnlineData)
             {
-                this.EconomyData = this.LoadEconomyOverviewData();
+                this.EconomyData = this.LoadEconomyOverviewData().Result;
                 this.EconomyData.RequestPoeLeagueInfo();
             }
 
@@ -192,28 +192,34 @@ namespace FilterPolishZ
         }
 
         [Time]
-        private EconomyRequestFacade LoadEconomyOverviewData()
+        private async Task<EconomyRequestFacade> LoadEconomyOverviewData()
         {
             LoggingFacade.LogDebug("Loading Economy Data...");
 
-            var result = EconomyRequestFacade.GetInstance();
+            var facade = EconomyRequestFacade.GetInstance();
             var seedFolder = Configuration.AppSettings["EcoFile Folder"];
             var variation = Configuration.AppSettings["leagueType"];
             var league = Configuration.AppSettings["currentLeague"];
-            
-            foreach (var tuple in FilterPolishConfig.FileRequestData)
+
+            var tasks = new Dictionary<string,Task<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>>();
+
+            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
             {
-                PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
-                LoggingFacade.LogDebug($"Loading Economy: {tuple.Item1} + {tuple.Item2} + {tuple.Item3}");
+                tasks.Add(ninjaURL,facade.PerformRequest(league, variation, internalgroup, ninjaURL, seedFolder));
+                LoggingFacade.LogDebug($"Requesting Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
             }
 
-            void PerformEcoRequest(string dictionaryKey, string requestKey, string url) =>
-                result.AddToDictionary(dictionaryKey,
-                    result.PerformRequest(league, variation, requestKey, url, seedFolder));
+            await Task.WhenAll(tasks.Values);
+
+            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
+            {
+                facade.AddToDictionary(filtergroup, tasks[ninjaURL].Result);
+                LoggingFacade.LogDebug($"Done Loading Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
+            }
 
             LoggingFacade.LogInfo("Economy Data Loaded...");
 
-            return result;
+            return facade;
         }
 
         [Time]

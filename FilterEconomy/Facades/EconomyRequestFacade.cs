@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using FilterPolishUtil.Extensions;
 using FilterCore.Constants;
 using Newtonsoft.Json;
@@ -52,7 +53,7 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, Tuple<DateTime,DateTime>> ActiveMetaTags { get; set; } = new Dictionary<string, Tuple<DateTime, DateTime>>();
 
-        public Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>> PerformRequest(string league, string leagueType, string branchKey, string url, string baseStoragePath)
+        public async Task<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> PerformRequest(string league, string leagueType, string branchKey, string url, string baseStoragePath)
         {
             var economySegmentBranch = url;
             var directoryPath = $"{baseStoragePath}/{leagueType}/{league}/{StringWork.GetDateString()}";
@@ -85,7 +86,7 @@ namespace FilterEconomy.Facades
 
                     try
                     {
-                        responseString = new RestRequest(urlRequest).Execute();
+                        responseString = await new RestRequest(urlRequest).ExecuteAsync();
                     }
                     catch (Exception)
                     {
