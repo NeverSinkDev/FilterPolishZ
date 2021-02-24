@@ -13,7 +13,7 @@ namespace AWSPolishFunctions
     {
         public async Task<APIGatewayProxyResponse> FilterGenerationFunction(APIGatewayProxyRequest apigProxyEvent, ILambdaContext context)
         {
-            return new APIGatewayProxyResponse { Body = $"Hello + { apigProxyEvent.QueryStringParameters.First().Value.ToString() }" };
+            return new APIGatewayProxyResponse { Body = $"Hello + { apigProxyEvent.QueryStringParameters.First().Value.ToString() }", StatusCode = 200 };
         }
     }
 }
