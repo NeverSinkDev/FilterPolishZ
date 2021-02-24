@@ -213,24 +213,7 @@ namespace FilterPolishZ
             var variation = Configuration.AppSettings["leagueType"];
             var league = Configuration.AppSettings["currentLeague"];
 
-            var tasks = new Dictionary<string,Task<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>>();
-
-            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
-            {
-                var result = facade.PerformRequest(league, variation, internalgroup, ninjaURL, seedFolder);
-                tasks.Add(ninjaURL, result);
-                LoggingFacade.LogDebug($"Requesting Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
-            }
-
-            await Task.WhenAll(tasks.Values).ConfigureAwait(false);
-
-            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
-            {
-                facade.AddToDictionary(filtergroup, tasks[ninjaURL].Result);
-                LoggingFacade.LogDebug($"Done Loading Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
-            }
-
-            LoggingFacade.LogInfo("Economy Data Loaded...");
+            await facade.LoadEconomyOverviewData(league, variation, seedFolder).ConfigureAwait(false);
 
             return facade;
         }

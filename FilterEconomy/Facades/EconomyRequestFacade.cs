@@ -53,6 +53,28 @@ namespace FilterEconomy.Facades
 
         public Dictionary<string, Tuple<DateTime,DateTime>> ActiveMetaTags { get; set; } = new Dictionary<string, Tuple<DateTime, DateTime>>();
 
+        public async Task LoadEconomyOverviewData(string league, string variation, string seedFolder)
+        {
+            var tasks = new Dictionary<string, Task<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>>>();
+
+            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
+            {
+                var result = this.PerformRequest(league, variation, internalgroup, ninjaURL, seedFolder);
+                tasks.Add(ninjaURL, result);
+                LoggingFacade.LogDebug($"Requesting Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
+            }
+
+            await Task.WhenAll(tasks.Values).ConfigureAwait(false);
+
+            foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
+            {
+                this.AddToDictionary(filtergroup, tasks[ninjaURL].Result);
+                LoggingFacade.LogDebug($"Done Loading Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
+            }
+
+            LoggingFacade.LogInfo("Economy Data Loaded...");
+        }
+
         public async Task<Dictionary<string, ItemList<FilterEconomy.Model.NinjaItem>>> PerformRequest(string league, string leagueType, string branchKey, string url, string baseStoragePath)
         {
             var economySegmentBranch = url;

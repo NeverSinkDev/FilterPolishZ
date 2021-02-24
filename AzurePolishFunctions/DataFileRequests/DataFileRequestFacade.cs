@@ -68,19 +68,8 @@ namespace AzurePolishFunctions.DataFileRequests
         {
             var result = MainGenerationRoutine.EconomyData;
 
-            foreach (var tuple in FilterPolishUtil.FilterPolishConfig.FileRequestData)
-            {
-                var reqRes = PerformEcoRequest(tuple.Item1, tuple.Item2, tuple.Item3);
-                if (reqRes != FileRequestResult.Success) return reqRes;
-            }
-
-            FileRequestResult PerformEcoRequest(string dictionaryKey, string requestKey, string url)
-            {
-                var ecoData = result.PerformRequest(league, leagueType, requestKey, url, BaseStoragePath);
-                if (ecoData == null) return FileRequestResult.Ecoless;
-                result.AddToDictionary(dictionaryKey, ecoData);
-                return FileRequestResult.Success;
-            }
+            var waitable = result.LoadEconomyOverviewData(league, leagueType, BaseStoragePath);
+            waitable.Wait();
 
             this.EconomyData = result.EconomyTierlistOverview;
             return FileRequestResult.Success;
