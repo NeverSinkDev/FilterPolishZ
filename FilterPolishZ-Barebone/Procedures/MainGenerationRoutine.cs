@@ -5,7 +5,6 @@ using FilterEconomy.Facades;
 using FilterEconomyProcessor;
 using FilterPolishUtil;
 using FilterPolishUtil.Model;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using System.Text;
 
 namespace AzurePolishFunctions.Procedures
 {
+
     public class MainGenerationRoutine
     {
         public static EconomyRequestFacade EconomyData { get; set; }
@@ -23,13 +23,17 @@ namespace AzurePolishFunctions.Procedures
         public static DataFileRequestFacade DataFiles { get; set; }
         public static FilterPublisher Publisher { get; set; }
 
+        public MainGenerationRoutine()
+        {
+            Logging = LoggingFacade.GetInstance();
+        }
+
         public static LoggingFacade Logging { get; set; }
 
-        public void Execute(string req, ILogger log)
+        public void Execute(string req)
         {
             // Logging?.Clean();
             Logging = LoggingFacade.GetInstance();
-            Logging.SetCustomLoggingMessage((s) => log.LogInformation(s));
 
             EconomyData?.Clean();
             ItemInfoData?.Clean();
@@ -51,13 +55,11 @@ namespace AzurePolishFunctions.Procedures
                 LoggingFacade.LogWarning("No Active League detected!");
             }
 
+            var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
             var requestedLeagueName = EconomyData.GetActiveLeagueName();
 
             // 1) Acquire Data
-
-            var localMode = Environment.GetEnvironmentVariable("localMode", EnvironmentVariableTarget.Process) ?? "true";
             dynamic data = JsonConvert.DeserializeObject(req);
-
             string leagueType = data.leagueType ?? Environment.GetEnvironmentVariable("leagueType", EnvironmentVariableTarget.Process) ?? "tmpstandard";
             string repoName = data.repoName ?? Environment.GetEnvironmentVariable("repoName", EnvironmentVariableTarget.Process) ?? "NeverSink-EconomyUpdated-Filter";
             string league = requestedLeagueName; //GetReqParams(req, data, "currentLeague", "Metamorph");
@@ -80,7 +82,6 @@ namespace AzurePolishFunctions.Procedures
             {
                 FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
             }
-
             
             LoggingFacade.LogInfo($"[CONFIG] FileRequestFacade Created!");
 
@@ -107,30 +108,25 @@ namespace AzurePolishFunctions.Procedures
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
                 FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
-
                 // EconomyData.PerformClassAbstractionProcedures();
 
                 TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
-
-                // 5) Generate Suggestions
+                
+                // Generate Suggestions
                 var economyTieringSystem = new ConcreteEconomyRules();
                 economyTieringSystem.GenerateSuggestions();
-
-
-                // 6) Apply suggestions
+                // Apply suggestions
                 TierListFacade.ApplyAllSuggestions();
             }
 
-            // 7) Generate changelogs
-            // todo
+            LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting generation...");
 
-            LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting publishing...");
-
-            // 8) Generate and Upload Filters
+            // Generate and Upload Filters
             Publisher = new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType);
 
             LoggingFacade.LogInfo($"[DEBUG] Initializing Publisher...");
             Publisher.Init(dataRes);
+            LoggingFacade.LogInfo($"[DEBUG] Filter Generation Done!");
 
             LoggingFacade.LogInfo($"[DEBUG] LadderPublishing:");
             Publisher.PublishToLadder();

@@ -5,6 +5,8 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 using System.Threading.Tasks;
 using System.Linq;
+using AzurePolishFunctions.Procedures;
+using System.Diagnostics;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace AWSPolishFunctions
@@ -13,7 +15,17 @@ namespace AWSPolishFunctions
     {
         public async Task<APIGatewayProxyResponse> FilterGenerationFunction(APIGatewayProxyRequest apigProxyEvent, ILambdaContext context)
         {
-            return new APIGatewayProxyResponse { Body = $"Hello + { apigProxyEvent.QueryStringParameters.First().Value.ToString() }", StatusCode = 200 };
+            var body = apigProxyEvent.Body;
+            var w = new Stopwatch();
+            w.Start();
+
+            var routine = new MainGenerationRoutine();
+            MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s); });
+            routine.Execute(body);
+
+            w.Stop();
+
+            return new APIGatewayProxyResponse { Body = $"Generation Finished after {(int)(w.ElapsedMilliseconds / (float)1000)} seconds", StatusCode = 200 };
         }
     }
 }

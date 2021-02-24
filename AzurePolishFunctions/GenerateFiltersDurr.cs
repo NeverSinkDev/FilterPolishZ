@@ -33,7 +33,7 @@ namespace AzurePolishFunctions
             log.LogInformation("C# HTTP trigger function processed a request.");
             try
             {
-                FilterGen.Execute(req, log);
+                FilterGen.Execute(req);
                 return "finished generation succesfully!";
             }
             catch (Exception e)

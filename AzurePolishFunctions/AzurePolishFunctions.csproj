@@ -10,10 +10,12 @@
     <RepositoryUrl>https://github.com/NeverSinkDev/FilterPolishZ</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LibGit2Sharp" Version="0.26.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FilterPolishZ-Barebone\FilterPolishZ-Barebone.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -23,10 +25,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FilterCore\FilterCore.csproj" />
-    <ProjectReference Include="..\FilterEconomyProcessor\FilterEconomyProcessor.csproj" />
-    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
   </ItemGroup>
 </Project>

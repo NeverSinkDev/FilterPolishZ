@@ -27,7 +27,7 @@ namespace AzurePolishFunctions
             }
 
             var genRoutine = new MainGenerationRoutine();
-            genRoutine.Execute(data, log);
+            genRoutine.Execute(data);
 
             return new OkObjectResult(string.Empty);
         }

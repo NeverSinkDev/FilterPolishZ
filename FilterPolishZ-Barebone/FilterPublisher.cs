@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using AzurePolishFunctions.DataFileRequests;
 using AzurePolishFunctions.Procedures;
 using FilterCore;
@@ -56,22 +55,11 @@ namespace AzurePolishFunctions
             {
                 LoggingFacade.LogInfo($"Repo folder existing... renewing");
                 DeleteDirectory(repoFolder);
-//                RunCommand(filterOutFolder, "git", "branch --set-upstream-to=origin/master master");
-//                using (var repo = new Repository(repoFolder))
-//                {
-//                    var options = new PullOptions();
-//                    var author = Environment.GetEnvironmentVariable("author", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-//                    var email = Environment.GetEnvironmentVariable("email", EnvironmentVariableTarget.Process) ?? "FilterPolishZ";
-//                    Commands.Pull(repo, new Signature(author, email, DateTimeOffset.Now), options);
-//                    LoggingFacade.LogInfo($"Pulling done");
-//                }
             }
-            
-            {
-                LoggingFacade.LogInfo($"Repo folder not existing... cloning");
-                Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
-                LoggingFacade.LogInfo($"Cloning done!");
-            }
+
+            LoggingFacade.LogInfo($"Repo folder not existing... cloning");
+            Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
+            LoggingFacade.LogInfo($"Cloning done!");
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
@@ -79,11 +67,8 @@ namespace AzurePolishFunctions
             filterWriter.Wait();
 
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
-
             LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
         }
-
-
 
         public void PublishToLadder()
         {
@@ -252,12 +237,6 @@ namespace AzurePolishFunctions
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             });
-            
-//            if (!string.IsNullOrEmpty(input) && !proc.HasExited)
-//            {
-//                proc.WaitForInputIdle();
-//                proc.StandardInput.WriteLine(input);
-//            }
 
             var outpu = proc.StandardOutput.ReadToEnd();
             var errors = proc.StandardError.ReadToEnd();
@@ -269,7 +248,7 @@ namespace AzurePolishFunctions
                 Console.WriteLine(errors);
             }
         }
-
+        
         private void UploadToPoe(string filterFolder)
         {
             var token = Environment.GetEnvironmentVariable("PoeApiAccessToken");
@@ -296,7 +275,7 @@ namespace AzurePolishFunctions
             };
             
             LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
-            
+
             var resp = FileDownloader.StaticHttpClient.PostAsJsonAsync(url, body);
             resp.Wait();
             if (resp.Result.StatusCode != HttpStatusCode.OK)
@@ -307,11 +286,6 @@ namespace AzurePolishFunctions
             {
                 LoggingFacade.LogInfo($"[PoeUpload] Success");
             }
-        }
-
-        public static void TestUpload()
-        {
-            new FilterPublisher(null, null, "tmpstandard").UploadToPoe("./");
         }
     }
 }

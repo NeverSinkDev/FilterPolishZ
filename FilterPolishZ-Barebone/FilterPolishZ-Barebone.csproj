@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>FilterPolishZ_Barebone</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FilterCore\FilterCore.csproj" />
+    <ProjectReference Include="..\FilterEconomyProcessor\FilterEconomyProcessor.csproj" />
+    <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
+    <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />
+  </ItemGroup>
+  <Target Name="GitLib2SharpFix" AfterTargets="Publish">
+    <Exec Command="copy libgit2-ef5a385.so bin\Release\netcoreapp2.1\publish" />
+  </Target>
+  <Target Name="GitLib2SharpFix" AfterTargets="Publish">
+    <Exec Command="copy libgit2-ef5a385.so bin\Debug\netcoreapp2.1\publish" />
+  </Target>
+</Project>
