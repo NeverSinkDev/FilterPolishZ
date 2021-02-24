@@ -43,7 +43,7 @@ Resources:
   SimpleApiFunc:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: /
+      CodeUri: ./
       Handler: AWSPolishFunctions::AWSPolishFunctions.GenerateFilters::FilterGenerationFunction
       Runtime: dotnetcore2.1
       Role: arn:aws:iam::389540702503:role/lambda_default
