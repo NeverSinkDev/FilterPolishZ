@@ -76,12 +76,21 @@ namespace FilterPolishZ
 
         private void LoadAllComponents(bool skipFetchOnlineData = false)
         {
-            // request ninja-economy info
-            if (!skipFetchOnlineData)
+
+            try
             {
-                this.EconomyData = this.LoadEconomyOverviewData().Result;
-                this.EconomyData.RequestPoeLeagueInfo();
+                // request ninja-economy info
+                if (!skipFetchOnlineData)
+                {
+                    this.EconomyData = this.LoadEconomyOverviewData().Result;
+                    this.EconomyData.RequestPoeLeagueInfo();
+                }
             }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
 
             if (Configuration.AppSettings["testLeague"] == "true" && !this.EconomyData.IsLeagueActive())
             {
