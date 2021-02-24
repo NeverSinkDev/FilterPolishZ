@@ -62,7 +62,6 @@ namespace FilterEconomy.Facades
 
             string responseString;
 
-            // TODO: Kill this!
             FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
 
             try
