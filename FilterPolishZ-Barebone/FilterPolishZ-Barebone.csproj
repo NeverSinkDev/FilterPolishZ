@@ -16,10 +16,4 @@
     <ProjectReference Include="..\FilterEconomy\FilterEconomy.csproj" />
     <ProjectReference Include="..\FilterPolishUtil\FilterPolishUtil.csproj" />
   </ItemGroup>
-  <Target Name="GitLib2SharpFix" AfterTargets="Publish">
-    <Exec Command="copy libgit2-ef5a385.so bin\Release\netcoreapp2.1\publish" />
-  </Target>
-  <Target Name="GitLib2SharpFix" AfterTargets="Publish">
-    <Exec Command="copy libgit2-ef5a385.so bin\Debug\netcoreapp2.1\publish" />
-  </Target>
 </Project>
