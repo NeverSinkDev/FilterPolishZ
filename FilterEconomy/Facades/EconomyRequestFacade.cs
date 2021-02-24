@@ -62,8 +62,6 @@ namespace FilterEconomy.Facades
 
             string responseString;
 
-            FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
-
             try
             {
                 if (FilterPolishConfig.ActiveRequestMode != RequestType.ForceOnline && File.Exists(fileFullPath))
