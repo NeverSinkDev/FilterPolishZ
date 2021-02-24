@@ -82,7 +82,10 @@ namespace FilterPolishZ
                 // request ninja-economy info
                 if (!skipFetchOnlineData)
                 {
-                    this.EconomyData = this.LoadEconomyOverviewData().Result;
+                    var result = this.LoadEconomyOverviewData();
+                    result.Wait();
+                    this.EconomyData = result.Result;
+
                     this.EconomyData.RequestPoeLeagueInfo();
                 }
             }
@@ -214,11 +217,12 @@ namespace FilterPolishZ
 
             foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
             {
-                tasks.Add(ninjaURL,facade.PerformRequest(league, variation, internalgroup, ninjaURL, seedFolder));
+                var result = facade.PerformRequest(league, variation, internalgroup, ninjaURL, seedFolder);
+                tasks.Add(ninjaURL, result);
                 LoggingFacade.LogDebug($"Requesting Economy: {filtergroup} + {internalgroup} + {ninjaURL}");
             }
 
-            await Task.WhenAll(tasks.Values);
+            await Task.WhenAll(tasks.Values).ConfigureAwait(false);
 
             foreach (var (filtergroup, internalgroup, ninjaURL) in FilterPolishConfig.FileRequestData)
             {

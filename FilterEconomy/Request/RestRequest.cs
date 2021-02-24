@@ -21,12 +21,14 @@ namespace FilterEconomy.Request
 
         public async Task<string> ExecuteAsync()
         {
-            return await this.PerformAsyncRequest(this.Path);
-        }
-
-        public string Execute()
-        {
-            return PerformRequestHTTPREQ(this.Path);
+            try
+            {
+                return await this.PerformAsyncRequest(this.Path).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
         }
 
         private static string PerformRequest(string url)
@@ -34,29 +36,14 @@ namespace FilterEconomy.Request
             return new WebClient() { Encoding = Encoding.UTF8 }.DownloadString(url);
         }
 
-        private static string PerformRequestHTTPREQ(string url)
-        {
-            var client = FileDownloader.StaticHttpClient;
-
-            var dlTask = client.GetStringAsync(url);
-            dlTask.Wait();
-            return dlTask.Result;
-        }
-
         private async Task<string> PerformAsyncRequest(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            // request.ContentType = contentType;
-            request.Method = WebRequestMethods.Http.Get;
-            request.Timeout = 20000;
-            request.Proxy = null;
-            WebResponse response = await request.GetResponseAsync();
-
-            using (Stream responseStream = response.GetResponseStream())
-            using (StreamReader sr = new StreamReader(responseStream))
+            using (var client = new HttpClient())
             {
-                string strContent = sr.ReadToEnd();
-                return strContent;
+                var req = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = await client.SendAsync(req).ConfigureAwait(false);
+                var responseX = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return responseX;
             }
         }
     }

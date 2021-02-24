@@ -62,6 +62,9 @@ namespace FilterEconomy.Facades
 
             string responseString;
 
+            // TODO: Kill this!
+            FilterPolishConfig.ActiveRequestMode = RequestType.ForceOnline;
+
             try
             {
                 if (FilterPolishConfig.ActiveRequestMode != RequestType.ForceOnline && File.Exists(fileFullPath))
@@ -86,12 +89,13 @@ namespace FilterEconomy.Facades
 
                     try
                     {
-                        responseString = await new RestRequest(urlRequest).ExecuteAsync();
+                        var request = new RestRequest(urlRequest);
+                        responseString = await request.ExecuteAsync().ConfigureAwait(false);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         LoggingFacade.LogError($"Loading Economy: Requesting From Ninja {urlRequest}");
-                        responseString = null;
+                        return new Dictionary<string, ItemList<NinjaItem>>(){{ "ERROR:" + urlRequest, null }};
                     }
                     
                     // poeNinja down -> use most recent local file
@@ -287,7 +291,9 @@ namespace FilterEconomy.Facades
             // Obtaining League Info
             try
             {
-                responseString = new RestRequest("http://api.pathofexile.com/leagues").Execute();
+                var waitable = new RestRequest("http://api.pathofexile.com/leagues").ExecuteAsync();
+                waitable.Wait();
+                responseString = waitable.Result;
             }
             catch (Exception)
             {
