@@ -1,0 +1,60 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  FilterPolishZ NeverSink filter generator
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 30
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        FbFtpPassword: {pipelinePlaceholderFbFtpPw}
+        AdminAreaPassword: {pipelinePlaceholderFbAdminPw}
+        frontend_S3BucketName: {pipelinePlaceholderfrontend_S3BucketName}
+        database_userPresetsTableName: {pipelinePlaceholderdatabase_userPresetsTableName}
+        database_profSavesTableName: {pipelinePlaceholderdatabase_profSavesTableName}
+        database_saveFileS3BucketName: {pipelinePlaceholderdatabase_saveFileS3BucketName}
+        database_userSessionTableName: {pipelinePlaceholderdatabase_userSessionTableName}
+
+Resources:
+  
+  FbLambdaStackApi:
+#    Type: AWS::ApiGatewayV2::Api
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowOrigin: "'*'" # todo
+        
+#  DefaultApiMethod:
+#    Type: AWS::ApiGateway::Method
+#    Properties:
+#      MethodResponses:
+#        - StatusCode: 200
+#        - StatusCode: 500
+#      RestApiId: !Ref FbLambdaStackApi
+#      ResourceId: !GetAtt
+#        - FbLambdaStackApi
+#        - RootResourceId
+#      HttpMethod: POST
+#      AuthorizationType: NONE
+
+  SimpleApiFunc:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ./Cloud/AWSPolishFunctions/
+      Handler: AWSPolishFunctions::AWSPolishFunctions.GenerateFilters::FilterGenerationFunction
+      Runtime: dotnetcore2.1
+      Role: arn:aws:iam::389540702503:role/lambda_default
+#      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+#        Variables:
+#          PARAM1: VALUE
+      Events:
+        SimpleApi:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /generate/triggerFilterGen
+            Method: get
+            RestApiId:
+              Ref: FbLambdaStackApi
