@@ -7,15 +7,15 @@ Description: >
 Globals:
   Function:
     Timeout: 30
-    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-      Variables:
-        FbFtpPassword: {pipelinePlaceholderFbFtpPw}
-        AdminAreaPassword: {pipelinePlaceholderFbAdminPw}
-        frontend_S3BucketName: {pipelinePlaceholderfrontend_S3BucketName}
-        database_userPresetsTableName: {pipelinePlaceholderdatabase_userPresetsTableName}
-        database_profSavesTableName: {pipelinePlaceholderdatabase_profSavesTableName}
-        database_saveFileS3BucketName: {pipelinePlaceholderdatabase_saveFileS3BucketName}
-        database_userSessionTableName: {pipelinePlaceholderdatabase_userSessionTableName}
+#    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+#      Variables:
+#        FbFtpPassword: {pipelinePlaceholderFbFtpPw}
+#        AdminAreaPassword: {pipelinePlaceholderFbAdminPw}
+#        frontend_S3BucketName: {pipelinePlaceholderfrontend_S3BucketName}
+#        database_userPresetsTableName: {pipelinePlaceholderdatabase_userPresetsTableName}
+#        database_profSavesTableName: {pipelinePlaceholderdatabase_profSavesTableName}
+#        database_saveFileS3BucketName: {pipelinePlaceholderdatabase_saveFileS3BucketName}
+#        database_userSessionTableName: {pipelinePlaceholderdatabase_userSessionTableName}
 
 Resources:
   
