@@ -77,11 +77,11 @@ namespace AzurePolishFunctions.DataFileRequests
 
         private void LoadGitHubFiles()
         {
-            var nsRepo = "NeverSink-Filter";
+            var nsRepo = "Filter-Precursors";
             var nsName = "NeverSinkDev";
-            var seedFilterRepoPath = "/ADDITIONAL-FILES/SeedFilter/NeverSink's filter - SEED (SeedFilter) .filter";
-            var descrPath = "/ADDITIONAL-FILES/Meta/OnlineDescription.txt";
-            var styleFolderRepoPath = "/ADDITIONAL-FILES/StyleSheets/";
+            var seedFilterRepoPath = "/NeverSink's filter - SEED (SeedFilter) .filter";
+            var descrPath = "/Meta/OnlineDescription.txt";
+            var styleFolderRepoPath = "/StyleSheets/";
             var repoDlPath = new GitHubFileDownloader().Download(nsName, nsRepo);
             
             FilterPublisher.FilterDescription = System.IO.File.ReadAllText(repoDlPath + descrPath);

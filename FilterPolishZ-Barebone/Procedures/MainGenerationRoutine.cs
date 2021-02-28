@@ -132,7 +132,7 @@ namespace AzurePolishFunctions.Procedures
             Publisher.PublishToLadder();
 
             LoggingFacade.LogInfo($"[DEBUG] GitHub:");
-            Publisher.PublishToGitHub();
+            //Publisher.PublishToGitHub();
 
             LoggingFacade.LogInfo($"[DEBUG] FilterBlade:");
             Publisher.PublishToFilterBlade();
