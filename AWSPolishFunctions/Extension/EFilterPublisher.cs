@@ -39,8 +39,6 @@ namespace AWSPolishFunctions.Extension
                 var directoryTransferUtility =
                     new TransferUtility(DbClient);
 
-                // 3. The same as Step 2 and some optional configuration. 
-                //    Search recursively for .txt files to upload.
                 var request = new TransferUtilityUploadDirectoryRequest
                 {
                     BucketName = existingBucketName,

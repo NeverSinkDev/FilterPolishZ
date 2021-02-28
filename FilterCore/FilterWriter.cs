@@ -103,7 +103,7 @@ namespace FilterPolishZ.Util
                     LoggingFacade.LogError("Error: style/strictness variant is smaller size than seed");
                 }
 
-                await FileWork.WriteTextAsync(filePath + "\\" + fileName + ".filter", result);
+                await FileWork.WriteTextAsync(filePath + fileName + ".filter", result);
                 LoggingFacade.LogDebug($"DONE GENERATING: {fileName}");
             }
         }
