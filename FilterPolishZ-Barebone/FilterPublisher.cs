@@ -241,7 +241,7 @@ namespace AzurePolishFunctions
                 version = FilterAccessFacade.GetInstance().PrimaryFilter.GetHeaderMetaData("VERSION")
             };
             
-            LoggingFacade.LogInfo($"[PoeUpload] Sending request...");
+            LoggingFacade.LogInfo($"[PoeUpload] Sending request: {filterId}");
 
             var resp = FileDownloader.StaticHttpClient.PostAsJsonAsync(url, body);
             resp.Wait();
