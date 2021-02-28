@@ -48,6 +48,8 @@ namespace AzurePolishFunctions
             Directory.CreateDirectory(filterOutFolder);
             LoggingFacade.LogInfo($"Tempfolder prepared {filterOutFolder}");
 
+            this.OutputFolder = filterOutFolder;
+
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
             var filterWriter = FilterWriter.WriteFilter(this.Filter, true, filterOutFolder + "/", Path.GetDirectoryName(MainGenerationRoutine.DataFiles.FilterStyleFilesPaths.First().Value) + "/");

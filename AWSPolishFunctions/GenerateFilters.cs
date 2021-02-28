@@ -24,6 +24,8 @@ namespace AWSPolishFunctions
             MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s); });
             routine.Execute(body);
 
+            Console.WriteLine("Done with MainGeneration Routine. Starting Extensions (AWS)");
+
             MainGenerationRoutine.Publisher.UploadToFBS3("fb-beta-frontend");
 
             w.Stop();
