@@ -76,7 +76,7 @@ namespace FilterPolishZ.Util
                 var fileName = filterName + " filter - " + strictnessIndex + "-" + FilterGenerationConfig.FilterStrictnessLevels[strictnessIndex].ToUpper();
                 var filter = new Filter(baseFilterString);
 
-                LoggingFacade.LogDebug($"GENERATING: {fileName}");
+                LoggingFacade.LogDebug($"GENERATING: {fileName}:{style}");
 
                 new FilterTableOfContentsCreator(filter).Run();
                 filter.ExecuteStrictnessCommands(strictnessIndex, consoleStrictness);
