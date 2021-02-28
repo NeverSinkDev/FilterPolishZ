@@ -58,7 +58,7 @@ namespace AzurePolishFunctions
             }
 
             LoggingFacade.LogInfo($"Repo folder not existing... cloning");
-            Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
+            // Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
             LoggingFacade.LogInfo($"Cloning done!");
 
             // create filter
