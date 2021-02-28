@@ -34,6 +34,7 @@ namespace AWSPolishFunctions.Extension
 
         private static async Task UploadDirAsync(string directoryPath, string serverFolderPrefix, string existingBucketName)
         {
+            Console.WriteLine($"ATTEMPTING TO UPLOAD: {directoryPath} to {serverFolderPrefix} on {existingBucketName}");
             try
             {
                 var directoryTransferUtility =

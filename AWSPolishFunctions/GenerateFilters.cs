@@ -27,8 +27,8 @@ namespace AWSPolishFunctions
             string repoName = data.repoName;
             routine.Execute(body);
 
-
             Console.WriteLine("Done with MainGeneration Routine. Starting Extensions (AWS)");
+            Console.WriteLine($"Variable Reponame is: {repoName}");
 
             MainGenerationRoutine.Publisher.UploadToFBS3("fb-beta-frontend", $@"/datafiles/filters/{repoName}");
             MainGenerationRoutine.Publisher.UploadToFBS3("fb-s3bucket-dev",  $@"/datafiles/filters/{repoName}");
