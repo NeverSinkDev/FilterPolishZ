@@ -27,12 +27,12 @@ namespace AWSPolishFunctions.Extension
             return res;
         }
 
-        public static void UploadToFBS3(this FilterPublisher me, string bucket)
+        public static void UploadToFBS3(this FilterPublisher me, string serverFolderPrefix, string bucket)
         {
-            UploadDirAsync(me.OutputFolder, bucket).Wait();
+            UploadDirAsync(me.OutputFolder, serverFolderPrefix, bucket).Wait();
         }
 
-        private static async Task UploadDirAsync(string directoryPath, string existingBucketName)
+        private static async Task UploadDirAsync(string directoryPath, string serverFolderPrefix, string existingBucketName)
         {
             try
             {
@@ -44,12 +44,12 @@ namespace AWSPolishFunctions.Extension
                     BucketName = existingBucketName,
                     Directory = directoryPath,
                     SearchOption = SearchOption.AllDirectories,
-                    KeyPrefix = @"/datafiles/filters/NeverSink_AutoEcoUpdate_tmpstandard",
+                    KeyPrefix = serverFolderPrefix,
                     CannedACL = S3CannedACL.PublicRead
                 };
 
                 await directoryTransferUtility.UploadDirectoryAsync(request);
-                Console.WriteLine("Upload statement 3 completed");
+                Console.WriteLine($"{directoryPath} uploaded to {serverFolderPrefix} on {existingBucketName}");
             }
             catch (AmazonS3Exception e)
             {

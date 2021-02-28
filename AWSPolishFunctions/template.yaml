@@ -58,3 +58,17 @@ Resources:
             Method: get
             RestApiId:
               Ref: FbLambdaStackApi
+        TimeTriggerEventSC:
+          Type: Schedule # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Schedule: 'rate(5 minutes)'
+            Name: SCSchedule
+            Enabled: True
+            Input: '{"body": "{\"leagueType\":\"tmpstandard\",\"repoName\":\"NeverSink_AutoEcoUpdate_tmpstandard\"}"}'
+        TimeTriggerEventHC:
+          Type: Schedule # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Schedule: 'rate(5 minutes)'
+            Name: HCSchedule
+            Enabled: True
+            Input: '{"body": "{\"leagueType\":\"tmphardcore\",\"repoName\":\"NeverSink_AutoEcoUpdate_tmphardcore\"}"}'

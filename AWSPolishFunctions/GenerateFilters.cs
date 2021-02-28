@@ -8,6 +8,7 @@ using System.Linq;
 using AzurePolishFunctions.Procedures;
 using System.Diagnostics;
 using AWSPolishFunctions.Extension;
+using Newtonsoft.Json;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace AWSPolishFunctions
@@ -22,11 +23,15 @@ namespace AWSPolishFunctions
 
             var routine = new MainGenerationRoutine();
             MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s); });
+            dynamic data = JsonConvert.DeserializeObject(body);
+            string repoName = data.repoName;
             routine.Execute(body);
+
 
             Console.WriteLine("Done with MainGeneration Routine. Starting Extensions (AWS)");
 
-            MainGenerationRoutine.Publisher.UploadToFBS3("fb-beta-frontend");
+            MainGenerationRoutine.Publisher.UploadToFBS3("fb-beta-frontend", $@"/datafiles/filters/{repoName}");
+            MainGenerationRoutine.Publisher.UploadToFBS3("fb-s3bucket-dev",  $@"/datafiles/filters/{repoName}");
 
             w.Stop();
 
