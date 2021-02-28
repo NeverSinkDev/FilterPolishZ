@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using AzurePolishFunctions.Procedures;
 using System.Diagnostics;
+using AWSPolishFunctions.Extension;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace AWSPolishFunctions
@@ -22,6 +23,8 @@ namespace AWSPolishFunctions
             var routine = new MainGenerationRoutine();
             MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s); });
             routine.Execute(body);
+
+            MainGenerationRoutine.Publisher.UploadToFBS3("fb-beta-frontend");
 
             w.Stop();
 
