@@ -47,7 +47,6 @@ namespace AzurePolishFunctions.Procedures
             ItemInfoData = ItemInformationFacade.GetInstance();
 
             // 0) Get Current League information etc
-
             EconomyData.RequestPoeLeagueInfo();
 
             if (!EconomyData.IsLeagueActive())
@@ -108,8 +107,9 @@ namespace AzurePolishFunctions.Procedures
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.PriorityEnrichmentProcedures);
                 FilterPolishUtil.FilterPolishConfig.AdjustPricingInformation();
                 EconomyData.EnrichAll(EnrichmentProcedureConfiguration.EnrichmentProcedures);
+                
                 // EconomyData.PerformClassAbstractionProcedures();
-
+                
                 TierListFacade.TierListData.Values.ToList().ForEach(x => x.ReEvaluate());
                 
                 // Generate Suggestions
@@ -122,23 +122,14 @@ namespace AzurePolishFunctions.Procedures
             LoggingFacade.LogInfo($"[DEBUG] Seedfiler regeneration done. Starting generation...");
 
             // Generate and Upload Filters
-            Publisher = new FilterPublisher(FilterAccessFacade.PrimaryFilter, repoName, leagueType);
-
             LoggingFacade.LogInfo($"[DEBUG] Initializing Publisher...");
+            Publisher = new FilterPublisher(FilterAccessFacade.PrimaryFilter, leagueType);
             Publisher.Init(dataRes);
+            
             LoggingFacade.LogInfo($"[DEBUG] Filter Generation Done!");
 
             LoggingFacade.LogInfo($"[DEBUG] LadderPublishing:");
             Publisher.PublishToLadder();
-
-            LoggingFacade.LogInfo($"[DEBUG] GitHub:");
-            //Publisher.PublishToGitHub();
-
-            LoggingFacade.LogInfo($"[DEBUG] FilterBlade:");
-            Publisher.PublishToFilterBlade();
-
-            LoggingFacade.LogInfo($"[DEBUG] FilterBlade Beta:");
-            Publisher.PublishToFilterBladeBETA();
         }
     }
 }

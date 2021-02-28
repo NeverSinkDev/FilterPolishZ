@@ -271,7 +271,7 @@ namespace FilterPolishZ
             }
             else baseFilter.SetHeaderMetaData("version:", newVersion);
 
-            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder, Configuration.AppSettings["StyleSheet Folder"]);
+            await FilterWriter.WriteFilter(baseFilter, isGeneratingStylesAndSeed, outputFolder, Configuration.AppSettings["StyleSheet Folder"]).ConfigureAwait(false);
         }
 
         private async Task WriteSeedFilter(Filter baseFilter, string filePath)

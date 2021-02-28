@@ -18,84 +18,49 @@ namespace AzurePolishFunctions
     public class FilterPublisher
     {
         public Filter Filter { get; set; }
-        public string RepoName {get; set;}
         public string League { get; set; }
 
-        public string RepoFolder { get; set; } = string.Empty;
-
+        public string OutputFolder = string.Empty;
         public bool PublishPrice = true;
 
         public static string FilterDescription = "NeverSink's LOOTFILTER, in-depth, endgame+leveling 2in1, user-friendly, multiversion, updated and refined over 5 years. For more information and customization options, visit: www.filterblade.xyz";
 
-        public FilterPublisher(Filter filter, string repoName, string league)
+        public FilterPublisher(Filter filter, string league)
         {
-            this.RepoName = repoName;
             this.Filter = filter;
             this.League = league;
         }
         
         public void Init(FileRequestResult dataRes)
         {
+            // important for end-league scenarios, where no economy exists
             if (dataRes != FileRequestResult.Success)
             {
                 PublishPrice = false;
             }
 
             var filterOutFolder = Path.GetTempPath() + "filterGenerationResult";
-            var repoFolder = filterOutFolder + "\\" + RepoName;
-            this.RepoFolder = repoFolder;
-
-            LoggingFacade.LogInfo($"Tempfolder prepared");
-
-            if (!Directory.Exists(filterOutFolder)) Directory.CreateDirectory(filterOutFolder);
-            
-            // clone/pull the repo. after that, we will edit these existing files by generating the new versions
-            // and push the update as the actual small changes.
-            if (Directory.Exists(repoFolder))
+            if (Directory.Exists(filterOutFolder))
             {
-                LoggingFacade.LogInfo($"Repo folder existing... renewing");
-                DeleteDirectory(repoFolder);
+                DeleteDirectory(filterOutFolder);
             }
 
-            LoggingFacade.LogInfo($"Repo folder not existing... cloning");
-            // Repository.Clone("https://github.com/NeverSinkDev/" + RepoName + ".git", repoFolder);
-            LoggingFacade.LogInfo($"Cloning done!");
+            Directory.CreateDirectory(filterOutFolder);
+            LoggingFacade.LogInfo($"Tempfolder prepared {filterOutFolder}");
 
             // create filter
             LoggingFacade.LogInfo($"Performing filter generation operations");
-            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, repoFolder + "\\", Path.GetDirectoryName(MainGenerationRoutine.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
+            var filterWriter = FilterWriter.WriteFilter(this.Filter, true, filterOutFolder + "\\", Path.GetDirectoryName(MainGenerationRoutine.DataFiles.FilterStyleFilesPaths.First().Value) + "\\");
             filterWriter.Wait();
 
             LoggingFacade.LogInfo($"Performing filter generation operations: DONE");
-            LoggingFacade.LogInfo($"Repofolder is: {RepoFolder}");
         }
 
         public void PublishToLadder()
         {
             LoggingFacade.LogInfo($"PoeUpload: starting");
-            UploadToPoe(RepoFolder);
+            UploadToPoe(OutputFolder);
             LoggingFacade.LogInfo($"PoeUpload: done");
-        }
-
-        public void PublishToGitHub()
-        {
-            LoggingFacade.LogInfo($"GitUpdate: starting");
-            PushToGit(this.RepoFolder, PublishPrice);
-            LoggingFacade.LogInfo($"GitUpdate: done");
-        }
-
-        public void PublishToFilterBlade()
-        {
-            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
-            PushToFTP("www", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade: done");
-        }
-
-        public void PublishToFilterBladeBETA()
-        {
-            LoggingFacade.LogInfo($"Publishing to filterblade: starting");
-            PushToFTP("beta", RepoFolder, "NeverSink_AutoEcoUpdate_" + MainGenerationRoutine.DataFiles.LeagueType);
-            LoggingFacade.LogInfo($"Publishing to filterblade: done");
         }
 
         private static void PushToFTP(string variant, string localFolder, string filterName)
