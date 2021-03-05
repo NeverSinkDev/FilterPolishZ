@@ -31,7 +31,7 @@ namespace AWSPolishFunctions
             Console.WriteLine($"Variable Reponame is: {repoName}");
 
             MainGenerationRoutine.Publisher.UploadToFBS3($@"/datafiles/filters/{repoName}", "fb-beta-frontend");
-            MainGenerationRoutine.Publisher.UploadToFBS3($@"/datafiles/filters/{repoName}", "fb-s3bucket-dev");
+            MainGenerationRoutine.Publisher.UploadToFBS3($@"/datafiles/filters/{repoName}", "fb-prod-frontend");
 
             w.Stop();
 
