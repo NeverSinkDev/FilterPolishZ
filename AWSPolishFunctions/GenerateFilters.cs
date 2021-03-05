@@ -22,7 +22,7 @@ namespace AWSPolishFunctions
             w.Start();
 
             var routine = new MainGenerationRoutine();
-            MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s); });
+            MainGenerationRoutine.Logging.SetCustomLoggingMessage((s) => { LambdaLogger.Log(s);});
             dynamic data = JsonConvert.DeserializeObject(body);
             string repoName = data.repoName;
             routine.Execute(body);
