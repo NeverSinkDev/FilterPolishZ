@@ -15,11 +15,8 @@ namespace FilterExoGenerator
             Console.WriteLine("Generating ExoFilters!");
 
 
-            var metaFilter = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\MetaPrototype.filter");
-            var metaStyle = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\StylePrototype.filter");
-
-            var style = metaStyle.Select(x => x).ToList();
-            var meta = metaFilter.Select(x => x).ToList();
+            var meta = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\MetaPrototype.filter");
+            var style = FileWork.ReadLinesFromFile("C:\\PROJECTS\\Filter-Precursors\\StylePrototype.filter");
 
             var styleBundle = new ExoBundle();
             var filterBundle = new ExoBundle();
